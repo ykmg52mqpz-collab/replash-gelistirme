@@ -23,9 +23,13 @@ try {
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT id, court, time_slot, status, access_code FROM matches WHERE facility_id = ? AND date = ? ORDER BY time_slot ASC");
-        $stmt->execute([$facilityId, $date]);
-        $slots = $stmt->fetchAll();
+        // Public endpoint: never expose access codes or locked/expired matches (Stealth Mode)
+        $slots = [];
+        if (!is_match_expired($date)) {
+            $stmt = $pdo->prepare("SELECT id, court, time_slot, status FROM matches WHERE facility_id = ? AND date = ? AND status = 'UNLOCKABLE' ORDER BY time_slot ASC");
+            $stmt->execute([$facilityId, $date]);
+            $slots = $stmt->fetchAll();
+        }
 
         echo json_encode(['ok' => true, 'slots' => $slots]);
         exit;
@@ -38,11 +42,12 @@ try {
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT m.*, f.name as facility_name FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE m.access_code = ? LIMIT 1");
-        $stmt->execute([$code]);
+        // Only unlocked, non-expired matches; never return playback URLs or codes
+        $stmt = $pdo->prepare("SELECT m.id, m.court, m.date, m.time_slot, m.sport, m.status, f.name as facility_name FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE UPPER(m.access_code) = ? LIMIT 1");
+        $stmt->execute([strtoupper($code)]);
         $match = $stmt->fetch();
 
-        if (!$match) {
+        if (!$match || $match['status'] !== 'UNLOCKABLE' || is_match_expired($match['date'])) {
             echo json_encode(['ok' => false, 'error' => 'Geçersiz veya süresi dolmuş kod']);
             exit;
         }

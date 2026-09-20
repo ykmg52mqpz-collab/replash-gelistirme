@@ -17,16 +17,16 @@ try {
 
     $match = null;
     if (!empty($matchId) && !empty($accessCode)) {
-        $stmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? AND (UPPER(access_code) = ? OR UPPER(code) = ?) LIMIT 1");
-        $stmt->execute([$matchId, strtoupper($accessCode), strtoupper($accessCode)]);
+        $stmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? AND UPPER(access_code) = ? LIMIT 1");
+        $stmt->execute([$matchId, strtoupper($accessCode)]);
         $match = $stmt->fetch();
         if (!$match) {
             http_response_code(403);
             die("Girilen erişim kodu bu maça ait değildir.");
         }
     } elseif (!empty($accessCode)) {
-        $stmt = $pdo->prepare("SELECT * FROM matches WHERE UPPER(access_code) = ? OR UPPER(code) = ? LIMIT 1");
-        $stmt->execute([strtoupper($accessCode), strtoupper($accessCode)]);
+        $stmt = $pdo->prepare("SELECT * FROM matches WHERE UPPER(access_code) = ? LIMIT 1");
+        $stmt->execute([strtoupper($accessCode)]);
         $match = $stmt->fetch();
     } elseif (!empty($matchId)) {
         http_response_code(403);

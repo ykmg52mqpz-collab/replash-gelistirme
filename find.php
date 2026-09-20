@@ -47,8 +47,7 @@ if ($pdo) {
                     // Match is UNLOCKABLE. If user submitted code, verify it
                     if (!empty($code)) {
                         $matchAccessCode = strtoupper(trim($match['access_code'] ?? ''));
-                        $matchCode = strtoupper(trim($match['code'] ?? ''));
-                        if ($code === $matchAccessCode || $code === $matchCode) {
+                        if ($matchAccessCode !== '' && hash_equals($matchAccessCode, $code)) {
                             $codeValidated = true;
                         } else {
                             $codeValidated = false;
@@ -59,8 +58,8 @@ if ($pdo) {
             }
         } elseif (!empty($code)) {
             // 2. User searched solely with an access code (direct code search)
-            $stmt = $pdo->prepare("SELECT m.*, f.name as facility_name, f.city, f.sport as facility_sport FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE UPPER(m.access_code) = ? OR UPPER(m.code) = ? LIMIT 1");
-            $stmt->execute([$code, $code]);
+            $stmt = $pdo->prepare("SELECT m.*, f.name as facility_name, f.city, f.sport as facility_sport FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE UPPER(m.access_code) = ? LIMIT 1");
+            $stmt->execute([$code]);
             $match = $stmt->fetch();
 
             if (!$match) {

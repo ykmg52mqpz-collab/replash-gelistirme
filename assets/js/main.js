@@ -117,9 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
           data.slots.forEach(s => {
             const opt = document.createElement('option');
             opt.value = s.time_slot;
-            opt.textContent = `${s.court} · ${s.time_slot} (${s.status === 'UNLOCKABLE' ? 'Hazır' : 'Kayıtlı'})`;
+            opt.textContent = `${s.court} · ${s.time_slot} (Hazır)`;
             opt.dataset.matchId = s.id;
-            opt.dataset.accessCode = s.access_code;
             slotSelect.appendChild(opt);
           });
         } else {
