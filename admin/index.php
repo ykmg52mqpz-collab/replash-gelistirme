@@ -511,11 +511,11 @@ require_once __DIR__ . '/../includes/header.php';
           <input type="hidden" name="admin_login" value="1">
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">E-Posta</label>
-            <input type="email" name="email" value="admin@replash.info" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
+            <input type="email" name="email" autocomplete="username" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Şifre</label>
-            <input type="password" name="password" value="replash2025" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
+            <input type="password" name="password" autocomplete="current-password" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
           </div>
           <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
             Giriş Yap &rarr;
