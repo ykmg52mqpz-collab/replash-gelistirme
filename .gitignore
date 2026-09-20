@@ -1,0 +1,23 @@
+# Yerel ortam / gizli bilgiler
+.env
+.env.*
+!.env.example
+!.env.*.example
+replash-info/.env*
+!replash-info/.env*.example
+
+# Veritabanı yedekleri ve dökümler (config/schema.sql hariç)
+*.sql
+*.sql.gz
+!config/schema.sql
+*.sqlite
+*.db
+
+# Yerel geliştirme araçları ve çıktılar
+.local/
+*.log
+.DS_Store
+
+# Next.js
+replash-info/node_modules/
+replash-info/.next/

@@ -1,0 +1,1494 @@
+<?php
+require_once __DIR__ . '/../includes/init.php';
+
+$pageTitle = 'Platform Admin Paneli';
+$error = null;
+$success = null;
+
+// Logout
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    unset($_SESSION['admin_logged_in']);
+    header('Location: index.php');
+    exit;
+}
+
+// Login
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM admins WHERE email = ? LIMIT 1");
+            $stmt->execute([$email]);
+            $admin = $stmt->fetch();
+
+            if ($admin && password_verify($password, $admin['password_hash'])) {
+                $_SESSION['admin_logged_in'] = true;
+                $_SESSION['admin_name'] = $admin['name'];
+                header('Location: index.php');
+                exit;
+            } elseif (!$admin) {
+                $error = "Bu e-posta adresi ile kayıtlı yönetici bulunamadı ({$email}).";
+            } else {
+                $error = "Girdiğiniz şifre hatalı.";
+            }
+        } catch (PDOException $e) {
+            $error = "Veritabanı Hatası: " . $e->getMessage();
+        }
+    } else {
+        $error = "Veritabanı bağlantısı kurulamadı! " . ($dbError ? "(" . $dbError . ")" : "Lütfen MySQL ayarlarınızı kontrol ediniz.");
+    }
+}
+
+$isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+
+$facilities = [];
+$cameras = [];
+$leads = [];
+$stats = ['total_matches' => 0, 'sold_matches' => 0, 'total_revenue' => 0, 'active_cameras' => 0];
+
+if ($isAdmin && $pdo) {
+    // Add Facility
+    if (isset($_POST['action']) && $_POST['action'] === 'add_facility') {
+        $name = trim($_POST['name'] ?? '');
+        $city = trim($_POST['city'] ?? '');
+        $sport = $_POST['sport'] ?? 'padel';
+        $pin = trim($_POST['pin'] ?? '');
+        $unitPrice = (float)($_POST['unit_price'] ?? 6.00);
+        $currency = $_POST['currency'] ?? 'EUR';
+        
+        // Courts and their multiple camera stream URLs
+        $courtList = [];
+        $courtsInput = $_POST['courts'] ?? [];
+
+        if (!empty($courtsInput) && is_array($courtsInput)) {
+            foreach ($courtsInput as $cData) {
+                $cName = trim($cData['name'] ?? '');
+                $cSport = trim($cData['sport'] ?? $sport);
+                $cPrice = (isset($cData['price']) && is_numeric($cData['price'])) ? (float)$cData['price'] : $unitPrice;
+                if (!empty($cName)) {
+                    $streams = [];
+                    if (!empty($cData['cameras']) && is_array($cData['cameras'])) {
+                        foreach ($cData['cameras'] as $sUrl) {
+                            $sTrimmed = trim($sUrl);
+                            if (!empty($sTrimmed)) {
+                                $streams[] = $sTrimmed;
+                            }
+                        }
+                    }
+                    if (empty($streams)) {
+                        $streams = [''];
+                    }
+                    $courtList[] = [
+                        'name' => $cName,
+                        'sport' => $cSport,
+                        'price' => $cPrice,
+                        'cameras' => $streams
+                    ];
+                }
+            }
+        }
+
+        // Fallback for flat court_names[] / court_streams[]
+        if (empty($courtList) && !empty($_POST['court_names']) && is_array($_POST['court_names'])) {
+            foreach ($_POST['court_names'] as $idx => $cName) {
+                $trimmed = trim($cName);
+                if (!empty($trimmed)) {
+                    $courtList[] = [
+                        'name' => $trimmed,
+                        'sport' => $sport,
+                        'price' => $unitPrice,
+                        'cameras' => [trim($_POST['court_streams'][$idx] ?? '')]
+                    ];
+                }
+            }
+        }
+
+        // Fallback for simple comma separated text if used
+        if (empty($courtList) && !empty($_POST['courts']) && is_string($_POST['courts'])) {
+            $rawCourts = array_map('trim', explode(',', $_POST['courts']));
+            foreach ($rawCourts as $rc) {
+                if (!empty($rc)) {
+                    $courtList[] = ['name' => $rc, 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']];
+                }
+            }
+        }
+
+        if (empty($courtList)) {
+            $courtList = [['name' => 'Saha 1', 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']]];
+        }
+
+        $facId = 'fac-' . strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+        $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+
+        $courtObjects = [];
+        $distinctSports = [];
+        foreach ($courtList as $cItem) {
+            $courtObjects[] = [
+                'name' => $cItem['name'],
+                'sport' => $cItem['sport'] ?? $sport,
+                'price' => (float)($cItem['price'] ?? $unitPrice)
+            ];
+            if (!empty($cItem['sport']) && !in_array($cItem['sport'], $distinctSports)) {
+                $distinctSports[] = $cItem['sport'];
+            }
+        }
+        $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
+
+        $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects), $pin, $unitPrice, $currency]);
+
+        // Add cameras for each court
+        $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
+        foreach ($courtList as $cItem) {
+            $c = $cItem['name'];
+            $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
+            $camNum = 1;
+            $totalCams = count($cItem['cameras']);
+            foreach ($cItem['cameras'] as $cStream) {
+                $camId = ($camNum === 1) ? "cam-{$slug}-{$cSlug}" : "cam-{$slug}-{$cSlug}-{$camNum}";
+                $channelId = ($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}";
+                $token = 'camk_' . bin2hex(random_bytes(8));
+                $camName = ($totalCams > 1) ? "{$name} · {$c} · {$camNum}. Kamera" : "{$name} · {$c}";
+                $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream]);
+                $camNum++;
+            }
+        }
+
+        $success = "Yeni tesis ve sahalara özel canlı yayın linkleri başarıyla kaydedildi.";
+    }
+
+    // Update Camera Stream URL
+    if (isset($_POST['action']) && $_POST['action'] === 'update_camera_stream') {
+        $camId = trim($_POST['camera_id'] ?? '');
+        $newStream = trim($_POST['stream_url'] ?? '');
+        if (!empty($camId)) {
+            $updCam = $pdo->prepare("UPDATE cameras SET stream_url = ? WHERE id = ?");
+            $updCam->execute([$newStream, $camId]);
+            $success = "Kamera canlı yayın URL'si başarıyla güncellendi.";
+        }
+    }
+
+    // Update Facility
+    if (isset($_POST['action']) && $_POST['action'] === 'update_facility') {
+        $facId = trim($_POST['facility_id'] ?? '');
+        $name = trim($_POST['name'] ?? '');
+        $city = trim($_POST['city'] ?? '');
+        $sport = $_POST['sport'] ?? 'padel';
+        $pin = trim($_POST['pin'] ?? '');
+        $unitPrice = (float)($_POST['unit_price'] ?? 6.00);
+        $currency = $_POST['currency'] ?? 'EUR';
+        
+        $courtList = [];
+        $courtsInput = $_POST['courts'] ?? [];
+
+        if (!empty($courtsInput) && is_array($courtsInput)) {
+            foreach ($courtsInput as $cData) {
+                $cName = trim($cData['name'] ?? '');
+                $cSport = trim($cData['sport'] ?? $sport);
+                $cPrice = (isset($cData['price']) && is_numeric($cData['price'])) ? (float)$cData['price'] : $unitPrice;
+                if (!empty($cName)) {
+                    $streams = [];
+                    if (!empty($cData['cameras']) && is_array($cData['cameras'])) {
+                        foreach ($cData['cameras'] as $sUrl) {
+                            $sTrimmed = trim($sUrl);
+                            if (!empty($sTrimmed)) {
+                                $streams[] = $sTrimmed;
+                            }
+                        }
+                    }
+                    if (empty($streams)) {
+                        $streams = [''];
+                    }
+                    $courtList[] = [
+                        'name' => $cName,
+                        'sport' => $cSport,
+                        'price' => $cPrice,
+                        'cameras' => $streams
+                    ];
+                }
+            }
+        }
+
+        // Fallback for flat court_names[] / court_streams[]
+        if (empty($courtList) && !empty($_POST['court_names']) && is_array($_POST['court_names'])) {
+            foreach ($_POST['court_names'] as $idx => $cName) {
+                $trimmed = trim($cName);
+                if (!empty($trimmed)) {
+                    $courtList[] = [
+                        'name' => $trimmed,
+                        'sport' => $sport,
+                        'price' => $unitPrice,
+                        'cameras' => [trim($_POST['court_streams'][$idx] ?? '')]
+                    ];
+                }
+            }
+        }
+
+        if (empty($courtList) && !empty($_POST['courts']) && is_string($_POST['courts'])) {
+            $rawCourts = array_map('trim', explode(',', $_POST['courts']));
+            foreach ($rawCourts as $rc) {
+                if (!empty($rc)) {
+                    $courtList[] = ['name' => $rc, 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']];
+                }
+            }
+        }
+
+        if (empty($courtList)) {
+            $courtList = [['name' => 'Saha 1', 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']]];
+        }
+
+        if (!empty($facId) && !empty($name) && !empty($pin)) {
+            $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+
+            $courtObjects = [];
+            $distinctSports = [];
+            foreach ($courtList as $cItem) {
+                $courtObjects[] = [
+                    'name' => $cItem['name'],
+                    'sport' => $cItem['sport'] ?? $sport,
+                    'price' => (float)($cItem['price'] ?? $unitPrice)
+                ];
+                if (!empty($cItem['sport']) && !in_array($cItem['sport'], $distinctSports)) {
+                    $distinctSports[] = $cItem['sport'];
+                }
+            }
+            $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
+
+            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ? WHERE id = ?");
+            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects), $facId]);
+
+            // Sync cameras
+            $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
+
+            $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
+            foreach ($courtList as $cItem) {
+                $c = $cItem['name'];
+                $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
+                $camNum = 1;
+                $totalCams = count($cItem['cameras']);
+                foreach ($cItem['cameras'] as $cStream) {
+                    $camId = ($camNum === 1) ? "cam-{$slug}-{$cSlug}" : "cam-{$slug}-{$cSlug}-{$camNum}";
+                    $channelId = ($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}";
+                    $token = 'camk_' . bin2hex(random_bytes(8));
+                    $camName = ($totalCams > 1) ? "{$name} · {$c} · {$camNum}. Kamera" : "{$name} · {$c}";
+                    $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream]);
+                    $camNum++;
+                }
+            }
+
+            $success = "Tesis ve saha kamera canlı yayın URL'leri başarıyla güncellendi.";
+        }
+    }
+
+    // Delete Facility
+    if (isset($_POST['action']) && $_POST['action'] === 'delete_facility') {
+        $facId = trim($_POST['facility_id'] ?? '');
+        if (!empty($facId)) {
+            $pdo->prepare("DELETE FROM matches WHERE facility_id = ?")->execute([$facId]);
+            $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
+            $pdo->prepare("DELETE FROM refunds WHERE facility_id = ?")->execute([$facId]);
+            $pdo->prepare("DELETE FROM facilities WHERE id = ?")->execute([$facId]);
+            $success = "Tesis, bağlı kameraları ve tüm kayıtları başarıyla silindi.";
+        }
+    }
+
+    // Update Search Form Display Settings
+    if (isset($_POST['action']) && $_POST['action'] === 'update_search_form_settings') {
+        $searchFacility = isset($_POST['search_by_facility_enabled']) ? '1' : '0';
+        $searchCode = isset($_POST['search_by_code_enabled']) ? '1' : '0';
+
+        // Graceful validation: ensure at least one search method is active
+        if ($searchFacility === '0' && $searchCode === '0') {
+            $searchCode = '1';
+        }
+
+        set_setting('search_by_facility_enabled', $searchFacility);
+        set_setting('search_by_code_enabled', $searchCode);
+        $success = "Arama ve maç bulma formu görünüm ayarları başarıyla güncellendi.";
+    }
+
+    $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
+    $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
+
+    // Stats
+    $stats['total_matches'] = (int)$pdo->query("SELECT COUNT(*) FROM matches")->fetchColumn();
+    $stats['sold_matches'] = (int)$pdo->query("SELECT COUNT(*) FROM matches WHERE status = 'UNLOCKABLE'")->fetchColumn();
+    $stats['active_cameras'] = (int)$pdo->query("SELECT COUNT(*) FROM cameras WHERE status = 'online'")->fetchColumn();
+    
+    // Lists
+    $facilities = $pdo->query("SELECT * FROM facilities ORDER BY name ASC")->fetchAll();
+    $cameras = $pdo->query("SELECT c.*, f.name as facility_name FROM cameras c JOIN facilities f ON c.facility_id = f.id ORDER BY f.name, c.court")->fetchAll();
+    $leads = $pdo->query("SELECT * FROM leads ORDER BY created_at DESC LIMIT 20")->fetchAll();
+
+    $camerasByFacility = [];
+    foreach ($cameras as $c) {
+        $camerasByFacility[$c['facility_id']][] = $c;
+    }
+
+    // Selected Facility Filter for Analytics
+    $selectedFacilityId = $_GET['facility_id'] ?? 'all';
+    $selectedFacilityName = 'Tüm Tesisler (Platform Geneli)';
+    $selectedFacilityCurrency = 'TL';
+
+    if ($selectedFacilityId !== 'all') {
+        foreach ($facilities as $fac) {
+            if ($fac['id'] === $selectedFacilityId) {
+                $selectedFacilityName = $fac['name'] . ' (' . $fac['city'] . ')';
+                $selectedFacilityCurrency = $fac['currency'];
+                break;
+            }
+        }
+    }
+
+    // Facility-by-Facility Breakdown
+    $facilityBreakdownStmt = $pdo->query("
+        SELECT 
+            f.id, f.name, f.city, f.sport, f.unit_price, f.currency,
+            COUNT(m.id) as total_matches,
+            SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN 1 ELSE 0 END) as sold_matches,
+            SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold,
+            SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as month_sold,
+            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN f.unit_price ELSE 0 END), 0) as total_revenue,
+            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN f.unit_price ELSE 0 END), 0) as today_revenue,
+            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN f.unit_price ELSE 0 END), 0) as month_revenue
+        FROM facilities f
+        LEFT JOIN matches m ON f.id = m.facility_id
+        GROUP BY f.id
+        ORDER BY total_revenue DESC, f.name ASC
+    ");
+    $facilityBreakdown = $facilityBreakdownStmt->fetchAll();
+
+    // Chart Time Series Calculation (for selected facility or all)
+    // 1. Daily (14 Days)
+    $dailyLabels = [];
+    $dailyRevenue = [];
+    $dailyCount = [];
+    $dailyMapRev = [];
+    $dailyMapCnt = [];
+
+    for ($i = 13; $i >= 0; $i--) {
+        $d = date('Y-m-d', strtotime("-{$i} days"));
+        $dailyLabels[] = date('d/m', strtotime($d));
+        $dailyMapRev[$d] = 0;
+        $dailyMapCnt[$d] = 0;
+    }
+
+    $sqlDaily = "SELECT DATE(COALESCE(m.sold_at, m.date)) as s_date, COUNT(*) as cnt, SUM(f.unit_price) as rev 
+        FROM matches m 
+        JOIN facilities f ON m.facility_id = f.id
+        WHERE m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)";
+    $paramsDaily = [];
+    if ($selectedFacilityId !== 'all') {
+        $sqlDaily .= " AND m.facility_id = ?";
+        $paramsDaily[] = $selectedFacilityId;
+    }
+    $sqlDaily .= " GROUP BY s_date";
+    $stmtDaily = $pdo->prepare($sqlDaily);
+    $stmtDaily->execute($paramsDaily);
+    while ($row = $stmtDaily->fetch(PDO::FETCH_ASSOC)) {
+        if (isset($dailyMapRev[$row['s_date']])) {
+            $dailyMapRev[$row['s_date']] = round((float)$row['rev'], 2);
+            $dailyMapCnt[$row['s_date']] = (int)$row['cnt'];
+        }
+    }
+    foreach ($dailyMapRev as $d => $rev) {
+        $dailyRevenue[] = $rev;
+        $dailyCount[] = $dailyMapCnt[$d];
+    }
+
+    // 2. Weekly (8 Weeks)
+    $weeklyLabels = [];
+    $weeklyCount = [];
+    $weeklyRevenue = [];
+
+    for ($w = 7; $w >= 0; $w--) {
+        $startOfWeek = date('Y-m-d', strtotime("-{$w} weeks monday this week"));
+        $endOfWeek = date('Y-m-d', strtotime("-{$w} weeks sunday this week"));
+        $weeklyLabels[] = date('d/m', strtotime($startOfWeek)) . '-' . date('d/m', strtotime($endOfWeek));
+
+        $sqlW = "SELECT COUNT(*) as cnt, COALESCE(SUM(f.unit_price), 0) as rev 
+            FROM matches m 
+            JOIN facilities f ON m.facility_id = f.id
+            WHERE m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) BETWEEN ? AND ?";
+        $paramsW = [$startOfWeek, $endOfWeek];
+        if ($selectedFacilityId !== 'all') {
+            $sqlW .= " AND m.facility_id = ?";
+            $paramsW[] = $selectedFacilityId;
+        }
+        $stmtW = $pdo->prepare($sqlW);
+        $stmtW->execute($paramsW);
+        $rowW = $stmtW->fetch(PDO::FETCH_ASSOC);
+        $weeklyCount[] = (int)($rowW['cnt'] ?? 0);
+        $weeklyRevenue[] = round((float)($rowW['rev'] ?? 0), 2);
+    }
+
+    // 3. Monthly (6 Months)
+    $monthlyLabels = [];
+    $monthlyCount = [];
+    $monthlyRevenue = [];
+    $monthNamesTr = ['01'=>'Ocak','02'=>'Şubat','03'=>'Mart','04'=>'Nisan','05'=>'Mayıs','06'=>'Haziran','07'=>'Temmuz','08'=>'Ağustos','09'=>'Eylül','10'=>'Ekim','11'=>'Kasım','12'=>'Aralık'];
+
+    for ($m = 5; $m >= 0; $m--) {
+        $yearMonth = date('Y-m', strtotime("-{$m} months"));
+        $mNum = date('m', strtotime($yearMonth . '-01'));
+        $monthlyLabels[] = ($monthNamesTr[$mNum] ?? $mNum) . ' ' . date('y', strtotime($yearMonth . '-01'));
+
+        $sqlM = "SELECT COUNT(*) as cnt, COALESCE(SUM(f.unit_price), 0) as rev 
+            FROM matches m 
+            JOIN facilities f ON m.facility_id = f.id
+            WHERE m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = ?";
+        $paramsM = [$yearMonth];
+        if ($selectedFacilityId !== 'all') {
+            $sqlM .= " AND m.facility_id = ?";
+            $paramsM[] = $selectedFacilityId;
+        }
+        $stmtM = $pdo->prepare($sqlM);
+        $stmtM->execute($paramsM);
+        $rowM = $stmtM->fetch(PDO::FETCH_ASSOC);
+        $monthlyCount[] = (int)($rowM['cnt'] ?? 0);
+        $monthlyRevenue[] = round((float)($rowM['rev'] ?? 0), 2);
+    }
+
+    // 4. Totals for selected scope
+    $sqlTotals = "SELECT 
+        COUNT(*) as total_matches,
+        SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN 1 ELSE 0 END) as sold_matches,
+        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold_count,
+        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as this_week_sold_count,
+        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as this_month_sold_count,
+        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN f.unit_price ELSE 0 END), 0) as total_revenue,
+        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN f.unit_price ELSE 0 END), 0) as today_revenue,
+        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN f.unit_price ELSE 0 END), 0) as this_week_revenue,
+        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN f.unit_price ELSE 0 END), 0) as this_month_revenue
+    FROM matches m
+    JOIN facilities f ON m.facility_id = f.id";
+    $paramsTotals = [];
+    if ($selectedFacilityId !== 'all') {
+        $sqlTotals .= " WHERE m.facility_id = ?";
+        $paramsTotals[] = $selectedFacilityId;
+    }
+    $stmtTotals = $pdo->prepare($sqlTotals);
+    $stmtTotals->execute($paramsTotals);
+    $totals = $stmtTotals->fetch(PDO::FETCH_ASSOC) ?: [];
+}
+
+require_once __DIR__ . '/../includes/header.php';
+?>
+
+<main class="min-h-screen pt-28 pb-20 relative">
+  <div class="hero-glow"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+
+    <?php if (!$isAdmin): ?>
+      <!-- Admin Login -->
+      <div class="max-w-md mx-auto card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">Platform Admin Girişi</h1>
+        <p class="text-neutral-400 text-xs sm:text-sm mb-6">Replash sistem yöneticisi hesabınızla giriş yapınız.</p>
+
+        <?php if (!$pdo): ?>
+          <div class="rounded-xl border border-rose-500/30 bg-rose-500/15 p-3.5 text-rose-300 text-xs font-medium mb-4 text-left leading-relaxed">
+            <strong class="font-bold flex items-center gap-1 text-rose-200 mb-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              Veritabanı Bağlantı Hatası:
+            </strong>
+            <?= e($dbError ?: 'MySQL sunucusuna bağlanılamıyor. Lütfen config/config.php veya .env dosyasını kontrol ediniz.') ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+          <div class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-300 text-xs font-medium mb-4 text-left">
+            <?= e($error) ?>
+          </div>
+        <?php endif; ?>
+
+        <form action="index.php" method="POST" class="space-y-4 text-left">
+          <input type="hidden" name="admin_login" value="1">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">E-Posta</label>
+            <input type="email" name="email" value="admin@replash.info" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Şifre</label>
+            <input type="password" name="password" value="replash2025" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
+          </div>
+          <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
+            Giriş Yap &rarr;
+          </button>
+        </form>
+      </div>
+
+    <?php else: ?>
+      <!-- Admin Dashboard Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-accent">Yönetim Konsolu</span>
+          <h1 class="font-display text-3xl font-bold text-white">Platform Dashboard</h1>
+          <p class="text-xs text-neutral-400 mt-1">Hoş geldiniz, <?= e($_SESSION['admin_name'] ?? 'Admin') ?></p>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <a href="<?= base_url('admin/calculator.php') ?>" class="rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Gelir Hesaplayıcı
+          </a>
+          <a href="<?= base_url('admin/matches.php') ?>" class="rounded-xl border border-accent/40 bg-accent/15 px-3.5 py-2 text-xs font-semibold text-accent hover:bg-accent/25 transition flex items-center gap-1.5 shadow-glow">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+            Satılan Maçlar
+          </a>
+          <a href="?action=logout" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-neutral-300 hover:bg-white/10 transition">Çıkış</a>
+        </div>
+      </div>
+
+      <?php if ($success): ?>
+        <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-300 text-sm font-medium mb-6">
+          <?= e($success) ?>
+        </div>
+      <?php endif; ?>
+
+      <!-- Facility Filter Toolbar for Analytics -->
+      <div class="card-elevated rounded-2xl p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-accent">Finansal Raporlama & Gelir Analizi</span>
+          <h2 class="font-display text-xl font-bold text-white flex items-center gap-2 mt-0.5">
+            <span><?= e($selectedFacilityName) ?></span>
+            <?php if ($selectedFacilityId !== 'all'): ?>
+              <a href="index.php" class="text-xs font-normal text-rose-400 hover:underline bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">Filtreyi Kaldır &times;</a>
+            <?php endif; ?>
+          </h2>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-neutral-400 font-semibold whitespace-nowrap">Tesis Seçin:</label>
+          <select 
+            onchange="window.location.href = 'index.php?facility_id=' + encodeURIComponent(this.value);" 
+            class="rounded-xl border border-white/10 bg-ink-900 px-3.5 py-2 text-xs font-medium text-white focus:border-accent focus:outline-none"
+          >
+            <option value="all" <?= $selectedFacilityId === 'all' ? 'selected' : '' ?>>⚡ Tüm Tesisler (Platform Geneli)</option>
+            <?php foreach ($facilities as $fac): ?>
+              <option value="<?= e($fac['id']) ?>" <?= $selectedFacilityId === $fac['id'] ? 'selected' : '' ?>>
+                <?= e($fac['name']) ?> (<?= e($fac['city']) ?>) · <?= e($fac['unit_price']) ?> <?= e($fac['currency']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      </div>
+
+      <!-- Financial Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-emerald-500/10 blur-xl group-hover:bg-emerald-500/20 transition"></div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400">Bugünkü Hasılat</span>
+            <div class="mt-2 flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-bold font-display text-emerald-400"><?= number_format((float)($totals['today_revenue'] ?? 0), 0, ',', '.') ?></span>
+              <span class="text-xs font-semibold text-neutral-300"><?= e($selectedFacilityCurrency) ?></span>
+            </div>
+          </div>
+          <div class="mt-3 text-[11px] text-neutral-400 flex items-center justify-between border-t border-white/5 pt-2">
+            <span>Bugün Satılan:</span>
+            <span class="font-bold text-white"><?= (int)($totals['today_sold_count'] ?? 0) ?> Maç</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-sky-500/10 blur-xl group-hover:bg-sky-500/20 transition"></div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400">Bu Haftaki Hasılat</span>
+            <div class="mt-2 flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-bold font-display text-sky-400"><?= number_format((float)($totals['this_week_revenue'] ?? 0), 0, ',', '.') ?></span>
+              <span class="text-xs font-semibold text-neutral-300"><?= e($selectedFacilityCurrency) ?></span>
+            </div>
+          </div>
+          <div class="mt-3 text-[11px] text-neutral-400 flex items-center justify-between border-t border-white/5 pt-2">
+            <span>Bu Hafta Satılan:</span>
+            <span class="font-bold text-white"><?= (int)($totals['this_week_sold_count'] ?? 0) ?> Maç</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-accent/10 blur-xl group-hover:bg-accent/20 transition"></div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400">Bu Ayki Hasılat</span>
+            <div class="mt-2 flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-bold font-display text-accent"><?= number_format((float)($totals['this_month_revenue'] ?? 0), 0, ',', '.') ?></span>
+              <span class="text-xs font-semibold text-neutral-300"><?= e($selectedFacilityCurrency) ?></span>
+            </div>
+          </div>
+          <div class="mt-3 text-[11px] text-neutral-400 flex items-center justify-between border-t border-white/5 pt-2">
+            <span>Bu Ay Satılan:</span>
+            <span class="font-bold text-white"><?= (int)($totals['this_month_sold_count'] ?? 0) ?> Maç</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl group-hover:bg-purple-500/20 transition"></div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400">Toplam Ciro / Ödeme</span>
+            <div class="mt-2 flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-bold font-display text-white"><?= number_format((float)($totals['total_revenue'] ?? 0), 0, ',', '.') ?></span>
+              <span class="text-xs font-semibold text-accent"><?= e($selectedFacilityCurrency) ?></span>
+            </div>
+          </div>
+          <div class="mt-3 text-[11px] text-neutral-400 flex items-center justify-between border-t border-white/5 pt-2">
+            <span>Toplam Satılan:</span>
+            <span class="font-bold text-white"><?= (int)($totals['sold_matches'] ?? 0) ?> Maç</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Graphical Revenue Chart -->
+      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+          <div>
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-accent animate-pulse"></div>
+              <h2 class="font-display text-xl font-bold text-white">Ödeme & Satış Dağılım Grafiği</h2>
+            </div>
+            <p class="text-xs text-neutral-400 mt-0.5">Kapsam: <span class="text-accent font-semibold"><?= e($selectedFacilityName) ?></span></p>
+          </div>
+
+          <!-- Chart Period Tabs -->
+          <div class="inline-flex rounded-xl bg-ink-900/90 p-1 border border-white/10 text-xs font-semibold">
+            <button 
+              type="button" 
+              onclick="switchAdminRevenueChart('daily', this)" 
+              class="admin-revenue-tab-btn active px-3.5 py-1.5 rounded-lg bg-accent text-ink-900 font-bold shadow-sm transition"
+            >
+              Günlük (14 Gün)
+            </button>
+            <button 
+              type="button" 
+              onclick="switchAdminRevenueChart('weekly', this)" 
+              class="admin-revenue-tab-btn px-3.5 py-1.5 rounded-lg text-neutral-400 hover:text-white transition"
+            >
+              Haftalık (8 Hafta)
+            </button>
+            <button 
+              type="button" 
+              onclick="switchAdminRevenueChart('monthly', this)" 
+              class="admin-revenue-tab-btn px-3.5 py-1.5 rounded-lg text-neutral-400 hover:text-white transition"
+            >
+              Aylık (6 Ay)
+            </button>
+          </div>
+        </div>
+
+        <!-- Chart Canvas Container -->
+        <div class="relative w-full h-72 sm:h-80">
+          <canvas id="adminRevenueAnalyticsChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Facility Breakdown Performance Table -->
+      <div class="card-elevated rounded-3xl overflow-hidden border border-white/10 mb-10">
+        <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="font-display text-xl font-bold text-white">Tesis Bazlı Gelir & Performans Tablosu</h2>
+            <p class="text-xs text-neutral-400">Tüm tesislerin anlık satış adetleri, birim fiyatları ve toplam ciroları</p>
+          </div>
+          <span class="text-xs font-semibold px-3 py-1 rounded-full bg-accent/10 text-accent"><?= count($facilityBreakdown) ?> Tesis Listeleniyor</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-ink-900/60 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+              <tr>
+                <th class="p-4">Tesis Adı & Şehir</th>
+                <th class="p-4">Birim Fiyat</th>
+                <th class="p-4 text-center">Bugünkü Satış</th>
+                <th class="p-4 text-center">Bu Ayki Satış</th>
+                <th class="p-4 text-center">Toplam Satış</th>
+                <th class="p-4 text-right">Toplam Ciro</th>
+                <th class="p-4 text-right">İşlem</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-neutral-300">
+              <?php foreach ($facilityBreakdown as $fb): ?>
+                <tr class="hover:bg-white/[0.02] transition <?= $selectedFacilityId === $fb['id'] ? 'bg-accent/5' : '' ?>">
+                  <td class="p-4">
+                    <div class="font-bold text-white flex items-center gap-2">
+                      <?= e($fb['name']) ?>
+                      <?php if ($selectedFacilityId === $fb['id']): ?>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-ink-900">Aktif Filtre</span>
+                      <?php endif; ?>
+                    </div>
+                    <div class="text-xs text-neutral-400"><?= e($fb['city']) ?> · <?= strtoupper(e($fb['sport'])) ?></div>
+                  </td>
+                  <td class="p-4 text-xs font-mono font-semibold text-neutral-200">
+                    <?= number_format((float)$fb['unit_price'], 2) ?> <?= e($fb['currency']) ?>
+                  </td>
+                  <td class="p-4 text-center">
+                    <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md">
+                      <?= (int)$fb['today_sold'] ?> ad (<?= number_format((float)$fb['today_revenue'], 0) ?> <?= e($fb['currency']) ?>)
+                    </span>
+                  </td>
+                  <td class="p-4 text-center">
+                    <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-md">
+                      <?= (int)$fb['month_sold'] ?> ad
+                    </span>
+                  </td>
+                  <td class="p-4 text-center font-mono text-xs text-neutral-300">
+                    <?= (int)$fb['sold_matches'] ?> / <?= (int)$fb['total_matches'] ?>
+                  </td>
+                  <td class="p-4 text-right font-mono text-sm font-bold text-accent">
+                    <?= number_format((float)$fb['total_revenue'], 0, ',', '.') ?> <?= e($fb['currency']) ?>
+                  </td>
+                  <td class="p-4 text-right">
+                    <?php if ($selectedFacilityId === $fb['id']): ?>
+                      <a href="index.php" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-300 text-xs font-semibold hover:bg-rose-500/20 transition">
+                        Filtreyi Kaldır
+                      </a>
+                    <?php else: ?>
+                      <a href="index.php?facility_id=<?= urlencode($fb['id']) ?>" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-accent text-ink-900 text-xs font-semibold shadow-glow hover:bg-accent-neon transition">
+                        Grafiği İncele &rarr;
+                      </a>
+                    <?php endif; ?>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Operational Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+          <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Toplam Kaydedilen Maç</div>
+          <div class="font-display text-3xl font-bold text-white mt-1"><?= $stats['total_matches'] ?></div>
+        </div>
+        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+          <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Satılan (Açık) Videolar</div>
+          <div class="font-display text-3xl font-bold text-accent mt-1"><?= $stats['sold_matches'] ?></div>
+        </div>
+        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+          <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Aktif Kameralar</div>
+          <div class="font-display text-3xl font-bold text-emerald-400 mt-1"><?= $stats['active_cameras'] ?> / <?= count($cameras) ?></div>
+        </div>
+      </div>
+
+      <!-- Facilities & Cameras Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        
+        <!-- Facilities List & Add Modal -->
+        <div class="card-elevated rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="font-display text-xl font-bold text-white">Kayıtlı Tesisler</h2>
+                <span class="text-xs text-neutral-400"><?= count($facilities) ?> Tesis Aktif</span>
+              </div>
+              <button onclick="document.getElementById('addFacilityModal').classList.toggle('hidden')" class="px-3 py-1.5 rounded-xl bg-accent text-ink-900 font-semibold text-xs shadow-glow hover:bg-accent-neon transition flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Yeni Tesis Ekle
+              </button>
+            </div>
+
+            <!-- Add Facility Form (Hidden by default or toggled) -->
+            <div id="addFacilityModal" class="hidden mb-6 p-5 rounded-2xl bg-ink-900 border border-accent/30 shadow-xl">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                <h3 class="text-sm font-bold text-accent">Yeni Tesis & Canlı Yayın Kameraları Tanımla</h3>
+                <span class="text-[11px] text-neutral-400">Her sahaya özel canlı RTSP/HLS linki bağlayın</span>
+              </div>
+
+              <form action="index.php" method="POST" class="space-y-4 text-xs">
+                <input type="hidden" name="action" value="add_facility">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-neutral-400 mb-1 font-medium">Tesis Adı</label>
+                    <input type="text" name="name" placeholder="Örn: Kadıköy Halısaha & Padel" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-neutral-400 mb-1 font-medium">Şehir</label>
+                    <input type="text" name="city" placeholder="Örn: İstanbul" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label class="block text-neutral-400 mb-1 font-medium">Spor Türü</label>
+                    <select name="sport" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
+                      <option value="football">Futbol (Halı Saha)</option>
+                      <option value="padel">Padel</option>
+                      <option value="tennis">Tenis</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-neutral-400 mb-1 font-medium">6 Haneli PIN</label>
+                    <input type="text" name="pin" maxlength="6" placeholder="343434" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white font-mono focus:border-accent focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-neutral-400 mb-1 font-medium">Video Satış Fiyatı</label>
+                    <div class="flex gap-1.5">
+                      <input type="number" step="0.5" name="unit_price" value="250.00" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
+                      <select name="currency" class="rounded-xl border border-white/10 bg-ink-800 px-2 text-white focus:border-accent focus:outline-none">
+                        <option value="TRY">TRY</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Courts & Multiple Camera Stream URLs -->
+                <div class="pt-2 border-t border-white/10 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <label class="font-bold text-white text-xs">Sahalar & Canlı Kamera Yayın Linkleri</label>
+                      <p class="text-[11px] text-neutral-400">Her sahaya 1 veya birden fazla kamera açısı ekleyebilirsiniz</p>
+                    </div>
+                    <button type="button" onclick="addCourtBlock('courtsContainer')" class="px-2.5 py-1 rounded-lg bg-accent/15 border border-accent/30 text-xs text-accent hover:bg-accent hover:text-ink-900 font-bold transition flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                      + Saha Ekle
+                    </button>
+                  </div>
+
+                  <div id="courtsContainer" class="space-y-3">
+                    <div class="court-block bg-ink-800/90 p-3.5 rounded-xl border border-white/10 space-y-2.5" data-court-index="0">
+                      <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                        <div class="flex items-center gap-2">
+                          <span class="w-2 h-2 rounded-full bg-accent"></span>
+                          <span class="font-bold text-white text-xs court-title">1. Saha / Kort</span>
+                        </div>
+                        <button type="button" onclick="removeCourtBlock(this)" class="px-2 py-0.5 rounded text-[11px] bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 font-semibold transition">&times; Sahayı Sil</button>
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Adı</label>
+                          <input type="text" name="courts[0][name]" value="Saha 1" placeholder="Örn: Açık Saha, 1. Kort" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                        </div>
+                        <div>
+                          <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Spor Türü</label>
+                          <select name="courts[0][sport]" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                            <option value="football">Futbol (Halı Saha)</option>
+                            <option value="padel">Padel</option>
+                            <option value="tennis">Tenis</option>
+                            <option value="basketball">Basketbol</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
+                          <input type="number" step="0.5" name="courts[0][price]" value="250.00" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                        </div>
+                      </div>
+
+                      <div class="pt-1.5 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[11px] font-semibold text-neutral-300">Kamera Yayın URL'leri:</span>
+                          <button type="button" onclick="addCameraToCourt(this)" class="text-[11px] text-accent hover:underline flex items-center gap-1 font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            + Kamera Ekle
+                          </button>
+                        </div>
+                        <div class="cameras-container space-y-1.5">
+                          <div class="camera-row flex items-center gap-1.5">
+                            <input type="text" name="courts[0][cameras][]" placeholder="1. Kamera Canlı Yayın URL (rtsp://... veya https://.../live.m3u8)" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs font-mono focus:border-accent focus:outline-none">
+                            <button type="button" onclick="removeCameraRow(this)" class="p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs hover:bg-rose-500/20 font-bold" title="Kamerayı Kaldır">&times;</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                  <button type="button" onclick="document.getElementById('addFacilityModal').classList.add('hidden')" class="px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10">İptal</button>
+                  <button type="submit" class="px-5 py-2 rounded-xl bg-accent text-ink-900 font-bold hover:bg-accent-neon shadow-glow">Tesis & Kameraları Kaydet</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Facilities Items -->
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+              <?php foreach ($facilities as $f): 
+                $courtsData = get_facility_courts_data($f);
+                $courtDisplayParts = [];
+                foreach ($courtsData as $c) {
+                    $cSportLabel = strtoupper($c['sport'] ?? $f['sport'] ?? 'football');
+                    $cPriceLabel = isset($c['price']) ? ' - ' . $c['price'] . ' ' . $f['currency'] : '';
+                    $courtDisplayParts[] = e($c['name']) . ' (' . $cSportLabel . $cPriceLabel . ')';
+                }
+                $courtsStr = implode(', ', $courtDisplayParts);
+              ?>
+                <div class="p-4 rounded-xl bg-ink-900 border border-white/5 text-sm space-y-2.5">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <div class="font-semibold text-white text-base"><?= e($f['name']) ?></div>
+                      <div class="text-xs text-neutral-400 mt-0.5">
+                        <?= e($f['city']) ?> · PIN: <code class="text-accent font-bold"><?= e($f['pin']) ?></code> · <?= e($f['unit_price']) ?> <?= e($f['currency']) ?>
+                      </div>
+                      <div class="text-[11px] text-neutral-500 mt-1">Sahalar: <?= e($courtsStr) ?></div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                      <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/10 text-accent uppercase"><?= e($f['sport']) ?></span>
+                      
+                      <!-- Edit Toggle Button -->
+                      <button type="button" onclick="document.getElementById('editFacility_<?= e($f['id']) ?>').classList.toggle('hidden')" class="p-1.5 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10" title="Tesisi Düzenle">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      </button>
+
+                      <!-- Delete Facility Form -->
+                      <form action="index.php" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
+                        <input type="hidden" name="action" value="delete_facility">
+                        <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
+                        <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="Tesisi Sil">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+
+                  <!-- Edit Facility Form (Collapsible) -->
+                  <div id="editFacility_<?= e($f['id']) ?>" class="hidden pt-3 border-t border-white/10 bg-ink-800/90 p-4 rounded-xl text-xs space-y-3.5">
+                    <div class="flex items-center justify-between pb-1 border-b border-white/10">
+                      <h4 class="font-bold text-accent">Tesis & Kamera Yayınlarını Düzenle</h4>
+                      <span class="text-[11px] text-neutral-400">Her sahaya birden fazla kamera URL'si atayabilirsiniz</span>
+                    </div>
+
+                    <form action="index.php" method="POST" class="space-y-3">
+                      <input type="hidden" name="action" value="update_facility">
+                      <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
+                      
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                          <label class="block text-neutral-400 mb-1 font-medium">Tesis Adı</label>
+                          <input type="text" name="name" value="<?= e($f['name']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                        </div>
+                        <div>
+                          <label class="block text-neutral-400 mb-1 font-medium">Şehir</label>
+                          <input type="text" name="city" value="<?= e($f['city']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                          <label class="block text-neutral-400 mb-1 font-medium">Varsayılan Spor</label>
+                          <select name="sport" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                            <option value="football" <?= $f['sport'] === 'football' ? 'selected' : '' ?>>Futbol (Halı Saha)</option>
+                            <option value="padel" <?= $f['sport'] === 'padel' ? 'selected' : '' ?>>Padel</option>
+                            <option value="tennis" <?= $f['sport'] === 'tennis' ? 'selected' : '' ?>>Tenis</option>
+                            <option value="basketball" <?= ($f['sport'] ?? '') === 'basketball' ? 'selected' : '' ?>>Basketbol</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-neutral-400 mb-1 font-medium">6 Haneli PIN</label>
+                          <input type="text" name="pin" maxlength="6" value="<?= e($f['pin']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
+                        </div>
+                        <div>
+                          <label class="block text-neutral-400 mb-1 font-medium">Birim Fiyat & Para Birimi</label>
+                          <div class="flex gap-1">
+                            <input type="number" step="0.5" name="unit_price" value="<?= e($f['unit_price']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                            <select name="currency" class="rounded-lg border border-white/10 bg-ink-900 px-1.5 text-white text-xs focus:border-accent focus:outline-none">
+                              <option value="TRY" <?= $f['currency'] === 'TRY' ? 'selected' : '' ?>>TRY</option>
+                              <option value="EUR" <?= $f['currency'] === 'EUR' ? 'selected' : '' ?>>EUR</option>
+                              <option value="USD" <?= $f['currency'] === 'USD' ? 'selected' : '' ?>>USD</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Courts & Multiple Stream URLs for this facility -->
+                      <div class="pt-2 border-t border-white/10 space-y-3">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <label class="font-bold text-white text-xs">Sahalar & Kamera Canlı Yayın URL'leri</label>
+                            <p class="text-[11px] text-neutral-400">Her sahaya özel spor türü, birim fiyat ve kamera açıları tanımlayın</p>
+                          </div>
+                          <button type="button" onclick="addCourtBlock('editCourtsContainer_<?= e($f['id']) ?>')" class="px-2.5 py-1 rounded-lg bg-accent/15 border border-accent/30 text-xs text-accent hover:bg-accent hover:text-ink-900 font-bold transition flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            + Saha Ekle
+                          </button>
+                        </div>
+
+                        <div id="editCourtsContainer_<?= e($f['id']) ?>" class="space-y-3">
+                          <?php 
+                          $thisCourtsData = get_facility_courts_data($f);
+                          $camsByCourt = [];
+                          $thisFacCams = $camerasByFacility[$f['id']] ?? [];
+                          foreach ($thisFacCams as $camRow) {
+                              $camsByCourt[$camRow['court']][] = $camRow['stream_url'];
+                          }
+                          if (empty($thisCourtsData)) {
+                              $thisCourtsData = [['name' => 'Saha 1', 'sport' => $f['sport'] ?? 'football', 'price' => $f['unit_price'] ?? 250]];
+                          }
+                          $cIdx = 0;
+                          foreach ($thisCourtsData as $cItem): 
+                              $cName = $cItem['name'];
+                              $cSport = $cItem['sport'] ?? $f['sport'] ?? 'football';
+                              $cPrice = $cItem['price'] ?? $f['unit_price'] ?? 250;
+                              $streams = $camsByCourt[$cName] ?? [''];
+                              if (empty($streams)) $streams = [''];
+                          ?>
+                            <div class="court-block bg-ink-900/90 p-3.5 rounded-xl border border-white/10 space-y-2.5" data-court-index="<?= $cIdx ?>">
+                              <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+                                <div class="flex items-center gap-2">
+                                  <span class="w-2 h-2 rounded-full bg-accent"></span>
+                                  <span class="font-bold text-white text-xs court-title"><?= ($cIdx + 1) ?>. Saha / Kort</span>
+                                </div>
+                                <button type="button" onclick="removeCourtBlock(this)" class="px-2 py-0.5 rounded text-[11px] bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 font-semibold transition">&times; Sahayı Sil</button>
+                              </div>
+
+                              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div>
+                                  <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Adı</label>
+                                  <input type="text" name="courts[<?= $cIdx ?>][name]" value="<?= e($cName) ?>" placeholder="Saha Adı" required class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                                </div>
+                                <div>
+                                  <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Spor Türü</label>
+                                  <select name="courts[<?= $cIdx ?>][sport]" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                                    <option value="football" <?= $cSport === 'football' ? 'selected' : '' ?>>Futbol (Halı Saha)</option>
+                                    <option value="padel" <?= $cSport === 'padel' ? 'selected' : '' ?>>Padel</option>
+                                    <option value="tennis" <?= $cSport === 'tennis' ? 'selected' : '' ?>>Tenis</option>
+                                    <option value="basketball" <?= $cSport === 'basketball' ? 'selected' : '' ?>>Basketbol</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
+                                  <input type="number" step="0.5" name="courts[<?= $cIdx ?>][price]" value="<?= e($cPrice) ?>" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-xs focus:border-accent focus:outline-none">
+                                </div>
+                              </div>
+
+                              <div class="pt-1.5 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                  <span class="text-[11px] font-semibold text-neutral-300">Kamera Yayın URL'leri:</span>
+                                  <button type="button" onclick="addCameraToCourt(this)" class="text-[11px] text-accent hover:underline flex items-center gap-1 font-medium">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    + Kamera Ekle
+                                  </button>
+                                </div>
+                                <div class="cameras-container space-y-1.5">
+                                  <?php foreach ($streams as $sIdx => $sUrl): ?>
+                                    <div class="camera-row flex items-center gap-1.5">
+                                      <input type="text" name="courts[<?= $cIdx ?>][cameras][]" value="<?= e($sUrl) ?>" placeholder="<?= ($sIdx + 1) ?>. Kamera URL (rtsp://... veya https://...)" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-xs font-mono focus:border-accent focus:outline-none">
+                                      <button type="button" onclick="removeCameraRow(this)" class="p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs hover:bg-rose-500/20 font-bold" title="Kamerayı Kaldır">&times;</button>
+                                    </div>
+                                  <?php endforeach; ?>
+                                </div>
+                              </div>
+                            </div>
+                          <?php 
+                            $cIdx++;
+                          endforeach; 
+                          ?>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                        <button type="button" onclick="document.getElementById('editFacility_<?= e($f['id']) ?>').classList.add('hidden')" class="px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10">Vazgeç</button>
+                        <button type="submit" class="px-4 py-1.5 rounded-lg bg-accent text-ink-900 font-bold hover:bg-accent-neon shadow-glow">Değişiklikleri Kaydet</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cameras List & Stream Management -->
+        <div class="card-elevated rounded-3xl p-6 border border-white/10">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="font-display text-xl font-bold text-white">Kamera & Canlı Yayınlar</h2>
+              <p class="text-xs text-neutral-400">Her sahaya atanmış olan canlı kamera bağlantıları</p>
+            </div>
+            <span class="text-xs text-neutral-400"><?= count($cameras) ?> Kamera</span>
+          </div>
+          <div class="space-y-3 max-h-96 overflow-y-auto">
+            <?php foreach ($cameras as $c): ?>
+              <div class="p-3.5 rounded-xl bg-ink-900 border border-white/5 text-sm space-y-2">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold text-white"><?= e($c['name']) ?></div>
+                    <div class="text-xs text-neutral-400 font-mono">channelId: <span class="text-neutral-300"><?= e($c['channel_id']) ?></span></div>
+                  </div>
+                  <div>
+                    <?php if ($c['status'] === 'online'): ?>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
+                      </span>
+                    <?php else: ?>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Offline
+                      </span>
+                    <?php endif; ?>
+                  </div>
+                </div>
+
+                <!-- Stream URL display and inline edit -->
+                <div class="bg-ink-800/80 p-2.5 rounded-lg border border-white/5">
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <span class="text-[11px] font-semibold text-accent uppercase tracking-wider">Kamera Canlı Yayın URL:</span>
+                    <button type="button" onclick="document.getElementById('edit-stream-<?= e($c['id']) ?>').classList.toggle('hidden')" class="text-[11px] text-neutral-400 hover:text-white underline">
+                      URL Değiştir
+                    </button>
+                  </div>
+                  <div class="text-xs font-mono text-neutral-300 truncate">
+                    <?= !empty($c['stream_url']) ? e($c['stream_url']) : '<span class="text-neutral-500 italic">Yayın URL tanımlanmadı</span>' ?>
+                  </div>
+
+                  <!-- Edit Stream URL Form -->
+                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2">
+                    <input type="hidden" name="action" value="update_camera_stream">
+                    <input type="hidden" name="camera_id" value="<?= e($c['id']) ?>">
+                    <input type="text" name="stream_url" value="<?= e($c['stream_url'] ?? '') ?>" placeholder="rtsp://... veya https://..." class="flex-1 rounded-lg border border-white/10 bg-ink-900 px-2 py-1 text-xs text-white font-mono focus:border-accent focus:outline-none">
+                    <button type="submit" class="rounded-lg bg-accent px-3 py-1 text-xs font-bold text-ink-900 hover:bg-accent-neon">Kaydet</button>
+                  </form>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Search Form Display Settings -->
+      <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10 mb-8 bg-ink-800/80">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-accent">Site Görünüm Ayarları</span>
+            <h2 class="font-display text-xl sm:text-2xl font-bold text-white mt-1">Arama & Maç Bulma Formu Yönetimi</h2>
+          </div>
+          <span class="text-xs text-neutral-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+            index.php & find.php Form Kontrolü
+          </span>
+        </div>
+
+        <form action="index.php" method="POST" class="space-y-6">
+          <input type="hidden" name="action" value="update_search_form_settings">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Option 1: Facility Search -->
+            <label class="relative flex items-start gap-4 p-5 rounded-2xl border transition-all cursor-pointer <?= $searchFacilityEnabled ? 'border-accent/40 bg-accent/[0.04]' : 'border-white/10 bg-white/[0.02]' ?> hover:border-accent/30">
+              <input type="checkbox" name="search_by_facility_enabled" value="1" <?= $searchFacilityEnabled ? 'checked' : '' ?> class="mt-1 h-5 w-5 rounded border-white/20 bg-ink-900 text-accent focus:ring-accent focus:ring-offset-ink-900">
+              <div class="space-y-1">
+                <span class="font-bold text-white text-base block">Tesis, Tarih ve Saat ile Arama</span>
+                <p class="text-xs text-neutral-400 leading-relaxed">
+                  Ziyaretçilerin tesis adı, tarih ve saat dilimi seçerek maçlarını listelemesine ve bulmasına olanak tanır.
+                </p>
+              </div>
+            </label>
+
+            <!-- Option 2: Code Search -->
+            <label class="relative flex items-start gap-4 p-5 rounded-2xl border transition-all cursor-pointer <?= $searchCodeEnabled ? 'border-accent/40 bg-accent/[0.04]' : 'border-white/10 bg-white/[0.02]' ?> hover:border-accent/30">
+              <input type="checkbox" name="search_by_code_enabled" value="1" <?= $searchCodeEnabled ? 'checked' : '' ?> class="mt-1 h-5 w-5 rounded border-white/20 bg-ink-900 text-accent focus:ring-accent focus:ring-offset-ink-900">
+              <div class="space-y-1">
+                <span class="font-bold text-white text-base block">Sadece Kod (PIN / Erişim Kodu) ile Arama</span>
+                <p class="text-xs text-neutral-400 leading-relaxed">
+                  Oyuncuların doğrudan 8 haneli maç erişim kodunu girerek maçlarına ulaşmasını sağlar.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <div class="rounded-xl border border-white/5 bg-ink-900/60 p-4 text-xs text-neutral-400 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-5 h-5 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span><strong>Tasarım Davranışı:</strong> Sadece kod ile arama seçildiğinde ana sayfada (index.php) yatay şık bir arama çubuğu, find.php sayfasında ise merkezi büyük PIN giriş kartı aktif olur.</span>
+            </div>
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-accent text-ink-900 font-bold hover:bg-accent-neon shadow-glow whitespace-nowrap text-xs transition">
+              Ayarları Kaydet &rarr;
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Leads / Contact Requests -->
+      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-10">
+        <h2 class="font-display text-xl font-bold text-white mb-4">Gelen Pilot Başvuruları & Talepler</h2>
+        <?php if (empty($leads)): ?>
+          <p class="text-xs text-neutral-500">Henüz yeni bir başvuru bulunmuyor.</p>
+        <?php else: ?>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-ink-900 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+                <tr>
+                  <th class="p-3">Ad / Tesis</th>
+                  <th class="p-3">İletişim</th>
+                  <th class="p-3">Şehir / Spor</th>
+                  <th class="p-3">Mesaj</th>
+                  <th class="p-3">Tarih</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-neutral-300">
+                <?php foreach ($leads as $l): ?>
+                  <tr>
+                    <td class="p-3">
+                      <div class="font-semibold text-white"><?= e($l['name']) ?></div>
+                      <div class="text-xs text-accent"><?= e($l['facility_name']) ?> (<?= e($l['court_count']) ?> Saha)</div>
+                    </td>
+                    <td class="p-3 text-xs">
+                      <div><?= e($l['email']) ?></div>
+                      <div class="text-neutral-400"><?= e($l['phone']) ?></div>
+                    </td>
+                    <td class="p-3 text-xs"><?= e($l['city']) ?> · <?= strtoupper(e($l['sport'])) ?></td>
+                    <td class="p-3 text-xs text-neutral-400 max-w-xs truncate"><?= e($l['message']) ?></td>
+                    <td class="p-3 text-xs font-mono"><?= e($l['created_at']) ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        <?php endif; ?>
+      </div>
+
+    <?php endif; ?>
+
+  </div>
+</main>
+
+<script>
+function addCourtBlock(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const courtBlocks = container.querySelectorAll('.court-block');
+  const nextIdx = courtBlocks.length;
+  const displayNum = nextIdx + 1;
+  const isEdit = containerId.startsWith('editCourtsContainer');
+  const bgClass = isEdit ? 'bg-ink-900/90' : 'bg-ink-800/90';
+  const inputBgClass = isEdit ? 'bg-ink-800' : 'bg-ink-900';
+
+  const div = document.createElement('div');
+  div.className = `court-block ${bgClass} p-3.5 rounded-xl border border-white/10 space-y-2.5`;
+  div.setAttribute('data-court-index', nextIdx);
+  div.innerHTML = `
+    <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accent"></span>
+        <span class="font-bold text-white text-xs court-title">${displayNum}. Saha / Kort</span>
+      </div>
+      <button type="button" onclick="removeCourtBlock(this)" class="px-2 py-0.5 rounded text-[11px] bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 font-semibold transition">&times; Sahayı Sil</button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+      <div>
+        <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Adı</label>
+        <input type="text" name="courts[${nextIdx}][name]" value="Saha ${displayNum}" placeholder="Saha Adı" required class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs focus:border-accent focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Spor Türü</label>
+        <select name="courts[${nextIdx}][sport]" class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs focus:border-accent focus:outline-none">
+          <option value="football">Futbol (Halı Saha)</option>
+          <option value="padel">Padel</option>
+          <option value="tennis">Tenis</option>
+          <option value="basketball">Basketbol</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
+        <input type="number" step="0.5" name="courts[${nextIdx}][price]" value="250.00" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs focus:border-accent focus:outline-none">
+      </div>
+    </div>
+    <div class="pt-1.5 space-y-1.5">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-semibold text-neutral-300">Kamera Yayın URL'leri:</span>
+        <button type="button" onclick="addCameraToCourt(this)" class="text-[11px] text-accent hover:underline flex items-center gap-1 font-medium">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          + Kamera Ekle
+        </button>
+      </div>
+      <div class="cameras-container space-y-1.5">
+        <div class="camera-row flex items-center gap-1.5">
+          <input type="text" name="courts[${nextIdx}][cameras][]" placeholder="1. Kamera Canlı Yayın URL (rtsp://... veya https://...)" class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs font-mono focus:border-accent focus:outline-none">
+          <button type="button" onclick="removeCameraRow(this)" class="p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs hover:bg-rose-500/20 font-bold" title="Kamerayı Kaldır">&times;</button>
+        </div>
+      </div>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function addCameraToCourt(btn) {
+  const courtBlock = btn.closest('.court-block');
+  if (!courtBlock) return;
+  const courtIdx = courtBlock.getAttribute('data-court-index') || '0';
+  const camerasContainer = courtBlock.querySelector('.cameras-container');
+  if (!camerasContainer) return;
+  const count = camerasContainer.querySelectorAll('.camera-row').length + 1;
+  const isEdit = courtBlock.classList.contains('bg-ink-900/90');
+  const inputBgClass = isEdit ? 'bg-ink-800' : 'bg-ink-900';
+
+  const div = document.createElement('div');
+  div.className = 'camera-row flex items-center gap-1.5';
+  div.innerHTML = `
+    <input type="text" name="courts[${courtIdx}][cameras][]" placeholder="${count}. Kamera Canlı Yayın URL (rtsp://... veya https://...)" class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs font-mono focus:border-accent focus:outline-none">
+    <button type="button" onclick="removeCameraRow(this)" class="p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs hover:bg-rose-500/20 font-bold" title="Kamerayı Kaldır">&times;</button>
+  `;
+  camerasContainer.appendChild(div);
+}
+
+function removeCourtBlock(btn) {
+  const courtBlock = btn.closest('.court-block');
+  if (!courtBlock) return;
+  const container = courtBlock.parentElement;
+  if (container.querySelectorAll('.court-block').length <= 1) {
+    alert('En az 1 saha tanımlı olmalıdır.');
+    return;
+  }
+  courtBlock.remove();
+}
+
+function removeCameraRow(btn) {
+  const row = btn.closest('.camera-row');
+  if (!row) return;
+  const container = row.parentElement;
+  if (container.querySelectorAll('.camera-row').length <= 1) {
+    const input = row.querySelector('input');
+    if (input) input.value = '';
+    return;
+  }
+  row.remove();
+}
+</script>
+
+<?php if ($isAdmin): ?>
+<!-- Chart.js Library for Graphical Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var currency = <?= json_encode($selectedFacilityCurrency) ?>;
+  var chartData = {
+    daily: {
+      labels: <?= json_encode($dailyLabels) ?>,
+      revenue: <?= json_encode($dailyRevenue) ?>,
+      count: <?= json_encode($dailyCount) ?>
+    },
+    weekly: {
+      labels: <?= json_encode($weeklyLabels) ?>,
+      revenue: <?= json_encode($weeklyRevenue) ?>,
+      count: <?= json_encode($weeklyCount) ?>
+    },
+    monthly: {
+      labels: <?= json_encode($monthlyLabels) ?>,
+      revenue: <?= json_encode($monthlyRevenue) ?>,
+      count: <?= json_encode($monthlyCount) ?>
+    }
+  };
+
+  var canvas = document.getElementById('adminRevenueAnalyticsChart');
+  if (!canvas) return;
+
+  var adminRevenueChart = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: chartData.daily.labels,
+      datasets: [
+        {
+          label: 'Hasılat (' + currency + ')',
+          data: chartData.daily.revenue,
+          backgroundColor: 'rgba(250, 204, 21, 0.75)',
+          hoverBackgroundColor: 'rgba(250, 204, 21, 1)',
+          borderRadius: 8,
+          borderSkipped: false,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Satılan Maç Adedi',
+          data: chartData.daily.count,
+          type: 'line',
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16, 185, 129, 0.12)',
+          fill: true,
+          tension: 0.35,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#10B981',
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#A3A3A3',
+            font: { size: 11, family: 'Inter, sans-serif', weight: '600' },
+            boxWidth: 12,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(17, 24, 39, 0.95)',
+          titleColor: '#FFFFFF',
+          bodyColor: '#E5E7EB',
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderWidth: 1,
+          padding: 12,
+          boxPadding: 6,
+          usePointStyle: true,
+          callbacks: {
+            label: function(context) {
+              if (context.dataset.yAxisID === 'y') {
+                return ' ' + context.dataset.label + ': ' + Number(context.raw).toLocaleString('tr-TR') + ' ' + currency;
+              }
+              return ' ' + context.dataset.label + ': ' + context.raw + ' Adet';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
+          ticks: { color: '#9CA3AF', font: { size: 10 } }
+        },
+        y: {
+          type: 'linear',
+          position: 'left',
+          grid: { color: 'rgba(255, 255, 255, 0.06)', drawBorder: false },
+          ticks: {
+            color: '#FACC15',
+            font: { size: 10 },
+            callback: function(val) { return Number(val).toLocaleString('tr-TR') + ' ' + currency; }
+          }
+        },
+        y1: {
+          type: 'linear',
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: {
+            color: '#10B981',
+            font: { size: 10 },
+            stepSize: 1,
+            precision: 0,
+            callback: function(val) { return val + ' ad'; }
+          }
+        }
+      }
+    }
+  });
+
+  window.switchAdminRevenueChart = function(period, btn) {
+    document.querySelectorAll('.admin-revenue-tab-btn').forEach(function(b) {
+      b.className = 'admin-revenue-tab-btn px-3.5 py-1.5 rounded-lg text-neutral-400 hover:text-white transition';
+    });
+    btn.className = 'admin-revenue-tab-btn active px-3.5 py-1.5 rounded-lg bg-accent text-ink-900 font-bold shadow-sm transition';
+
+    var targetData = chartData[period];
+    if (targetData && adminRevenueChart) {
+      adminRevenueChart.data.labels = targetData.labels;
+      adminRevenueChart.data.datasets[0].data = targetData.revenue;
+      adminRevenueChart.data.datasets[1].data = targetData.count;
+      adminRevenueChart.update();
+    }
+  };
+});
+</script>
+<?php endif; ?>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

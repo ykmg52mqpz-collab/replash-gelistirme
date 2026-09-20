@@ -1,0 +1,932 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "howItWorks": "Nasıl Çalışır",
+    "forFacilities": "Sahalar İçin",
+    "forPlayers": "Oyuncular İçin",
+    "about": "Hakkımızda",
+    "find": "Maçını Bul",
+    "bookDemo": "Pilot Saha Ol",
+    "contact": "İletişim",
+    "notice": {
+      "text": "Pilot program açık — 2026 Q1 için pilot sahalar arıyoruz.",
+      "cta": "Başvur"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Amatör Spor Sahaları İçin",
+      "title": "Oyna. Kaydet. Yeniden Yaşa.",
+      "subtitle": "Replash, amatör futbol ve padel maçlarını paylaşılabilir dijital anlara dönüştürür. Otomatik kayıt, anında erişim, modern spor tesisleri için tasarlanmış.",
+      "cta": "Pilot Saha Ol",
+      "ctaSecondary": "Nasıl Çalışır"
+    },
+    "intro": {
+      "eyebrow": "Saha Sahipleri İçin",
+      "slogan": "Her ay yeni bir gelir kaynağı. Sıfır başlangıç maliyetiyle.",
+      "tagline": "Saha zamanından fazlası.",
+      "cta": "Bizimle Konuşun"
+    },
+    "twoLayer": {
+      "eyebrow": "İki Katmanlı Fırsat",
+      "title": "Görünmez bir sorun. Yeni bir alışkanlık.",
+      "subtitle": "Replash, amatör sporda herkesin hissettiği bir boşluğu kapatıyor. Ve aynı zamanda sosyal medya çağına uygun bir davranış inşa ediyor.",
+      "layer1": {
+        "label": "Katman 1. Boşluk",
+        "title": "Amatör maçların %95'i kaydedilmiyor.",
+        "desc": "Profesyonel futbol tek bir golü yüzlerce açıdan yakalarken, amatör sahada en güzel an olduğu saniye uçup gidiyor. Oyuncular sadece bir hatırayla sahadan ayrılıyor. Gösterecek hiçbir şeyleri yok."
+      },
+      "layer2": {
+        "label": "Katman 2. Alışkanlık",
+        "title": "İnsanlar artık sadece oynamıyor. Paylaşıyor.",
+        "desc": "Sosyal medya artık hayatın arka planında değil. Ön planında. Yemekten sonra, antrenmandan sonra, yürüyüşten sonra... Maçtan sonra? Neredeyse hiçbir şey. Replash bu boşluğu kapatıyor."
+      }
+    },
+    "whatIs": {
+      "eyebrow": "Replash Nedir?",
+      "title": "Günlük spor tesisleri için otomatik maç kaydı.",
+      "description": "Replash, amatör spor tesisleri için otomatik maç kayıt ve erişim platformudur. Maçları kaydeder, sahaya, tarihe ve saate göre düzenler ve oyuncuların maçlarını QR kod veya web bağlantısı ile kolayca bulmasını sağlar. Personelinizden hiçbir el işi gerektirmeden.",
+      "items": {
+        "1": {
+          "title": "Otomatik Kayıt",
+          "desc": "Sabit PoE kameralar her maçı başladığı anda kaydeder. Tuş yok, ayar yok, personel müdahalesi yok."
+        },
+        "2": {
+          "title": "Slot Bazlı Düzenleme",
+          "desc": "Her kayıt; saha, tarih ve saat slotuna göre etiketlenir. 'Maçını Bul' sayfasından anında aranabilir."
+        },
+        "3": {
+          "title": "İzle, Kes, Paylaş",
+          "desc": "Oyuncular maçlarını izler, 10–45 saniyelik highlight'lar keser, indirir ve sosyal medyada paylaşır. Uygulama gerekmez. Hesap gerekmez."
+        }
+      }
+    },
+    "findPreview": {
+      "eyebrow": "Maçını Bul",
+      "title": "Üç alan. Maçınız.",
+      "desc": "Uygulama indirilmesi gerekmez. Hesap gerekmez. Şifre gerekmez. Oyuncular sahadan ayrılır, QR'ı okutur veya siteyi ziyaret eder ve maçlarını izler.",
+      "fields": {
+        "facility": "Saha",
+        "date": "Tarih",
+        "time": "Saat Slotu",
+        "facilityPlaceholder": "Bir saha seçin",
+        "datePlaceholder": "Tarih seçin",
+        "timePlaceholder": "Slotunuzu seçin"
+      },
+      "button": "Maçımı İzle",
+      "tryIt": "Demoyu deneyin"
+    },
+    "whyFacilities": {
+      "eyebrow": "Sahalar Neden Replash'ı Seçiyor",
+      "title": "Sahalar artık sadece saha zamanı satmıyor. Maçın etrafındaki deneyimi satıyorlar.",
+      "items": {
+        "1": {
+          "title": "Yeni Dijital Hizmet",
+          "desc": "Rakiplerinizin sunmadığı bir şey sunun. Amatör fiyat noktasında profesyonel video deneyimi."
+        },
+        "2": {
+          "title": "Öne Çıkın",
+          "desc": "Sahaların fiyatla rekabet ettiği bir pazarda, unutulmaz deneyim sadakat yaratır."
+        },
+        "3": {
+          "title": "Daha İyi Oyuncu Deneyimi",
+          "desc": "Oyuncular en güzel anlarını sahanızla özdeşleştirir. Daha fazlası için geri gelirler."
+        },
+        "4": {
+          "title": "Gelir Fırsatı",
+          "desc": "Satılan her video hem oyuncular hem de sahanız için değer üretir."
+        },
+        "5": {
+          "title": "Sıfır Karmaşıklık",
+          "desc": "Replash kameraları, depolamayı ve teslimatı yönetir. Ekibiniz sadece her satışta bir basit eylem yapar."
+        },
+        "6": {
+          "title": "Modern Marka",
+          "desc": "Sahanızın ileri görüşlü olduğunu gösterin. Oyuncuların fark ettiği ve hakkında konuştuğu teknoloji."
+        }
+      }
+    },
+    "whatPlayersGet": {
+      "eyebrow": "Oyuncular Ne Kazanır",
+      "title": "Oyuncularınız ne kazanır. Ve neden geri gelirler.",
+      "items": {
+        "1": {
+          "title": "Maçlarını İzleyin",
+          "desc": "Maçın tüm kaydına erişin. Goller, kurtarışlar, raliler ve aradaki her şey."
+        },
+        "2": {
+          "title": "En İyi Anları Kesin",
+          "desc": "Replash içinde 10–45 saniyelik highlight'lar kesin. Gol, rali, kutlama. Telefona anında indirin."
+        },
+        "3": {
+          "title": "Sosyal Medyada Paylaşın",
+          "desc": "Klibi doğrudan sosyal medya platformlarında paylaşın. Replash profili gerekmez. Oyuncu her paylaşıma sahip."
+        },
+        "4": {
+          "title": "AI Highlights (Yakında)",
+          "desc": "Yapay zeka destekli highlight tespiti. Maçın en heyecanlı anlarını otomatik kes."
+        }
+      }
+    },
+    "simpleOperation": {
+      "eyebrow": "Basit Operasyon",
+      "title": "Bir kez kurulur. Sonsuza kadar çalışır.",
+      "subtitle": "Manuel kamera kontrolü yok. Karmaşık iş akışı yok. Ekibiniz misafirlerinize odaklanır.",
+      "steps": {
+        "1": {
+          "title": "Kameralar Bir Kez Kurulur",
+          "desc": "Replash ekibi tarafından sahada kurulan sabit PoE kameralar. Tekrarlayan kurulum yok, bakım yükü yok."
+        },
+        "2": {
+          "title": "Maçlar Otomatik Kaydedilir",
+          "desc": "Saha açıkken her maç yakalanır. Personel müdahalesi sıfır."
+        },
+        "3": {
+          "title": "Personel Satışta Aktive Eder",
+          "desc": "Oyuncu video erişimi satın aldığında, ekibiniz panelde 'Video Satıldı' tuşuna basar. Tek tıklama, durum: UNLOCKABLE."
+        },
+        "4": {
+          "title": "Oyuncular İzler ve Eğlenir",
+          "desc": "Oyuncu maçına Maçını Bul sayfası üzerinden anında erişir. Sürtünme yok."
+        }
+      }
+    },
+    "privacy": {
+      "eyebrow": "Önce Gizlilik",
+      "title": "Oyuncularınızı. Ve sahanızı. Korumak için tasarlandı.",
+      "items": {
+        "1": "Kameralar sadece oyun alanını kaydeder. Soyunma odası, giriş yok",
+        "2": "Ses kaydı yok. Yüz tanıma yok. Asla.",
+        "3": "Videolar özel. Sadece doğru saha + tarih + saat + UNLOCKABLE durumu ile erişilebilir",
+        "4": "Tüm kayıtlar 7 gün sonra otomatik silinir",
+        "5": "GDPR, AİHS Madde 8 ve İtalyan Garante düzenlemelerine tamamen uyumlu",
+        "6": "Kurulumdan önce açık tabela ve veri işleme anlaşmaları sağlanır"
+      }
+    },
+    "cta": {
+      "title": "Sahanızı yeni bir dijital maç deneyimiyle güncelleyin.",
+      "button": "Sahalar İçin Keşfet"
+    }
+  },
+  "find": {
+    "hero": {
+      "eyebrow": "Maçını Bul",
+      "title": "Maçınızı izleyin.",
+      "subtitle": "Tesisten kodunu aldın mı? Gir ve saniyeler içinde maçını izle."
+    },
+    "form": {
+      "facility": "Saha",
+      "date": "Tarih",
+      "time": "Saat Slotu",
+      "facilityPlaceholder": "Sahanızı seçin",
+      "datePlaceholder": "Oynadığınız tarihi seçin",
+      "timePlaceholder": "Saat slotunuzu seçin",
+      "button": "Maçımı Bul",
+      "buttonLoading": "Aranıyor...",
+      "facilityHelp": "Oynadığınız sahayı seçin.",
+      "dateHelp": "Maçınızın günü.",
+      "timeHelp": "Rezervasyon saat slotunuz (örn: 19:00–20:00)."
+    },
+    "errors": {
+      "notFound": {
+        "title": "Maçınızı bulamadık",
+        "desc": "Ya saat slotu bir kayıtla eşleşmiyor ya da saha videoyu henüz aktive etmedi. Resepsiyondan satışı onaylamasını isteyin, sonra tekrar deneyin.",
+        "report": "Sorun Bildir"
+      },
+      "locked": {
+        "title": "Video henüz açılmadı",
+        "desc": "Sahanız henüz satışı onaylamadı. Resepsiyon 'Video Satıldı' tuşuna basar basmaz video kullanılabilir olacak."
+      }
+    },
+    "explainer": {
+      "title": "Erişim nasıl çalışır",
+      "desc": "Bir video sadece dört koşul aynı anda eşleştiğinde gösterilir: doğru saha, doğru tarih, doğru saat slotu ve sahanın kaydı aktive etmiş olması. Genel listeleme yok. Tahmin edilebilir URL yok. Maçınız sadece sizindir.",
+      "noShare": "Videolar asla arama motorlarında görünmez. Bağlantılar genel değildir."
+    },
+    "watch": {
+      "title": "Maçını bul",
+      "subtitle": "Maçtan sonra tesisin sana verdiği kodu gir.",
+      "codeLabel": "Maç kodu",
+      "button": "Maçı izle",
+      "buttonLoading": "Aranıyor…",
+      "fallbackToggle": "Kodun yok mu? Saha ve saatle ara",
+      "court": "Saha / Kort",
+      "courtPlaceholder": "Önce tesisi seç",
+      "rateLimited": "Çok fazla deneme. Bir dakika sonra tekrar dene.",
+      "playerLabel": "Maç kaydı",
+      "processing": {
+        "title": "Video hazırlanıyor",
+        "desc": "Videon yaklaşık {minutes} dakika içinde hazır olacak. Az sonra tekrar dene."
+      },
+      "notFound": {
+        "title": "Geçersiz kod veya maç mevcut değil",
+        "desc": "Kodu kontrol et veya tesis personeline sor. Ödeme yaptıysan ve videoyu göremiyorsan aşağıdan talep aç."
+      },
+      "refund": {
+        "open": "Video sorunu / İade",
+        "title": "Video sorunu / İade talebi",
+        "desc": "Ödedin ama izleyemiyor musun? Detayları gönder — inceleyip ücretsiz maç onayını e-postayla ileteceğiz.",
+        "email": "E-posta adresin",
+        "message": "Sorunu açıkla (isteğe bağlı)",
+        "send": "Talep gönder",
+        "sent": "Talep gönderildi. Referans:"
+      },
+      "clip": {
+        "label": "Klip kes",
+        "hint": "Zaman çizelgesinde sürükleyerek 15–40 sn seç, sonra indir.",
+        "download": "Klibi indir",
+        "range": "15 ile 40 saniye arasında seç."
+      },
+      "expires": "Bu video {date} tarihinde otomatik silinir."
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "eyebrow": "Nasıl Çalışır",
+      "title": "Altı basit adım. Ekibiniz için sıfır karmaşıklık.",
+      "subtitle": "Başlangıç vuruşundan replay'e. Replash aradaki her şeyi yönetir. Aşağıda: her adım Marco'nun gerçek Salı akşamı padel maçı somut örneğiyle açıklandı."
+    },
+    "marcoIntro": {
+      "name": "Marco",
+      "context": "Example Padel Club'da Salı 19:00–20:00 arası 4 oyunculu padel maçı oynuyor"
+    },
+    "steps": {
+      "1": {
+        "label": "Adım 1",
+        "title": "Maç Rezerve Edilir ve Oynanır",
+        "desc": "Oyuncular kortu normal şekilde rezerve eder ve oynar. Saha üzerindeki oyuncu deneyiminde hiçbir şey değişmez. Replash arka planda sessizce çalışır. Ve takımların çoğu sahaya vardığında resepsiyona gidip maç videosunu, daha maç başlamadan, rezervasyona eklenmesini ister.",
+        "marco": {
+          "time": "",
+          "example": "Marco slotunu rezerve eder. Sahaya vardığında resepsiyona gider ve 'maç videosu da eklemek istiyorum' der. Resepsiyonist +Maç Videosu opsiyonunu rezervasyona ekler. Marco girişte Replash tabelasını görür (GDPR-uyumlu) ve videosunun zaten yolda olduğunu bilerek maçı oynar."
+        }
+      },
+      "2": {
+        "label": "Adım 2",
+        "title": "Replash Otomatik Kaydeder",
+        "desc": "Sahaya kurulan sabit PoE kameralar maçın tamamını başından sonuna yakalar. Tuş yok, manuel kontrol yok, personel müdahalesi yok.",
+        "marco": {
+          "time": "19:00 → 20:00",
+          "example": "Marco ve arkadaşları oynarken PoE kameralar maçı sessizce kaydeder. Saha bakımcısı hiçbir şey yapmaz. Ayar yok, başlat/durdur yok. Kayıt, satış onaylanana kadar geçici tamponda tutulur."
+        }
+      },
+      "3": {
+        "label": "Adım 3",
+        "title": "Slot Bazlı Düzenlenir",
+        "desc": "Her kayıt otomatik olarak saha, tarih ve saat slotuna göre etiketlenir. Maçını Bul akışı üzerinden keşfedilebilir hale gelir.",
+        "marco": {
+          "time": "20:00",
+          "example": "Sistem Marco'nun maçını şu şekilde kaydeder: Example Padel Club · Salı 14 Mayıs 2026 · 19:00–20:00. Bu kesin etiket, maçın daha sonra bulunmasının tek yoludur."
+        }
+      },
+      "4": {
+        "label": "Adım 4",
+        "title": "Personel Satışta Aktive Eder",
+        "desc": "Bir oyuncu video erişimini satın aldığında, saha personeli Replash admin panelini açar, günün maç listesinden doğru maçı bulur ve unlock eder. Maç durumu LOCKED'tan UNLOCKABLE'a geçer. Gerekli olan tek tekrar eden işlem budur.",
+        "marco": {
+          "time": "20:05",
+          "example": "Resepsiyonist Replash panelini açar, günün maç listesinden 19:00–20:00 slotunu bulur, saati, oyuncu sayısını ve tutarı kontrol eder ve unlock eder. Maç durumu UNLOCKABLE'a geçer ve erişim Marco'nun takımına anında hazır olur."
+        }
+      },
+      "5": {
+        "label": "Adım 5",
+        "title": "Oyuncu Maçı Bulur",
+        "desc": "Oyuncular replash.eu'u ziyaret eder, üç alanı (saha, tarih, slot) doldurur ve izler.",
+        "marco": {
+          "time": "20:08",
+          "example": "Marco telefonundan replash.eu'u ziyaret eder. Example Padel Club, bugünün tarihi ve 19:00–20:00'yi seçer. Sistem 4 koşulun da eşleştiğini kontrol eder. Ve maç anında telefonunda oynamaya başlar."
+        }
+      },
+      "6": {
+        "label": "Adım 6",
+        "title": "İzle, Kes, Paylaş",
+        "desc": "Oyuncular maçın tamamını izler, dahili clip cutter ile 10–45 saniyelik highlight'lar keser, indirir ve sosyal medyada kendi kimlikleriyle paylaşır.",
+        "marco": {
+          "time": "20:15",
+          "example": "Marco 17. dakikadaki golü izler, 20 saniyelik bir highlight keser, indirir ve sosyal medyasında paylaşır. Arkadaşları görür. Döngü tekrar başlar."
+        }
+      }
+    },
+    "tech": {
+      "eyebrow": "Teknik Genel Bakış",
+      "title": "Güvenilirlik ve düşük bakım için tasarlandı.",
+      "items": {
+        "1": {
+          "title": "Sabit PoE Kameralar",
+          "desc": "Tavana veya yüksek duvara bir kez monte edilen geniş açılı outdoor 1080p kameralar. Hareketli parça yok, operatör gerekmez."
+        },
+        "2": {
+          "title": "AB Bazlı Bulut Depolama",
+          "desc": "Kayıtlar AB veri merkezlerinde güvenle işlenir ve saklanır. Tasarımla GDPR uyumlu, her yerden erişilebilir."
+        },
+        "3": {
+          "title": "Slot Bazlı Segmentasyon",
+          "desc": "Her kayıt rezervasyon slotuna göre otomatik olarak kırpılır ve etiketlenir."
+        },
+        "4": {
+          "title": "7 Gün Saklama",
+          "desc": "Tüm kayıtlar 7 gün sonra otomatik silinir. Depolama temiz, gizlilik korunmuş."
+        },
+        "5": {
+          "title": "Esnek Bağlantı",
+          "desc": "Ethernet tercih edilir; PoE yerel tampon kısa kesintileri emer; WiFi'siz outdoor sahalar için LTE/SIM yedek."
+        },
+        "6": {
+          "title": "Düşük Bakım Tasarımı",
+          "desc": "Sistem gözetimsiz çalışır. Sorunlar çoğunlukla operasyonları etkilemeden önce uzaktan çözülür."
+        }
+      }
+    },
+    "architecture": {
+      "eyebrow": "Dört Katmanlı Mimari",
+      "title": "Dikey entegre. Amatör spor için sıfırdan inşa edildi.",
+      "layers": {
+        "1": {
+          "name": "Edge",
+          "function": "Sahada PoE IP kameralar",
+          "detail": "Saha açıkken sürekli kayıt. Bağlantı kesintileri için yerel tampon."
+        },
+        "2": {
+          "name": "Cloud",
+          "function": "AB bazlı nesne depolama",
+          "detail": "Sadece UNLOCKABLE işaretli maçlar uzun süre tutulur. Satılmayan maçlar kısa süre sonra silinir."
+        },
+        "3": {
+          "name": "Web",
+          "function": "Maçını Bul + clip cutter + paneller",
+          "detail": "Oyuncu akışı, saha admin paneli, Replash admin paneli. Hepsi tek çatı altında."
+        },
+        "4": {
+          "name": "Billing",
+          "function": "Durum bazlı mutabakat motoru",
+          "detail": "Otomatik gelir paylaşımı. Kurcalanamaz, tamamen denetlenir, aylık mutabakat."
+        }
+      }
+    },
+    "cta": {
+      "title": "Çalışırken görmeye hazır mısınız?",
+      "button": "Pilot Saha Ol"
+    }
+  },
+  "forFacilities": {
+    "hero": {
+      "eyebrow": "Sahalar İçin",
+      "title": "Sahanızı modern bir spor deneyimine dönüştürün. Her ay daha fazla gelir elde ederek.",
+      "subtitle": "Replash, sahanıza yeni bir dijital ürün kazandırır. Ekibinize hiçbir operasyonel yük eklemeden."
+    },
+    "value": {
+      "eyebrow": "Operasyonel Yük Olmadan Ek Değer",
+      "title": "Yeni bir hizmet. Sıfır yeni iş yükü.",
+      "desc": "Replash sahalara kamera yönetmek, video düzenlemek veya karmaşık teknolojiyle uğraşmak zorunda kalmadan eksiksiz bir video hizmeti sunar. Kurulumdan teslimata her şey Replash tarafından yönetilir. Ekibiniz sadece deneyimi sunar."
+    },
+    "turkey": {
+      "eyebrow": "Zaten Kanıtlandı. Sadece Burada Değil Henüz",
+      "title": "Davranış zaten gerçek. Türkiye'de.",
+      "desc": "Türkiye genelinde, halısaha futbol kültürü (5'lik ve 7'lik) o kadar yerleşmiş ki rezervasyon sırasında maç videosu sunmak artık neredeyse her tesiste standart. 'sosyal halısaha' sistemi pratikte her tesiste var. Kameralar kaydeder, oyuncular izler ve indirir, hizmet rezervasyon akışının parçasıdır.",
+      "lesson": "Türk versiyonu temel ve sadece futbolla sınırlı. Replash aynı kanıtlanmış davranışı padel ve futbola, tüm Avrupa'ya taşıyor. Premium ürün, tam GDPR duruşu, sosyal medyaya hazır klip kesme ve şeffaf gelir paylaşım modeli ile.",
+      "stats": {
+        "1": {
+          "value": "10.000+",
+          "label": "Türkiye'de maç kaydı kullanan halısahalar"
+        },
+        "2": {
+          "value": "2018",
+          "label": "Modelin ana akım hale geldiği yıl"
+        },
+        "3": {
+          "value": "Standart",
+          "label": "Artık varsayılan. Özellik değil"
+        }
+      }
+    },
+    "differentiate": {
+      "eyebrow": "Rakiplerden Öne Çıkın",
+      "title": "Çoğu saha bir kort sunar. Replash bir anı sunmanıza yardım eder.",
+      "desc": "Rekabetçi bir pazarda, sadece fiyat sadakat yaratmaya yetmez. Her maçtan sonra otomatik olarak sunulan profesyonel video deneyimi, oyunculara sahanızı seçmek, daha sık geri gelmek ve başkalarına önermek için bir neden verir.",
+      "quote": "Sahalar artık sadece saha zamanı satmıyor. Maçın etrafındaki deneyimi satıyorlar."
+    },
+    "competitors": {
+      "eyebrow": "Replash Nereye Oturur",
+      "title": "Mevcut spor-video şirketleri yanlış pazara hizmet ediyor.",
+      "desc": "Mevcut profesyonel video-analiz çözümleri profesyonel kulüplere ve akademilere odaklanır. Pahalı kameralar, taktik analiz araçları, dar pazar. Pazarın gerçek kitlesi olan amatör sporu görmezden geldiler. Replash tam o boşluk için inşa edildi.",
+      "comparison": {
+        "header": {
+          "feature": "Özellik",
+          "pro": "Profesyonel platformlar",
+          "replash": "Replash"
+        },
+        "rows": {
+          "target": {
+            "feature": "Hedef",
+            "pro": "Pro kulüpler, akademiler",
+            "replash": "Amatör sahalar"
+          },
+          "venues": {
+            "feature": "Saha sayısı (İtalya)",
+            "pro": "~1.000",
+            "replash": "~10.000+"
+          },
+          "purpose": {
+            "feature": "Amaç",
+            "pro": "Taktik analiz",
+            "replash": "İzle + kes + paylaş"
+          },
+          "cost": {
+            "feature": "Saha maliyeti",
+            "pro": "On binlerce €",
+            "replash": "€0 başlangıç"
+          },
+          "ops": {
+            "feature": "Operasyonel yük",
+            "pro": "Antrenörler, analistler",
+            "replash": "Satış başına bir tıklama"
+          },
+          "audience": {
+            "feature": "Son kullanıcı",
+            "pro": "Antrenörler",
+            "replash": "Amatör oyuncular"
+          }
+        }
+      }
+    },
+    "engagement": {
+      "eyebrow": "Daha İyi Oyuncu Bağlılığı",
+      "title": "Oyuncular en güzel anlarının yaşandığı sahaları hatırlar.",
+      "desc": "Bir oyuncu maçını izleyip paylaşabildiğinde, o anıları sahanızla özdeşleştirir. O duygusal bağ, tek seferlik rezervasyonları düzenli müşterilere. Düzenli müşterileri ise sahanızı arkadaşlarına öneren savunuculara dönüştürür.",
+      "items": {
+        "1": "Daha yüksek tekrar rezervasyon oranları",
+        "2": "Video paylaşımı yoluyla organik ağızdan ağıza pazarlama",
+        "3": "Daha güçlü oyuncu-saha ilişkileri",
+        "4": "Oyuncular tarafından doğal olarak oluşturulan sosyal medya içeriği. Sahanız arka planda etiketli"
+      }
+    },
+    "revenue": {
+      "eyebrow": "Gelir Hizalanması",
+      "title": "Paylaşılan başarı etrafında inşa edilmiş bir model.",
+      "desc": "Replash performans bazlı bir model üzerine tasarlandı. Video hizmeti oyuncular için değer ürettiğinde, hem saha hem de Replash kazanır. Başlangıç maliyeti yok, abonelik ücreti yok ve saha için risk yok.",
+      "quote": "Oyuncular sevince herkes kazanır."
+    },
+    "revenueScenarios": {
+      "eyebrow": "Kazanç Örnekleri",
+      "title": "Pasif gelir. Satış başına tek tıklama karşılığında.",
+      "subtitle": "Aşağıda Milano'daki gerçek maç başına dinamiklere dayalı aylık kazanç örnekleri var. Payınız kort sayısıyla doğrusal olarak ölçeklenir.",
+      "disclaimer": "Sadece örnek. Nihai koşullar onboarding sırasında kararlaştırılır.",
+      "headers": {
+        "scenario": "Senaryo",
+        "videos": "Günlük Satılan Video",
+        "padel": "Padel Kortu",
+        "football": "Futbol Sahası"
+      },
+      "rows": {
+        "1": {
+          "name": "Sakin Ay",
+          "videos": "2",
+          "padel": "€72 / ay",
+          "football": "€135 / ay"
+        },
+        "2": {
+          "name": "Ortalama Ay",
+          "videos": "4",
+          "padel": "€144 / ay",
+          "football": "€270 / ay"
+        },
+        "3": {
+          "name": "Yoğun Ay",
+          "videos": "6",
+          "padel": "€216 / ay",
+          "football": "€405 / ay"
+        },
+        "4": {
+          "name": "3 Kortlu Saha (Yoğun)",
+          "videos": "18",
+          "padel": "€648 / ay",
+          "football": "€1.215 / ay"
+        }
+      },
+      "footer": "Saf pasif gelir. Maliyet yok. Satış başına tek eylem: 'Video Satıldı' tuşuna bas."
+    },
+    "objections": {
+      "eyebrow": "Yaygın Endişeler. Cevaplandı",
+      "title": "Her sahanın sorduğu iki soru. İki net cevap.",
+      "items": {
+        "gdpr": {
+          "question": "Ya GDPR?",
+          "answer": "Replash'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve 7 gün sonra otomatik silinir. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.",
+          "items": {
+            "1": "Ses yok. Yüz tanıma yok.",
+            "2": "7 gün sonra otomatik silme.",
+            "3": "GDPR / AİHS Madde 8 / Garante uyumlu.",
+            "4": "Gizlilik & Yasal Gerekçe dosyası önceden teslim edilir."
+          }
+        },
+        "tech": {
+          "question": "Ya WiFi'mız yoksa?",
+          "answer": "PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Kurulum, kablolama ve kamera montajı tamamen Replash tarafından yapılır. Teknik personeliniz bu sürece dahil olmaz.",
+          "items": {
+            "1": "PoE yerel tampon kesintileri yönetir.",
+            "2": "WiFi'siz sahalar için LTE/SIM yedek.",
+            "3": "Tüm kurulum Replash tarafından yapılır.",
+            "4": "Saha operasyonlarına sıfır müdahale."
+          }
+        }
+      }
+    },
+    "marketing": {
+      "eyebrow": "Pazarlama Katmanı Dahil",
+      "title": "Sahanızı sadece müşterilere değil. Kitlelere taşırız.",
+      "desc": "Replash sadece bir altyapı sağlayıcısı değil. Partner sahalarını görünür kılan bir pazarlama katmanıdır. Web sitemizde logonuzu ve konumunuzu öne çıkarırız. Oyuncular highlight'larını sosyal medyada paylaştıkça sahanız çevredeki topluluklara organik olarak ulaşır. Pazarlama, kullanıcı davranışı üzerinden gerçekleşir.",
+      "items": {
+        "1": {
+          "title": "Replash'te Öne Çıkar",
+          "desc": "Sahanızın logosu ve konumu sitemizde ve kurumsal kanallarımızda öne çıkarılır."
+        },
+        "2": {
+          "title": "Organik Sosyal Yayılım",
+          "desc": "Bir oyuncunun paylaştığı her klip sahanızı dolaylı olarak ağına taşır."
+        },
+        "3": {
+          "title": "Pilot Turnuvalar",
+          "desc": "Lansmanda partner sahalarda temalı turnuvalar düzenleriz. Yeni müşteriler ve eklenen görünürlük, bizden hediye."
+        }
+      }
+    },
+    "whatYouDo": {
+      "eyebrow": "Sahanın Yapması Gerekenler",
+      "title": "Ekibiniz teknolojiyi yönetmez. Ekibiniz sadece deneyimi sunar.",
+      "items": {
+        "1": {
+          "title": "Kurulum İçin Erişim Sağlayın",
+          "desc": "Replash ekibinin her sahaya/korta kamera kurmasına izin verin. 1 gün süren tek seferlik bir süreç."
+        },
+        "2": {
+          "title": "İnternet Bağlantısını Destekleyin",
+          "desc": "Sahada istikrarlı bir internet bağlantısının olduğundan emin olun. Replash gerisini yönetir (LTE yedek mevcut)."
+        },
+        "3": {
+          "title": "QR Kodları ve Tabelayı Yerleştirin",
+          "desc": "Basılı QR kodları ve net tabelalar Replash tarafından sağlanır ve her korta yerleştirilir."
+        },
+        "4": {
+          "title": "Satılan Maçları Aktive Edin",
+          "desc": "Bir oyuncu video erişimi için ödediğinde, personeliniz tek bir butona basar: 'Video Satıldı'. Tek tekrarlayan eylem budur."
+        }
+      }
+    },
+    "cta": {
+      "title": "Replash'i sahanıza getirin.",
+      "subtitle": "Bizimle kurulum, zamanlama ve sahanız için nasıl çalıştığını konuşun.",
+      "button": "Pilot Saha Ol"
+    },
+    "roi": {
+      "eyebrow": "GELİR HESAPLAYICI",
+      "title": "Aylık pasif gelirinizi hesaplayın",
+      "subtitle": "Kaç sahanız var? Saha başına günlük kaç video satmayı bekliyorsunuz? Rakamlarınızı girin, aylık payınızı görün.",
+      "sport": {
+        "padel": "Padel",
+        "football": "Futbol"
+      },
+      "inputs": {
+        "videos": "Saha başı günlük satılan video",
+        "videosSuffix": "saha başı",
+        "days": "Aylık aktif gün",
+        "daysSuffix": "gün",
+        "courts": "Saha sayısı",
+        "courtsSuffix": "saha"
+      },
+      "results": {
+        "eyebrow": "TAHMINI GELIRINIZ",
+        "videos": "Satılan video",
+        "videosHint": "aylık",
+        "share": "Payınız (%15)",
+        "shareHint": "aylık kazanç",
+        "yearlyEyebrow": "YILLIK POTANSIYEL",
+        "yearlySuffix": "yıllık",
+        "yearlyNote": "Personelinize sıfır ek iş yükü ile."
+      },
+      "disclaimer": "* Tahmin spor başına ortalama video satış fiyatına dayanmaktadır. Hesaplama tamamen örnektir. Kendi rakamlarınızı girip potansiyelinizi görün.",
+      "hook": {
+        "title": "Bu tahmini tesisinin aylık gelirine çevir.",
+        "desc": "Kısa bir görüşme ayarla. Bu rakamları senin tesisine göre çıkaralım; kurulum, süre ve şartları birlikte konuşalım.",
+        "cta": "Görüşme ayarla"
+      }
+    }
+  },
+  "forPlayers": {
+    "hero": {
+      "eyebrow": "Oyuncular İçin",
+      "title": "Maçınız yeniden görülmeyi hak ediyor.",
+      "subtitle": "Maçını izle. En güzel anları kes. Sosyal medyada paylaş. En güzel anılarınız her zaman sizinle olsun."
+    },
+    "watch": {
+      "eyebrow": "Maçınızı İzleyin",
+      "title": "Maçınızın tamamı, son düdükten sonra hazır.",
+      "desc": "Maçınız bittikten ve erişim aktive edildikten sonra, kayıtın tamamını basit bir web bağlantısı veya QR kod üzerinden izleyebilirsiniz. Uygulama indirilmesi gerekmez. Hesap gerekmez. Sadece maçınız, izlemeye hazır."
+    },
+    "clipping": {
+      "eyebrow": "En İyi Anları Kesin",
+      "title": "Bir gol kes. Bir rali sakla. Saniyeler içinde paylaş.",
+      "desc": "Replash'in dahili bir clip cutter'ı var. Maçınızı tarayın, 10–45 saniyelik bir an seçin ve doğrudan telefonunuza indirin. 17. dakikadaki gol. Son setin galibiyet vuruşu. Kutlama. İstediğiniz saniyeleri seçin, kesin ve telefonunuzun rulosunda olsun.",
+      "features": {
+        "1": {
+          "label": "Kaydı aç",
+          "desc": "Maçınızı herhangi bir cihazdan izleyin."
+        },
+        "2": {
+          "label": "Anı seç",
+          "desc": "Zaman çizelgesini tara, 10–45 saniye seç."
+        },
+        "3": {
+          "label": "İndir",
+          "desc": "Klip anında telefonunuza dışa aktarılır."
+        },
+        "4": {
+          "label": "Her yerde paylaş",
+          "desc": "Sosyal medya platformlarında paylaşın."
+        }
+      }
+    },
+    "relive": {
+      "eyebrow": "En İyi Anları Yeniden Yaşa",
+      "title": "Goller. Kurtarışlar. Raliler. Komik anlar. Hepsi iki kez izlemeye değer.",
+      "desc": "Maçı tarayın ve onu unutulmaz kılan anları tekrar izleyin. İster son dakika golü, ister zor bir kurtarış, ister incelemek istediğiniz bir rali, ister herkesi güldüren komik bir kaçırılmış şut olsun. Tüm kayıt orada.",
+      "items": {
+        "1": "Kendi tekniğinizi ve pozisyonunuzu gözden geçirin",
+        "2": "Golleri ve harika oyunları kutlayın",
+        "3": "Arkadaşlarınızla komik anları ve bloopers'ı yeniden yaşayın",
+        "4": "Takımınızla taktik durumları analiz edin",
+        "5": "Zaman içindeki ilerlemenizin kişisel kaydını tutun"
+      }
+    },
+    "whyVideo": {
+      "eyebrow": "Oyuncular Videoyu Neden Seçer",
+      "title": "Atlaması zor dört neden.",
+      "reasons": {
+        "1": {
+          "title": "Psikolojik Tatmin",
+          "desc": "Yemekten sonra bir story paylaşırsın. Antrenmandan sonra ayna selfie'si. Maçtan sonra? Neredeyse hiçbir şey. Replash o boş anı kapatır."
+        },
+        "2": {
+          "title": "An, Yakalandı",
+          "desc": "İlk golden sonraki bakış. Galibiyet setinin son vuruşu. Bunlar olduğu saniye uçar. Bir şey izlemiyorsa. Replash sahanın üzerine bir hafıza katmanı inşa eder."
+        },
+        "3": {
+          "title": "Kes ve Paylaş, Sürtünmesiz",
+          "desc": "Kaydı aç. 10 saniye seç. İndir. Paylaş. Hesap gerekmez, uygulama gerekmez, profil gerekmez. Basitliğin kendisi karar mekanizmasının bir parçasıdır."
+        },
+        "4": {
+          "title": "Sosyal Kanıt",
+          "desc": "Aynı sahada oynayan takımların kliplerini sosyal medyada gördüğünüzde, bir sonraki rezervasyon '+ video' varsayılan olarak gelir. Refleks, karar değil."
+        }
+      }
+    },
+    "share": {
+      "eyebrow": "Arkadaşlarınla Paylaş",
+      "title": "Deneyim son düdükle bitmez.",
+      "desc": "Klibini. Veya tam maç bağlantısını. Takım arkadaşlarına, arkadaşlarına ve aileye gönder. Story'ne koy. Sahayı etiketle. En iyi anlar paylaşıldığında daha iyidir ve maçın, insanların duyduğu değil gerçekten izleyebildiği bir şey haline gelir."
+    },
+    "ai": {
+      "eyebrow": "AI Highlights. Yakında",
+      "title": "En iyi anları otomatik kes.",
+      "desc": "Replash gelecekte AI destekli highlight'ları desteklemek üzere tasarlandı. Maçınızdan golleri, kurtarışları ve en heyecanlı anları otomatik olarak kısa bir reel halinde keser. Sosyal medyada paylaşmaya hazır kare ve dikey formatlar, altyazılarla. Tüm kaydı izlemeden en iyi anlarınızı bulacaksınız.",
+      "badge": "Yakında"
+    },
+    "simple": {
+      "eyebrow": "Karmaşık Süreç Yok",
+      "title": "Üç adım. Bir dakikanın altında.",
+      "steps": {
+        "1": {
+          "title": "Tara veya Ziyaret Et",
+          "desc": "Sahanızdaki QR kodu tarayın veya Replash web sitesini ziyaret edin."
+        },
+        "2": {
+          "title": "Maçınızı Bulun",
+          "desc": "Sahanızı, tarihinizi ve saat slotunuzu girin."
+        },
+        "3": {
+          "title": "İzleyin ve Tadını Çıkarın",
+          "desc": "Maç kaydınızın tamamına anında erişin."
+        }
+      }
+    },
+    "cta": {
+      "title": "Sahanıza Replash'i sorun.",
+      "subtitle": "Replash partner sahalarda mevcut. Sahanız henüz sunmuyorsa, iletişime geçmelerini teşvik edin.",
+      "button": "Sahalar İçin Daha Fazla Bilgi"
+    }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Replash Hakkında",
+      "title": "Amatör spor için replay katmanını inşa ediyoruz.",
+      "subtitle": "Replash, profesyonel tarzda video deneyimini günlük amatör maçlara getirmek için kurulmuş bir spor-teknoloji girişimidir."
+    },
+    "unimi": {
+      "eyebrow": "Università degli Studi di Milano",
+      "title": "Üniversitemiz arkamızda duruyor.",
+      "desc": "Replash, Università degli Studi di Milano'daki Economics, Behaviour Data and Policy programı içinde doğdu. Projenin temeli akademik: davranışsal ekonomi, alışkanlık oluşumu ve piyasaların yeni tüketim kalıplarına nasıl tepki verdiği. Üniversitenin desteği, GDPR duruşundan veri etiğine kadar sorumlu bir şekilde inşa etmemiz için kurumsal zemin sağlıyor.",
+      "badge": "Università degli Studi di Milano",
+      "items": {
+        "1": {
+          "title": "Akademik Temel",
+          "desc": "Gözlemlenen davranışsal kalıplara dayanır: dokümantasyon yoluyla kimlik inşası (Goffman, 1959), spor paylaşımı ölçeği (Strava) ve Z kuşağı sosyal motivasyonu."
+        },
+        "2": {
+          "title": "Kurumsal Destek",
+          "desc": "UniMi'den akademik rehberlikle geliştirildi. IP çerçevesi, GDPR duruşu ve etik veri uygulamaları üniversite seviyesinde bir ortamda şekillendi."
+        },
+        "3": {
+          "title": "Gerçek Dünya Laboratuvarı",
+          "desc": "Replash gerçek müşteriler ve gerçek verilerle bir ortam yaratıyor. Araştırma, staj ve uygulamalı öğrenim için UniMi ile bağlantılı, GDPR uyumlu bir üretim ortamı içinde."
+        }
+      }
+    },
+    "founders": {
+      "eyebrow": "Kurucu Ekip",
+      "title": "Bir gözlem. Bir ürün.",
+      "desc": "Replash, davranışsal ekonomi altyapısına sahip kuruculardan çıktı. Alışkanlıkların nasıl oluştuğunu, piyasaların nasıl tepki verdiğini okumak üzerine bir düşünce dünyası. Alan ile şirketin yaptığı iş arasındaki örtüşme, projenin köşe taşı.",
+      "values": {
+        "1": "Davranışsal ekonomi perspektifi",
+        "2": "Gözlemlenmiş kalıp üzerine inşa edildi, spekülasyon değil",
+        "3": "Avrupa amatör pazarı için tasarlandı"
+      }
+    },
+    "mission": {
+      "eyebrow": "Misyonumuz",
+      "text": "Her amatör maçı daha unutulmaz, daha paylaşılabilir ve daha değerli hale getirmek."
+    },
+    "vision": {
+      "eyebrow": "Vizyonumuz",
+      "text": "Her spor tesisinin maç kaydını ışıklar, soyunma odaları veya online rezervasyon kadar doğal bir şekilde sunabildiği bir gelecek."
+    },
+    "story": {
+      "eyebrow": "Fikir",
+      "title": "Amatör spor unutulmaktan daha iyisini hak ediyor.",
+      "desc": "Her hafta sonu binlerce maç oynanır ve unutulur. Oyuncular sahada her şeyini verir. Ve sadece bir hatırayla ayrılır. Replash bunu değiştirmek için yaratıldı. Her maçın anlatılmaya değer bir hikayesi olduğuna ve her oyuncunun onu tekrar görmeyi. Ve paylaşmayı. Hak ettiğine inanıyoruz."
+    },
+    "whoWeServe": {
+      "eyebrow": "Kime Hizmet Veriyoruz",
+      "title": "Günlük spor için inşa edildi.",
+      "items": {
+        "1": {
+          "title": "Futbol Sahaları",
+          "desc": "Premium deneyim sunmak isteyen 5'lik, 7'lik ve futsal sahaları."
+        },
+        "2": {
+          "title": "Padel Kulüpleri",
+          "desc": "Hızla büyüyen bir pazarda öne çıkmak isteyen modern padel tesisleri."
+        },
+        "3": {
+          "title": "Amatör Spor Tesisleri",
+          "desc": "Düzenli, tekrarlayan maçlar düzenleyen ve unutulmaz bir şey sunmak isteyen her tesis."
+        },
+        "4": {
+          "title": "Oyuncular",
+          "desc": "Maçlarını izlemek, kesmek ve paylaşmak isteyen. Kendi kimlikleri altında. Amatör oyuncular."
+        }
+      }
+    },
+    "values": {
+      "eyebrow": "Değerlerimiz",
+      "items": {
+        "1": {
+          "title": "Basitlik",
+          "desc": "Teknoloji arka plana saklanmalı. Deneyim çaba gerektirmemeli."
+        },
+        "2": {
+          "title": "Gizlilik",
+          "desc": "Oyuncular verilerini bize emanet eder. Bunu ciddiye alırız. Yüz tanıma yok, gözetim yok, tam GDPR duruşu."
+        },
+        "3": {
+          "title": "Güvenilirlik",
+          "desc": "Her maç kaydedilir, her zaman. Sahalar ve oyuncular Replash'in çalışmasına güvenebilir."
+        },
+        "4": {
+          "title": "Oyuncu Deneyimi",
+          "desc": "İnşa ettiğimiz her şey şu soruyla başlar: bu, oyuncunun deneyimini daha iyi hale getiriyor mu?"
+        },
+        "5": {
+          "title": "Saha Büyümesi",
+          "desc": "Replash yalnızca birlikte çalıştığımız sahalar başarılı olduğunda başarılıdır. Bu modelin içinde kuruludur."
+        }
+      }
+    },
+    "cta": {
+      "title": "Replash'i sahanıza getirmek ister misiniz?",
+      "button": "İletişime Geçin"
+    }
+  },
+  "faq": {
+    "eyebrow": "Sık Sorulan Sorular",
+    "title": "Evet demeden önce bilmeniz gereken her şey.",
+    "subtitle": "Sahaların ve oyuncuların en çok sorduğu soruların cevapları.",
+    "categories": {
+      "facilities": "Sahalar İçin",
+      "players": "Oyuncular İçin",
+      "privacy": "Gizlilik ve Teknik"
+    },
+    "items": {
+      "1": {
+        "q": "Sahama tam olarak ne kurulur?",
+        "a": "Sabit PoE geniş açılı kameralar. Padel kortlarında tavana veya yüksek duvara, futbol sahalarında ise sahanın etrafındaki köşe direklerine monte edilir. Kurulum 1 gün sürer ve operasyonları kesintiye uğratmaz. Tüm kablolama gizlenir. Replash ekibi montajdan ağ kurulumuna kadar her şeyi yönetir."
+      },
+      "2": {
+        "q": "Başlangıç maliyeti veya sözleşme yükümlülüğü var mı?",
+        "a": "Hayır. Replash maliyetin %100'ünü karşılar. Kameralar, kurulum, bakım, yazılım güncellemeleri. Aylık ücret yok. Minimum taahhüt 6 aydır. Sözleşme süresince tesis, anlaşılan yüzde payını her ay almaya devam eder."
+      },
+      "3": {
+        "q": "Replash sahayla geliri nasıl paylaşır?",
+        "a": "Her ay sonunda, unlocked edilmiş tüm videolar admin panelinden takip edilir. Sözleşmede belirlenen pay tesiste kalır; kalan pay ise her ay sonunda Replash'e ödenir. Saha ne kadar aktif olursa, tesisin kazancı da o kadar büyür — her yeni maç ek gelir demek. Her şey panel üzerinden otomatik mutabakata bağlanır. Sizin tarafınızda sıfır operasyonel maliyetle."
+      },
+      "4": {
+        "q": "Personelimin her maç için bir şey yapması gerekiyor mu?",
+        "a": "Sadece bir tıklama. Bir oyuncu video erişimi için ödediğinde, resepsiyonist saha panelinde maçı 'Video Satıldı' olarak işaretler. Kayıt LOCKED'tan UNLOCKABLE'a geçer. Geri kalan her şey (kayıt, depolama, teslimat, clip cutter) tamamen otomatik."
+      },
+      "5": {
+        "q": "Bir kamera arızalanırsa veya teknik sorun olursa ne olur?",
+        "a": "Replash tüm kameraları 7/24 izler. Nadir arıza durumlarında, destek ekibimiz otomatik olarak bilgilendirilir ve sorunu uzaktan çözer. Genellikle saatler içinde. Bir kayıt kaybolursa, o satış raporunuzda görünmez ve sizden ücret alınmaz."
+      },
+      "6": {
+        "q": "Ne kadar hızlı başlayabiliriz?",
+        "a": "Başvurunuz onaylandıktan sonra (genellikle 3 gün içinde), size uygun bir zamanda kurulum planlarız. Çoğu saha ilk temastan sonra 3 hafta içinde çalışmaya başlar."
+      },
+      "8": {
+        "q": "Oyuncular gerçekten klipleri sosyal medyada paylaşabilir mi?",
+        "a": "Evet. Bu çekirdek deneyim. Replash platformun içinde dahili bir clip cutter'a sahip. Oyuncular maçtan 10–45 saniyelik bir an seçer, klibi telefonlarına indirir ve kendi hesapları altında sosyal medya platformlarında paylaşır. Replash klibin yapıldığı yerdir. Paylaşım oyuncunun kendi kanallarında gerçekleşir."
+      },
+      "10": {
+        "q": "Ya GDPR?",
+        "a": "Replash GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleriyle tamamen uyumludur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli vardır (giriş tabelası + QR + rezervasyon bildirimi). Kurulumdan önce bir Gizlilik & Yasal Gerekçe dosyası sağlanır."
+      },
+      "12": {
+        "q": "Güçlü WiFi bağlantımız yoksa?",
+        "a": "PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Replash ekibi tüm kurulumu yönetir."
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "İletişime Geçin",
+    "title": "Sahanız hakkında konuşalım.",
+    "subtitle": "Demo istemek, sorularınız olmak veya başlamaya hazır olmak. Biz buradayız.",
+    "fields": {
+      "name": "Adınız",
+      "facilityName": "Saha Adı",
+      "email": "E-posta Adresi",
+      "phone": "Telefon Numarası (isteğe bağlı)",
+      "sport": "Spor",
+      "message": "Sahanızdan bahsedin (isteğe bağlı)",
+      "sportOptions": {
+        "football": "Futbol / Futsal",
+        "padel": "Padel",
+        "other": "Diğer"
+      },
+      "sportOtherPlaceholder": "Sporu belirtin..."
+    },
+    "submit": "Mesaj Gönder",
+    "submitting": "Gönderiliyor...",
+    "success": "Mesajınız alındı! 24 saat içinde size ulaşacağız.",
+    "error": "Bir şeyler yanlış gitti. Lütfen birazdan tekrar deneyin.",
+    "trust": "Taahhüt gerekmez. Ücretsiz danışmanlık. 24 saat içinde yanıt.",
+    "whatsapp": {
+      "aria": "WhatsApp'tan yaz",
+      "prefill": "Merhaba! Tesisim için Replash hakkında bilgi almak istiyorum."
+    }
+  },
+  "footer": {
+    "tagline": "Sadece bir maçtan fazlası.",
+    "links": {
+      "howItWorks": "Nasıl Çalışır",
+      "forFacilities": "Sahalar İçin",
+      "forPlayers": "Oyuncular İçin",
+      "find": "Maçını Bul",
+      "about": "Hakkımızda",
+      "contact": "İletişim"
+    },
+    "privacy": "Gizlilik Politikası",
+    "rights": "Tüm hakları saklıdır."
+  },
+  "meta": {
+    "home": {
+      "title": "Replash | Sahana yeni bir gelir kaynağı: otomatik maç videosu",
+      "description": "Amatör spor sahaları için otomatik maç kaydı. Maçınızın en güzel anlarını izleyin, kesin ve paylaşın."
+    },
+    "find": {
+      "title": "Maçını Bul. Replash",
+      "description": "Üç alan, otuz saniye, maçınız. Amatör futbol veya padel maçınızı izleyin. Uygulama yok, hesap yok."
+    },
+    "howItWorks": {
+      "title": "Nasıl Çalışır. Replash",
+      "description": "Replash'in sahanızdaki maçları nasıl otomatik kaydettiğini, düzenlediğini ve oyunculara nasıl ilettiğini görün."
+    },
+    "forFacilities": {
+      "title": "Sahalar İçin. Replash",
+      "description": "Spor tesisinizi modern bir maç deneyimine dönüştürün. Sıfır operasyonel karmaşıklık, yeni dijital hizmet, kanıtlanmış model."
+    },
+    "forPlayers": {
+      "title": "Oyuncular İçin. Replash",
+      "description": "Maçınızı izleyin, en iyi anları kesin ve sosyal medyada paylaşın. Maçınız, yeniden yaşamaya hazır."
+    },
+    "about": {
+      "title": "Hakkımızda. Replash",
+      "description": "Replash, Università degli Studi di Milano tarafından desteklenen amatör spor için replay katmanını inşa ediyor. Profesyonel tarzda video günlük maçlara."
+    }
+  }
+}

@@ -1,0 +1,722 @@
+<?php
+return [
+    'nav' => [
+        'home' => 'Home',
+        'howItWorks' => 'Come Funziona',
+        'forFacilities' => 'Per i Centri',
+        'forPlayers' => 'Per i Giocatori',
+        'about' => 'Chi Siamo',
+        'find' => 'Trova la Partita',
+        'bookDemo' => 'Richiedi una demo',
+        'contact' => 'Contatti',
+        'panel' => 'Pannello Centro',
+        'admin' => 'Amministrazione',
+        'notice' => [
+            'text' => 'Programma pilota aperto — cerchiamo centri pilota per il 2026.',
+            'cta' => 'Candidati'
+        ]
+    ],
+    'home' => [
+        'hero' => [
+            'badge' => 'Per Centri Sportivi Amatoriali',
+            'title' => 'Gioca. Registra. Rivivi.',
+            'subtitle' => 'Dai ai giocatori una partita da rivivere. Un nuovo ricavo per il tuo centro. Replash registra le partite in automatico e le rende pronte da guardare, ritagliare e condividere.',
+            'cta' => 'Richiedi una demo',
+            'ctaSecondary' => 'Scopri come funziona'
+        ],
+        'intro' => [
+            'eyebrow' => 'Per i Gestori di Centri Sportivi',
+            'slogan' => 'Un nuovo flusso di ricavi ogni mese. Senza alcun costo iniziale.',
+            'tagline' => 'Più del semplice campo.',
+            'sports' => 'Disponibile oggi per calcio e padel. Progettato per crescere con altri sport.',
+            'cta' => 'Parla con noi'
+        ],
+        'twoLayer' => [
+            'eyebrow' => 'Valore da Entrambi i Lati',
+            'title' => 'Per i giocatori. E per il tuo centro.',
+            'subtitle' => 'Replash dà ai giocatori una partita da rivivere e al tuo centro un nuovo servizio da offrire. Un solo sistema, due tipi di valore.',
+            'layer1' => [
+                'label' => 'Per i Giocatori',
+                'stat' => '0%',
+                'title' => 'delle partite amatoriali non viene mai registrato.',
+                'desc' => 'Il momento migliore di una partita svanisce nell\'attimo in cui accade. Con Replash i giocatori escono dal campo con la partita completa, pronta da guardare, ritagliare e condividere.'
+            ],
+            'layer2' => [
+                'label' => 'Per il Centro',
+                'title' => 'Un nuovo servizio che i giocatori vogliono.',
+                'desc' => 'Ogni partita registrata è un servizio in più da offrire e un nuovo ricavo, senza costi iniziali e con una sola azione dello staff. Il tuo centro diventa il posto dove le partite si rivivono.'
+            ]
+        ],
+        'whatIs' => [
+            'eyebrow' => 'Cos\'è Replash?',
+            'title' => 'Registrazione automatica delle partite per i centri sportivi.',
+            'description' => 'Replash è una piattaforma di registrazione e accesso automatico alle partite per i centri sportivi amatoriali. Registra le partite, le organizza per sede, data e orario, e permette ai giocatori di trovare la propria partita facilmente tramite un QR code o link web. Senza alcun intervento manuale del tuo staff.',
+            'items' => [
+                '1' => [
+                    'title' => 'Registrazione Automatica',
+                    'desc' => 'Telecamere fisse PoE registrano ogni partita nel momento in cui inizia. Nessun pulsante, nessuna configurazione, nessun intervento dello staff.'
+                ],
+                '2' => [
+                    'title' => 'Organizzata per Slot Orario',
+                    'desc' => 'Ogni registrazione è taggata per sede, data e slot orario. Immediatamente ricercabile tramite la pagina "Trova la Partita".'
+                ],
+                '3' => [
+                    'title' => 'Guarda, Ritaglia, Condividi',
+                    'desc' => 'I giocatori guardano la partita, tagliano clip di 10–45 secondi, le scaricano e le condividono sui social media. Nessuna app richiesta. Nessun account richiesto.'
+                ]
+            ]
+        ],
+        'findPreview' => [
+            'eyebrow' => 'Ricerca Rapida',
+            'title' => 'Tre campi. La tua partita.',
+            'desc' => 'Nessuna app da scaricare richiesta. Nessun account richiesto. I giocatori escono dal campo, scansionano un QR o visitano il sito, e guardano la partita.',
+            'fields' => [
+                'facility' => 'Centro / Club',
+                'date' => 'Data',
+                'time' => 'Fascia Oraria',
+                'accessCode' => 'o Codice di Accesso (es: AEXF-BFFG)',
+                'facilityPlaceholder' => 'Seleziona un centro',
+                'datePlaceholder' => 'Seleziona data',
+                'timePlaceholder' => 'Seleziona orario',
+                'codePlaceholder' => 'AEXF-BFFG'
+            ],
+            'button' => 'Trova e Guarda la Partita',
+            'tryIt' => 'Prova la Demo dal Vivo'
+        ],
+        'whyFacilities' => [
+            'eyebrow' => 'Perché i Centri Scelgono Replash',
+            'title' => 'I centri non vendono solo tempo sul campo. Vendono l\'esperienza intorno alla partita.',
+            'cta' => 'Per i Centri',
+            'items' => [
+                '1' => [
+                    'title' => 'Nuovo Servizio Digitale',
+                    'desc' => 'Offri qualcosa che i tuoi concorrenti non hanno. Un\'esperienza video professionale a un prezzo amatoriale.'
+                ],
+                '2' => [
+                    'title' => 'Differenziati',
+                    'desc' => 'In un mercato dove i centri competono sul prezzo, un\'esperienza memorabile crea fidelizzazione.'
+                ],
+                '3' => [
+                    'title' => 'Zero Complessità',
+                    'desc' => 'Replash gestisce telecamere, archiviazione e consegna. Il tuo team compie una sola azione semplice per ogni vendita.'
+                ]
+            ]
+        ],
+        'whatPlayersGet' => [
+            'eyebrow' => 'Cosa Ricevono i Giocatori',
+            'title' => 'Cosa ottengono i tuoi giocatori. E perché tornano.',
+            'cta' => 'Per i Giocatori',
+            'items' => [
+                '1' => [
+                    'title' => 'Guardano la Loro Partita',
+                    'desc' => 'Accedono alla registrazione completa della partita. Gol, parate, scambi e tutto il resto.'
+                ],
+                '2' => [
+                    'title' => 'Ritagliano i Momenti Migliori',
+                    'desc' => 'Tagliano highlights di 10–45 secondi direttamente in Replash. Un gol, uno scambio, un\'esultanza. Download immediato sul telefono.'
+                ],
+                '3' => [
+                    'title' => 'Condividono sui Social',
+                    'desc' => 'Condividono la clip direttamente sulle piattaforme social media. Nessun profilo Replash. Il giocatore possiede ogni condivisione.'
+                ]
+            ]
+        ],
+        'faq' => [
+            'eyebrow' => 'Domande Frequenti',
+            'title' => 'Tutto quello che vuoi sapere prima di dire sì.',
+            'subtitle' => 'Risposte alle domande che centri e giocatori fanno più spesso.',
+            'items' => [
+                '1' => [
+                    'q' => 'Cosa viene installato esattamente nel mio centro?',
+                    'a' => 'Telecamere PoE fisse grandangolari. Nei campi da padel, montate sul soffitto o su una parete alta; nei campi da calcio, montate sui pali agli angoli attorno al campo. L\'installazione richiede un giorno e non interrompe le operazioni. Tutti i cavi vengono nascosti. Il team Replash gestisce tutto, dal montaggio alla rete.'
+                ],
+                '2' => [
+                    'q' => 'Ci sono costi anticipati o vincoli contrattuali?',
+                    'a' => 'No. Replash copre il 100% del costo. Telecamere, installazione, manutenzione, aggiornamenti software. Nessun canone mensile. L\'impegno minimo è di 6 mesi. Per tutta la durata del contratto, il tuo centro riceve la stessa quota di ricavi concordata ogni mese.'
+                ],
+                '3' => [
+                    'q' => 'Come funziona la divisione dei ricavi con il centro?',
+                    'a' => 'Alla fine di ogni mese, tutti i video sbloccati vengono tracciati dal pannello di amministrazione. La quota definita nel tuo contratto resta al tuo centro; l\'importo rimanente viene pagato a Replash a fine mese. Più i tuoi campi sono attivi, più il tuo centro guadagna — ogni nuova partita è un ricavo aggiuntivo. Tutto viene riconciliato automaticamente dal pannello. Con zero costi operativi da parte tua.'
+                ],
+                '4' => [
+                    'q' => 'Il mio staff deve fare qualcosa per ogni partita?',
+                    'a' => 'Un solo tocco. Quando la squadra vuole il video, la reception lo abilita dal pannello. Tutto il resto (registrazione, archiviazione, consegna del codice, clip cutter) è completamente automatico.'
+                ],
+                '5' => [
+                    'q' => 'Cosa succede se una telecamera si rompe o c\'è un problema tecnico?',
+                    'a' => 'Replash monitora tutte le telecamere 24/7. In rari casi di guasto, il nostro team di supporto viene notificato automaticamente e risolve il problema da remoto. Di solito in poche ore. Se una registrazione viene persa, quella vendita non appare nel tuo report e non viene addebitata.'
+                ],
+                '6' => [
+                    'q' => 'Quanto velocemente possiamo iniziare?',
+                    'a' => 'Dopo l\'approvazione della candidatura (di solito entro 3 giorni), pianifichiamo l\'installazione in un momento che ti fa comodo. La maggior parte dei centri è operativa entro 3 settimane dal primo contatto.'
+                ],
+                '7' => [
+                    'q' => 'I giocatori possono davvero condividere clip sui social media?',
+                    'a' => 'Sì. È l\'esperienza centrale. Replash ha un clip cutter integrato nella piattaforma. I giocatori scelgono un momento di 10–45 secondi della partita, scaricano la clip sul telefono e la condividono sui social media sotto il proprio account. Replash è il luogo dove la clip viene fatta. La condivisione avviene sui canali del giocatore.'
+                ],
+                '8' => [
+                    'q' => 'E il GDPR?',
+                    'a' => 'Replash è pienamente conforme a GDPR, CEDU Articolo 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). È in atto un modello di notifica a tre livelli (segnaletica all\'ingresso + QR + notifica prenotazione). Un file Privacy & Legal Justification viene fornito prima dell\'installazione.'
+                ],
+                '9' => [
+                    'q' => 'E se non abbiamo una connessione WiFi forte?',
+                    'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
+                ]
+            ]
+        ],
+        'cta' => [
+            'title' => 'Porta una nuova esperienza digitale nel tuo centro.',
+            'subtitle' => 'Parlaci di installazione, tempi e di come funziona per il tuo centro.',
+            'button' => 'Scopri per i Centri',
+            'secondary' => 'Contattaci'
+        ]
+    ],
+    'howItWorks' => [
+        'hero' => [
+            'eyebrow' => 'Come Funziona',
+            'title' => 'Sei semplici passi. Zero complessità per il tuo team.',
+            'subtitle' => 'Dal calcio d\'inizio al replay, Replash gestisce tutto nel mezzo. Sotto: ogni passo spiegato, con la partita di padel di Marco di martedì sera come esempio concreto.'
+        ],
+        'steps' => [
+            '1' => [
+                'label' => 'Passo 1',
+                'title' => 'La Partita Viene Prenotata e Giocata',
+                'desc' => 'I giocatori prenotano un campo normalmente e giocano. Nulla cambia nell\'esperienza sul campo. Replash funziona in silenzio in background. E la maggior parte delle squadre si avvicina alla reception del centro e chiede di aggiungere il video della partita prima ancora che la partita inizi.'
+            ],
+            '2' => [
+                'label' => 'Passo 2',
+                'title' => 'Replash Registra Automaticamente',
+                'desc' => 'Le telecamere PoE fisse installate nel centro catturano l\'intera partita dall\'inizio alla fine. Nessun pulsante, nessun controllo manuale, nessun intervento dello staff.'
+            ],
+            '3' => [
+                'label' => 'Passo 3',
+                'title' => 'Il Centro Abilita il Video',
+                'desc' => 'Quando la squadra vuole il video, lo staff del centro lo abilita dal pannello Replash con un tocco. È l\'unica azione ricorrente richiesta, e richiede pochi secondi.'
+            ],
+            '4' => [
+                'label' => 'Passo 4',
+                'title' => 'Ricevi il Codice della Partita',
+                'desc' => 'Appena il video è abilitato, la squadra riceve un codice partita univoco: alla reception o tramite il QR all\'ingresso. Un solo codice per tutta la squadra.'
+            ],
+            '5' => [
+                'label' => 'Passo 5',
+                'title' => 'Inserisci il Codice su Replash',
+                'desc' => 'I giocatori vanno su replash.eu, inseriscono il codice della partita e il video si apre. Nessun account, nessuna app, nessuna lista pubblica.'
+            ],
+            '6' => [
+                'label' => 'Passo 6',
+                'title' => 'Guarda, Ritaglia, Condividi',
+                'desc' => 'I giocatori guardano la partita, tagliano clip di 10–45 secondi con il clip cutter integrato, le scaricano e le condividono sui social media. Sotto la propria identità.'
+            ]
+        ],
+        'mockups' => [
+            'step1' => [
+                'bookingTitle' => 'Prenotazione Martedì Sera',
+                'pitchSlot' => 'Campo 2 • 20:00 - 21:00 (60 Min)',
+                'confirmed' => 'Confermato',
+                'recordingLabel' => 'Registrazione Video HD Automatica Replash',
+                'active' => 'Attivo'
+            ],
+            'step2' => [
+                'rec' => 'Rec 47:12',
+                'cam' => 'Telecamera 01 · Auto'
+            ],
+            'step3' => [
+                'panelTitle' => 'Pannello Reception del Centro',
+                'pin' => 'PIN: ****',
+                'slotName' => 'Campo 2 • Slot 20:00',
+                'videoRecorded' => 'Video Registrato',
+                'subtitle' => 'La squadra ha pagato • Sblocca con 1 tocco',
+                'activateBtn' => 'Abilita Video (1 Clic)'
+            ],
+            'step4' => [
+                'uniqueCode' => 'Codice Univoco per Tutta la Squadra',
+                'copyShare' => 'Copia / Condividi',
+                'tip' => '💡 Invialo al gruppo WhatsApp: tutti i tuoi amici possono guardarlo sui propri dispositivi.'
+            ],
+            'step5' => [
+                'button' => 'Trova e Guarda Partita',
+                'noApp' => 'Nessuna App',
+                'noAccount' => 'Nessun Account',
+                'instantAccess' => 'Accesso Immediato'
+            ],
+            'step6' => [
+                'playerTitle' => 'LETTORE VIDEO · RITAGLIA E CONDIVIDI',
+                'quality' => '1080p HD · 60 FPS',
+                'clipSelection' => '✂ 00:28 Selezione Clip',
+                'createClip' => 'Crea Clip (MP4)',
+                'share' => 'Condividi:'
+            ]
+        ],
+        'cta' => [
+            'title' => 'Pronto a vederlo in azione?',
+            'button' => 'Richiedi una demo'
+        ]
+    ],
+    'common' => [
+        'loading' => 'Caricamento...',
+        'all_rights_reserved' => 'Tutti i diritti riservati.',
+        'privacy_policy' => 'Privacy Policy',
+        'terms_of_service' => 'Termini di Servizio',
+        'cookie_policy' => 'Cookie Policy',
+        'contact_us' => 'Contatti',
+        'back' => 'Indietro',
+        'save' => 'Salva',
+        'cancel' => 'Annulla',
+        'search' => 'Cerca',
+        'online' => 'Online',
+        'offline' => 'Offline',
+        'locked' => 'Bloccato',
+        'sold' => 'Venduto',
+        'unlockable' => 'Sbloccato',
+        'views' => 'Visualizzazioni',
+        'clip' => 'Crea Clip',
+        'download' => 'Scarica',
+        'share' => 'Condividi',
+        'copy_link' => 'Copia Link',
+        'pages' => 'Pagine'
+    ],
+    'find' => [
+        'title' => 'Trova e Guarda la Tua Partita',
+        'subtitle' => 'Seleziona la tua struttura e l\'orario della partita per trovare il video, oppure aprilo direttamente con il tuo codice di accesso.',
+        'fields' => [
+            'facility' => 'Centro Sportivo / Club',
+            'select_facility' => 'Seleziona Struttura',
+            'date' => 'Data',
+            'time' => 'Fascia Oraria',
+            'all_hours' => 'Tutti gli Orari',
+            'search_btn' => 'Trova e Guarda Partita',
+            'or_code' => 'oppure Apri Direttamente con Codice di Accesso:',
+            'code_placeholder' => 'Es: AEXF-BFFG',
+            'open_code_btn' => 'Sblocca Codice'
+        ],
+        'status' => [
+            'unlocked' => 'Pronto per la Visione',
+            'pending_code' => 'Codice di Accesso Richiesto',
+            'locked' => 'Bloccato (In Attesa di Pagamento)',
+            'verified_code' => 'Codice Verificato:'
+        ],
+        'camera_select' => [
+            'label' => 'Angolo Telecamera:',
+            'camera_n' => 'Telecamera {n}',
+            'switching' => 'Passaggio alla telecamera...'
+        ],
+        'tools' => [
+            'clip_title' => 'Taglio di Precisione & Scarica Clip',
+            'clip_desc' => 'Imposta l\'intervallo temporale o registra al volo, scarica direttamente in MP4.',
+            'start_time' => 'Inizio',
+            'end_time' => 'Fine',
+            'set_start_btn' => '⏱ Imposta Inizio',
+            'set_end_btn' => '⏱ Imposta Fine',
+            'cut_clip_btn' => '✂️ Taglia & Scarica Clip',
+            'live_record_btn' => '🔴 Registra dal Vivo',
+            'btn_start' => 'Crea Clip',
+            'btn_stop' => 'Ferma Registrazione',
+            'recording_active' => 'REGISTRAZIONE IN CORSO',
+            'full_match' => 'Partita Completa',
+            'share' => 'Condividi',
+            'copied' => 'Link della partita copiato!'
+        ],
+        'modal' => [
+            'title' => 'Clip Azione Pronta!',
+            'desc' => 'Il frammento video selezionato è stato esportato in MP4',
+            'court' => 'Campo / Struttura:',
+            'range' => 'Intervallo Clip:',
+            'duration' => 'Durata Clip:',
+            'format' => 'Formato:',
+            'seconds' => 'secondi',
+            'download_mp4' => 'Scarica Clip MP4',
+            'share_clip' => 'Condividi',
+            'share_social_title' => 'Condividi sui Social Media',
+            'preparing_file' => 'Preparazione del file video...',
+            'file_share_not_supported' => 'Il tuo browser non supporta la condivisione diretta di file. Il video è stato scaricato, puoi caricarlo nella finestra aperta.',
+            'close' => 'Chiudi'
+        ],
+        'gate' => [
+            'title' => 'Registrazione Partita Trovata!',
+            'desc' => 'La registrazione della telecamera per questo slot è pronta. Inserisci il codice di accesso a 8 cifre fornito dal centro.',
+            'placeholder' => 'Codice di Accesso (Es: AEXF-BFFG)',
+            'verify_btn' => 'Verifica e Guarda Video'
+        ],
+        'locked_card' => [
+            'title' => 'Questa Partita è Bloccata',
+            'desc' => 'La tua partita è stata registrata ma non è ancora stata sbloccata dal centro sportivo. Rivolgiti alla reception per ottenere il codice.',
+            'staff_btn' => 'Accesso Personale (PIN)'
+        ],
+        'errors' => [
+            'not_found' => 'Nessuna registrazione trovata per i criteri selezionati (Centro, Data, Orario).',
+            'expired' => 'Questo video è stato eliminato poiché il periodo di conservazione di 7 giorni è scaduto.',
+            'code_mismatch' => 'Il codice di accesso inserito non corrisponde a questa partita. Inserisci il codice corretto.',
+            'invalid_code' => 'Nessuna partita trovata con questo codice. Controlla il codice.',
+            'too_short' => 'La clip è troppo breve (almeno 2 secondi).'
+        ]
+    ],
+    'panel' => [
+        'login' => [
+            'title' => 'Accesso Personale Centro',
+            'subtitle' => 'Inserisci il codice PIN a 6 cifre della tua struttura.',
+            'placeholder' => '······',
+            'submit' => 'Accedi',
+            'example_pin' => 'Esempio PIN:',
+            'invalid_pin' => 'Codice PIN non valido. Riprova.'
+        ],
+        'header' => [
+            'badge' => 'Desk Struttura',
+            'price_info' => 'Prezzo Video:',
+            'bulk_btn' => '⚡ Genera Slot del Giorno (Bloccati)',
+            'add_slot_btn' => '+ Aggiungi Slot / Vendi',
+            'calendar_btn' => '📅 Seleziona da Calendario',
+            'logout' => 'Esci'
+        ],
+        'metrics' => [
+            'today_sold' => 'Venduti Oggi',
+            'this_week_sold' => 'Venduti Questa Settimana',
+            'this_month_sold' => 'Venduti Questo Mese',
+            'total_revenue' => 'Incasso Totale',
+            'matches_unit' => 'partite'
+        ],
+        'chart' => [
+            'title' => 'Analisi Vendite e Incassi',
+            'daily' => 'Giornaliero (Ultimi 14 Giorni)',
+            'weekly' => 'Settimanale (Ultime 8 Settimane)',
+            'monthly' => 'Mensile (Ultimi 6 Mesi)',
+            'sold_matches' => 'Partite Vendute',
+            'revenue' => 'Incasso'
+        ],
+        'table' => [
+            'title' => 'Partite e Slot Orari',
+            'subtitle' => 'Registrazioni, stati e codici di accesso per la tua struttura',
+            'filter_all_courts' => 'Tutti i Campi',
+            'filter_status_all' => 'Tutti gli Stati',
+            'filter_status_sold' => 'Vendita Confermata',
+            'filter_status_locked' => 'Bloccato (In Attesa)',
+            'filter_search' => 'Cerca Codice o Campo...',
+            'th_date' => 'Data e Ora',
+            'th_court' => 'Campo',
+            'th_code' => 'Codice Accesso',
+            'th_status' => 'Stato',
+            'th_video' => 'Video & Azioni',
+            'badge_sold' => 'Vendita Confermata',
+            'badge_locked' => 'Bloccato (In Attesa)',
+            'action_unlock' => 'Conferma Vendita (Sblocca)',
+            'action_unlock_btn' => '⚡ Sblocca e Vendi',
+            'action_relock' => '🔒 Riblocca',
+            'action_lock' => 'Blocca (Metti in Attesa)',
+            'action_download' => 'Scarica',
+            'action_watch' => 'Guarda',
+            'no_records' => 'Nessuna registrazione o slot trovato.'
+        ],
+        'modals' => [
+            'bulk_title' => 'Genera Slot Giornalieri in Blocco (Bloccati)',
+            'bulk_desc' => 'Genera automaticamente gli slot orari per tutti i campi nella data selezionata e li mantiene bloccati fino alla vendita.',
+            'single_title' => 'Aggiungi Slot o Conferma Vendita',
+            'court_label' => 'Campo / Pista',
+            'date_label' => 'Data',
+            'slot_label' => 'Fascia Oraria',
+            'status_label' => 'Stato Iniziale',
+            'status_locked_opt' => 'Bloccato (In Attesa di Vendita)',
+            'status_unlocked_opt' => 'Venduto (Sblocca Immediatamente)',
+            'submit_generate' => 'Genera Slot e Salva',
+            'submit_save' => 'Salva e Genera Codice',
+            'cancel' => 'Annulla',
+            'calendar_title' => 'Seleziona Slot da Calendario Settimanale e Conferma Vendita',
+            'calendar_desc' => 'Clicca su una casella di giorno e ora nel calendario sottostante, scegli il campo per generare il codice e confermare subito la vendita.',
+            'cal_prev_week' => 'Settimana Precedente',
+            'cal_today' => 'Oggi',
+            'cal_next_week' => 'Settimana Successiva',
+            'cal_time' => 'Ora',
+            'cal_slot_popup_title' => 'Seleziona Campo e Conferma Vendita',
+            'cal_confirm_btn' => 'Conferma Vendita e Genera Codice',
+            'cal_already_sold' => 'Venduto'
+        ]
+    ],
+    'forFacilities' => [
+        'hero' => [
+            'eyebrow' => 'Per Proprietari e Gestori di Centri',
+            'title' => 'Il tuo centro genera entrate extra ogni mese.',
+            'subtitle' => 'Zero costi hardware, zero sforzo per lo staff. Genera ricavi digitali da ogni partita con Replash e aumenta la fidelizzazione dei giocatori.'
+        ],
+        'engagement' => [
+            'eyebrow' => 'Maggiore Coinvolgimento',
+            'title' => 'I giocatori ricordano i centri dove sono accaduti i loro momenti migliori.',
+            'desc' => 'Quando un giocatore può guardare e condividere la propria partita, associa quei ricordi al tuo centro. Quella connessione emotiva trasforma le prenotazioni occasionali in clienti abituali. E i clienti abituali in sostenitori che consigliano il tuo centro agli amici.',
+            'items' => [
+                '1' => 'Tassi di prenotazione ripetuta più elevati',
+                '2' => 'Passaparola organico attraverso la condivisione dei video',
+                '3' => 'Relazioni più forti tra giocatori e centro',
+                '4' => 'Contenuti per i social creati naturalmente dai giocatori. Il tuo centro taggato in background'
+            ]
+        ],
+        'roi' => [
+            'eyebrow' => 'CALCOLATORE DI RICAVI',
+            'title' => 'Calcola la tua entrata mensile passiva',
+            'subtitle' => 'Quanti campi hai? Quanti video pensi di vendere al giorno per campo? Inserisci i tuoi numeri e scopri la tua quota mensile.',
+            'sport' => [
+                'padel' => 'Padel',
+                'football' => 'Calcio'
+            ],
+            'inputs' => [
+                'courts' => 'Numero di campi',
+                'courtsSuffix' => 'campi',
+                'videos' => 'Video venduti / campo / giorno',
+                'videosSuffix' => 'per campo',
+                'days' => 'Giorni attivi al mese',
+                'daysSuffix' => 'giorni'
+            ],
+            'results' => [
+                'eyebrow' => 'LA TUA STIMA',
+                'videos' => 'Video venduti',
+                'videosHint' => 'al mese',
+                'share' => 'La tua quota (15%)',
+                'shareHint' => 'guadagno mensile',
+                'yearlyEyebrow' => 'POTENZIALE ANNUO',
+                'yearlySuffix' => 'all\'anno',
+                'yearlyNote' => 'Con zero lavoro aggiuntivo per il tuo staff.'
+            ],
+            'disclaimer' => '* Stima basata sul prezzo medio di vendita del video per sport. Il calcolo è puramente illustrativo. Inserisci i tuoi numeri per vedere il tuo potenziale.',
+            'hook' => [
+                'title' => 'Trasforma questa stima nel reddito mensile del tuo centro.',
+                'desc' => 'Prenota una breve call. Adattiamo questi numeri al tuo centro e ti spieghiamo installazione, tempi e condizioni.',
+                'cta' => 'Prenota una call'
+            ]
+        ],
+        'objections' => [
+            'eyebrow' => 'Dubbi Comuni. Risolti',
+            'title' => 'Due domande che ogni centro fa. Due risposte chiare.',
+            'items' => [
+                'gdpr' => [
+                    'question' => 'E il GDPR?',
+                    'answer' => 'L\'architettura privacy di Replash è conforme a GDPR, CEDU Art. 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. I video sono inaccessibili pubblicamente, legati allo slot orario e auto-eliminati dopo 7 giorni. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). Modello di notifica a tre livelli (segnaletica + QR + notifica prenotazione) pronto prima dell\'installazione.',
+                    'items' => [
+                        '1' => 'Niente audio. Niente riconoscimento facciale.',
+                        '2' => 'Auto-eliminazione dopo 7 giorni.',
+                        '3' => 'Conforme a GDPR / CEDU Art. 8 / Garante.',
+                        '4' => 'File Privacy & Legal Justification consegnato in anticipo.'
+                    ]
+                ],
+                'tech' => [
+                    'question' => 'E se non abbiamo WiFi?',
+                    'answer' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Installazione, cablaggio e montaggio sono interamente gestiti da Replash. Il tuo staff tecnico non è coinvolto.',
+                    'items' => [
+                        '1' => 'Buffer locale PoE gestisce le interruzioni.',
+                        '2' => 'Fallback LTE/SIM per centri senza WiFi.',
+                        '3' => 'Setup completo gestito da Replash.',
+                        '4' => 'Zero interferenza con le operazioni del centro.'
+                    ]
+                ]
+            ]
+        ],
+        'marketing' => [
+            'eyebrow' => 'Layer Marketing Incluso',
+            'title' => 'Portiamo il tuo centro a pubblici, non solo a clienti.',
+            'desc' => 'Replash non è solo un fornitore di infrastruttura. È anche un layer di marketing che rende visibili i centri partner. Sul nostro sito mettiamo in evidenza il tuo logo e la posizione. Mentre i giocatori condividono gli highlights sui social media, il tuo centro raggiunge le comunità circostanti in modo organico. Il marketing avviene attraverso il comportamento degli utenti.',
+            'items' => [
+                '1' => [
+                    'title' => 'In Evidenza su Replash',
+                    'desc' => 'Logo e posizione del tuo centro evidenziati sul nostro sito e canali corporate.'
+                ],
+                '2' => [
+                    'title' => 'Diffusione Social Organica',
+                    'desc' => 'Ogni clip che un giocatore condivide porta il tuo centro, indirettamente, nella sua rete.'
+                ],
+                '3' => [
+                    'title' => 'Tornei Pilota',
+                    'desc' => 'Al lancio, organizziamo tornei tematici nei centri partner. Nuovi clienti e maggiore visibilità, a carico nostro.'
+                ]
+            ]
+        ],
+        'whatYouDo' => [
+            'eyebrow' => 'Cosa Deve Fare il Centro',
+            'title' => 'Il tuo team non gestisce la tecnologia. Il tuo team semplicemente offre l\'esperienza.',
+            'items' => [
+                '1' => [
+                    'title' => 'Fornire Accesso per l\'Installazione',
+                    'desc' => 'Permettere al team Replash di installare le telecamere su ogni campo o pista. Un processo unico che richiede un giorno.'
+                ],
+                '2' => [
+                    'title' => 'Supportare la Connessione Internet',
+                    'desc' => 'Garantire una connessione internet stabile nel centro. Replash pensa al resto (LTE fallback disponibile).'
+                ],
+                '3' => [
+                    'title' => 'Esporre QR Code e Segnaletica',
+                    'desc' => 'QR code stampati e segnaletica chiara sono forniti da Replash e posizionati su ogni campo.'
+                ],
+                '4' => [
+                    'title' => 'Attivare le Partite Vendute',
+                    'desc' => 'Quando un giocatore paga per l\'accesso al video, il tuo staff clicca un solo pulsante: \'Video Venduto\'. Questa è l\'unica azione ricorrente.'
+                ]
+            ]
+        ],
+        'cta' => [
+            'title' => 'Porta Replash nel tuo centro.',
+            'subtitle' => 'Parlaci di installazione, tempi e di come funziona per il tuo centro.',
+            'button' => 'Diventa Centro Pilota'
+        ]
+    ],
+    'about' => [
+        'hero' => [
+            'eyebrow' => 'Chi Siamo',
+            'title' => 'La Tecnologia che Digitalizza lo Sport Amatoriale',
+            'subtitle' => 'Replash è nata per evitare che milioni di partite amatoriali vadano perdute e per dare alle moderne strutture sportive un superpotere digitale.'
+        ],
+        'missionVision' => [
+            'mission' => [
+                'eyebrow' => 'LA NOSTRA MISSIONE',
+                'quote' => '"Rendere ogni partita amatoriale più memorabile, più condivisibile e più preziosa."'
+            ],
+            'vision' => [
+                'eyebrow' => 'LA NOSTRA VISIONE',
+                'quote' => '"Un futuro in cui ogni struttura sportiva possa offrire la registrazione delle partite con la stessa naturalezza con cui offre illuminazione, spogliatoi o prenotazioni online."'
+            ]
+        ],
+        'story' => [
+            'title' => 'Da chi ama giocare, per chi ama giocare.',
+            'desc' => 'Abbiamo creato Replash da un\'esigenza semplice che vediamo ogni settimana: giochi una gran partita e non resta nulla da rivedere. Il calcio e il padel amatoriale meritano la stessa opportunità di rivivere i loro momenti migliori dello sport professionistico.',
+            'bullets' => [
+                '1' => 'Nato dallo sport amatoriale, non da una presentazione',
+                '2' => 'Costruito su una reale esigenza dei giocatori',
+                '3' => 'Creato per strutture e giocatori in tutta Europa'
+            ]
+        ],
+        'stats' => [
+            '1' => ['val' => '100%', 'label' => 'Registrazione Automatica'],
+            '2' => ['val' => '< 8 min', 'label' => 'Tempo di Disponibilità'],
+            '3' => ['val' => '0 Sforzo', 'label' => 'Per lo Staff']
+        ],
+        'everydaySport' => [
+            'title' => 'Creato per lo sport di ogni giorno.',
+            'cards' => [
+                'football' => [
+                    'title' => 'Campi da Calcio',
+                    'desc' => 'Centri di calcio a 5, calcio a 7 e futsal che desiderano offrire un\'esperienza premium.'
+                ],
+                'padel' => [
+                    'title' => 'Club di Padel',
+                    'desc' => 'Strutture di padel moderne che vogliono distinguersi in un mercato in rapida espansione.'
+                ],
+                'venues' => [
+                    'title' => 'Centri Sportivi Amatoriali',
+                    'desc' => 'Qualsiasi struttura che ospiti partite regolari e voglia offrire qualcosa di memorabile.'
+                ],
+                'players' => [
+                    'title' => 'Giocatori',
+                    'desc' => 'Giocatori amatoriali che desiderano guardare, ritagliare clip e condividere la propria partita con la propria identità.'
+                ]
+            ]
+        ],
+        'cta' => 'Contattaci'
+    ],
+    'forPlayers' => [
+        'hero' => [
+            'eyebrow' => 'Per i Giocatori',
+            'title' => 'Rendi Immortale Ogni Grande Momento.',
+            'subtitle' => 'Quell\'incredibile tiro al volo, il rigore impossibile parato o lo smash decisivo a padel... Non rimarranno più solo nei ricordi.'
+        ],
+        'features' => [
+            '1' => [
+                'title' => 'Registrazione HD Grandangolare',
+                'desc' => 'Copertura video ad alta definizione che cattura l\'intero campo con zero punti ciechi.'
+            ],
+            '2' => [
+                'title' => 'Crea Clip in Pochi Secondi',
+                'desc' => 'Seleziona i tuoi 15-30 secondi preferiti e scaricali direttamente sul tuo dispositivo senza dover rivedere tutta la partita.'
+            ],
+            '3' => [
+                'title' => 'WhatsApp e Storie',
+                'desc' => 'Condividilo subito nella chat di gruppo o pubblica le tue migliori giocate su Instagram Stories e TikTok.'
+            ]
+        ],
+        'findBanner' => [
+            'eyebrow' => 'Inizia Ora',
+            'title' => 'Pronto a Guardare la Tua Partita?',
+            'subtitle' => 'Inserisci il codice di accesso ricevuto dal centro o seleziona la tua struttura per trovare la partita.',
+            'button' => 'Trova e Guarda la Mia Partita'
+        ],
+        'whyVideo' => [
+            'title' => 'Why players want the video.',
+            'cards' => [
+                '1' => [
+                    'num' => '01',
+                    'title' => 'Un ricordo da custodire',
+                    'desc' => 'Dopo una cena pubblichi una foto. Dopo l\'allenamento, un selfie. Dopo una partita? Quasi nulla. Replash ti dà finalmente qualcosa da rivedere e condividere.'
+                ],
+                '2' => [
+                    'num' => '02',
+                    'title' => 'Il Momento, Catturato',
+                    'desc' => 'Lo sguardo dopo il primo gol. Il colpo che chiude il set. Momenti che svaniscono all\'istante — a meno che non ci sia una registrazione. Con Replash restano tuoi per sempre.'
+                ],
+                '3' => [
+                    'num' => '03',
+                    'title' => 'Crea Clip e Condividi, Senza Ostacoli',
+                    'desc' => 'Apri la registrazione. Scegli 10 secondi. Scarica. Condividi. Nessun account, nessuna app, nessun profilo.'
+                ],
+                '4' => [
+                    'num' => '04',
+                    'title' => 'Quando gli amici lo vedono',
+                    'desc' => 'Quando vedi le clip delle squadre che hanno giocato nella tua stessa struttura, aggiungere il video alla tua prossima prenotazione diventa naturale.'
+                ]
+            ]
+        ],
+        'highlights' => [
+            'title' => 'Gol. Parate. Punti incredibili. Momenti divertenti. Tutto vale la pena rivederlo due volte.',
+            'subtitle' => 'Scorri la partita e rivivi i momenti che hanno fatto il match. Che sia un gol all\'ultimo minuto, una parata difficile, uno scambio da analizzare o un errore comico. La registrazione completa è lì per te.',
+            'items' => [
+                '1' => 'Rivedi la tua tecnica e il tuo posizionamento in campo',
+                '2' => 'Festeggia i gol e le grandi giocate con la squadra',
+                '3' => 'Rivivi momenti divertenti e papere con gli amici',
+                '4' => 'Analizza situazioni tattiche con i compagni di squadra',
+                '5' => 'Conserva un archivio personale dei tuoi progressi nel tempo'
+            ]
+        ]
+    ],
+    'contact' => [
+        'hero' => [
+            'eyebrow' => 'Programma Pilota & Contatti',
+            'title' => 'Porta la Tua Struttura nel Futuro',
+            'subtitle' => 'Compila il modulo sottostante per richiedere una struttura pilota o per qualsiasi domanda.'
+        ],
+        'success' => [
+            'title' => 'Richiesta Ricevuta!',
+            'desc' => 'Il nostro team ti contatterà al più presto. Grazie per il tuo interesse.'
+        ],
+        'errors' => [
+            'required' => 'Inserisci il tuo nome e il tuo indirizzo email.',
+            'general' => 'Si è verificato un errore durante l\'invio: '
+        ],
+        'form' => [
+            'name' => 'Nome e Cognome *',
+            'email' => 'Indirizzo Email *',
+            'phone' => 'Numero di Telefono',
+            'facility_name' => 'Nome Struttura / Club',
+            'city' => 'Città',
+            'cityPlaceholder' => 'Milano, Roma, Torino, ecc.',
+            'sport' => 'Tipo di Sport',
+            'sports' => [
+                'padel' => 'Padel',
+                'football' => 'Calcio a 5 / 7 / 11',
+                'both' => 'Entrambi',
+                'other' => 'Altro'
+            ],
+            'court_count' => 'Numero di Campi',
+            'message' => 'Il Tuo Messaggio o Domande',
+            'messagePlaceholder' => 'Scrivi i dettagli della tua struttura o qualsiasi domanda...',
+            'submit' => 'Invia Richiesta'
+        ]
+    ],
+    'searchSettings' => [
+        'codeOnly' => [
+            'eyebrow' => 'ACCESSO RAPIDO CON CODICE',
+            'title' => 'Trova la Tua Partita con il Codice',
+            'subtitle' => 'Inserisci il codice di accesso ricevuto dal personale della struttura.',
+            'desc' => 'Inserisci il codice di accesso per guardare subito la tua partita registrata.',
+            'placeholder' => 'Es: AEXF-BFFG o Codice a 6 Cifre',
+            'button' => 'Trova & Guarda la Partita',
+            'hint' => 'Nessun account, nessuna app. Inserisci il codice e guarda subito.'
+        ]
+    ],
+    'camera_select' => [
+        'label' => 'Angolazione Telecamera:',
+        'camera_n' => '{n}ª Telecamera',
+        'switching' => 'Passaggio alla telecamera...'
+    ]
+];

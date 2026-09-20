@@ -1,0 +1,2888 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kamera</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+<style>
+  :root{
+    --ink:#eef2f7; --dim:#a6b2c2; --faint:#6b7787;
+    --line:rgba(255,255,255,.14); --fill:rgba(255,255,255,.09); --fill-h:rgba(255,255,255,.17);
+    /* Yüzen katmanlar (baloncuk, menü, palet) ortak dil kullanır; ok üçgeninin
+       iç rengi bunun opak karşılığıdır. */
+    --pop:rgba(12,17,25,.92); --pop-ok:#0c1119; --pop-rad:12px;
+    --pop-bosluk:2px;          /* okun ucu ile gösterdiği şey arasındaki mesafe */
+    --pop-golge:0 8px 24px rgba(0,0,0,.5);
+    --amber:#f0a13c; --live:#3ecf8e; --sel:#4aa8ff; --danger:#ff6b6b;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:#05080d}
+  body{font-family:var(--sans);color:var(--ink);overflow:hidden}
+
+  #player{position:relative;width:100%;height:100dvh;background:#05080d;overflow:hidden;user-select:none;
+    touch-action:none}
+  #player:fullscreen{height:100vh}
+  #player.fs{position:fixed;inset:0;width:100%;height:100dvh;z-index:999}
+  video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#05080d;display:block;
+    touch-action:none}
+
+  /* şeritler bilgi katmanının (z:3) üstünde kalmalı, yoksa tünel altında gizlenir */
+  .scrim{position:absolute;left:0;right:0;z-index:4;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+  .scrim>*{pointer-events:auto}
+  .scrim-t{top:0;padding:10px 12px;display:flex;align-items:center;gap:8px;
+    background:linear-gradient(180deg,rgba(3,6,11,.88),rgba(3,6,11,0))}
+  .scrim-b{bottom:0;padding:26px 12px 12px}
+  .scrim-b::before{content:"";position:absolute;left:0;right:0;bottom:0;height:132px;z-index:-1;
+    pointer-events:none;
+    background:linear-gradient(0deg,rgba(3,6,11,.94),rgba(3,6,11,.82) 38%,rgba(3,6,11,0))}
+  #player.idle{cursor:auto}
+  #player.idle .scrim{opacity:1;transform:none}
+  #player.idle .ctrl{opacity:0;pointer-events:none;margin-bottom:-44px}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;
+    border:1px solid var(--line);background:rgba(10,15,23,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border-radius:9px;color:var(--ink);font:13px/1 var(--sans);cursor:pointer;
+    transition:background .14s,border-color .14s;white-space:nowrap}
+  .pill:hover{background:var(--fill-h)}
+  .pill:active{transform:translateY(1px)}
+  .pill:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+  .pill[disabled]{opacity:.35;pointer-events:none}
+  .pill.sq{width:32px;padding:0;justify-content:center;font-size:15px}
+  .pill.go{background:var(--sel);border-color:var(--sel);color:#06121e;font-weight:650}
+  .pill.go:hover{background:#65b7ff}
+  .pill.busy{border-color:var(--amber);color:var(--amber)}
+  /* Menü düğmeleri: içi dolu değil, hafif renkli zemin — kaydı durdur
+     düğmesiyle aynı dil. */
+  .ses-menu .pill.go{background:rgba(74,168,255,.16);border-color:rgba(74,168,255,.55);
+    color:#bfe0ff;font-weight:600}
+  .ses-menu .pill.go:hover{background:rgba(74,168,255,.26)}
+  .pill.sil{background:rgba(255,107,107,.16);border-color:rgba(255,107,107,.55);color:#ffc0c0}
+  .pill.sil:hover{background:rgba(255,107,107,.26);border-color:rgba(255,107,107,.7)}
+  .sp{margin-left:auto}
+
+  .seg{display:flex;gap:3px;padding:3px;border:1px solid var(--line);border-radius:10px;
+    background:rgba(10,15,23,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .seg button{border:0;background:transparent;color:var(--dim);font:600 12.5px/1 var(--sans);
+    padding:7px 12px;border-radius:7px;cursor:pointer;letter-spacing:.02em}
+  .seg button[aria-selected="true"]{background:var(--fill-h);color:var(--ink)}
+  .seg button:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+
+  #player.kilit #dayBtn,#player.kilit #btnLive,#player.kilit #camBtn{opacity:.35;pointer-events:none}
+  #camBtn{gap:7px;max-width:170px}
+  #camLbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* kamera kartları: yan yana ızgara, görüntü büyük, yazı altında */
+  .ck-bilgi{display:flex;flex-direction:column;gap:6px;margin:0 0 13px;font-size:12.5px;color:var(--dim)}
+  .ck-bilgi div{display:flex;justify-content:space-between;gap:14px}
+  .ck-bilgi b{font-weight:600;color:var(--ink);font-family:var(--mono);font-size:12px}
+  .ck-cubuk{height:6px;border-radius:3px;background:rgba(255,255,255,.09);overflow:hidden;margin-bottom:13px}
+  .ck-dolgu{height:100%;width:0;border-radius:3px;background:var(--sel);transition:width .22s}
+  #ciktiModal.hazir .ck-cubuk{display:none}
+  #ckDo{opacity:.35;pointer-events:none}
+  #ciktiModal.hazir #ckDo{opacity:1;pointer-events:auto}
+  /* Kaydırma çubuğu dinle düğmesinin üstüne binmesin: sağda pay bırakılır
+     ve çubuk ince, kendi rengiyle çizilir. */
+  .ses-list{display:flex;flex-direction:column;gap:7px;margin:2px 0 12px;
+    max-height:54vh;overflow-y:auto;overflow-x:hidden;padding-right:8px;
+    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+  .ses-list::-webkit-scrollbar{width:6px}
+  .ses-list::-webkit-scrollbar-track{background:transparent}
+  .ses-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:3px}
+  .ses-list::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.34)}
+  .ses-satir{display:flex;gap:6px}
+  .ses-din{flex:none;width:42px;display:grid;place-items:center;cursor:pointer;
+    border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.04);
+    color:var(--dim);transition:background .14s,color .14s}
+  .ses-din:hover{background:rgba(255,255,255,.09);color:var(--ink)}
+  .ses-din.caliyor{background:rgba(74,168,255,.18);border-color:rgba(74,168,255,.5);color:var(--sel)}
+  .ses-din.hatali{border-color:rgba(255,107,107,.6);color:#ffb3b3}
+  .ses-din.yukleniyor .ic{display:none}
+  .ses-din.yukleniyor::before{content:"";width:15px;height:15px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.22);border-top-color:currentColor;
+    animation:donuyor .8s linear infinite}
+  .ses-sec{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;
+    border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.04);
+    color:var(--ink);font:inherit;text-align:left;font-weight:600;font-size:13.5px;
+    transition:background .14s}
+  .ses-sec:hover{background:rgba(255,255,255,.09)}
+  .ses-sec.yukleniyor{opacity:.6;pointer-events:none}
+  .ses-sec.yukleniyor .ic{display:none}
+  .ses-sec.yukleniyor::before{content:"";flex:none;width:16px;height:16px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.22);border-top-color:currentColor;
+    animation:donuyor .8s linear infinite}
+  .ses-sec.hatali{border-color:rgba(255,107,107,.6);color:#ffb3b3}
+  @keyframes donuyor{to{transform:rotate(360deg)}}
+  .ses-sec .ic{flex:none;color:var(--dim)}
+  /* işaretler ilerleme çubuğunda */
+  /* İşaret artık bir nokta değil, sesin süresi kadar bant. Sol kenar başlangıcı
+     gösterir; sürükleme o kenarı taşır. */
+  /* Bant çubuğun altından geçerken alt ve üstte az görünüyordu; biraz
+     yükseltildi. Üstte kalan pay baloncuk okunun 2px'lik mesafesini bozmayacak
+     kadar bırakılır. */
+  .ses-im{position:absolute;top:50%;min-width:3px;height:17px;margin-top:-8.5px;
+    border-radius:3px;background:rgba(255,214,10,.34);
+    border-left:3px solid #ffd60a;box-sizing:border-box;
+    box-shadow:0 0 0 1px rgba(0,0,0,.45);
+    cursor:grab;z-index:2;touch-action:none}
+  /* görünmez geniş dokunma alanı: ince işaret parmakla da yakalanır */
+  .ses-im::after{content:"";position:absolute;left:-11px;top:50%;
+    width:26px;height:26px;transform:translateY(-50%)}
+  .ses-ad{position:absolute;left:5px;right:3px;top:50%;transform:translateY(-50%);
+    font-size:9.5px;font-weight:700;line-height:1;letter-spacing:.01em;
+    color:#fff3c4;text-shadow:0 1px 2px rgba(0,0,0,.85);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+  .ses-im.dar .ses-ad{display:none}
+  .ses-im.yalniz-onizleme .ses-ad{color:#ffe0bd}
+  .ses-im.tasiniyor{cursor:grabbing;height:21px;margin-top:-10.5px;
+    background:rgba(255,255,255,.4);border-left-color:#fff;
+    box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 8px rgba(255,214,10,.8)}
+  .ses-im:hover{background:rgba(255,255,255,.45)}
+  /* işaretli alana dokununca çıkan seçenekler */
+  .ses-menu{position:absolute;bottom:calc(100% + var(--pop-bosluk) + 5px);z-index:5;display:none;gap:6px;
+    padding:5px;border-radius:var(--pop-rad);transform:translateX(-50%);
+    background:var(--pop);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:var(--pop-golge);white-space:nowrap}
+  .ses-menu.on{display:flex}
+  .ses-menu .pill{height:32px;padding:0 12px;gap:6px}
+  /* ok da baloncuk gibi çerçeveli görünsün: arkada bir tık büyük, çizgi
+     renginde ikinci bir üçgen. */
+  .ses-menu::before{content:"";position:absolute;top:100%;left:var(--ok,50%);margin-left:-6.5px;
+    border-left:6.5px solid transparent;border-right:6.5px solid transparent;
+    border-top:6px solid var(--line)}
+  .ses-menu::after{content:"";position:absolute;top:calc(100% - 1px);left:var(--ok,50%);margin-left:-6px;
+    border-left:6px solid transparent;border-right:6px solid transparent;
+    border-top:6px solid var(--pop-ok)}
+  /* sunucu izni olmadığı için klibe gömülemeyen ses */
+  .ses-im.yalniz-onizleme{background:rgba(255,149,0,.32);border-left-color:#ff9500}
+  .cam-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:2px 0 12px;
+    max-height:56vh;overflow-y:auto;overflow-x:hidden;padding-right:8px;
+    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+  .cam-list::-webkit-scrollbar{width:6px}
+  .cam-list::-webkit-scrollbar-track{background:transparent}
+  .cam-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:3px}
+  .cam-sec{display:block;padding:0;cursor:pointer;overflow:hidden;
+    border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);
+    color:var(--ink);font:inherit;text-align:left;transition:background .14s,border-color .14s}
+  .cam-sec:hover{background:rgba(255,255,255,.09)}
+  .cam-sec.on{border-color:var(--sel);background:rgba(74,168,255,.14)}
+  .cam-sec.on .cam-on::after{content:"";position:absolute;top:6px;right:6px;
+    width:9px;height:9px;border-radius:50%;background:var(--sel);
+    box-shadow:0 0 0 2px rgba(5,8,13,.75)}
+  /* anlık görüntü: yüklenene kadar ikon görünür */
+  .cam-on{position:relative;width:100%;aspect-ratio:16/9;
+    background:rgba(0,0,0,.45);overflow:hidden;display:grid;place-items:center}
+  .cam-on img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    opacity:0;transition:opacity .25s}
+  .cam-on img.yuklendi{opacity:1}
+  .cam-sec .ic{width:22px;height:22px;color:var(--dim)}
+  .cam-sec.on .ic{color:var(--sel)}
+  .cam-ad{display:block;min-width:0;padding:8px 10px 9px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-weight:600;font-size:13px}
+  .cam-alt{font-size:11.5px;color:var(--dim);margin-top:2px;font-weight:400;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* tek kamera ya da dar ekran: tek sütun */
+  @media(max-width:380px){.cam-list{grid-template-columns:1fr}}
+  .canli-btn{font-weight:700;letter-spacing:.06em;font-size:12.5px}
+  #player.canli .canli-btn{background:rgba(62,207,142,.18);border-color:rgba(62,207,142,.5);
+    color:#b8f5d8;pointer-events:none;font-weight:700;letter-spacing:.06em}
+  #player.canli #liveDot{background:var(--live);box-shadow:0 0 0 3px rgba(62,207,142,.18)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+  .dot.on{background:var(--live);box-shadow:0 0 0 3px rgba(62,207,142,.18)}
+  .dot.busy{background:var(--amber);box-shadow:0 0 0 3px rgba(240,161,60,.18);animation:pulse 1.1s infinite}
+  .dot.err{background:var(--danger);box-shadow:0 0 0 3px rgba(255,107,107,.18)}
+  @keyframes pulse{50%{opacity:.35}}
+
+  .tc{font-family:var(--mono);font-size:12.5px}
+  #stamp{color:var(--amber);font-family:var(--mono);font-size:13px}
+
+  select.pill{appearance:none;padding-right:22px;
+    background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+    background-position:calc(100% - 12px) 14px,calc(100% - 8px) 14px;background-size:4px 4px;background-repeat:no-repeat}
+  input[type=date].pill{cursor:text;font-family:var(--mono);font-size:12.5px}
+  input[type=range]{accent-color:var(--sel);width:80px;height:32px}
+
+  #tl{flex-direction:column;gap:4px;margin-bottom:10px;position:relative}
+  #tl{display:flex}
+  .tlbar{display:flex;align-items:center;gap:6px;min-height:42px;max-height:60px;
+    transition:opacity .18s,min-height .26s,max-height .26s}
+  #timeline{width:100%;height:78px;display:block;border-radius:10px;cursor:grab;touch-action:none;
+    background:rgba(8,12,19,.62);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    transition:height .26s}
+  /* Boşta: tünel ince bir şeride iner, üzerinde yalnızca saatler ve kayıt bandı
+     kalır. Kamera/tarih/canlı düğmeleri katlanır. */
+  #player.idle .tlbar{opacity:0;pointer-events:none;min-height:0;max-height:0;
+    overflow:hidden;margin:0}
+  #player.idle #timeline{height:38px}
+  /* Boşta baloncuk kalır: ani bir an için kaydı hemen başlatabilmek gerekiyor.
+     Üst şerit katlandığı için görüntünün üzerine yükselir. */
+  /* Okun ucu her iki durumda da tünelin üst kenarına değsin. Hesap:
+     tünelin üstü = üst şerit yüksekliği + 4px aralık; baloncuk 42px + ok 6px.
+     Normalde şerit 42px (üst = 46 → top -2), boşta şerit katlanır (üst = 4 → top -44). */
+  #bubble{top:calc(-2px - var(--pop-bosluk))}
+  #player.idle #bubble{top:calc(-44px - var(--pop-bosluk))}
+  #bubble{transition:top .26s}
+  @media(prefers-reduced-motion:reduce){
+    .tlbar,#timeline{transition:none}
+  }
+
+  #bubble{position:absolute;left:0;display:none;align-items:center;gap:6px;height:42px;
+    transform:translateX(-50%);padding:5px;border-radius:var(--pop-rad);
+    background:var(--pop);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:var(--pop-golge);white-space:nowrap;z-index:2}
+  #bubble.on{display:flex}
+  /* Ok çerçevesi yalnızca eğik kenarlarda görünsün: dış üçgen sadece yanlardan
+     geniş, derinliği aynı. Aksi halde ucunda da beyaz kalıyor ve baloncuk
+     boşlukta dururken (tünel küçükken) her kenarı çizgili görünüyordu. */
+  /* Çerçeve üçgeni baloncuğun kenarıyla aynı renkte ve yalnızca yarım piksel
+     taşar: tam piksel taşınca eğik kenarda kalın bir kama oluşup gövdenin
+     ince çizgisinden daha belirgin duruyordu. */
+  #bubble::before{content:"";position:absolute;top:100%;left:var(--arrow,50%);transform:translateX(-50%);
+    border-left:6.5px solid transparent;border-right:6.5px solid transparent;
+    border-top:6px solid var(--line)}
+  /* İç üçgen 1px yukarıda: baloncuğun alt kenar çizgisi okun tabanından
+     geçiyordu, bu şekilde tam altında kalıp gizleniyor. */
+  #bubble::after{content:"";position:absolute;top:calc(100% - 1px);left:var(--arrow,50%);
+    transform:translateX(-50%);
+    border-left:6px solid transparent;border-right:6px solid transparent;
+    border-top:6px solid var(--pop-ok)}    /* opak: saydam olsa alttaki çerçeve
+      üçgeni içinden görünür ve okun tamamı çizgili durur */
+  #selText{font-family:var(--mono);font-size:12px;color:var(--dim);padding:0 4px}
+  #selText em{font-style:normal;color:var(--sel)}
+
+
+  /* kayıt önizlemesi: zaman tünelinin yerini alır, ayrı bir ekran hissi verir */
+  #preview{display:none;flex-direction:column;justify-content:space-between;
+    min-height:78px;margin-bottom:10px;       /* tünel tuvaliyle birebir (border-box) */
+    padding:9px 12px;border-radius:10px;
+    background:rgba(9,13,20,.72);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  #player.preview #preview{display:flex}
+  #player.preview #tl,#player.preview #bubble{display:none}
+  .pv-head{display:flex;align-items:center;gap:8px}
+  #pvBack,#pvShare,#pvDl{height:32px}
+  #pvBack{width:32px}
+  .pv-range{font-family:var(--mono);font-size:12.5px;color:var(--sel)}
+  .pv-track{display:flex;align-items:center;gap:10px}
+  .pv-t{font-family:var(--mono);font-size:11.5px;color:var(--dim);white-space:nowrap}
+  .pv-bar{position:relative;flex:1;height:22px;cursor:pointer;touch-action:none;
+    display:flex;align-items:center}
+  .pv-bar::before{content:"";position:absolute;left:0;right:0;height:7px;border-radius:4px;
+    background:rgba(255,255,255,.12)}
+  .pv-fill{position:relative;height:7px;border-radius:4px;background:var(--sel);width:0;
+    box-shadow:0 0 0 1px rgba(74,168,255,.25)}
+  /* Tutamak, "Burayı seç" ikonuyla aynı biçim: dış halka + ortada nokta.
+     Aynı şeyi anlatan iki öğe aynı görünsün. */
+  .pv-fill::after{content:"";position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;border-radius:50%;
+    background:radial-gradient(circle,var(--sel) 0 3.2px,var(--pop-ok) 3.2px 5.6px,var(--sel) 5.6px 100%);
+    box-shadow:0 2px 6px rgba(0,0,0,.5)}
+  .pv-size{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+  /* tüm ikonlar SVG: cihazdan cihaza görünüm değişmez */
+  .ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round}
+  .ic.fill{fill:currentColor;stroke:none}
+  .pill.sq .ic{width:17px;height:17px}
+  #dayBtn .ic{width:15px;height:15px;margin-right:1px}
+  #pvShare,#pvDl,#mPrev,#mNext,#dayBtn{gap:7px}
+  @media(max-width:620px){#pvShare span,#pvDl span{display:none}
+    #pvShare,#pvDl{width:38px;padding:0;justify-content:center}
+    #preview{min-height:66px;padding:6px 10px}
+    .pv-bar{height:18px}
+    .ses-im{height:14px;margin-top:-7px}
+    .ses-im.tasiniyor{height:17px;margin-top:-8.5px}}
+
+  .ctrl{display:flex;align-items:center;gap:6px;
+    transition:opacity .22s ease,margin-bottom .22s ease}
+  .ctrl .tc{color:var(--dim);padding:0 2px;white-space:nowrap}
+  .ctrl .tc b{color:var(--ink);font-weight:500}
+
+  .rdot{width:9px;height:9px;border-radius:50%;background:var(--danger);flex:none;opacity:.65}
+  #btnClip{font-variant-numeric:tabular-nums}
+  #btnClip.on{background:rgba(255,107,107,.16);border-color:rgba(255,107,107,.55);color:#ffc0c0}
+  #btnClip.on .rdot{opacity:1;border-radius:2px;animation:pulse 1s infinite}
+  /* hazırlanırken düğme pasifleşir, dolgu ilerlemeyi gösterir */
+  #btnClip.prep{pointer-events:none;color:var(--dim);border-color:rgba(74,168,255,.45);
+    background:linear-gradient(90deg,rgba(74,168,255,.28) var(--p,0%),rgba(10,15,23,.55) var(--p,0%));
+    transition:background .12s linear}
+  /* kayıt sırasındaki nabız yerine dönen halka: aynı yerde, aynı boyutta */
+  #btnClip.prep .rdot{background:none;opacity:1;border-radius:50%;
+    width:12px;height:12px;border:2px solid rgba(74,168,255,.3);border-top-color:var(--sel);
+    animation:sp .7s linear infinite}
+
+  /* baloncuk iki durumda: boşta (kaydı başlat) · kayıtta (durdur + başlangıç saati) */
+  #bubble.idle #selText{display:none}
+  #bubble.prep #selText{display:inline}
+  #bubble.notready #btnClip{opacity:.45;pointer-events:none}
+  #pvShare{font-variant-numeric:tabular-nums}
+  #player.noshare #pvShare{display:none}
+
+  /* dikey mod uyarısı */
+  #rotate{position:absolute;inset:0;z-index:20;display:none;place-items:center;padding:28px;
+    text-align:center;background:#05080d}
+  #rotate.on{display:grid}
+  #rotate h3{margin:22px 0 8px;font-size:17px;font-weight:600}
+  #rotate p{margin:0 0 20px;color:var(--dim);font-size:14px;line-height:1.55;max-width:30ch}
+  .phone{width:54px;height:90px;border:3px solid var(--amber);border-radius:10px;margin:0 auto;
+    position:relative;animation:tilt 2.4s ease-in-out infinite;transform-origin:50% 50%}
+  .phone::before{content:"";position:absolute;left:50%;top:6px;transform:translateX(-50%);
+    width:16px;height:3px;border-radius:2px;background:var(--amber);opacity:.7}
+  @keyframes tilt{0%,25%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+
+  /* ---- kare işaretleme: yatayda sol dikey ray ---- */
+  #shot{position:absolute;inset:0;z-index:10;display:none;flex-direction:row;
+    background:#05080d;padding:8px;gap:8px;--renk:#ff3b30}
+  #shot.on{display:flex}
+  /* overflow kullanılmaz: baloncuk rayın dışına taşıyor, kırpılır */
+  .rail{display:flex;flex-direction:column;align-items:center;gap:8px;flex:none;
+    max-height:100%;justify-content:center;position:relative}
+  .rail>.tb-back{position:absolute;top:0;left:50%;transform:translateX(-50%)}
+  .stagewrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;position:relative}
+  /* alt şerit: kırpma onayı ve çıktı düğmeleri aynı yeri, aynı ölçüyü paylaşır */
+  .altserit{position:absolute;left:0;right:0;bottom:0;z-index:2;
+    display:flex;align-items:center;gap:10px;padding:14px 12px 12px;
+    background:linear-gradient(0deg,rgba(3,6,11,.9),rgba(3,6,11,.55) 60%,rgba(3,6,11,0))}
+  .altserit .pill{height:36px;gap:7px;padding:0 14px}
+  #ciktiBar{justify-content:flex-end}
+  #player.cropping #ciktiBar{display:none}
+
+  .tb{display:flex;align-items:center;gap:2px;padding:3px;border-radius:12px;
+    background:rgba(255,255,255,.06);border:1px solid var(--line)}
+  .tb.col{flex-direction:column}
+  .tb-sep{width:20px;height:1px;background:var(--line);margin:3px 0}
+  .tb button{width:36px;height:36px;display:grid;place-items:center;cursor:pointer;
+    border:0;background:transparent;color:var(--dim);border-radius:9px;
+    transition:background .14s,color .14s,transform .1s}
+  .tb button:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+  .tb button:active{transform:scale(.92)}
+  .tb button:focus-visible{outline:2px solid var(--sel);outline-offset:-2px}
+  .tool.on{background:rgba(255,255,255,.14);color:var(--ink)}
+  .tool.on .ic{stroke:var(--renk)}            /* etkin araç seçili rengi taşır */
+  .tb-act[disabled]{opacity:.3;pointer-events:none}
+  .tb-act.go{background:var(--sel);color:#06121e}
+  .tb-act.go:hover{background:#65b7ff;color:#06121e}
+  .tb-back{width:38px;height:38px;display:grid;place-items:center;cursor:pointer;
+    border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.06);
+    color:var(--ink);flex:none}
+  .tb-back:hover{background:rgba(255,255,255,.12)}
+
+  /* renk paleti: araç kümesinin sağında dikey baloncuk */
+  .tool-wrap{position:relative;display:flex}
+  /* Palet, araç kümesini saran çerçeveye tutunuyor; düğmenin kendisi 4px
+     içeride (3px iç boşluk + 1px kenar). Mesafe düğmeden ölçülsün diye eklenir,
+     yoksa öteki baloncuklardan daha yakın görünüyor. */
+  .palet{position:absolute;left:calc(100% + var(--pop-bosluk) + 5px + 4px);top:0;z-index:3;
+    display:none;flex-direction:column;align-items:center;gap:10px;
+    padding:11px;border-radius:var(--pop-rad);
+    background:var(--pop);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:var(--pop-golge);
+    animation:paletAc .16s ease}
+  .palet.acik{display:flex}
+  .palet::after{content:"";position:absolute;right:100%;top:var(--ok,20px);
+    transform:translateY(-50%);transition:top .16s ease;
+    border-top:6.5px solid transparent;border-bottom:6.5px solid transparent;
+    border-right:6px solid var(--line)}
+  .palet::before{content:"";position:absolute;right:calc(100% - 1px);top:var(--ok,20px);z-index:1;
+    transform:translateY(-50%);transition:top .16s ease;
+    border-top:6px solid transparent;border-bottom:6px solid transparent;
+    border-right:6px solid var(--pop-ok)}
+  @keyframes paletAc{from{opacity:0;transform:translateX(-6px)}}
+  .sw{width:26px;height:26px;border-radius:50%;cursor:pointer;padding:0;flex:none;
+    background:var(--c);border:1px solid rgba(255,255,255,.25);
+    transition:transform .14s,box-shadow .14s}
+  .sw:hover{transform:scale(1.08)}
+  /* seçili renk büyümez; halka baloncuğun içinde kalacak şekilde içeri çizilir */
+  .sw.on{box-shadow:inset 0 0 0 3px var(--pop-ok),0 0 0 2px var(--c)}
+  .sw:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+  #cropBar{display:none}
+  #player.cropping #cropBar{display:flex}
+  #cropApply{gap:7px}
+  .crop-hint{font-size:12px;color:var(--dim)}
+  #shotCv{flex:1;min-height:0;width:100%;display:block;touch-action:none;cursor:crosshair;
+    border-radius:8px;background:#05080d}
+  @media(max-height:380px){                  /* çok alçak ekranlar: daha da sıkı */
+    .tb button{width:28px;height:28px}
+    .tb-back{width:30px;height:30px}
+    .ic{width:15px;height:15px}
+  }
+  @media(max-height:430px){                  /* alçak yatay ekranlar */
+    #shot{padding:6px;gap:6px}
+    .tb button{width:32px;height:32px}
+    .tb-back{width:34px;height:34px}
+    .palet{gap:7px;padding:8px 7px}
+    .sw{width:23px;height:23px}
+  }
+
+  .modal{position:absolute;inset:0;z-index:6;display:none;place-items:center;padding:20px;
+    background:rgba(3,6,11,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+  .modal.on{display:grid}
+  .sheet{width:min(360px,100%);background:rgba(14,19,28,.97);border:1px solid var(--line);
+    border-radius:calc(var(--pop-rad) + 2px);padding:16px;
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .sheet h3{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint)}
+  .sheet input[type=date]{width:100%;height:40px;padding:0 12px;border-radius:9px;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink);
+    font:14px var(--mono);margin-bottom:10px}
+  .sheet .row{display:flex;gap:8px;margin-bottom:8px}
+  .sheet .row .pill{flex:1;justify-content:center;height:36px}
+
+  .center{position:absolute;inset:0;z-index:3;display:none;place-items:center;padding:24px;text-align:center;
+    background:rgba(3,6,11,.8);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  .center.on{display:grid}
+  .center{padding-bottom:210px}
+  .center h3{margin:14px 0 6px;font-size:16px;font-weight:600}
+  .center p{margin:0 0 16px;max-width:42ch;color:var(--dim);font-size:13.5px;line-height:1.55}
+  .spin{width:34px;height:34px;border:2px solid var(--line);border-top-color:var(--amber);border-radius:50%;
+    animation:sp .8s linear infinite;margin:0 auto}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  @media(max-width:620px){
+    .scrim-t{padding:8px}.scrim-b{padding:22px 8px 8px}
+    #vol{display:none}
+    #timeline{height:66px}.pill{height:34px}.ctrl{gap:4px}
+    #player.idle .ctrl{margin-bottom:-46px}
+    #player.idle #timeline{height:34px}
+    #player.idle #bubble{top:calc(-44px - var(--pop-bosluk))}
+    #selText{display:none}
+    .center{padding-bottom:230px}
+  }
+  @media(max-width:420px){.pill.sq{width:34px}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div id="player" class="live">
+  <video id="video" playsinline webkit-playsinline x-webkit-airplay="deny"
+         disableremoteplayback controlslist="nodownload noremoteplayback"
+         preload="none"></video>
+
+  <div class="scrim scrim-t">
+    <span class="pill" id="statPill" style="pointer-events:none"><i class="dot" id="dot"></i><span id="status">Hazır</span></span>
+    <span class="sp"></span>
+    <span class="pill" style="pointer-events:none"><span id="stamp">--:--:--</span></span>
+  </div>
+
+  <div class="center" id="center">
+    <div>
+      <div id="cIcon" class="spin"></div>
+      <h3 id="cTitle">Bağlanıyor</h3>
+      <p id="cText"></p>
+      <button class="pill go" id="cBtn" style="height:36px">Yeniden dene</button>
+    </div>
+  </div>
+
+  <div class="scrim scrim-b">
+    <div id="tl">
+      <div class="tlbar">
+        <button class="pill" id="camBtn" title="Kamera seç"><svg viewBox="0 0 24 24" class="ic"><path d="M3 7h11v10H3zM14 10l7-3v10l-7-3"/></svg><span id="camLbl"></span></button>
+        <button class="pill" id="dayBtn" title="Tarih seç"><svg viewBox="0 0 24 24" class="ic"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="dayLbl"></span></button>
+        <span class="sp"></span>
+        <button class="pill canli-btn" id="btnLive" title="Canlı yayına dön">
+          <i class="dot" id="liveDot"></i><span id="liveLbl">CANLIYA DÖN</span></button>
+      </div>
+
+      <div id="bubble">
+        <span id="selText"></span>
+        <button class="pill" id="btnClip" title="Kaydı başlat / durdur (R)"><i class="rdot"></i><span id="clipLbl">Kaydı Başlat</span></button>
+      </div>
+      <canvas id="timeline"></canvas>
+    </div>
+
+    <div id="preview">
+      <div class="pv-head">
+        <button class="pill sq" id="pvBack" title="Zaman tüneline dön"><svg viewBox="0 0 24 24" class="ic"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="pv-range" id="pvRange"></span>
+        <span class="pv-size" id="pvSize"></span>
+        <span class="sp"></span>
+        <button class="pill" id="pvShot" title="Kareyi işaretle"><svg viewBox="0 0 24 24" class="ic"><path d="M4 8V6a2 2 0 0 1 2-2h2M20 8V6a2 2 0 0 0-2-2h-2M4 16v2a2 2 0 0 0 2 2h2M20 16v2a2 2 0 0 1-2 2h-2"/><circle cx="12" cy="12" r="3.2"/></svg><span>Kare Yakala</span></button>
+        <button class="pill" id="pvSes" title="Bu ana ses ekle"><svg viewBox="0 0 24 24" class="ic"><path d="M4 9v6h4l5 4V5L8 9H4M17 9a4 4 0 0 1 0 6"/></svg><span>Ses Ekle</span></button>
+        <button class="pill" id="pvShare"><svg viewBox="0 0 24 24" class="ic"><path d="M12 16V4M12 4 8 8M12 4l4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg><span>Paylaş</span></button>
+        <button class="pill go" id="pvDl"><svg viewBox="0 0 24 24" class="ic"><path d="M12 4v12M12 16l-4-4M12 16l4-4M5 19h14"/></svg><span>İndir</span></button>
+      </div>
+      <div class="pv-track">
+        <span class="pv-t" id="pvCur">00:00</span>
+        <div class="pv-bar" id="pvBar"><div class="pv-fill" id="pvFill"></div>
+          <div class="ses-menu" id="sesMenu">
+            <button class="pill go" id="sesSec"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg><span>Burayı seç</span></button>
+            <button class="pill sil" id="sesSil"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg><span>Sil</span></button>
+          </div>
+        </div>
+        <span class="pv-t" id="pvLen">00:00</span>
+      </div>
+    </div>
+
+    <div class="ctrl">
+      <button class="pill sq" id="btnPlay" title="Oynat / Duraklat"><svg viewBox="0 0 24 24" class="ic fill" id="icPlay"><path d="M8 5.5v13l11-6.5z"/></svg></button>
+      <button class="pill sq" id="btnMute" title="Ses"><svg viewBox="0 0 24 24" class="ic"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor" stroke="none"/><g id="icVolOn"><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></g><g id="icVolOff"><path d="M17 9.5l4 5M21 9.5l-4 5"/></g></svg></button>
+      <input type="range" id="vol" min="0" max="1" step=".05" value="1" title="Ses düzeyi">
+      <span class="tc" id="clock">--:--:--</span>
+      <span class="sp"></span>
+      <select class="pill" id="rate" title="Hız">
+        <option value="0.5">0.5×</option><option value="1" selected>1×</option>
+        <option value="2">2×</option><option value="4">4×</option><option value="8">8×</option>
+      </select>
+      <button class="pill sq" id="btnFs" title="Tam ekran"><svg viewBox="0 0 24 24" class="ic"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+  </div>
+
+  <div id="rotate">
+    <div>
+      <div class="phone"></div>
+      <h3>Cihazınızı yatay çevirin</h3>
+      <p>Bu oynatıcı yatay modda çalışır. Telefonunuzu çevirin ya da aşağıdaki düğmeyi kullanın.</p>
+      <button class="pill go" id="rotBtn" style="height:38px">Tam ekran ve çevir</button>
+    </div>
+  </div>
+
+  <div id="shot">
+    <div class="rail">
+      <button class="tb-back" id="shotBack" title="Kapat"><svg viewBox="0 0 24 24" class="ic"><path d="M15 5l-7 7 7 7"/></svg></button>
+
+      <div class="tool-wrap">
+        <div class="tb col">
+          <button class="tool on" data-tool="pen" title="Kalem"><svg viewBox="0 0 24 24" class="ic"><path d="M4 20l4-1 10-10-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>
+          <button class="tool" data-tool="arrow" title="Ok"><svg viewBox="0 0 24 24" class="ic"><path d="M5 19L19 5M19 5h-7M19 5v7"/></svg></button>
+          <button class="tool" data-tool="circle" title="Daire"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8"/></svg></button>
+          <button class="tool" data-tool="rect" title="Dikdörtgen"><svg viewBox="0 0 24 24" class="ic"><rect x="4" y="6" width="16" height="12" rx="1.5"/></svg></button>
+          <span class="tb-sep"></span>
+          <button class="tool" data-tool="crop" title="Kırp"><svg viewBox="0 0 24 24" class="ic"><path d="M7 2v15h15M2 7h15v15"/></svg></button>
+        </div>
+
+        <div class="palet" id="renkler">
+          <button class="sw on" data-color="#ff3b30" style="--c:#ff3b30" title="Kırmızı"></button>
+          <button class="sw" data-color="#ff9500" style="--c:#ff9500" title="Turuncu"></button>
+          <button class="sw" data-color="#ffd60a" style="--c:#ffd60a" title="Sarı"></button>
+          <button class="sw" data-color="#34c759" style="--c:#34c759" title="Yeşil"></button>
+          <button class="sw" data-color="#4aa8ff" style="--c:#4aa8ff" title="Mavi"></button>
+          <button class="sw" data-color="#c77dff" style="--c:#c77dff" title="Mor"></button>
+          <button class="sw" data-color="#ffffff" style="--c:#ffffff" title="Beyaz"></button>
+          <button class="sw" data-color="#0b0e13" style="--c:#0b0e13" title="Siyah"></button>
+        </div>
+      </div>
+
+      <div class="tb col">
+        <button class="tb-act" id="shotUndo" title="Geri al"><svg viewBox="0 0 24 24" class="ic"><path d="M9 7L4 12l5 5"/><path d="M4 12h9a6 6 0 0 1 0 12h-1"/></svg></button>
+        <button class="tb-act" id="shotClear" title="Tümünü sil"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button>
+      </div>
+
+    </div>
+
+    <div class="stagewrap">
+      <canvas id="shotCv"></canvas>
+      <div class="altserit" id="ciktiBar">
+        <button class="pill" id="shotShare"><svg viewBox="0 0 24 24" class="ic"><path d="M12 16V4M12 4 8 8M12 4l4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg><span>Paylaş</span></button>
+        <button class="pill go" id="shotSave"><svg viewBox="0 0 24 24" class="ic"><path d="M12 4v12M12 16l-4-4M12 16l4-4M5 19h14"/></svg><span>Kaydet</span></button>
+      </div>
+      <div class="altserit" id="cropBar">
+        <span class="crop-hint">Alanı sürükleyerek seçin</span>
+        <span class="sp"></span>
+        <button class="pill" id="cropCancel"><svg viewBox="0 0 24 24" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Vazgeç</span></button>
+        <button class="pill go" id="cropApply"><svg viewBox="0 0 24 24" class="ic"><path d="M7 2v15h15M2 7h15v15"/></svg><span>Kırp</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="ciktiModal">
+    <div class="sheet">
+      <h3 id="ckBaslik">Klip hazırlanıyor</h3>
+      <div class="ck-bilgi" id="ckBilgi"></div>
+      <div class="ck-cubuk" id="ckCubuk"><div class="ck-dolgu" id="ckDolgu"></div></div>
+      <div class="row">
+        <button class="pill" id="ckClose">Kapat</button>
+        <button class="pill go" id="ckDo"><svg viewBox="0 0 24 24" class="ic" id="ckIkon"><path d="M12 4v12M12 16l-4-4M12 16l4-4M5 19h14"/></svg><span id="ckEtiket">İndir</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="sesModal">
+    <div class="sheet">
+      <h3>Ses ekle</h3>
+      <div id="sesList" class="ses-list"></div>
+      <div class="row"><button class="pill go" id="sesClose">Kapat</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="camModal">
+    <div class="sheet">
+      <h3>Kamera</h3>
+      <div id="camList" class="cam-list"></div>
+      <div class="row"><button class="pill go" id="camClose">Kapat</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="dayModal">
+    <div class="sheet">
+      <h3>Tarih</h3>
+      <input type="date" id="day">
+      <div class="row">
+        <button class="pill" id="mPrev"><svg viewBox="0 0 24 24" class="ic"><path d="M15 5l-7 7 7 7"/></svg><span>Önceki</span></button>
+        <button class="pill" id="mNext"><span>Sonraki</span><svg viewBox="0 0 24 24" class="ic"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="row">
+        <button class="pill" id="mYest">Dün</button>
+        <button class="pill" id="mToday">Bugün</button>
+      </div>
+      <div class="row"><button class="pill go" id="mClose">Kapat</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ==================================================================
+   YAYIN AYARLARI — düzenlenecek tek yer burasıdır
+   ================================================================== */
+const CFG = {
+  /* Kamera listesi. Her satır kendi sunucusunu ve numarasını taşır; altındaki
+     ortak ayarları (stream, user, pass) gerekirse kendi içinde ezebilir.
+     Tek kamera bırakırsanız seçici düğme kendiliğinden gizlenir. */
+  kameralar: [
+    {ad:"Saha 1", alt:"Kale arkası", base:"https://cloud4.kamerabulutkayit.com", cam:"2"},
+    {ad:"Saha 2", alt:"Yan çizgi",   base:"https://cloud1.kamerabulutkayit.com", cam:"4"}
+  ],
+  stream : "sub",                                  // "sub" (düşük) veya "main" (yüksek)
+  yedekStream: "sub",                              // ana akış çözülemezse buna düşülür ("" = kapalı)
+  user   : "admin",                                // Basic kimlik doğrulama kullanıcısı
+  pass   : "",                                     // parola (boşsa admin: → YWRtaW46)
+
+  audio    : true,        // adrese audio=1 eklensin mi
+  seconds  : true,        // time parametresine saniye de yazılsın mı — klipler için önemli;
+                          // sunucu saniyeyi kabul etmiyorsa false yapın (başlangıç dakikaya yuvarlanır)
+  file     : "varsistemi.mp4",  // indirilen dosya adının kökü
+  liveEsik : 30,          // tünelde "şimdi"ye bu kadar yakınsa canlı yayına geçilir (sn)
+  canliGecikme: 6,        // canlı yayında canlı ucun kaç saniye gerisinde kalınacağı
+                          // düşük değer = az gecikme, çok takılma · yüksek = akıcı ama geç
+  openStream: true,       // gezinmede süresiz akış (parça yok, duraklama yok)
+  chunk    : 3600,        // süresiz akış kapalıysa parça süresi (sn)
+  centerPin: true,        // turuncu pin tünelin ortasında sabit dursun, zaman altından aksın
+  viewSpan : 1*3600,      // açılışta tünelde görünen aralık (sn); 24 saat için 86400
+  maxSpan  : 86400,       // en fazla uzaklaşma (sn) — daha geniş görünüm hem okunmaz
+                          // hem her görünen günü taratıp sunucuyu yorar
+  minSpan  : 120,         // en fazla yakınlaşma (sn)
+  historyDays: 30,        // tünelde geriye gidilebilecek en fazla gün sayısı
+
+  /* --- klip alma (KAYIT sekmesinde: başlat / durdur) --- */
+  clipPre  : 3,           // başlat'a bastığınızda kaç saniye geriden başlasın (tepki payı)
+  clipPost : 0,           // durdur'a bastığınızda sona eklenecek pay (0 = tam durdurulan an)
+  clipMax  : 600,         // en uzun klip (sn) — aşılınca kendiliğinden durur
+  clipZoom : 180,         // kayıt başlayınca tünelin yakınlaşacağı aralık (sn)
+  prefetch : true,        // kayıt durunca dosyayı hemen belleğe al: indirme/paylaşma anında olur
+  autoNext : true,        // parça bitince bir sonrakine geç
+
+  /* --- kayıtlı aralıkların bulunması --- */
+  ranges   : "rpc",       // kayıt aralıkları: "rpc" = zaman tüneli API (msgpack) · "off" = kapalı
+  rpcPath  : "/rpc",      // JSON-RPC uç noktası
+  rpcStream: "video",     // Devline akış adı (sub/main değil)
+  rpcParca : 60,          // ekran başına parça sayısı (üreticinin oynatıcısı da 60 kullanır)
+  rpcMax   : 400,         // tek istekte güvenli üst sınır
+  gapJump  : 60,          // kayıt kesintisi bu kadar kısaysa oynatma sonraki bölüme atlar (sn)
+  tailMs   : 5000,        // görünen aralığın tazelenme sıklığı (ms)
+  urlMode  : "time",      // "time" = time+duration · "epoch" = start+end (saniye damgası)
+
+  serverTime: true,       // açılışta sunucu saatiyle hizalan (cihaz saati kaymışsa kurtarır)
+  sesKok   : "https://varsistemi.com/mobil/sounds/",   // ses dosyalarının bulunduğu dizin
+  /* Listedeki adresler göreliyse sesKok ile birleştirilir. id verilen satırlar
+     dosya gerektirmez, tarayıcıda üretilir. */
+  sesler   : [
+    {ad:"Ve gol",            url:"1774114732_ve-gol.mp3"},
+    {ad:"Vuruyor ve gol",    url:"1774292896_vuruyor-ve-gol.mp3"},
+    {ad:"Gol",               url:"goal.mp3"},
+    {ad:"Penaltı",           url:"1774217787_penalti.mp3"},
+    {ad:"Faul var",          url:"1774433341_faul-var.mp3"},
+    {ad:"Serbest",           url:"1774115616_serbest.mp3"},
+    {ad:"Şimdi korner",      url:"1774432913_simdi-korner.mp3"},
+    {ad:"Aut",               url:"1774433466_aut.mp3"},
+    {ad:"Bir şut",           url:"1774432983_bir-sut.mp3"},
+    {ad:"Uzaktan şut",       url:"1774292923_uzaktan-sut.mp3"},
+    {ad:"Füze",              url:"1774115570_fuze.mp3"},
+    {ad:"Rövaşata",          url:"1774433196_rovansata.mp3"},
+    {ad:"Karambol",          url:"1774433092_karambol.mp3"},
+    {ad:"Kaleci kurtarıyor", url:"1774294311_kaleci-kurtariyor.mp3"},
+    {ad:"Bir pas",           url:"1774293440_bir-pas.mp3"},
+    {ad:"Sağ kanat",         url:"1774293293_sag-kanat.mp3"},
+    {ad:"Sol kanat",         url:"1774293421_sol-kanat.mp3"},
+    {ad:"Orta saha",         url:"1774294077_orta-saha.mp3"},
+    {ad:"Kaleye böyle",      url:"1775419056_kayele-boyle.mp3"},
+    {ad:"Rakip yerde",       url:"1774433328_rakip-yerde.mp3"},
+    {ad:"Sakatlanma",        url:"1774115594_sakatlanma.mp3"},
+    {ad:"Olmadı",            url:"1774293560_olmadi.mp3"},
+    {ad:"Oyun yeniden",      url:"1774294103_oyun-yeniden.mp3"},
+    {ad:"Allahını seven",    url:"1774433572_allahini-seven.mp3"}
+  ],
+  sesSeviye: 0.85,        // eklenen seslerin yüksekliği (0-1)
+  sesliEn  : 1280,        // sesli dosyanın en fazla genişliği (px)
+  sesliFps : 25,          // sesli dosyanın kare hızı
+  sesliKbps: 4000,        // sesli dosyanın görüntü bit hızı (kbps)
+  onizlemeIsit : 4,       // açılışta önden yüklenecek kamera görüntüsü sayısı (0 = kapalı)
+  onizlemeTazeMs: 20000,  // bellekteki görüntü bu süre boyunca taze sayılır (ms)
+
+  landscape: true,        // dikey tutulunca "cihazı çevirin" uyarısı çıksın mı (sadece dokunmatik cihazlar)
+  fit      : "fill",      // "fill" = ekranı tam doldur (oran bozulabilir, kırpma yok)
+                          // "cover" = doldur ama kenarlardan kırp · "contain" = tamamını sığdır
+  poster   : "",          // kapak görseli adresi; boş bırakılırsa yerleşik kapak kullanılır
+  title    : ""           // üst şeritteki etiket; boşsa "cam 2 · sub" yazılır
+};
+/* ================================================================== */
+
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,"0"),
+      clamp=(v,a,b)=>v<a?a:v>b?b:v, P=$("player"), video=$("video");
+
+const b64=s=>{const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x)};
+const hms=s=>{s=Math.max(0,Math.round(s));return pad(s/3600|0)+":"+pad(s%3600/60|0)+":"+pad(s%60)};
+const hm =s=>{s=Math.max(0,Math.round(s));return pad(s/3600|0)+":"+pad(s%3600/60|0)};
+const dur2=s=>{s=Math.max(0,Math.round(s));const h=s/3600|0,m=s%3600/60|0,x=s%60;
+  if(h)return h+" sa "+m+" dk";
+  if(m)return x?m+" dk "+x+" sn":m+" dk";
+  return x+" sn";};
+const mb=b=>b>=1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB";
+const AYLAR=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+const kisaTarih=d=>pad(d.getDate())+" "+AYLAR[d.getMonth()];
+const dISO=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const secOf=d=>d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+/* ===== mutlak zaman modeli =====
+   Tüm zamanlar epoch saniyesi. Gün kavramı yalnızca etiketleme, tarama ve
+   adres üretimi için türetilir; tünel gün sınırı tanımaz. */
+const DAY=86400;
+let saatFarki=0;                       /* sunucu saati ile cihaz saati arasındaki fark */
+const nowSec=()=>Date.now()/1000+saatFarki;
+const dateOf=t=>new Date(Math.round(t)*1000);
+const dayStartOf=t=>{const d=dateOf(t);d.setHours(0,0,0,0);return Math.round(d.getTime()/1000)};
+const todOf=t=>t-dayStartOf(t);                 /* gün içi saniye */
+const hmsAbs=t=>hms(todOf(t));
+const hmAbs=t=>hm(todOf(t));
+
+/* Etkin kamera. Bir alan kameranın kendisinde tanımlıysa o, değilse CFG'deki
+   ortak değer kullanılır. */
+let AK=0;
+const KAMERALAR=()=>CFG.kameralar&&CFG.kameralar.length
+  ? CFG.kameralar
+  : [{ad:CFG.title||"Kamera", base:CFG.base, cam:CFG.cam}];
+const K=alan=>{const c=KAMERALAR()[AK]||{};return c[alan]!==undefined?c[alan]:CFG[alan]};
+let BASE=String(K("base")||"").replace(/\/+$/,"");
+const kameraAdi=()=>{const c=KAMERALAR()[AK]||{};return c.ad||("cam "+K("cam"))};
+
+/* ---------- akış seçimi ve kodek ----------
+   H.265 (HEVC) desteği tarayıcıya bağlı: Safari ve donanım desteği olan
+   Chrome/Edge çözer, diğerleri çözemez. Oynatıcı bunu değiştiremez ama
+   çözülemeyen bir akışta siyah ekranda bırakmak yerine yedek akışa geçer. */
+let akisZorla=null;
+const AKIS=()=>akisZorla||K("stream");
+const hevcVar=(()=>{
+  try{
+    const t=['video/mp4; codecs="hvc1.1.6.L93.B0"','video/mp4; codecs="hev1.1.6.L93.B0"'];
+    const v=document.createElement("video");
+    return t.some(x=>(window.MediaSource&&MediaSource.isTypeSupported&&MediaSource.isTypeSupported(x))
+      ||["probably","maybe"].includes(v.canPlayType(x)));
+  }catch(e){return false}
+})();
+function akisYedegeDus(sebep){
+  const yedek=CFG.yedekStream||"sub";
+  if(!yedek||AKIS()===yedek)return false;      /* zaten yedekteyiz */
+  akisZorla=yedek;
+  stat((sebep||"Akış çözülemedi")+" · "+yedek+" akışına geçildi","err");
+  if(mode==="live")goLive();
+  else if(seg.st)load(seg.st.getTime()/1000,CFG.chunk);
+  return true;
+}
+/* "fill" = ekranı tamamen kapla (oran bozulabilir) · "cover" = kırparak kapla
+   · "contain" = tamamını sığdır (kenarlarda boşluk kalır) */
+video.style.objectFit = ["fill","contain","cover"].includes(CFG.fit) ? CFG.fit : "cover";
+try{video.disableRemotePlayback=true}catch(e){}   /* AirPlay'e aktarımı engelle */
+
+/* kapak: verilmezse kamera adını taşıyan yerleşik bir görsel üretilir */
+const kapakGorseli=()=> CFG.poster || "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">'+
+  '<defs><radialGradient id="g" cx="50%" cy="45%" r="70%">'+
+  '<stop offset="0%" stop-color="#141c28"/><stop offset="100%" stop-color="#05080d"/>'+
+  '</radialGradient></defs>'+
+  '<rect width="1280" height="720" fill="url(#g)"/>'+
+  '<g fill="none" stroke="#f0a13c" stroke-opacity=".55" stroke-width="6">'+
+  '<rect x="524" y="296" width="180" height="112" rx="16"/>'+
+  '<path d="M704 330l68-34v112l-68-34z"/><circle cx="614" cy="352" r="34"/></g>'+
+  '<circle cx="614" cy="352" r="12" fill="#f0a13c" fill-opacity=".7"/>'+
+  '<text x="640" y="470" text-anchor="middle" fill="#8b97a8" '+
+  'font-family="system-ui,sans-serif" font-size="30" letter-spacing="2">'+
+  kameraAdi().replace(/[<>&]/g,"")+'</text></svg>');
+video.poster=kapakGorseli();
+
+/* ---------- adres üretimi ---------- */
+const tParam=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+
+  pad(d.getHours())+":"+pad(d.getMinutes())+(CFG.seconds?":"+pad(d.getSeconds()):"");
+
+function url(o){  /* authorization elle kodlanır: boşluk %20 olmalı, + değil */
+  const q=["authorization="+encodeURIComponent("Basic "+b64(K("user")+":"+K("pass")))];
+  if(CFG.audio)q.push("audio=1");
+  if(o.start!=null){                       /* epoch biçimi: yuvarlama derdi yok */
+    q.push("start="+Math.floor(o.start));q.push("end="+Math.ceil(o.end));
+  }else{
+    if(o.time)q.push("time="+encodeURIComponent(o.time));
+    if(o.dur)q.push("duration="+encodeURIComponent(o.dur));
+  }
+  if(o.dl){q.push("download=1");q.push("filename="+encodeURIComponent(o.name))}
+  return BASE+"/cameras/"+K("cam")+"/streaming/"+AKIS()+"."+(o.live?"m3u8":"mp4")+"?"+q.join("&");
+}
+const liveUrl=()=>url({live:true});
+const fname=(st,d)=>(CFG.file.replace(/\.mp4$/i,"")||"kayit")+"_"+dISO(st)+"_"+
+  pad(st.getHours())+pad(st.getMinutes())+pad(st.getSeconds())+"_"+hms(d).replace(/:/g,"")+".mp4";
+/* CFG.seconds kapalıysa time dakikaya yuvarlanır; kayıp olmasın diye
+   başlangıç geriye çekilip aradaki fark süreye eklenir */
+function recUrl(st,d,dl){
+  if(CFG.urlMode==="epoch"){
+    const a=st.getTime()/1000;
+    return url({start:a,end:a+d,dl:!!dl,name:dl?fname(st,d):null});
+  }
+  let s=st, dur=d;
+  if(!CFG.seconds && st.getSeconds()){     /* dakikaya yuvarlanıyorsa kayıp olmasın */
+    s=new Date(st); s.setSeconds(0,0); dur=d+st.getSeconds();
+  }
+  return url({time:tParam(s),dur:hms(dur),dl:!!dl,name:dl?fname(s,dur):null});
+}
+
+/* ---------- durum ---------- */
+let mode="live",hls=null,hlsHata=0,view={s:0,w:3600},seg={st:null,d:0},sel={a:null,b:null};
+/* focus = tünelin ortasındaki an (mutlak saniye). day yalnızca etiket/modal için türetilir. */
+let focus=nowSec(), day=dateOf(dayStartOf(focus));
+const enErken=()=>nowSec()-(CFG.historyDays||30)*DAY;
+/* Canlı yayının gösterdiği an, duvar saatinden birkaç saniye geridedir. */
+function canliAn(){
+  let g=CFG.canliGecikme||6;
+  if(hls&&typeof hls.latency==="number"&&hls.latency>0&&hls.latency<120)g=hls.latency;
+  return nowSec()-g;
+}
+const canliBolge=t=>t>=nowSec()-(CFG.liveEsik||30);
+const sinirla=t=>clamp(t,enErken(),nowSec());
+function syncDay(){
+  const g=dateOf(dayStartOf(focus));
+  if(+g===+day)return;
+  day=g;$("day").value=dISO(day);$("dayLbl").textContent=kisaTarih(day);
+}
+function resetView(){
+  const w=clamp(CFG.viewSpan||DAY,+CFG.minSpan||120,+CFG.maxSpan||DAY);
+  focus=nowSec();
+  view={w,s:CFG.centerPin?focus-w/2:focus-w*.65};
+  syncDay();
+}
+resetView();
+/* seg.ready olmadan video.currentTime bir önceki parçaya aittir; pin yanlış yerde görünür */
+const head=()=>{
+  if(mode!=="rec"||!seg.st)return null;
+  const t0=seg.st.getTime()/1000;
+  if(!seg.ready)return t0;
+  const ct=video.currentTime||0;
+  return t0+(seg.d!=null?Math.min(ct,seg.d):ct);   /* seg.d yoksa süresiz akış */
+};
+
+const stat=(t,k)=>{
+  $("status").textContent=t;$("dot").className="dot"+(k?" "+k:"");
+  $("statPill").style.display=t?"":"none";      /* boş durum: rozet gizlenir */
+};
+function center(title,text,btn,spin){
+  $("cTitle").textContent=title;$("cText").textContent=text||"";
+  $("cIcon").style.display=spin?"":"none";
+  $("cBtn").style.display=btn?"":"none";if(btn)$("cBtn").textContent=btn;
+  $("center").classList.add("on")}
+const hideCenter=()=>$("center").classList.remove("on");
+/* Düğme metnini yazarken textContent kullanmak içindeki ikonu da siliyordu;
+   yalnızca etiket bölümü güncellenir. */
+function btnYaz(el,m){
+  const sp=el.querySelector("span");
+  if(sp)sp.textContent=m; else el.textContent=m;
+}
+const btnOku=el=>{const sp=el.querySelector("span");return sp?sp.textContent:el.textContent};
+const flash=(el,m)=>{const o=btnOku(el);btnYaz(el,m);setTimeout(()=>btnYaz(el,o),1100)};
+
+/* ---------- canlı ---------- */
+function goLive(){
+  shotClose();P.classList.remove("preview");prepClear();clipCancel();prefetchAbort();
+  sel.a=sel.b=null;restoreSpan();          /* önizlemeden çıkılıyor: işaret ve yakınlık kalmasın */
+  killHls();mode="live";P.classList.add("canli");
+  seg.st=null;$("rate").value="1";video.playbackRate=1;
+  focus=sinirla(canliAn());
+  center("Bağlanıyor","",null,true);stat("Bağlanıyor…","busy");
+  const u=liveUrl();hlsHata=0;
+  if(window.Hls&&Hls.isSupported()){
+    const yukPolitika={maxLoadTimeMs:20000,maxTimeToFirstByteMs:8000,
+      timeoutRetry:{maxNumRetry:5,retryDelayMs:500,maxRetryDelayMs:2000},
+      errorRetry:{maxNumRetry:5,retryDelayMs:500,maxRetryDelayMs:2000}};
+    hls=new Hls({
+      enableWorker:true,                       /* çözümleme ana iş parçacığını meşgul etmesin */
+      lowLatencyMode:false,                    /* düşük gecikme kovalamak takılma üretiyor */
+      liveSyncDuration:CFG.canliGecikme||6,    /* canlı ucun bu kadar gerisinde kal */
+      liveMaxLatencyDuration:Math.max(20,(CFG.canliGecikme||6)*4),
+      maxLiveSyncPlaybackRate:1.08,            /* geride kalınca sessizce hızlanıp yetiş */
+      maxBufferLength:20, maxMaxBufferLength:40,
+      backBufferLength:60,                     /* seyrek tahliye: daha az duraklama */
+      maxBufferHole:.5, nudgeMaxRetry:8,       /* küçük boşluklarda takılıp kalma */
+      capLevelToPlayerSize:true,               /* ekrandan büyük çözünürlük indirilmez */
+      manifestLoadPolicy:{default:yukPolitika},
+      playlistLoadPolicy:{default:yukPolitika},
+      fragLoadPolicy:{default:Object.assign({},yukPolitika,{maxLoadTimeMs:120000})}
+    });
+    hls.loadSource(u);hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,()=>{hideCenter();stat("","on");play()});   /* CANLI rozeti zaten var */
+    hls.on(Hls.Events.FRAG_BUFFERED,()=>{hlsHata=0});   /* akış düzeldi: sayaç sıfırlanır */
+    hls.on(Hls.Events.ERROR,(_,d)=>{
+      if(!d.fatal)return;
+      if(d.type===Hls.ErrorTypes.NETWORK_ERROR){
+        stat("Ağ hatası","err");
+        hlsHata++;
+        if(hlsHata>4){goLive();return}          /* üst üste hata: baştan kur */
+        hls.startLoad();
+      }
+      else if(d.type===Hls.ErrorTypes.MEDIA_ERROR){
+        const kodek=/codec|incompatible|unsupported/i.test((d.details||"")+" "+((d.error&&d.error.message)||""));
+        if(kodek&&akisYedegeDus("Bu kamera H.265 yayınlıyor olabilir"))return;
+        stat("Çözücü hatası","err");
+        try{hls.config.maxBufferLength=15;hls.config.maxMaxBufferLength=30}catch(e){}
+        hls.recoverMediaError();                /* zayıf bağlantıda arabelleği küçült */
+      }
+      else{stat("Bağlanamadı","err");
+        center("Canlı akış açılamadı","Sunucuya ulaşılamıyor ya da tarayıcı CORS nedeniyle engelliyor. Dosyanın başındaki CFG bloğunu kontrol edin.","Yeniden dene",false)}});
+  }else if(video.canPlayType("application/vnd.apple.mpegurl")){
+    video.src=u;video.addEventListener("loadedmetadata",()=>{hideCenter();stat("","on");play()},{once:true});
+  }else{stat("Desteklenmiyor","err");center("HLS desteklenmiyor","Bu tarayıcı HLS oynatamıyor.",null,false)}
+}
+const killHls=()=>{if(hls){hls.destroy();hls=null}video.removeAttribute("src");video.load()};
+const play=()=>video.play().then(wakeOn).catch(()=>{video.muted=true;syncMute();video.play().then(wakeOn).catch(()=>{})});
+
+/* ---------- kayıt ---------- */
+function goRec(){
+  killHls();mode="rec";P.classList.remove("canli");
+  seg.st=null;stat("Kayıt");
+  idle(false);requestAnimationFrame(fit);setTimeout(fit,60);
+  taraGorunen();
+}
+/* Tünel konumuna göre kaynak seç: uçtaysa canlı, gerideyse kayıt. */
+function kaynakSec(t){
+  if(canliBolge(t)){if(mode!=="live")goLive();return}
+  if(mode==="live")goRec();
+  if(!hasRec(t)){releaseSeg();stat("Bu anda kayıt yok","err");
+    center("Bu anda kayıt yok","Zaman tünelini kaydırıp turuncu çizgiyi yeşil işaretli bir bölüme getirin.",null,false);return}
+  load(t,CFG.chunk);
+}
+/* locked=true ise parça bitince sonrakine geçilmez (işaretli aralık oynatımı) */
+function load(t,d,locked){
+  t=sinirla(t);
+  dropBlobUrl();killHls();
+  if(!locked&&CFG.openStream){                    /* gezinme: süresiz akış, parça sınırı yok */
+    seg={st:dateOf(t),d:null,locked:false,ready:false};
+    center("Yükleniyor","",null,true);stat("Yükleniyor…","busy");
+    sonKontrol=0;
+    /* Arşiv sürekli mp4 olarak akar: segment üretimi beklenmediği için
+       takılma olmaz, hls.js devreye girmez. */
+    video.src=url({time:tParam(seg.st)});video.load();play();
+    selUI();draw();return;
+  }
+  d=Math.max(1,Math.min(d,nowSec()-t));           /* klip: tam sınırlarıyla */
+  seg={st:dateOf(t),d:Math.round(d),locked:!!locked,ready:false};
+  center("Yükleniyor","",null,true);stat("Yükleniyor…","busy");
+  video.src=recUrl(seg.st,d,false);video.load();play();selUI();draw();
+}
+video.addEventListener("loadeddata",()=>{if(mode==="rec"){seg.ready=true;hideCenter();stat("Oynatılıyor","on")}});
+video.addEventListener("seeked",pvSync);
+video.addEventListener("timeupdate",pvSync);
+video.addEventListener("error",()=>{
+  /* kaynak biçimi desteklenmiyor: büyük olasılıkla H.265 */
+  if(video.error&&video.error.code===4&&!blobUrl&&akisYedegeDus("Bu akış tarayıcıda çözülemiyor"))return;
+  if(mode!=="rec"||!seg.st)return;
+  if(blobUrl){                                   /* bellekteki dosya açılamadı: sunucuya dön */
+    dropBlobUrl();stat("Bellekten oynatılamadı","err");
+    load(seg.st.getTime()/1000,seg.d||CFG.chunk,seg.locked);return;
+  }
+  if(preparing)return;
+  /* sunucu görüntü döndürmedi: bandı düzelt ki tünel gerçeği göstersin */
+  const t0=seg.st.getTime()/1000;
+  bosIsaretle(t0,t0+60);
+  draw();
+  stat("Kayıt yok","err");
+  center("Bu aralıkta kayıt yok","Sunucu bu zaman için görüntü döndürmedi. Başka bir saat ya da tarih deneyin.",null,false)});
+video.addEventListener("ended",()=>{
+  if(mode!=="rec"||!seg.st)return;
+  if(clip){clipStop();return}                                 /* parça bitti: kaydı kapat */
+  if(seg.locked){stat("İşaretli aralık bitti","on");return}   /* aralık dışına taşma */
+  if(!CFG.autoNext)return;
+  const n=seg.st.getTime()/1000+seg.d;
+  if(canliBolge(n)){focus=sinirla(canliAn());goLive();return}   /* uca yetişti: canlı */
+  if(araligiBul(n+1)){load(n,CFG.chunk);return}      /* aynı bölüm sürüyor */
+  const sonra=sonrakiAralik(n);
+  if(sonra&&sonra.a-n<=(+CFG.gapJump||60)){load(sonra.a,CFG.chunk);return}  /* kısa kesinti */
+  releaseSeg();                                      /* kayıt burada bitiyor */
+  stat("Bu bölüm bitti","err");
+  center("Kayıt burada bitiyor",
+    "Zaman tünelini kaydırarak yeşil işaretli başka bir bölüme geçin.",null,false);
+});
+
+/* ---------- kayıtlı aralıklar (mutlak zaman) ----------
+   Her gün ayrı taranır ama sonuçlar mutlak saniye olarak saklanır; çizim ve
+   sorgulama gün tanımaz. Görünen pencereye giren günler kendiliğinden taranır. */
+let tailT=null, scanTimer=null;
+let rangeCache={};                 /* dISO -> [{a,b}] mutlak */
+
+let mergeTol=2;                 /* bitişik parçaları birleştirme toleransı (sn) */
+const merge=a=>{
+  a=a.filter(r=>r.b>r.a).sort((x,y)=>x.a-y.a);const o=[];
+  for(const r of a){const l=o[o.length-1];
+    if(l&&r.a<=l.b+(mergeTol||2))l.b=Math.max(l.b,r.b);else o.push({a:r.a,b:r.b})}
+  return o;
+};
+/* tüm bilinen günlerin aralıkları tek listede */
+/* Liste her çizim karesinde yeniden kurulup sıralanıyordu; gün sayısı arttıkça
+   ana iş parçacığını meşgul edip oynatmada takılmaya yol açar. Sürüm damgasıyla
+   önbelleğe alınır, yalnızca veri değişince yeniden kurulur. */
+let rangesSurum=0, rangesDuz=[], rangesDuzSurum=-1;
+const rangesDegisti=()=>{rangesSurum++};
+function tumRanges(){
+  if(rangesDuzSurum!==rangesSurum){
+    const o=[];for(const k in rangeCache)for(const r of rangeCache[k])o.push(r);
+    rangesDuz=o.sort((x,y)=>x.a-y.a);rangesDuzSurum=rangesSurum;
+  }
+  return rangesDuz;
+}
+let kapsanan=[];                     /* zaman tünelinin sorgulanmış aralıkları */
+function kapsaEkle(a,b){
+  kapsanan=merge(kapsanan.concat([{a,b}]));
+  if(kapsanan.length>200)kapsanan=kapsanan.slice(-200);
+}
+const bilinen=t=>kapsanan.some(r=>t>=r.a&&t<=r.b);
+const araligiBul=t=>tumRanges().find(r=>t>=r.a-1&&t<r.b)||null;
+const sonrakiAralik=t=>tumRanges().find(r=>r.a>=t-1)||null;
+const hasRec=t=>!bilinen(t)||tumRanges().some(r=>t>=r.a-1&&t<=r.b+1);
+
+/* --- JSON yanıtını çözümle (alan adları esnek) --- */
+/* ---------- zaman tüneli API'si (msgpack) ----------
+   Sunucu JSON kabul etmiyor; kendi arayüzü de msgpack kullanıyor ve içerik
+   türünü tırnak içinde gönderiyor. Kayıt aralıklarının tek kaynağı budur:
+   mp4 yoklaması bu sunucuda kayıt olmayan anlar için de görüntü döndürdüğü
+   için güvenilir değil. */
+/* küçük msgpack kodlayıcı/çözücü */
+function mpEnc(v){
+  const p=[];
+  const u8=n=>p.push(n&255);
+  const yaz=(...b)=>b.forEach(u8);
+  const u16=n=>yaz(n>>8,n);
+  const u32=n=>yaz(n>>>24,n>>>16,n>>>8,n);
+  const metin=s=>{
+    const b=new TextEncoder().encode(s);
+    if(b.length<32)u8(0xa0|b.length); else if(b.length<256)yaz(0xd9,b.length);
+    else if(b.length<65536){u8(0xda);u16(b.length)} else {u8(0xdb);u32(b.length)}
+    b.forEach(u8);
+  };
+  const kod=v=>{
+    if(v===null||v===undefined)return u8(0xc0);
+    if(v===true)return u8(0xc3);
+    if(v===false)return u8(0xc2);
+    if(typeof v==="number"){
+      if(Number.isInteger(v)){
+        if(v>=0){
+          if(v<128)return u8(v);
+          if(v<256)return yaz(0xcc,v);
+          if(v<65536){u8(0xcd);return u16(v)}
+          u8(0xce);return u32(v);
+        }
+        if(v>=-32)return u8(0xe0|(v+32));
+        if(v>=-128)return yaz(0xd0,v);
+        if(v>=-32768){u8(0xd1);return u16(v)}
+        u8(0xd2);return u32(v);
+      }
+      u8(0xcb);
+      const b=new Uint8Array(8);new DataView(b.buffer).setFloat64(0,v);
+      return b.forEach(u8);
+    }
+    if(typeof v==="string")return metin(v);
+    if(Array.isArray(v)){
+      if(v.length<16)u8(0x90|v.length); else if(v.length<65536){u8(0xdc);u16(v.length)} else {u8(0xdd);u32(v.length)}
+      return v.forEach(kod);
+    }
+    const k=Object.keys(v);
+    if(k.length<16)u8(0x80|k.length); else if(k.length<65536){u8(0xde);u16(k.length)} else {u8(0xdf);u32(k.length)}
+    k.forEach(x=>{metin(x);kod(v[x])});
+  };
+  kod(v);
+  return new Uint8Array(p);
+}
+function mpDec(buf){
+  const b=buf instanceof Uint8Array?buf:new Uint8Array(buf);
+  const dv=new DataView(b.buffer,b.byteOffset,b.byteLength);
+  let i=0;
+  const str=n=>{const s=new TextDecoder().decode(b.subarray(i,i+n));i+=n;return s};
+  const oku=()=>{
+    const c=b[i++];
+    if(c<0x80)return c;
+    if(c<0x90){const n=c&15,o={};for(let j=0;j<n;j++){const k=oku();o[k]=oku()}return o}
+    if(c<0xa0){const n=c&15,a=[];for(let j=0;j<n;j++)a.push(oku());return a}
+    if(c<0xc0)return str(c&31);
+    if(c===0xc0)return null;
+    if(c===0xc2)return false;
+    if(c===0xc3)return true;
+    if(c===0xc4){const n=b[i++];const r=b.subarray(i,i+n);i+=n;return r}
+    if(c===0xc5){const n=dv.getUint16(i);i+=2;const r=b.subarray(i,i+n);i+=n;return r}
+    if(c===0xc6){const n=dv.getUint32(i);i+=4;const r=b.subarray(i,i+n);i+=n;return r}
+    if(c===0xca){const v=dv.getFloat32(i);i+=4;return v}
+    if(c===0xcb){const v=dv.getFloat64(i);i+=8;return v}
+    if(c===0xcc)return b[i++];
+    if(c===0xcd){const v=dv.getUint16(i);i+=2;return v}
+    if(c===0xce){const v=dv.getUint32(i);i+=4;return v}
+    if(c===0xcf){const v=Number(dv.getBigUint64(i));i+=8;return v}
+    if(c===0xd0){const v=dv.getInt8(i);i+=1;return v}
+    if(c===0xd1){const v=dv.getInt16(i);i+=2;return v}
+    if(c===0xd2){const v=dv.getInt32(i);i+=4;return v}
+    if(c===0xd3){const v=Number(dv.getBigInt64(i));i+=8;return v}
+    if(c===0xd9)return str(b[i++]);
+    if(c===0xda){const n=dv.getUint16(i);i+=2;return str(n)}
+    if(c===0xdb){const n=dv.getUint32(i);i+=4;return str(n)}
+    if(c===0xdc){const n=dv.getUint16(i);i+=2;const a=[];for(let j=0;j<n;j++)a.push(oku());return a}
+    if(c===0xdd){const n=dv.getUint32(i);i+=4;const a=[];for(let j=0;j<n;j++)a.push(oku());return a}
+    if(c===0xde){const n=dv.getUint16(i);i+=2;const o={};for(let j=0;j<n;j++){const k=oku();o[k]=oku()}return o}
+    if(c===0xdf){const n=dv.getUint32(i);i+=4;const o={};for(let j=0;j<n;j++){const k=oku();o[k]=oku()}return o}
+    if(c>=0xe0)return c-256;
+    throw new Error("msgpack 0x"+c.toString(16));
+  };
+  return oku();
+}
+
+let rpcYok=false, rpcHata="", sonBirim=0, rpcTavan=0;
+/* Kamera değişince yoldaki istekler hâlâ eski sunucudan dönüyor. Nesil sayacı
+   ile geç gelen yanıtlar yok sayılır; yoksa eski kameranın kayıt aralıkları
+   yeni kameranın tüneline yazılır. */
+let kamNesil=0;   /* sunucunun döndürdüğü en fazla parça */
+async function rpc(govde){
+  const u=BASE+(CFG.rpcPath||"/rpc")+"?authorization="+
+    encodeURIComponent("Basic "+b64(K("user")+":"+K("pass")))+
+    "&content-type=%27application/x-msgpack%27";
+  const r=await fetch(u,{method:"POST",credentials:"omit",body:mpEnc(govde)});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=mpDec(new Uint8Array(await r.arrayBuffer()));
+  if(j&&j.error)throw new Error(j.error.message||"rpc");
+  return j&&j.result;
+}
+/* Sunucu saatiyle hizala. Tüm zaman hesabı cihazın saatine dayanıyor; kayma
+   varsa tünel, kayıt aralıkları ve klip sınırları hep o kadar yanlış olur. */
+async function sunucuSaati(){
+  if(CFG.serverTime===false||CFG.ranges!=="rpc")return;
+  const nesil=kamNesil;
+  try{
+    const res=await rpc({method:"get_server_info",version:12});
+    if(nesil!==kamNesil)return;                 /* kamera değişti: yanıt geçersiz */
+    const lt=res&&res.info&&res.info.local_time;
+    if(!Array.isArray(lt)||lt.length<6)return;
+    const d=new Date(lt[0],lt[1]-1,lt[2],lt[3],lt[4],lt[5],lt[6]||0);
+    const fark=d.getTime()/1000-Date.now()/1000;
+    if(!isFinite(fark)||Math.abs(fark)>86400)return;    /* saçma değer: yok say */
+    if(Math.abs(fark)>5){                               /* küçük sapmalar önemsiz */
+      saatFarki=fark;
+      rangeCache={};kapsanan=[];sonBirim=0;rangesDegisti();
+      focus=sinirla(focus);resetView();
+      if(mode==="live")goLive(); else draw();
+      rpcTazele();
+    }
+  }catch(e){/* alınamazsa cihaz saati kullanılmaya devam eder */}
+}
+
+const RPC_BIRIM=[1,5,10,15,30,60,240,360,720,1440];
+async function rpcAralik(t0,t1){
+  t0=Math.max(enErken(),t0);t1=Math.min(nowSec(),t1);
+  if(t1-t0<30)return null;
+  /* Çözünürlük ekran başına ~60 parça (üreticinin kuralı); istek üç ekranı
+     kapsadığı için parça sayısı ~180 olur. */
+  let unit=RPC_BIRIM.find(x=>x>=view.w/(+CFG.rpcParca||60))||1440;
+  while((t1-t0)/unit>(+CFG.rpcMax||400)){
+    const n=RPC_BIRIM[RPC_BIRIM.indexOf(unit)+1];
+    if(!n)break; unit=n;
+  }
+  /* Parça ızgarasını mutlak zamana hizala: pencere kaydıkça ızgara kaysaydı
+     aynı kaydın sınırları her tazelemede oynardı. */
+  /* Sunucu bir istekte sınırlı sayıda parça döndürüyor. Sınır öğrenildikten
+     sonra pencere ona göre daraltılır; yoksa bandın sonu erken kesilir ve
+     pencere kaydıkça sağa sola oynar. */
+  if(rpcTavan){
+    const genislik=rpcTavan*unit;
+    const orta=view.s+view.w/2;
+    t0=Math.max(t0,orta-genislik/2);
+    t1=Math.min(t1,t0+genislik);
+  }
+  t0=Math.floor(t0/unit)*unit;
+  t1=Math.min(nowSec(),Math.ceil(t1/unit)*unit);
+  if(t1-t0<unit)return null;
+  const L=d=>[d.getFullYear(),d.getMonth()+1,d.getDate(),d.getHours(),d.getMinutes(),d.getSeconds()];
+  const res=await rpc({method:"archive.get_frames_timeline",version:13,params:{
+    start_time:L(dateOf(t0)), end_time:L(dateOf(t1)), unit_len:unit,
+    channel:+K("cam"), stream:K("rpcStream")||"video"}});
+  const dizi=(res&&res.timeline)||[];
+  const beklenen=Math.round((t1-t0)/unit);
+  if(dizi.length&&dizi.length<beklenen-1&&(!rpcTavan||dizi.length<rpcTavan))rpcTavan=dizi.length;
+  const kapsananSon=Math.min(t1,t0+dizi.length*unit);
+  /* Çözünürlük değişimini yanıt geldikten sonra uygula: eski bant, yenisi
+     hazır olana kadar ekranda kalsın, boş kare görünmesin. */
+  if(unit!==sonBirim){rangeCache={};kapsanan=[];sonBirim=unit;}
+  mergeTol=Math.max(2,unit*1.5);
+  const out=[];
+  for(let i=0;i<dizi.length;i++){
+    if(!(dizi[i]>0))continue;
+    const a=t0+i*unit;let k=i;
+    while(k+1<dizi.length&&dizi[k+1]>0)k++;
+    out.push({a,b:Math.min(t0+(k+1)*unit,kapsananSon)});
+    i=k;
+  }
+  return {araliklar:merge(out),t0,t1:kapsananSon};
+}
+/* Tek tazeleyici, tek çözünürlük: görünen aralık ve iki yanına birer ekran. */
+let rpcMesgul=false;
+async function rpcTazele(){
+  if(CFG.ranges!=="rpc"||rpcYok||rpcMesgul)return;
+  rpcMesgul=true;
+  const nesil=kamNesil;
+  try{
+    const s=await rpcAralik(view.s-view.w, view.s+view.w*2);
+    if(nesil!==kamNesil)return;                 /* kamera değişti: yanıt geçersiz */
+    if(s){
+      for(const k in rangeCache)rangeCache[k]=kirp(rangeCache[k],s.t0,s.t1);
+      for(const x of s.araliklar){
+        const k=dISO(dateOf(dayStartOf(x.a)));
+        rangeCache[k]=merge((rangeCache[k]||[]).concat([x]));
+      }
+      kapsaEkle(s.t0,s.t1);rangesDegisti();draw();
+    }
+  }catch(e){
+    rpcYok=true;rpcHata=(e&&e.message)||"hata";
+    stat("Kayıt bilgisi alınamadı","err");            /* uydurma yerine dürüst boşluk */
+  }finally{rpcMesgul=false}
+}
+
+/* verilen pencereyi aralık listesinden çıkarır */
+function kirp(list,t0,t1){
+  const out=[];
+  for(const r of (list||[])){
+    if(t1<=r.a||t0>=r.b){out.push(r);continue}
+    if(r.a<t0-1)out.push({a:r.a,b:t0});
+    if(r.b>t1+1)out.push({a:t1,b:r.b});
+  }
+  return out;
+}
+
+function onbellekBuda(){
+  const sinir=dayStartOf(enErken())-DAY;
+  let degisti=false;
+  for(const k in rangeCache){
+    const g=Math.round(new Date(k+"T00:00:00").getTime()/1000);
+    if(isFinite(g)&&g<sinir){delete rangeCache[k];degisti=true}
+  }
+  if(degisti)rangesDegisti();
+}
+
+/* Görünüm değiştiğinde kayıt aralıklarını tazele (kaydırma bitince). */
+let sonPencere="";
+function taraGorunen(){
+  if(CFG.ranges!=="rpc"||rpcYok)return;
+  const key=Math.round(view.s/30)+"|"+Math.round(view.w);
+  if(key===sonPencere)return;
+  sonPencere=key;
+  clearTimeout(scanTimer);
+  scanTimer=setTimeout(()=>{onbellekBuda();rpcTazele()},300);
+}
+
+/* Tarama bittiği anda kayıt sürüyorduysa, bant "şimdi"ye kadar büyümeye devam eder.
+   Dakikada bir kısa bir istekle kaydın hâlâ akıp akmadığı doğrulanır. */
+/* ---------- bandın ucunu güncel tutma ----------
+   Karmaşık pencere/doğrulama mantığı yerine tek kural: bugünü belirli aralıklarla
+   yeniden tara. Sunucunun kısa pencere ya da ince çözünürlük desteklemesi gerekmez. */
+function tazeleBaslat(){
+  clearInterval(tailT);
+  /* Görünen aralık sık ve ince, gün taraması seyrek ve kaba tazelenir. */
+  tailT=setInterval(rpcTazele,Math.max(2000,+CFG.tailMs||5000));
+  rpcTazele();
+}
+/* Oynatma başarısız olursa o aralığı önbellekten düş: tünel yalan söylemesin. */
+function bosIsaretle(t0,t1){
+  const k=dISO(dateOf(dayStartOf(t0))), list=rangeCache[k];
+  if(!list)return;
+  rangeCache[k]=kirp(list,t0,t1);rangesDegisti();
+}
+
+/* ---------- klip alma ---------- */
+/* Yalnızca KAYIT sekmesinde. Başlat'a basınca oynatılan andaki zaman işaretlenir,
+   görüntü akmaya devam eder; Durdur'a basınca aralık seçim olarak belirir. */
+let clip=null;
+
+/* ekranda görünen karenin o güne ait saati */
+function shownAt(){
+  if(mode==="live")return dateOf(canliAn());   /* canlıda gösterilen kare */
+  const p=head();
+  return p==null?null:dateOf(p);
+}
+
+function clipToggle(){
+  if(mode!=="rec"||preparing)return;
+  if(clip)clipStop(); else clipBegin();
+}
+function clipBegin(){
+  /* zaman akmıyorsa kayıt yanlış noktadan başlar: parça yüklenmemiş, duraklatılmış
+     ya da sonuna gelmişse (oynat'a basınca baştan sarar) engellenir */
+  if(video.paused){stat("Önce oynatmayı başlatın","err");return}
+  if(mode!=="live"){
+    if(!seg.st||!seg.ready||video.readyState<2){stat("Görüntü henüz yüklenmedi","err");return}
+    if(video.ended){stat("Parça bitti · yeniden başlatın","err");return}
+  }
+  const t=shownAt();
+  if(!t){stat("Önce bir kayıt açın","err");return}
+  clip={t0:new Date(t.getTime()-(CFG.clipPre||0)*1000)};
+  cv.style.cursor="default";prefetchAbort();restoreSpan();P.classList.remove("preview");prepClear();
+  if(prevSpan==null)prevSpan=view.w;                  /* kullanıcının ölçeği saklanır */
+  view.w=clamp(CFG.clipZoom||180,+CFG.minSpan||120,+CFG.maxSpan||DAY);
+  const t0=clip.t0.getTime()/1000;
+  sel={a:t0,b:t0+1};
+  stat("Kayıt alınıyor","busy");selUI();draw();
+}
+function clipStop(){
+  const t=shownAt()||dateOf(clip.t0.getTime()/1000+1);
+  const a=clip.t0, b=new Date(t.getTime()+(CFG.clipPost||0)*1000);
+  clip=null;cv.style.cursor="grab";
+  if(b-a<2000){sel.a=sel.b=null;stat("Kayıt çok kısa","err");selUI();draw();return}
+  showClip(a,b);
+}
+/* aralığı tünelde seçim olarak göster */
+let prevSpan=null;                 /* önizleme öncesi kullanıcının seçtiği yakınlık */
+function restoreSpan(){
+  if(prevSpan==null)return;
+  view.w=prevSpan;prevSpan=null;
+  
+}
+function showClip(a,b){
+  const s=a.getTime()/1000, e=Math.max(s+1,b.getTime()/1000);
+  sel={a:s,b:e};
+  if(prevSpan==null)prevSpan=view.w;                  /* prefetch kapalıyken de geri dönebilelim */
+  if(!CFG.centerPin)view.s=(s+e)/2-view.w/2;
+  const st=dateOf(s), len=Math.round(e-s);
+  if(CFG.prefetch){
+    /* "Durdur" → doğrudan "Bekleyin": aradaki durum hiç çizilmez.
+       Oynatma bu sırada kesilmez; önizleme dosya hazır olunca açılır. */
+    preparing=true;prepMeta={st,len};
+    try{video.pause()}catch(err){}      /* akış ile indirme aynı anda bant tüketmesin */
+    prepStart();draw();
+    prefetchClip(st,len);
+  }else{
+    selUI();draw();hideCenter();
+    load(s,len,true);                                /* işaretin başından oynat, sonunda dur */
+    enterPreview();
+    stat("İşaretli aralık · "+dur2(e-s),"on");
+  }
+}
+$("btnClip").onclick=clipToggle;
+
+/* oynatılan parçayı bırak: yoksa focus bir sonraki karede oynatma konumuna geri sıçrar */
+function releaseSeg(){
+  clipCancel();dropBlobUrl();prepClear();
+  seg={st:null,d:0,locked:false,ready:false};
+  try{video.pause()}catch(e){}
+  video.removeAttribute("src");video.load();
+}
+function clipCancel(){
+  if(!clip)return;
+  clip=null;cv.style.cursor="grab";sel.a=sel.b=null;prefetchAbort();restoreSpan();selUI();
+}
+/* ---------- kayıt sonu bekçisi ----------
+   Süresiz akışta "ended" olayı gelmez; kaydın bittiği yeri kendimiz izleriz.
+   Aralık bilgisi taramadan geldiği için dakika altı hassasiyettedir. */
+let sonKontrol=0;
+function bekci(){
+  if(mode!=="rec"||!seg.st||seg.locked||seg.d!=null)return;
+  if(video.paused||!seg.ready||clip||preparing||kayan)return;
+  const p=head();if(p==null)return;
+  if(canliBolge(p)){focus=sinirla(canliAn());goLive();return}   /* uca yetişti: canlı */
+  const r=araligiBul(p);
+  if(!r)return;                                 /* aralık bilinmiyorsa karışma */
+  if(p<r.b-.5)return;                           /* bölüm sürüyor */
+  if(Date.now()-sonKontrol<1500)return;         /* arka arkaya tetiklenmesin */
+  sonKontrol=Date.now();
+  const sonra=sonrakiAralik(r.b);
+  if(sonra&&sonra.a-r.b<=(+CFG.gapJump||60)){load(sonra.a,0);return}   /* kısa kesinti: atla */
+  try{video.pause()}catch(e){}
+  stat("Bu bölüm bitti","err");
+  center("Kayıt burada bitiyor",
+    "Zaman tünelini kaydırarak yeşil işaretli başka bir bölüme geçin.",null,false);
+}
+
+/* ---------- saat ---------- */
+/* döngü, tuval ve diğer tanımlar hazır olduktan sonra en altta başlatılır */
+function tick(){
+  bekci();
+  if(clip){
+    const p=head();
+    const u=mode==="live"?canliAn():p;
+    if(u!=null)sel.b=Math.max(sel.a+1,u);            /* işaret zamanla birlikte büyür */
+    if(sel.b-sel.a>=(CFG.clipMax||600))clipStop();
+  }
+  if(mode==="live"){
+    const t=canliAn();
+    $("stamp").textContent=dISO(dateOf(t))+" "+hmsAbs(t);
+    $("clock").textContent=hmsAbs(t);
+  }
+  else if(dg&&dg.moved&&CFG.centerPin){                /* gezinirken pin altındaki an */
+    $("stamp").textContent=dISO(dateOf(focus))+" "+hmsAbs(focus);
+    $("clock").textContent=hmsAbs(focus);   /* pin zaten bu anı gösteriyor */
+  }
+  else{const p=head();
+    if(p==null){$("stamp").textContent="--:--:--";$("clock").textContent="—"}
+    else{$("stamp").textContent=dISO(dateOf(p))+" "+hmsAbs(p);
+         $("clock").textContent=hmsAbs(p)}}
+  /* Çizim tek noktadan, kare hızında. Eskiden parmak olaylarından da
+     çağrılıyordu; olaylar ekran tazelemesiyle aynı ritimde gelmediği için
+     kaydırma titriyordu. */
+  if(P.classList.contains("preview")){pvSync();sesTakip()} else draw();
+  requestAnimationFrame(tick);
+}
+
+/* ---------- zaman tüneli ---------- */
+const cv=$("timeline"),g=cv.getContext("2d");let W=0,H=0;
+function fit(){const r=devicePixelRatio||1;W=cv.clientWidth;H=cv.clientHeight;
+  if(!W||!H)return;cv.width=W*r|0;cv.height=H*r|0;g.setTransform(r,0,0,r,0,0);draw()}
+new ResizeObserver(fit).observe(cv);
+addEventListener("resize",fit);
+const X=t=>(t-view.s)/view.w*W, T=x=>view.s+x/W*view.w;
+const STEP=[60,120,300,600,900,1800,3600,7200,10800,21600];
+if(!CanvasRenderingContext2D.prototype.roundRect)
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.beginPath();this.moveTo(x+r,y);
+    this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this};
+
+function draw(){
+  if(!W||P.classList.contains("preview"))return;
+  if(CFG.centerPin){
+    if(!dg&&!pinch&&!kayan){
+      if(mode==="live")focus=canliAn();          /* canlıda zaman kendiliğinden akar */
+      else{const p=head();if(p!=null)focus=p}
+    }
+    focus=sinirla(focus);
+    view.s=focus-view.w/2;
+  }
+  syncDay();taraGorunen();canliBtnUI();
+  const D=devicePixelRatio||1, q=v=>Math.round(v*D)/D, hp=.5/D;
+  /* Boşta tünel inceldiğinde cetvel ve bant oranlı küçülür. */
+  const dar=H<56;
+  const R=dar?15:22, TOP=R, TR=H-R-(dar?2:3);
+  const cs=getComputedStyle(document.body);
+  const FS=cs.getPropertyValue("--sans"), FM=cs.getPropertyValue("--mono");
+  g.clearRect(0,0,W,H);
+  g.fillStyle="rgba(255,255,255,.03)";g.fillRect(0,0,W,R);
+
+  /* zemin: taranmış günler koyu, bilinmeyenler nötr */
+  g.fillStyle="rgba(255,255,255,.05)";g.fillRect(0,TOP+2,W,TR-4);
+  for(const r of kapsanan){                    /* bilgi alınmış aralıklar biraz daha koyu */
+    const a=q(Math.max(0,X(r.a))), b=q(Math.min(W,X(r.b)));
+    if(b>a){g.fillStyle="rgba(255,255,255,.035)";g.fillRect(a,TOP+2,b-a,TR-4)}
+  }
+  /* kayıt bantları: gün sınırı tanımaz, tek liste */
+  /* Kayıt, canlı yayının birkaç saniye ilerisinde olabilir: sunucu yazmayı
+     sürdürürken yayın geriden gelir. O bölüm henüz gidilebilir bir yer olmadığı
+     için bant canlı ucun ötesine çizilmez — veri silinmez, yalnızca gösterilmez. */
+  const uc=canliAn();
+  for(const r of tumRanges()){
+    const a=q(Math.max(0,X(r.a))),b=q(Math.min(W,X(Math.min(r.b,uc))));
+    if(b<=a)continue;
+    g.fillStyle="rgba(62,207,142,.30)";g.fillRect(a,TOP+2,b-a,TR-4);
+    g.fillStyle="rgba(62,207,142,.75)";g.fillRect(a,TOP+2,b-a,2);
+  }
+
+  /* cetvel: tikler yerel gün başlangıcına göre hizalanır */
+  let st=21600;for(const x of STEP)if(x/view.w*W>=58){st=x;break}
+  g.font=(dar?"9.5px ":"10.5px ")+FM;g.textBaseline="middle";g.lineWidth=1;
+  const g0=dayStartOf(view.s);
+  for(let t=g0+Math.floor((view.s-g0)/st)*st; t<=view.s+view.w; t+=st){
+    const x=X(t);if(x<0||x>W)continue;
+    const tod=todOf(t), maj=st>=3600?tod%3600===0:tod%(st*2)===0;
+    const gx=q(x)+hp;
+    g.strokeStyle=maj?"rgba(255,255,255,.16)":"rgba(255,255,255,.07)";
+    g.beginPath();g.moveTo(gx,R);g.lineTo(gx,H-2);g.stroke();
+    g.fillStyle=maj?"#a6b2c2":"#6b7787";
+    g.textAlign=x<24?"left":x>W-24?"right":"center";
+    g.fillText(st<60?hms(tod):hm(tod),q(clamp(x,3,W-3)),R/2);
+  }
+
+  /* gün sınırları */
+  for(let d0=Math.ceil(view.s/DAY)*DAY-DAY; d0<view.s+view.w+DAY; d0+=DAY){
+    const b0=dayStartOf(d0+DAY/2);            /* yaz saati kaymalarına dayanıklı */
+    const x=q(X(b0));
+    if(x<-60||x>W+60)continue;
+    g.strokeStyle="rgba(255,255,255,.45)";g.setLineDash([2,3]);
+    g.beginPath();g.moveTo(x,R);g.lineTo(x,H-2);g.stroke();g.setLineDash([]);
+    const et=kisaTarih(dateOf(b0));
+    g.font="600 9.5px "+FS;
+    const tw=g.measureText(et).width+10;
+    g.fillStyle="rgba(9,13,20,.75)";g.roundRect(x+3,H-18,tw,14,4);g.fill();
+    g.fillStyle="#a6b2c2";g.textAlign="center";g.fillText(et,x+3+tw/2,H-11);
+  }
+
+  if(sel.a!=null&&sel.b!=null&&sel.b>sel.a){
+    const a=q(X(sel.a)),b=q(X(sel.b));
+    const CL=clip?"255,107,107":"74,168,255";
+    g.fillStyle="rgba("+CL+",.22)";g.fillRect(a,TOP+2,b-a,TR-4);
+    g.strokeStyle="rgb("+CL+")";g.lineWidth=2;g.beginPath();
+    g.moveTo(a,TOP-3);g.lineTo(a,H-2);
+    g.moveTo(b,TOP-3);g.lineTo(b,H-2);g.stroke();g.lineWidth=1;
+    const va=Math.max(a,0), vb=Math.min(b,W);
+    if(vb-va>62){const L=dur2(sel.b-sel.a),m=q((va+vb)/2);
+      g.font=(dar?"600 9.5px ":"600 10.5px ")+FS;
+      const w=q(g.measureText(L).width+14);
+      g.fillStyle="rgb("+CL+")";g.roundRect(m-w/2,TOP+4,w,16,8);g.fill();
+      g.fillStyle="#06121e";g.textAlign="center";g.fillText(L,m,TOP+12)}
+  }
+  const p=CFG.centerPin?focus:head();
+  if(p!=null){const x=q(X(p));
+    if(x>=-3&&x<=W+3){
+      g.strokeStyle="#f0a13c";g.lineWidth=2;g.beginPath();
+      g.moveTo(x,R+1);g.lineTo(x,H-2);g.stroke();g.lineWidth=1;
+      g.fillStyle="#f0a13c";g.beginPath();
+      g.moveTo(x-5,R+1);g.lineTo(x+5,R+1);g.lineTo(x,R+9);g.closePath();g.fill()}}
+  /* Kesikli çizgi "duvar saati şimdi"yi değil, izlenebilecek en yeni anı —
+     yani canlı ucu — gösterir. Yayın birkaç saniye geriden geldiği için ikisi
+     aynı şey değil; kullanıcı açısından anlamlı olan, gidebileceği son nokta.
+     Böylece canlıdayken pin, bandın ucu ve bu çizgi aynı yerde durur. */
+  const nx=q(X(canliAn()));
+  if(nx>=-40&&nx<=W+40){
+    g.strokeStyle="rgba(62,207,142,.55)";g.setLineDash([3,3]);
+    g.beginPath();g.moveTo(nx,R);g.lineTo(nx,H-2);g.stroke();g.setLineDash([]);
+  }
+  selUI();
+}
+
+let dg=null, pinch=null;
+const pts=new Map();
+const lx=e=>e.clientX-cv.getBoundingClientRect().left;
+
+cv.addEventListener("pointerdown",e=>{
+  cv.setPointerCapture(e.pointerId);const x=lx(e);pts.set(e.pointerId,x);
+  if(pts.size===2){                                   /* iki parmak: yakınlaştırma */
+    const v=[...pts.values()];
+    dg=null;pinch={d:Math.abs(v[0]-v[1])||1,w:view.w,t:T((v[0]+v[1])/2)};
+    return;
+  }
+  kayan=false;                                  /* kullanıcı dokundu: kayma biter */
+  if(clip||preparing){dg=null;return}                 /* kayıt ve hazırlık sırasında zaman sabit */
+  dg={x0:x,t0:T(x),v0:view.s,f0:focus,moved:false};    /* tek parmak: zamanda gezinme */
+  cv.style.cursor="grabbing";
+});
+
+cv.addEventListener("pointermove",e=>{
+  if(pts.has(e.pointerId))pts.set(e.pointerId,lx(e));
+  if(pinch&&pts.size>=2){
+    const v=[...pts.values()],d=Math.abs(v[0]-v[1])||1,mid=(v[0]+v[1])/2;
+    const w=clamp(pinch.w*pinch.d/d,+CFG.minSpan||120,+CFG.maxSpan||DAY);
+    view.w=w;
+    if(!CFG.centerPin)view.s=pinch.t-mid/W*w;
+    return;
+  }
+  if(!dg)return;
+  const x=lx(e);
+  if(Math.abs(x-dg.x0)>3)dg.moved=true;
+  if(CFG.centerPin)focus=sinirla(dg.f0-(x-dg.x0)/W*view.w);
+  else view.s=dg.v0-(x-dg.x0)/W*view.w;
+  draw();
+});
+
+function endPointer(e){
+  pts.delete(e.pointerId);
+  if(pts.size<2)pinch=null;
+  cv.style.cursor="grab";
+  if(pts.size){dg=null;return}                        /* hâlâ parmak varsa tıklama sayma */
+  if(!dg)return;
+  /* zaman yalnızca tüneli kaydırarak seçilir; boş dokunuş görüntüyü değiştirmez */
+  const moved=dg.moved;
+  if(moved)sonDokunus=0;                              /* kaydırma çift dokunuş sayılmaz */
+  else if(ciftDokunusBak(lx(e))){dg=null;return}      /* çift dokunuş: yakınlaştır */
+  const t=CFG.centerPin?focus:dg.t0;
+  const seek=CFG.centerPin ? moved : !moved;
+  dg=null;
+  if(seek){if(CFG.centerPin)focus=t;kaynakSec(t)}
+  draw();
+}
+cv.addEventListener("pointerup",endPointer);
+cv.addEventListener("pointercancel",endPointer);
+
+cv.addEventListener("wheel",e=>{e.preventDefault();
+  const x=lx(e),a=T(x),w=clamp(view.w*(e.deltaY>0?1.35:1/1.35),+CFG.minSpan||120,+CFG.maxSpan||DAY);
+  if(CFG.centerPin)view.w=w;                          /* merkez sabit, yalnızca ölçek değişir */
+  else {view.s=a-x/W*w;view.w=w}
+  draw()},{passive:false});
+/* Çift dokunuş: tüm gün ↔ seçilen aralık. Yalnızca gerçek dokunuşlarda —
+   hızlı ardışık kaydırmalar yanlışlıkla yakınlaştırma tetiklemesin diye
+   hareket eden dokunuşlar sayılmaz ve iki dokunuş birbirine yakın olmalı. */
+let sonDokunus=0, sonDokunusX=0;
+function ciftDokunusBak(x){
+  const t=Date.now();
+  if(t-sonDokunus<320&&Math.abs(x-sonDokunusX)<30){
+    sonDokunus=0;
+    view.w = view.w>43200 ? clamp(CFG.viewSpan||3600,+CFG.minSpan||120,+CFG.maxSpan||DAY)
+                          : (+CFG.maxSpan||DAY);
+    if(!CFG.centerPin)view.s=T(x)-view.w/2;
+    draw();return true;
+  }
+  sonDokunus=t;sonDokunusX=x;return false;
+}
+
+/* ---------- seçim ---------- */
+/* baloncuk üç durumda: boşta → Klip · kayıtta → Durdur+süre · seçim varsa → İndir */
+function selUI(){
+  /* Kayıt ve hazırlık sırasında zamanı değiştiren düğmeler kilitlenir:
+     tarih değişimi ya da canlıya dönüş, süren kaydı ortada bırakırdı. */
+  P.classList.toggle("kilit", !!(clip||preparing));
+  const b=$("bubble");
+  if(mode!=="rec"||!seg.st||P.classList.contains("preview")){b.className="";return}
+  const hazir=seg.ready&&!video.paused&&!video.ended;
+  b.className="on "+(clip?"clip":"idle")+((!clip&&!hazir)?" notready":"");
+  $("btnClip").classList.toggle("on",!!clip);
+  if(preparing){b.className="on prep";bubblePos();return}   /* etiket hazırlık göstergesinde */
+  if(clip){
+    $("clipLbl").textContent="Durdur "+hms(Math.max(0,sel.b-sel.a)).slice(3);
+    $("selText").innerHTML="<em>"+hmsAbs(sel.a)+"</em> →";
+  }else $("clipLbl").textContent="Kaydı Başlat";
+  bubblePos();
+}
+/* baloncuğu ilgili noktanın üstüne yerleştir, tünel kenarlarını taşırma */
+function bubblePos(){
+  const b=$("bubble");
+  if(!b.classList.contains("on")||!W)return;
+  const p=CFG.centerPin?focus:head();
+  const target = p!=null ? X(p) : W/2;
+  const bw=b.offsetWidth, half=bw/2;
+  const left=$("dayBtn").offsetWidth+10;              /* tarih butonunun üstüne binmesin */
+  /* centerPin açıkken baloncuk da diğer sabit öğeler gibi ortada durur */
+  const raw = CFG.centerPin ? W/2 : target;
+  const lo=Math.min(left+half,W/2+left/2), hi=Math.max(W-half-4,W/2);
+  const cx=clamp(raw,lo,hi);
+  b.style.left=cx+"px";
+  b.style.setProperty("--arrow",clamp(target-(cx-half),12,bw-12)+"px");
+}
+/* ---------- işaretli aralığı belleğe alma ----------
+   Kayıt durdurulunca dosya tünel görünümündeyken indirilir. Önizleme ekranı
+   ancak dosya hazır olduğunda açılır; orada her şey yerelden çalışır:
+   ileri sarma anında, indirme ve paylaşma beklemesiz. */
+let clipCache=null, clipReq=null, clipPct=0, clipBytes=0, clipTotal=0, blobUrl=null, preparing=false;
+const clipKey=(st,d)=>+st+"|"+d;
+
+function dropBlobUrl(){
+  if(!blobUrl)return;
+  const u=blobUrl;blobUrl=null;
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+/* hazırlık göstergesi: düğme dokunur dokunmaz pasifleşir ve dönen halkaya geçer */
+let prepMeta=null, finishT=null;
+const PREP_FINISH_MS=420;      /* tamamlanma anının görünür kalma süresi */
+function prepStart(){
+  const b=$("btnClip");
+  b.classList.remove("on");b.classList.add("prep");
+  b.style.setProperty("--p","0%");
+  $("clipLbl").textContent="Bekleyin";
+  $("selText").innerHTML="<em>"+hmsAbs(sel.a)+"</em> → <em>"+hmsAbs(sel.b)+"</em>";
+  $("bubble").className="on prep";
+  bubblePos();
+}
+function prepUI(){
+  if(!preparing||!clipTotal)return;
+  $("btnClip").style.setProperty("--p",Math.min(88,Math.round(clipPct*100))+"%");
+  /* son bölümde metin değişir: iş bitmek üzere */
+  $("clipLbl").textContent = clipPct>=.55 ? "Bitiriliyor" : "Bekleyin";
+}
+function prepClear(){
+  clearTimeout(finishT);finishT=null;
+  preparing=false;prepMeta=null;
+  const b=$("btnClip");b.classList.remove("prep");b.style.removeProperty("--p");
+}
+/* önizleme başlığındaki dosya boyutu */
+function sizeUI(){
+  const el=$("pvSize");if(!el)return;
+  el.textContent=clipCache?mb(clipCache.blob.size):"";
+}
+
+function prefetchAbort(){
+  if(clipReq){try{clipReq.ctrl.abort()}catch(e){}}
+  clipReq=null;clipCache=null;clipPct=0;clipBytes=0;clipTotal=0;dropBlobUrl();sizeUI();
+}
+function prefetchClip(st,d){
+  prefetchAbort();
+  if(!CFG.prefetch)return;
+  const key=clipKey(st,d), name=fname(st,d), ctrl=new AbortController();
+  const promise=(async()=>{
+    const r=await fetch(recUrl(st,d,true),{credentials:"omit",signal:ctrl.signal});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    clipTotal=+(r.headers.get("content-length")||0);
+    let blob;
+    if(r.body&&r.body.getReader){
+      const rd=r.body.getReader(),parts=[];let got=0;
+      for(;;){const{done,value}=await rd.read();if(done)break;
+        parts.push(value);got+=value.length;clipBytes=got;
+        if(clipTotal)clipPct=got/clipTotal;
+        prepUI();}
+      blob=new Blob(parts,{type:"video/mp4"});
+    }else blob=await r.blob();
+    clipPct=1;clipCache={key,blob,name};sizeUI();
+    clipReady();
+    return clipCache;
+  })();
+  promise.catch(()=>{if(clipReq&&clipReq.key===key){clipReq=null}prepareFailed()});
+  clipReq={key,promise,ctrl};prepUI();
+}
+
+/* dosya hazır: önizlemeyi aç ve oynatmayı blob üzerinden başlat */
+function clipReady(){
+  if(!clipCache)return;
+  if(!preparing){attachBlob(false);return}
+  /* dosya çok hızlı inebiliyor; tamamlandığı kısa bir an görünür kalsın */
+  $("clipLbl").textContent="Bitiriliyor";
+  clearTimeout(finishT);
+  finishT=setTimeout(finishPrep,PREP_FINISH_MS);
+}
+function finishPrep(){
+  if(!preparing)return;
+  const meta=prepMeta;
+  prepClear();
+  if(meta)seg={st:meta.st,d:meta.len,locked:true,ready:false};
+  enterPreview();
+  attachBlob(true);
+}
+function attachBlob(fromStart){
+  if(!clipCache||blobUrl)return;
+  killHls();                                    /* önizleme her zaman bellekten oynar */
+  const t=fromStart?0:(video.currentTime||0);
+  const wasPlaying=fromStart||!video.paused;
+  blobUrl=URL.createObjectURL(clipCache.blob);
+  video.addEventListener("loadedmetadata",()=>{
+    try{video.currentTime=Math.min(t,(video.duration||t))}catch(e){}
+    hideCenter();stat("İşaretli aralık · "+dur2(seg.d||0),"on");
+    if(wasPlaying)play();
+    pvSync();
+  },{once:true});
+  video.src=blobUrl;video.load();
+}
+/* dosya alınamazsa sunucudan oynatmaya düşülür */
+function prepareFailed(){
+  if(!preparing)return;
+  const meta=prepMeta;prepClear();hideCenter();
+  if(meta){load(meta.st.getTime()/1000,meta.len,true);enterPreview()}
+  stat("Bellekten alınamadı","err");
+}
+
+/* hazırsa anında, hâlâ iniyorsa bekleyerek döner; başarısızsa null */
+async function clipData(st,d){
+  const key=clipKey(st,d);
+  if(clipCache&&clipCache.key===key)return clipCache;
+  if(clipReq&&clipReq.key===key){try{return await clipReq.promise}catch(e){return null}}
+  return null;
+}
+
+/* dosyayı belleğe indirip cihazın paylaşım sayfasına verir (WhatsApp, Mesajlar, AirDrop…) */
+const canShareFiles=(()=>{try{
+  return !!(navigator.canShare&&navigator.canShare(
+    {files:[new File([new Blob()],"t.mp4",{type:"video/mp4"})]}));
+}catch(e){return false}})();
+if(!canShareFiles)P.classList.add("noshare");
+
+/* ---------- çıktı penceresi ----------
+   İndir ve Paylaş bu pencereyi açar. Hazırlık burada yapılır, ilerleme burada
+   görünür ve dosya buradan verilir. Böylece paylaşım penceresi kullanıcının
+   taze dokunuşuyla açılır: uzun süren ses işlemesi tarayıcının iznini
+   düşürdüğü için doğrudan paylaşmak çalışmıyordu. */
+let ckHazir=null, ckCalisiyor=false, ckMod="dl";
+
+const boyutYaz=b=>b>=1048576?(b/1048576).toFixed(1)+" MB":Math.round(b/1024)+" KB";
+const bicimYaz=t=>{
+  t=String(t||"").toLowerCase();
+  if(t.indexOf("mp4")>=0)return "MP4 · H.264";
+  if(t.indexOf("webm")>=0)return t.indexOf("vp9")>=0?"WebM · VP9":"WebM · VP8";
+  return t.split("/").pop().toUpperCase()||"—";
+};
+function ckBilgiYaz(satirlar){
+  $("ckBilgi").innerHTML="";
+  satirlar.forEach(([a,b])=>{
+    const d=document.createElement("div");
+    d.innerHTML="<span></span><b></b>";
+    d.querySelector("span").textContent=a;
+    d.querySelector("b").textContent=b;
+    $("ckBilgi").appendChild(d);
+  });
+}
+function ckIlerleme(p,metin){
+  $("ckDolgu").style.width=Math.round(p*100)+"%";
+  if(metin)$("ckBaslik").textContent=metin;
+}
+function ckKapat(){$("ciktiModal").classList.remove("on")}
+
+const CK_IKON={
+  dl:'<path d="M12 4v12M12 16l-4-4M12 16l4-4M5 19h14"/>',
+  share:'<path d="M12 16V4M12 4 8 8M12 4l4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/>'
+};
+async function ciktiAc(mod){
+  if(sel.a==null||sel.b==null||ckCalisiyor)return;
+  ckMod=(mod==="share"&&canShareFiles)?"share":"dl";      /* paylaşım yoksa indirme */
+  $("ckIkon").innerHTML=CK_IKON[ckMod];
+  $("ckEtiket").textContent=ckMod==="share"?"Paylaş":"İndir";
+  const m=$("ciktiModal");
+  m.classList.add("on");m.classList.remove("hazir");
+  idle(false);
+  const st=dateOf(sel.a), d=Math.round(sel.b-sel.a);
+  const imza=clipKey(st,d)+"::"+sesImza();
+  if(ckHazir&&ckHazir.imza===imza){ckGoster();return}     /* hazır: yeniden üretme */
+
+  ckCalisiyor=true;
+  $("ckBaslik").textContent="Klip hazırlanıyor";
+  ckIlerleme(0);
+  ckBilgiYaz([
+    ["Zaman", hmsAbs(sel.a)+" → "+hmsAbs(sel.b)],
+    ["Süre", d+" sn"],
+    ["Ses", sesIsaret.length?(sesIsaret.length+" ses eklendi"):"eklenmedi"]
+  ]);
+  try{
+    let c=await clipData(st,d);
+    if(!c){                                               /* önbellekte yoksa indir */
+      ckIlerleme(.1,"Kayıt alınıyor");
+      const r=await fetch(recUrl(st,d,true),{credentials:"omit"});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      c={blob:await r.blob(),name:fname(st,d)};
+    }
+    ckIlerleme(.25);
+    if(sesIsaret.length&&sesliOlabilir()){
+      $("ckBaslik").textContent="Ses işleniyor";
+      c=await sesliUret(c.blob,c.name,p=>ckIlerleme(.25+p*.75));
+    }else if(sesIsaret.length){
+      stat("Bu tarayıcı ses gömmeyi desteklemiyor","err");
+    }
+    ckIlerleme(1);
+    ckHazir={imza,blob:c.blob,name:c.name,
+             en:c.en||video.videoWidth||0, boy:c.boy||video.videoHeight||0};
+    ckGoster();
+  }catch(e){
+    $("ckBaslik").textContent="Hazırlanamadı";
+    ckBilgiYaz([["Sebep",(e&&e.message)||"bilinmiyor"]]);
+  }finally{ckCalisiyor=false}
+}
+function ckGoster(){
+  const m=$("ciktiModal");
+  m.classList.add("hazir");
+  $("ckBaslik").textContent="Klip hazır";
+  const sn=Math.round(sel.b-sel.a);
+  const satir=[
+    ["Zaman", hmsAbs(sel.a)+" → "+hmsAbs(sel.b)],
+    ["Süre", sn+" sn"]
+  ];
+  const olcu=(ckHazir.en&&ckHazir.boy) ? ckHazir.en+"×"+ckHazir.boy+" · " : "";
+  satir.push(["Görüntü", olcu+bicimYaz(ckHazir.blob.type)]);
+  satir.push(["Boyut", boyutYaz(ckHazir.blob.size||0)]);
+  const eksik=sesIsaret.filter(im=>!im.buf);
+  satir.push(["Ses", !sesIsaret.length ? "yayının kendi sesi"
+    : eksik.length ? (sesIsaret.length-eksik.length)+" gömüldü · "+eksik.length+" gömülemedi"
+    : sesIsaret.length+" ses gömüldü"]);
+  if(eksik.length)satir.push(["Sebep", eksik[0].sebep||"bilinmiyor"]);
+  ckBilgiYaz(satir);
+}
+$("ckDo").onclick=async()=>{
+  if(!ckHazir)return;
+  const btn=$("ckDo");
+  if(ckMod==="dl"){
+    const u=URL.createObjectURL(ckHazir.blob), a=document.createElement("a");
+    a.href=u;a.download=ckHazir.name;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),60000);
+    flash(btn,"İndi");return;
+  }
+  try{
+    const file=new File([ckHazir.blob],ckHazir.name,{type:ckHazir.blob.type||"video/mp4"});
+    if(!navigator.canShare||!navigator.canShare({files:[file]}))throw new Error("desteklenmiyor");
+    await navigator.share({files:[file],title:"Kamera kaydı"});
+    flash(btn,"Gönderildi");
+  }catch(e){
+    if(!(e&&e.name==="AbortError"))flash(btn,"Olmadı");
+  }
+};
+$("ckClose").onclick=ckKapat;
+$("ciktiModal").addEventListener("pointerdown",e=>{if(e.target===$("ciktiModal"))ckKapat()});
+
+$("pvShare").onclick=()=>ciktiAc("share");
+$("pvDl").onclick=()=>ciktiAc("dl");
+
+/* ---------- klibe ses ekleme ----------
+   Sesler CFG.sesler listesinden gelir: {ad:"Alkış", url:"alkis.mp3"}. Göreli
+   adresler CFG.sesKok ile birleştirilir. İşaretler klibe bakarken duyulur ve
+   paylaşırken dosyaya gömülür. */
+let AC=null;
+const acKur=()=>{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();return AC};
+
+const sesBellek={};
+const sesAdres=t=>/^https?:|^\//i.test(t.url) ? t.url : (CFG.sesKok||"")+t.url;
+
+/* Ses verisini karıştırabilmek için sunucunun çapraz köken izni (CORS) vermesi
+   gerekiyor. İzin yoksa dosya yine de <audio> ile çalınabilir — önizlemede
+   duyulur ama klibe gömülemez. O yüzden iki yol denenir. */
+async function sesAl(t){
+  const anahtar=t.id||t.url;
+  if(sesBellek[anahtar])return sesBellek[anahtar];
+  let kayit;
+  {
+    const adres=sesAdres(t);
+    let sebep="";
+    try{
+      /* cache:"reload" önemli: izin başlığı eklenmeden önce alınmış yanıtlar
+         tarayıcı önbeleğinde izinsiz olarak duruyor ve okuma reddedilmeye
+         devam ediyor. Yine olmazsa adrese damga ekleyip bir kez daha denenir. */
+      let r=null;
+      try{ r=await fetch(adres,{cache:"reload"}) }
+      catch(ilk){
+        sebep=(ilk&&ilk.message)||"erişim";
+        const damga=adres+(adres.indexOf("?")>=0?"&":"?")+"cb="+Date.now();
+        r=await fetch(damga,{cache:"reload"});
+      }
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      const ham=await r.arrayBuffer();
+      try{ const b=await acKur().decodeAudioData(ham);kayit={buf:b,sure:b.duration||0} }
+      catch(coz){ sebep="ses çözülemedi"; throw coz }
+    }catch(e){
+      if(!sebep)sebep=(e&&e.message)||"bilinmeyen";
+      /* CORS ya da ağ: çalınabiliyor mu diye <audio> ile dene */
+      const a=new Audio();
+      a.preload="auto";a.src=adres;
+      await new Promise((ok,no)=>{
+        a.oncanplaythrough=()=>ok(); a.onloadeddata=()=>ok();
+        a.onerror=()=>no(new Error("ses açılamadı"));
+        setTimeout(()=>no(new Error("ses zaman aşımı")),12000);
+      });
+      /* Uyarıyı burada göstermiyoruz: bir kez tetiklenip ekranda kalıyor ve
+         sonradan sorunsuz yüklenen sesler varken yanıltıyordu. Gerçek durum
+         işaretin renginde ve çıktı penceresindeki sayımda görünür. */
+      kayit={el:a, gomulemez:true, sebep, sure:a.duration||0};
+    }
+  }
+  sesBellek[anahtar]=kayit;
+  return kayit;
+}
+
+/* --- işaretler --- */
+let sesIsaret=[];                             /* {t, ad, kaynak} klip başlangıcına göre sn */
+function sesListe(){
+  const el=$("sesList");el.innerHTML="";
+  (CFG.sesler||[]).forEach(t=>{
+    const satir=document.createElement("div");
+    satir.className="ses-satir";
+    const b=document.createElement("button");
+    b.className="ses-sec";
+    b.innerHTML='<svg viewBox="0 0 24 24" class="ic"><path d="M4 9v6h4l5 4V5L8 9H4M17 9a4 4 0 0 1 0 6"/></svg>';
+    b.appendChild(document.createTextNode(t.ad));
+    b.onclick=()=>sesEkle(t,b);
+    const d=document.createElement("button");
+    d.className="ses-din";d.title="Dinle";
+    d.innerHTML='<svg viewBox="0 0 24 24" class="ic"><path d="M8 5v14l11-7z"/></svg>';
+    d.onclick=e=>{e.stopPropagation();sesDinle(t,d)};
+    satir.appendChild(b);satir.appendChild(d);
+    el.appendChild(satir);
+  });
+}
+/* Pencere açıkken oynatma durur: kullanıcı istediği anı dondurup sakince seçer,
+   ses tam o ana yerleşir. Seçim ya da kapatma sonrası kaldığı yerden devam eder. */
+let sesDuraklatildi=false;
+function sesPencereAc(){
+  sesDuraklatildi=!video.paused;
+  if(sesDuraklatildi){try{video.pause()}catch(e){}}
+  sesListe();$("sesModal").classList.add("on");
+}
+function sesPencereKapat(){
+  dinlemeDurdur();
+  $("sesModal").classList.remove("on");
+  if(sesDuraklatildi){sesDuraklatildi=false;video.play().catch(()=>{})}
+}
+
+/* Listede dinleme: sesi eklemeden çalar. İkinci dokunuş durdurur. */
+let dinlenen=null;
+function dinlemeDurdur(){
+  if(!dinlenen)return;
+  try{dinlenen.src?dinlenen.src.stop():dinlenen.el.pause()}catch(e){}
+  if(dinlenen.dugme)dinlenen.dugme.classList.remove("caliyor");
+  dinlenen=null;
+}
+async function sesDinle(t,dugme){
+  const ayni=dinlenen&&dinlenen.dugme===dugme;
+  dinlemeDurdur();
+  if(ayni)return;                              /* aynı sese tekrar: durdur */
+  dugme.classList.add("yukleniyor");
+  try{
+    const kayit=await sesAl(t);
+    dugme.classList.remove("yukleniyor");
+    if(kayit.buf){
+      const ac=acKur(), src=ac.createBufferSource();
+      src.buffer=kayit.buf;
+      const g=ac.createGain();g.gain.value=+CFG.sesSeviye||0.85;
+      src.connect(g).connect(ac.destination);
+      src.onended=()=>{if(dinlenen&&dinlenen.src===src)dinlemeDurdur()};
+      src.start();
+      dinlenen={src,dugme};
+    }else if(kayit.el){
+      const a=kayit.el.cloneNode();
+      a.volume=+CFG.sesSeviye||0.85;
+      a.onended=()=>{if(dinlenen&&dinlenen.el===a)dinlemeDurdur()};
+      a.currentTime=0;a.play().catch(()=>{});
+      dinlenen={el:a,dugme};
+    }
+    dugme.classList.add("caliyor");
+  }catch(e){
+    dugme.classList.remove("yukleniyor");
+    dugme.classList.add("hatali");setTimeout(()=>dugme.classList.remove("hatali"),1600);
+  }
+}
+
+async function sesEkle(t,btn){
+  if(btn){btn.classList.add("yukleniyor");btn.disabled=true}
+  try{
+    const kayit=await sesAl(t);
+    const an=video.currentTime||0;
+    const im={t:an, ad:t.ad, buf:kayit.buf, el:kayit.el, sure:kayit.sure||0,
+              gomulemez:!!kayit.gomulemez, sebep:kayit.sebep};
+    sesIsaret.push(im);
+    sesIsaret.sort((a,b)=>a.t-b.t);
+    ckHazir=null;sesIsaretCiz();
+    sesOnizle(im);                                 /* eklendiği anda bir kez duyulsun */
+  }catch(e){
+    if(btn){btn.classList.remove("yukleniyor");btn.disabled=false;
+      btn.classList.add("hatali");setTimeout(()=>btn.classList.remove("hatali"),1600)}
+    stat("Ses yüklenemedi","err");
+    return;                                   /* pencere açık kalsın: başkası seçilebilir */
+  }
+  sesPencereKapat();
+}
+/* Eklerken ya da listede dinlerken tek seferlik çalma. Oynatma sırasındaki
+   sesleri bu değil, aşağıdaki denetleyici yönetir. */
+function sesOnizle(im){
+  dinlemeDurdur();
+  try{
+    if(im.buf){
+      const ac=acKur(), src=ac.createBufferSource();
+      src.buffer=im.buf;
+      const g=ac.createGain();g.gain.value=+CFG.sesSeviye||0.85;
+      src.connect(g).connect(ac.destination);
+      src.onended=()=>{if(dinlenen&&dinlenen.src===src)dinlemeDurdur()};
+      src.start();
+      dinlenen={src,dugme:null};
+    }else if(im.el){
+      const a=im.el.cloneNode();
+      a.volume=+CFG.sesSeviye||0.85;
+      a.onended=()=>{if(dinlenen&&dinlenen.el===a)dinlemeDurdur()};
+      a.currentTime=0;a.play().catch(()=>{});
+      dinlenen={el:a,dugme:null};
+    }
+  }catch(e){}
+}
+
+function sesIsaretCiz(){
+  if($("sesMenu"))$("sesMenu").classList.remove("on");
+  const bar=$("pvBar");
+  bar.querySelectorAll(".ses-im").forEach(x=>x.remove());
+  const sure=video.duration||0;if(!sure)return;
+  sesIsaret.forEach(im=>{
+    const d=document.createElement("div");
+    d.className="ses-im"+(im.gomulemez?" yalniz-onizleme":"");
+    const ad=document.createElement("span");
+    ad.className="ses-ad";ad.textContent=im.ad;
+    d.appendChild(ad);
+    d.style.left=(im.t/sure*100)+"%";
+    /* sesin kapladığı zaman kadar genişlik: nerede başlayıp nerede bittiği görünür */
+    d.style.width=im.sure ? (Math.min(im.sure,Math.max(0,sure-im.t))/sure*100)+"%" : "";
+    d.title=im.ad+(im.sure?(" · "+im.sure.toFixed(1)+" sn"):"")+
+      (im.gomulemez?(" · gömülemiyor ("+(im.sebep||"?")+")"):"")+" · dokun: kaldır";
+    /* Dokunmak kaldırır, sürüklemek taşır. Sürüklerken video da o ana gider:
+       ince bir işareti pikselle değil, gördüğünüz kareyle hizalıyorsunuz. */
+    d.onpointerdown=e=>{
+      e.stopPropagation();e.preventDefault();
+      const bar=$("pvBar"), r=bar.getBoundingClientRect(), sure2=video.duration||0;
+      if(!sure2)return;
+      const bas=e.clientX; let tasindi=false;
+      const oynuyordu=!video.paused;
+      if(oynuyordu){try{video.pause()}catch(x){}}
+      try{d.setPointerCapture(e.pointerId)}catch(x){}
+      const hareket=ev=>{
+        if(!tasindi&&Math.abs(ev.clientX-bas)<4)return;
+        tasindi=true;d.classList.add("tasiniyor");
+        const t=clamp((ev.clientX-r.left)/r.width,0,1)*sure2;
+        im.t=t;d.style.left=(t/sure2*100)+"%";
+        if(im.sure)d.style.width=(Math.min(im.sure,Math.max(0,sure2-t))/sure2*100)+"%";
+        try{video.currentTime=t}catch(x){}
+      };
+      const birak=()=>{
+        d.removeEventListener("pointermove",hareket);
+        d.removeEventListener("pointerup",birak);
+        d.removeEventListener("pointercancel",birak);
+        d.classList.remove("tasiniyor");
+        if(tasindi){
+          sesBitir(im);
+          sesIsaret.sort((a,b)=>a.t-b.t);
+          ckHazir=null;sesIsaretCiz();
+          if(oynuyordu)video.play().catch(()=>{});
+        }else{
+          if(oynuyordu)video.play().catch(()=>{});   /* menü açılırken oynatma sürsün */
+          sesMenuAc(im,bas,r,false);
+        }
+      };
+      d.addEventListener("pointermove",hareket);
+      d.addEventListener("pointerup",birak);
+      d.addEventListener("pointercancel",birak);
+    };
+    bar.appendChild(d);
+    /* Bant darsa yazı yerine sadece "…" kalırdı; o durumda hiç gösterilmez. */
+    if(d.offsetWidth<38)d.classList.add("dar");
+  });
+}
+/* İşaretli alan tıklanınca doğrudan silmek yerine seçenek sunulur; o bölgede
+   çubuğa dokunup ilerlemek de mümkün olsun diye "Seç" vardır. */
+let menuIm=null, menuAn=0;
+function sesMenuAc(im,x,r){
+  menuIm=im;
+  const sure=video.duration||0;
+  menuAn=sure?clamp((x-r.left)/r.width,0,1)*sure:0;
+  const m=$("sesMenu");
+  const hedef=sure?menuAn/sure*r.width:0;      /* çubuk içinde piksel konumu */
+  m.style.left=hedef+"px";
+  m.style.setProperty("--ok","50%");
+  m.classList.add("on");
+  /* Etiket uzun; baloncuk çubuğun dışına taşarsa içeri çekilir, ok işaretin
+     üstünde kalmaya devam eder. */
+  const g=m.offsetWidth/2, en=r.width;
+  const sol=clamp(hedef,g+2,Math.max(g+2,en-g-2));
+  m.style.left=sol+"px";
+  m.style.setProperty("--ok",clamp(hedef-(sol-g),10,m.offsetWidth-10)+"px");
+}
+function sesMenuKapat(){
+  $("sesMenu").classList.remove("on");
+  menuIm=null;
+}
+$("sesMenu").addEventListener("pointerdown",e=>e.stopPropagation());
+$("sesSec").onclick=()=>{                        /* o ana git: çubuğun normal işi */
+  try{video.currentTime=menuAn}catch(e){}
+  sesMenuKapat();
+};
+$("sesSil").onclick=()=>{
+  if(menuIm){const i=sesIsaret.indexOf(menuIm);if(i>=0)sesIsaret.splice(i,1);ckHazir=null;sesIsaretCiz()}
+  sesMenuKapat();
+};
+/* başka yere dokunmak menüyü kapatır */
+$("preview").addEventListener("pointerdown",e=>{
+  if($("sesMenu").classList.contains("on")&&!e.target.closest(".ses-im,.ses-menu"))sesMenuKapat();
+},true);
+
+/* oynatma sırasında sırası gelen sesleri çal */
+/* ---------- eklenen seslerin oynatımı ----------
+   Sesler videonun ikinci bir ses izi gibi davranır: oynatma kafası bir sesin
+   aralığındaysa o ses duyulur, değilse susar. Her karede denetlenir; böylece
+   duraklatma, atlama, geri sarma ve hız değişimi kendiliğinden doğru çalışır.
+   Eskiden "geçerken bir kez çal" mantığı vardı ve sesin ortasına atlayınca
+   hiç duyulmuyor, duraklatınca da susmuyordu. */
+function sesBasla(im,kayma,hiz){
+  try{
+    if(im.buf){
+      const ac=acKur(), src=ac.createBufferSource();
+      src.buffer=im.buf;
+      try{src.playbackRate.value=hiz}catch(e){}
+      const g=ac.createGain();g.gain.value=+CFG.sesSeviye||0.85;
+      src.connect(g).connect(ac.destination);
+      src.onended=()=>{if(im.aktif&&im.aktif.src===src)im.aktif=null};
+      src.start(0,Math.max(0,kayma));
+      im.aktif={src,hiz};
+    }else if(im.el){
+      const a=im.el.cloneNode();
+      a.volume=+CFG.sesSeviye||0.85;
+      try{a.playbackRate=hiz}catch(e){}
+      a.currentTime=Math.max(0,kayma);a.play().catch(()=>{});
+      im.aktif={el:a,hiz};
+    }
+  }catch(e){}
+}
+function sesBitir(im){
+  if(!im.aktif)return;
+  try{im.aktif.src?im.aktif.src.stop():im.aktif.el.pause()}catch(e){}
+  im.aktif=null;
+}
+function seslerSustur(){sesIsaret.forEach(sesBitir)}
+
+function sesTakip(){
+  const onizleme=P.classList.contains("preview");
+  const oynuyor=onizleme&&!video.paused&&!video.ended;
+  if(!onizleme){seslerSustur();return}
+  const an=video.currentTime||0, hiz=video.playbackRate||1;
+  sesIsaret.forEach(im=>{
+    const sure=im.sure||0.4;
+    const icinde=an>=im.t-0.03&&an<im.t+sure;
+    if(oynuyor&&icinde){
+      if(!im.aktif)sesBasla(im,an-im.t,hiz);
+      else if(im.aktif.hiz!==hiz){sesBitir(im);sesBasla(im,an-im.t,hiz)}   /* hız değişti */
+    }else if(im.aktif)sesBitir(im);
+  });
+}
+/* atlama ve duraklatma anında beklemeden tepki ver */
+video.addEventListener("seeking",()=>{if(P.classList.contains("preview"))seslerSustur()});
+video.addEventListener("pause",()=>{if(P.classList.contains("preview"))seslerSustur()});
+video.addEventListener("play",()=>{if(P.classList.contains("preview"))dinlemeDurdur()});
+
+/* ---------- sesleri dosyaya gömme ----------
+   Tarayıcıda bir mp4'ün ses izini tek başına değiştirmek mümkün değil; yeniden
+   kodlamak gerekiyor. Klip gerçek zamanlı oynatılır, kareler bir tuvale çizilir,
+   yayının sesi ile eklenen sesler karıştırılır ve hepsi yeni bir dosyaya yazılır.
+   Bu yüzden 30 saniyelik klip 30 saniye sürer. Ses eklenmemişse dosyaya hiç
+   dokunulmaz: özgün kopya bayt bayt korunur. */
+const sesliOlabilir=()=>!!(window.MediaRecorder&&HTMLCanvasElement.prototype.captureStream&&
+  (window.AudioContext||window.webkitAudioContext));
+function sesliTur(){
+  const l=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4",
+           "video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
+  for(const m of l)if(window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))return m;
+  return "";
+}
+async function sesliUret(blob,ad,ilerleme){
+  const ac=acKur();
+  const u=URL.createObjectURL(blob);
+  const v=document.createElement("video");
+  v.src=u;v.playsInline=true;v.setAttribute("playsinline","");v.preload="auto";
+  v.style.cssText="position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0";
+  document.body.appendChild(v);
+  const temizle=()=>{try{v.remove()}catch(e){}setTimeout(()=>URL.revokeObjectURL(u),3000)};
+  try{
+    await new Promise((ok,no)=>{v.onloadedmetadata=()=>ok();v.onerror=()=>no(new Error("klip açılamadı"))});
+    const enBoy=+CFG.sesliEn||1280;
+    const k=Math.min(1,enBoy/(v.videoWidth||enBoy));
+    const cw=Math.max(2,Math.round((v.videoWidth||1280)*k/2)*2);
+    const ch=Math.max(2,Math.round((v.videoHeight||720)*k/2)*2);
+    const tuval=document.createElement("canvas");tuval.width=cw;tuval.height=ch;
+    const cx=tuval.getContext("2d");
+    const gorTrack=tuval.captureStream(+CFG.sesliFps||25);
+    const hedef=ac.createMediaStreamDestination();
+    const kaynak=ac.createMediaElementSource(v);      /* ses hoparlöre değil kayda gider */
+    kaynak.connect(hedef);
+    const akis=new MediaStream([...gorTrack.getVideoTracks(),...hedef.stream.getAudioTracks()]);
+    const tur=sesliTur();
+    const rec=new MediaRecorder(akis,Object.assign(
+      {videoBitsPerSecond:(+CFG.sesliKbps||4000)*1000,audioBitsPerSecond:128000},
+      tur?{mimeType:tur}:{}));
+    const parca=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)parca.push(e.data)};
+    const kayitBitti=new Promise(ok=>{rec.onstop=ok});
+
+    const t0=ac.currentTime+.15;                      /* sesleri zamanla */
+    sesIsaret.forEach(im=>{
+      if(!im.buf)return;                              /* izin yok: gömülemez */
+      const sr=ac.createBufferSource();sr.buffer=im.buf;
+      const g=ac.createGain();g.gain.value=+CFG.sesSeviye||0.85;
+      sr.connect(g).connect(hedef);
+      sr.start(t0+im.t);
+    });
+
+    rec.start(250);
+    try{v.currentTime=0}catch(e){}
+    await v.play();
+    let dur=false;
+    const ciz=()=>{
+      if(dur)return;
+      try{cx.drawImage(v,0,0,cw,ch)}catch(e){}
+      if(ilerleme&&v.duration)ilerleme(Math.min(1,v.currentTime/v.duration));
+      if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(ciz);
+      else requestAnimationFrame(ciz);
+    };
+    ciz();
+    await new Promise(ok=>{v.onended=ok;setTimeout(ok,((v.duration||60)+8)*1000)});
+    dur=true;
+    await new Promise(ok=>setTimeout(ok,300));        /* son kareler yazılsın */
+    rec.stop();await kayitBitti;
+    try{kaynak.disconnect()}catch(e){}
+    const mt=(rec.mimeType||tur||"video/webm").split(";")[0];
+    const uz=mt.indexOf("mp4")>=0?"mp4":"webm";
+    return {blob:new Blob(parca,{type:mt}),
+            name:ad.replace(/\.[^.]+$/,"")+"_sesli."+uz, en:cw, boy:ch};
+  }finally{temizle()}
+}
+const sesImza=()=>sesIsaret.map(im=>im.ad+"@"+im.t.toFixed(2)).join("|");
+
+$("pvSes").onclick=sesPencereAc;
+$("sesClose").onclick=sesPencereKapat;
+$("sesModal").addEventListener("pointerdown",e=>{if(e.target===$("sesModal"))sesPencereKapat()});
+
+/* ---------- kare yakalama ve işaretleme ----------
+   Klip blob üzerinden oynatıldığı için tuval "kirlenmez"; kare doğrudan
+   alınabilir. Şekiller 0–1 aralığında saklanır, böylece hem ekranda hem tam
+   çözünürlüklü çıktıda aynı yerde görünür ve geri alma sağlıklı çalışır. */
+let shotBase=null, shotIlk=null, kirpma=null, gecmis=[],
+    sekiller=[], aktifSekil=null, arac="pen", renk="#ff3b30", shotRect=null;
+const scv=$("shotCv"), sctx=scv.getContext("2d");
+
+/* Klip bellekten (blob) oynatıldığı için tuval kirlenmez; kare doğrudan alınır. */
+function shotOpen(){
+  if(P.classList.contains("shooting"))return;
+  if(!video.videoWidth){stat("Kare alınamadı","err");return}
+  try{video.pause()}catch(e){}
+  shotBase=document.createElement("canvas");
+  shotBase.width=video.videoWidth;shotBase.height=video.videoHeight;
+  shotBase.getContext("2d").drawImage(video,0,0);
+  shotIlk=shotBase;kirpma=null;gecmis=[];
+  P.classList.remove("cropping","cropped");
+  sekiller=[];aktifSekil=null;
+  P.classList.add("shooting");$("shot").classList.add("on");
+  aracSec(arac==="crop"?"pen":arac);          /* ölçüm için ekran görünür olmalı */
+  requestAnimationFrame(()=>{shotFit();okHizala(arac)});
+}
+function shotClose(){
+  if(!P.classList.contains("shooting"))return;
+  $("shot").classList.remove("on");P.classList.remove("shooting");
+  shotBase=null;shotIlk=null;kirpma=null;gecmis=[];sekiller=[];aktifSekil=null;
+  P.classList.remove("cropping","cropped");
+  if(mode==="rec"&&seg.st&&!video.ended)play();   /* izleme kaldığı yerden sürer */
+}
+$("pvShot").onclick=()=>shotOpen();
+$("shotBack").onclick=shotClose;
+
+/* tuvali kaba sığdır ve görüntü dikdörtgenini hesapla */
+function shotFit(){
+  if(!shotBase)return;
+  const D=devicePixelRatio||1, cw=scv.clientWidth, ch=scv.clientHeight;
+  if(!cw||!ch)return;
+  scv.width=Math.round(cw*D);scv.height=Math.round(ch*D);
+  sctx.setTransform(D,0,0,D,0,0);
+  const k=Math.min(cw/shotBase.width,ch/shotBase.height);
+  const w=shotBase.width*k, h=shotBase.height*k;
+  shotRect={x:(cw-w)/2,y:(ch-h)/2,w,h};
+  shotRender();
+}
+new ResizeObserver(()=>shotFit()).observe(scv);
+
+/* şekilleri verilen ölçekte çiz — hem ekran hem çıktı aynı fonksiyonu kullanır */
+function sekilleriCiz(c,x0,y0,w,h){
+  const kal=Math.max(2,w*.006);
+  c.lineCap="round";c.lineJoin="round";
+  const P2=(p)=>[x0+p.x*w, y0+p.y*h];
+  for(const sk of sekiller.concat(aktifSekil?[aktifSekil]:[])){
+    c.strokeStyle=sk.renk;c.lineWidth=kal;
+    c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=kal*1.2;
+    if(sk.tip==="pen"){
+      c.beginPath();sk.pts.forEach((p,i)=>{const[a,b]=P2(p);i?c.lineTo(a,b):c.moveTo(a,b)});c.stroke();
+    }else if(sk.tip==="arrow"){
+      const[ax,ay]=P2(sk.pts[0]),[bx,by]=P2(sk.pts[1]);
+      c.beginPath();c.moveTo(ax,ay);c.lineTo(bx,by);c.stroke();
+      const ang=Math.atan2(by-ay,bx-ax), u=kal*3.5;
+      c.beginPath();c.moveTo(bx,by);
+      c.lineTo(bx-u*Math.cos(ang-.4),by-u*Math.sin(ang-.4));
+      c.moveTo(bx,by);
+      c.lineTo(bx-u*Math.cos(ang+.4),by-u*Math.sin(ang+.4));
+      c.stroke();
+    }else if(sk.tip==="rect"){
+      const[ax,ay]=P2(sk.pts[0]),[bx,by]=P2(sk.pts[1]);
+      c.beginPath();c.rect(Math.min(ax,bx),Math.min(ay,by),Math.abs(bx-ax),Math.abs(by-ay));c.stroke();
+    }else{
+      const[ax,ay]=P2(sk.pts[0]),[bx,by]=P2(sk.pts[1]);
+      c.beginPath();
+      c.ellipse((ax+bx)/2,(ay+by)/2,Math.abs(bx-ax)/2,Math.abs(by-ay)/2,0,0,6.284);
+      c.stroke();
+    }
+    c.shadowBlur=0;
+  }
+}
+function shotRender(){
+  if(!shotBase||!shotRect)return;
+  const cw=scv.clientWidth, ch=scv.clientHeight;
+  sctx.clearRect(0,0,cw,ch);
+  sctx.drawImage(shotBase,shotRect.x,shotRect.y,shotRect.w,shotRect.h);
+  sekilleriCiz(sctx,shotRect.x,shotRect.y,shotRect.w,shotRect.h);
+  $("shotUndo").disabled=!gecmis.length;        /* çizim ya da kırpma: son işlem */
+  $("shotClear").disabled=!sekiller.length;
+  if(kirpma){                                   /* dışarısı karartılır, üçte bir çizgileri */
+    const R=shotRect;
+    const x=R.x+kirpma.x*R.w, y=R.y+kirpma.y*R.h, w=kirpma.w*R.w, h=kirpma.h*R.h;
+    sctx.fillStyle="rgba(3,6,11,.62)";
+    sctx.fillRect(R.x,R.y,R.w,y-R.y);
+    sctx.fillRect(R.x,y+h,R.w,R.y+R.h-(y+h));
+    sctx.fillRect(R.x,y,x-R.x,h);
+    sctx.fillRect(x+w,y,R.x+R.w-(x+w),h);
+    sctx.strokeStyle="#fff";sctx.lineWidth=1.5;sctx.strokeRect(x,y,w,h);
+    sctx.strokeStyle="rgba(255,255,255,.35)";sctx.lineWidth=1;
+    sctx.beginPath();
+    for(let i=1;i<3;i++){
+      sctx.moveTo(x+w*i/3,y);sctx.lineTo(x+w*i/3,y+h);
+      sctx.moveTo(x,y+h*i/3);sctx.lineTo(x+w,y+h*i/3);
+    }
+    sctx.stroke();
+  }
+}
+
+/* ---- çizim ---- */
+const shotNorm=e=>{
+  const r=scv.getBoundingClientRect();
+  return {x:clamp((e.clientX-r.left-shotRect.x)/shotRect.w,0,1),
+          y:clamp((e.clientY-r.top-shotRect.y)/shotRect.h,0,1)};
+};
+const shotIcinde=e=>{
+  if(!shotRect)return false;
+  const r=scv.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+  return x>=shotRect.x&&x<=shotRect.x+shotRect.w&&y>=shotRect.y&&y<=shotRect.y+shotRect.h;
+};
+scv.addEventListener("pointerdown",e=>{
+  if(!shotBase||!shotIcinde(e))return;        /* görüntünün dışına çizilmez */
+  scv.setPointerCapture(e.pointerId);
+  if(arac==="crop"){const p=shotNorm(e);kirpma={x0:p.x,y0:p.y,x:p.x,y:p.y,w:0,h:0};
+    P.classList.add("cropping");shotRender();return}
+  aktifSekil={tip:arac,renk,pts:[shotNorm(e),shotNorm(e)]};
+  shotRender();
+});
+scv.addEventListener("pointermove",e=>{
+  if(kirpma&&arac==="crop"&&kirpma.x0!=null){
+    const p=shotNorm(e);
+    kirpma.x=Math.min(kirpma.x0,p.x);kirpma.y=Math.min(kirpma.y0,p.y);
+    kirpma.w=Math.abs(p.x-kirpma.x0);kirpma.h=Math.abs(p.y-kirpma.y0);
+    shotRender();return;
+  }
+  if(!aktifSekil)return;
+  const p=shotNorm(e);
+  if(aktifSekil.tip==="pen")aktifSekil.pts.push(p); else aktifSekil.pts[1]=p;
+  shotRender();
+});
+function shotBitir(){
+  if(kirpma&&kirpma.x0!=null){
+    kirpma.x0=null;                               /* seçim tamam, onay bekleniyor */
+    if(kirpma.w<.05||kirpma.h<.05)kirpIptal();
+    else shotRender();
+    return;
+  }
+  if(!aktifSekil)return;
+  const p=aktifSekil.pts;
+  const yeterli=aktifSekil.tip==="pen" ? p.length>2
+    : Math.hypot(p[1].x-p[0].x,p[1].y-p[0].y)>.02;
+  if(yeterli){kaydet();sekiller.push(aktifSekil)}
+  aktifSekil=null;shotRender();
+}
+scv.addEventListener("pointerup",shotBitir);
+scv.addEventListener("pointercancel",shotBitir);
+
+function paletKapat(){$("renkler").classList.remove("acik")}
+/* baloncuğun oku, seçili aracın hizasına gelir */
+function okHizala(t){
+  const b=document.querySelector('.tool[data-tool="'+t+'"]');
+  if(!b)return;
+  $("renkler").style.setProperty("--ok",(b.offsetTop+b.offsetHeight/2)+"px");
+}
+function aracSec(t){
+  arac=t;
+  document.querySelectorAll(".tool").forEach(x=>x.classList.toggle("on",x.dataset.tool===t));
+  if(t==="crop"){paletKapat();return}
+  if(kirpma)kirpIptal();
+  /* çizim aracına dokununca palet açılır; aynı araca tekrar dokunmak kapatır */
+  $("renkler").classList.add("acik");            /* çizim aracı seçiliyse palet açık */
+  okHizala(t);
+}
+document.querySelectorAll(".tool").forEach(b=>b.onclick=()=>aracSec(b.dataset.tool));
+document.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{
+  renk=b.dataset.color;
+  $("shot").style.setProperty("--renk",renk);        /* etkin araç ikonu da bu rengi alır */
+  document.querySelectorAll(".sw").forEach(x=>x.classList.toggle("on",x===b));
+});
+/* Tek geri alma: çizim ve kırpma aynı yığında tutulur, son işlem geri alınır. */
+function kaydet(){
+  gecmis.push({base:shotBase, sek:sekiller.map(k=>({tip:k.tip,renk:k.renk,pts:k.pts.map(p=>({x:p.x,y:p.y}))}))});
+  if(gecmis.length>60)gecmis.shift();
+}
+function geriAl(){
+  const g=gecmis.pop();if(!g)return;
+  const olcuDegisti=g.base!==shotBase;
+  shotBase=g.base;sekiller=g.sek;aktifSekil=null;kirpma=null;
+  P.classList.remove("cropping");
+  P.classList.toggle("cropped",shotBase!==shotIlk);
+  if(olcuDegisti)shotFit(); else shotRender();
+}
+
+/* --- kırpma --- */
+function kirpIptal(){
+  kirpma=null;P.classList.remove("cropping");shotRender();
+}
+function kirpUygula(){
+  if(!kirpma||kirpma.w<.05||kirpma.h<.05){kirpIptal();return}
+  const k={x:kirpma.x,y:kirpma.y,w:kirpma.w,h:kirpma.h};
+  const sx=Math.round(k.x*shotBase.width), sy=Math.round(k.y*shotBase.height);
+  const sw=Math.max(8,Math.round(k.w*shotBase.width)), sh=Math.max(8,Math.round(k.h*shotBase.height));
+  const c=document.createElement("canvas");c.width=sw;c.height=sh;
+  c.getContext("2d").drawImage(shotBase,sx,sy,sw,sh,0,0,sw,sh);
+  kaydet();shotBase=c;
+  /* şekiller yeni çerçeveye taşınır, tamamen dışarıda kalanlar düşer */
+  sekiller=sekiller
+    .map(sk=>({...sk,pts:sk.pts.map(p=>({x:(p.x-k.x)/k.w,y:(p.y-k.y)/k.h}))}))
+    .filter(sk=>sk.pts.some(p=>p.x>-.05&&p.x<1.05&&p.y>-.05&&p.y<1.05));
+  kirpma=null;P.classList.remove("cropping");P.classList.add("cropped");
+  aracSec("pen");
+  shotFit();
+}
+$("cropApply").onclick=kirpUygula;
+$("cropCancel").onclick=kirpIptal;
+$("shotUndo").onclick=geriAl;
+$("shotClear").onclick=()=>{if(!sekiller.length)return;kaydet();sekiller=[];shotRender()};
+
+/* ---- çıktı: tam çözünürlük ---- */
+function shotBlob(){
+  return new Promise(res=>{
+    const c=document.createElement("canvas");
+    c.width=shotBase.width;c.height=shotBase.height;
+    const x=c.getContext("2d");
+    x.drawImage(shotBase,0,0);
+    sekilleriCiz(x,0,0,c.width,c.height);
+    c.toBlob(b=>res(b),"image/png");
+  });
+}
+const shotAd=()=>{
+  const t=seg.st?seg.st.getTime()/1000+(video.currentTime||0):nowSec();
+  return (CFG.file.replace(/\.mp4$/i,"")||"kare")+"_"+dISO(dateOf(t))+"_"+
+         hmsAbs(t).replace(/:/g,"")+".png";
+};
+$("shotSave").onclick=async()=>{
+  const b=await shotBlob(), u=URL.createObjectURL(b), a=document.createElement("a");
+  a.href=u;a.download=shotAd();document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),60000);
+  flash($("shotSave"),"İndi");
+};
+$("shotShare").onclick=async()=>{
+  const btn=$("shotShare");
+  try{
+    const b=await shotBlob();
+    const f=new File([b],shotAd(),{type:"image/png"});
+    if(!navigator.canShare||!navigator.canShare({files:[f]}))throw new Error("desteklenmiyor");
+    await navigator.share({files:[f],title:"Kamera karesi"});
+  }catch(e){if(!(e&&e.name==="AbortError"))flash(btn,"Olmadı")}
+};
+
+/* ---------- kayıt önizleme ekranı ---------- */
+function enterPreview(){
+  P.classList.add("preview");
+  $("rate").value="1";video.playbackRate=1;   /* kısa klip hızlı oynatılmaz */
+  $("pvRange").textContent=hmsAbs(sel.a)+" → "+hmsAbs(sel.b);
+  $("pvCur").textContent="00:00";
+  $("pvLen").textContent=hms(sel.b-sel.a).slice(3);
+  sizeUI();pvSync();sesIsaretCiz();idle(false);   /* panel görünür kalır, alt kontrol satırı boşta gizlenir */
+}
+function exitPreview(){
+  if(!P.classList.contains("preview"))return;
+  seslerSustur();sesIsaret=[];ckHazir=null;sesIsaretCiz();
+  shotClose();
+  P.classList.remove("preview");prepClear();
+  /* önizlemede kaynak kısa klipti; normal parçaya dönülmezse yeni kayıt
+     birkaç saniyede biten bir dosyanın içinde başlar */
+  const t=head();
+  const geri=seg.st?(t!=null?t:seg.st.getTime()/1000):null;
+  sel.a=sel.b=null;prefetchAbort();restoreSpan();selUI();
+  requestAnimationFrame(fit);
+  if(geri!=null)load(geri,CFG.chunk);          /* kilitsiz normal parça */
+  draw();
+}
+$("pvBack").onclick=exitPreview;
+
+const pvLen=()=>{
+  const d=video.duration;
+  return (blobUrl&&d&&isFinite(d)&&d>0)?d:seg.d;      /* blob'da süre kesin */
+};
+function pvSync(){
+  if(!P.classList.contains("preview"))return;
+  const L=pvLen();if(!L)return;
+  const t=Math.min(video.currentTime||0,L);
+  $("pvFill").style.width=(t/L*100)+"%";
+  $("pvCur").textContent=hms(t).slice(3);
+}
+let pvDrag=false;
+function pvSeek(e){
+  const r=$("pvBar").getBoundingClientRect();
+  const L=pvLen();
+  if(!L||!r.width)return;
+  const t=clamp((e.clientX-r.left)/r.width,0,1)*L;
+  try{video.currentTime=Math.min(t,Math.max(0,L-.05))}catch(err){}
+  pvSync();
+}
+$("pvBar").addEventListener("pointerdown",e=>{
+  pvDrag=true;$("pvBar").setPointerCapture(e.pointerId);pvSeek(e)});
+$("pvBar").addEventListener("pointermove",e=>{if(pvDrag)pvSeek(e)});
+$("pvBar").addEventListener("pointerup",()=>{pvDrag=false});
+$("pvBar").addEventListener("pointercancel",()=>{pvDrag=false});
+
+/* ---------- tarih ---------- */
+/* Gün seçimi artık tüneli sıfırlamaz; yalnızca odağı o güne taşır.
+   Önbellek ve taranmış günler korunur, tünel kesintisiz kalır. */
+function setDay(d){
+  P.classList.remove("preview");prepClear();clipCancel();prefetchAbort();
+  sel.a=sel.b=null;selUI();releaseSeg();
+  const g=new Date(d);g.setHours(0,0,0,0);
+  const g0=Math.round(g.getTime()/1000);
+  const bugun=dayStartOf(nowSec())===g0;
+  focus=sinirla(bugun?nowSec():g0+todOf(focus));
+  const w=clamp(CFG.viewSpan||DAY,+CFG.minSpan||120,+CFG.maxSpan||DAY);
+  view={w,s:focus-w/2};prevSpan=null;
+  syncDay();
+  center("Kayıt seçilmedi","Zaman tünelini kaydırarak turuncu çizgiyi istediğiniz saate getirin.",null,false);
+  draw();taraGorunen();
+}
+$("day").value=dISO(day);
+$("day").onchange=e=>{const p=e.target.value.split("-");
+  if(p.length===3){setDay(new Date(+p[0],+p[1]-1,+p[2]));closeDay()}};
+const openDay=()=>{$("dayModal").classList.add("on");idle(false)};
+const closeDay=()=>$("dayModal").classList.remove("on");
+/* ---------- kamera seçimi ----------
+   Kameralar farklı sunucularda olabildiği için değişimde adres kökü, kimlik
+   bilgileri ve tüm kayıt önbelleği sıfırlanır. */
+function camListe(){
+  const L=KAMERALAR(), el=$("camList");
+  el.innerHTML="";
+  L.forEach((c,i)=>{
+    const b=document.createElement("button");
+    b.className="cam-sec"+(i===AK?" on":"");
+    b.innerHTML='<span class="cam-on"><svg viewBox="0 0 24 24" class="ic">'+
+      '<path d="M3 7h11v10H3zM14 10l7-3v10l-7-3"/></svg></span>'+
+      '<span class="cam-ad"></span>';
+    const ad=b.querySelector(".cam-ad");
+    ad.textContent=c.ad||("cam "+(c.cam!==undefined?c.cam:CFG.cam));
+    if(c.alt){                              /* isteğe bağlı kısa açıklama */
+      const alt=document.createElement("div");
+      alt.className="cam-alt";alt.textContent=c.alt;
+      ad.appendChild(alt);
+    }
+    b.onclick=()=>kameraSec(i);
+    el.appendChild(b);
+    onizlemeYukle(b.querySelector(".cam-on"),c,i);
+  });
+}
+/* ---------- kamera anlık görüntüleri ----------
+   Sunucu kareyi düz bir HTTP adresinden JPEG olarak veriyor. Seçici açılınca
+   beklememek için üç katman var: açılışta ısıtma, düğmeye dokunulduğu anda
+   erken başlatma ve bellekte tutma. Bekleyen bir görüntü varsa önce o gösterilir,
+   tazesi geldiğinde sessizce değiştirilir. */
+const onGoruntu={}, onZaman={}, onIstek={};   /* onIstek: yolda olanlar */
+let onIsitildi=false;
+
+function onizlemeAdres(c){
+  const kok=String(c.base||CFG.base||"").replace(/\/+$/,"");
+  const kam=c.cam!==undefined?c.cam:CFG.cam;
+  if(!kok||kam===undefined)return null;
+  const kul=c.user!==undefined?c.user:CFG.user;
+  const par=c.pass!==undefined?c.pass:CFG.pass;
+  const akis=c.stream!==undefined?c.stream:CFG.stream;
+  return kok+"/cameras/"+kam+"/image?stream="+encodeURIComponent(akis||"sub")+
+    "&authorization="+encodeURIComponent("Basic "+b64(kul+":"+par))+"&t="+Date.now();
+}
+/* Belleğe al; kutu verilirse geldiğinde oraya yerleştir. Aynı kamera için
+   yolda bir istek varsa ikincisi açılmaz, sadece hedef kutu güncellenir. */
+function onizlemeGetir(i,c,kutu){
+  if(onIstek[i]){if(kutu)onIstek[i].kutu=kutu;return}
+  const u=onizlemeAdres(c);if(!u)return;
+  const img=new Image(), kayit={img,kutu:kutu||null};
+  onIstek[i]=kayit;
+  img.decoding="async";
+  img.onload=()=>{
+    delete onIstek[i];
+    onGoruntu[i]=img;onZaman[i]=Date.now();
+    const k=kayit.kutu;
+    if(k&&k.isConnected){
+      k.querySelectorAll("img").forEach(x=>{if(x!==img)x.remove()});
+      k.appendChild(img);
+      requestAnimationFrame(()=>img.classList.add("yuklendi"));
+    }
+  };
+  img.onerror=()=>{delete onIstek[i]};        /* alınamazsa ikon kalır */
+  img.src=u;
+}
+/* listede göster: bellektekini hemen bas, gerekiyorsa arkada tazele */
+function onizlemeYukle(kutu,c,i){
+  const eski=onGoruntu[i];
+  if(eski){kutu.appendChild(eski);eski.classList.add("yuklendi")}
+  const taze=Date.now()-(onZaman[i]||0) < (+CFG.onizlemeTazeMs||20000);
+  if(!eski||!taze)onizlemeGetir(i,c,kutu);
+}
+/* önden ısıt: açılışta bir kez ve seçiciye dokunulduğu anda */
+function onizlemeIsit(hepsi){
+  const L=KAMERALAR(), sinir=hepsi?L.length:Math.min(L.length,+CFG.onizlemeIsit||0);
+  for(let i=0;i<sinir;i++){
+    if(Date.now()-(onZaman[i]||0) < (+CFG.onizlemeTazeMs||20000))continue;
+    onizlemeGetir(i,L[i],null);
+  }
+}
+function camUI(){
+  const cok=KAMERALAR().length>1;
+  $("camBtn").style.display=cok?"":"none";
+  $("camLbl").textContent=kameraAdi();
+}
+function openCam(){if(clip||preparing)return;camListe();$("camModal").classList.add("on");idle(false)}
+function closeCam(){$("camModal").classList.remove("on")}
+function kameraSec(i){
+  closeCam();
+  if(clip||preparing)return;                  /* süren kaydı ortada bırakma */
+  if(i===AK||i<0||i>=KAMERALAR().length)return;
+  AK=i;kamNesil++;rpcMesgul=false;akisZorla=null;             /* yoldaki istekler geçersiz sayılır */
+  BASE=String(K("base")||"").replace(/\/+$/,"");
+  /* kamera değişti: önceki kameraya ait her şey bırakılır */
+  exitPreview();shotClose();killHls();releaseSeg();prepClear();prefetchAbort();
+  rangeCache={};kapsanan=[];sonBirim=0;rpcTavan=0;rpcYok=false;rpcHata="";sonPencere="";
+  rangesDegisti();
+  video.poster=kapakGorseli();
+  camUI();resetView();goLive();draw();sunucuSaati();
+}
+$("camBtn").addEventListener("pointerdown",()=>{if(!clip&&!preparing)onizlemeIsit(true)});
+$("camBtn").onclick=openCam;
+$("camClose").onclick=closeCam;
+$("camModal").addEventListener("pointerdown",e=>{if(e.target===$("camModal"))closeCam()});
+
+$("dayBtn").onclick=openDay;
+$("mClose").onclick=closeDay;
+$("dayModal").addEventListener("pointerdown",e=>{if(e.target===$("dayModal"))closeDay()});
+$("mPrev").onclick=()=>setDay(new Date(+day-864e5));
+$("mNext").onclick=()=>setDay(new Date(+day+864e5));
+$("mToday").onclick=()=>{setDay(new Date());closeDay()};
+$("mYest").onclick=()=>{setDay(new Date(Date.now()-864e5));closeDay()};
+
+/* ---------- kontroller ---------- */
+$("btnPlay").onclick=()=>video.paused?play():video.pause();
+const ICON_PLAY="M8 5.5v13l11-6.5z", ICON_PAUSE="M8 5h3.2v14H8zM12.8 5H16v14h-3.2z";
+const setPlayIcon=p=>$("icPlay").firstElementChild.setAttribute("d",p?ICON_PLAY:ICON_PAUSE);
+video.addEventListener("play",()=>setPlayIcon(false));
+video.addEventListener("pause",()=>setPlayIcon(true));
+const syncMute=()=>{
+  const kapali=video.muted||!video.volume;
+  $("icVolOn").style.display=kapali?"none":"";
+  $("icVolOff").style.display=kapali?"":"none";
+};
+$("btnMute").onclick=()=>{video.muted=!video.muted;syncMute()};
+$("vol").oninput=e=>{video.volume=+e.target.value;video.muted=!+e.target.value;syncMute()};
+$("rate").onchange=e=>video.playbackRate=+e.target.value;
+/* iOS Safari Element.requestFullscreen desteklemez; orada CSS ile tam ekran taklidi */
+function goFull(){
+  if(document.fullscreenElement||document.webkitFullscreenElement){
+    (document.exitFullscreen||document.webkitExitFullscreen).call(document);return}
+  if(P.classList.contains("fs")){P.classList.remove("fs");requestAnimationFrame(fit);return}
+  if(P.requestFullscreen)P.requestFullscreen().catch(()=>{P.classList.add("fs");fit()});
+  else if(P.webkitRequestFullscreen)P.webkitRequestFullscreen();
+  else{P.classList.add("fs");requestAnimationFrame(fit)}
+}
+$("btnFs").onclick=goFull;
+document.addEventListener("fullscreenchange",()=>requestAnimationFrame(fit));
+/* Canlıya dönüş: tünel geride kaldıysa doğrudan sıçramak yerine kayarak gider.
+   Hedef sürekli ilerlediği için her karede yeniden hesaplanır. */
+let kayan=false;
+function canliyaKay(){
+  if(mode==="live"){goLive();return}
+  const bas=focus, uzaklik=Math.abs(canliAn()-bas);
+  if(uzaklik<30){focus=canliAn();goLive();draw();return}       /* zaten uçtaysa kaydırma */
+  const sure=clamp(260+Math.log10(1+uzaklik)*180,260,760);      /* uzak mesafe biraz daha uzun */
+  const t0=performance.now();
+  kayan=true;
+  const adim=t=>{
+    if(!kayan)return;                                           /* kullanıcı devraldı */
+    const p=Math.min(1,(t-t0)/sure);
+    const e=p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;            /* yumuşak giriş-çıkış */
+    focus=bas+(canliAn()-bas)*e;
+    draw();
+    if(p<1)requestAnimationFrame(adim);
+    else{kayan=false;focus=canliAn();goLive();draw()}
+  };
+  requestAnimationFrame(adim);
+}
+$("btnLive").onclick=canliyaKay;
+/* düğme canlıdayken durum göstergesi, gerideyken eylem */
+function canliBtnUI(){
+  $("liveLbl").textContent = mode==="live" ? "CANLI" : "CANLIYA DÖN";
+}
+$("cBtn").onclick=()=>{hideCenter();if(mode==="live")goLive()};
+
+/* ---------- otomatik gizleme ---------- */
+let idleT=null, touchUI=false;
+function idle(on){
+  /* canlıda klip yok; kayıtta klip alırken de gizlenir, tünel ve baloncuk açık kalır */
+  if(on){if(!video.paused&&(mode==="rec"||!clip))P.classList.add("idle");return}
+  P.classList.remove("idle");clearTimeout(idleT);
+  idleT=setTimeout(()=>{
+    if(!video.paused&&!dg&&!$("dayModal").classList.contains("on"))idle(true);
+  },touchUI?2600:1800);
+}
+["pointermove","pointerdown","pointerup","keydown","wheel"].forEach(ev=>
+  P.addEventListener(ev,e=>{if(e.pointerType)touchUI=e.pointerType!=="mouse";idle(false)},{passive:true}));
+/* dokunmatikte parmak kalkınca pointerleave tetiklenir; sadece fare için geçerli olsun */
+P.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse"&&!video.paused)idle(true)});
+video.addEventListener("pause",()=>idle(false));
+
+document.addEventListener("keydown",e=>{
+  if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName))return;
+  if(P.classList.contains("shooting")){          /* işaretleme ekranı açıkken */
+    if(e.key==="Escape")shotClose();
+    else if((e.ctrlKey||e.metaKey)&&e.key==="z")geriAl();
+    return;
+  }
+  if(e.code==="Space"){e.preventDefault();video.paused?play():video.pause()}
+  else if(/^[mM]$/.test(e.key)){video.muted=!video.muted;syncMute()}
+  else if(/^[fF]$/.test(e.key))$("btnFs").click();
+  else if(/^[rR]$/.test(e.key))clipToggle();
+  else if(e.key==="Escape"){if(P.classList.contains("preview"))exitPreview();else closeDay()}
+  /* kayıt ve hazırlık sırasında sarma işaretin sınırlarını bozar */
+  else if(e.key==="ArrowLeft"){if(!clip&&!preparing)video.currentTime=Math.max(0,video.currentTime-10)}
+  else if(e.key==="ArrowRight"){if(!clip&&!preparing)video.currentTime+=10}
+});
+
+/* ---------- ekranı açık tut ---------- */
+/* Maç izlerken ekrana dokunulmadığı için telefon karartıyor. Oynatma sürerken
+   kilidi tutar, duraklayınca ya da sekme arkaya alınınca bırakır. */
+let wake=null;
+async function wakeOn(){
+  if(wake||!("wakeLock" in navigator)||document.visibilityState!=="visible")return;
+  try{
+    wake=await navigator.wakeLock.request("screen");
+    wake.addEventListener("release",()=>{wake=null});
+  }catch(e){wake=null}
+}
+function wakeOff(){ if(wake){try{wake.release()}catch(e){} wake=null} }
+video.addEventListener("playing",wakeOn);
+video.addEventListener("pause",wakeOff);
+video.addEventListener("ended",wakeOff);
+
+/* ---------- arka plandan dönüş ---------- */
+/* Sekme arkadayken canlı yayın donuyor ya da dakikalarca geride kalıyor.
+   Geri dönüldüğünde canlı uca yaklaştırılır, gerekirse akış yeniden kurulur. */
+let hidAt=0;
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible"){hidAt=Date.now();wakeOff();return}
+  const away=(Date.now()-hidAt)/1000;
+  if(!video.paused)wakeOn();
+  if(mode!=="live")return;
+  if(away>90||video.readyState<2||video.error){goLive();return}   /* uzun süre: baştan kur */
+  if(hls){
+    try{
+      const edge=hls.liveSyncPosition;
+      if(edge!=null&&isFinite(edge)&&edge-video.currentTime>6)video.currentTime=edge;
+    }catch(e){}
+    hls.startLoad();
+  }else if(video.buffered.length){                                 /* Safari yerel HLS */
+    const end=video.buffered.end(video.buffered.length-1);
+    if(end-video.currentTime>6)video.currentTime=end-1;
+  }
+  play();
+});
+
+/* ---------- dikey mod uyarısı ---------- */
+const mqPortrait=matchMedia("(orientation: portrait)");
+const isTouch=()=>matchMedia("(pointer: coarse)").matches;
+let wasPlaying=false;
+function checkOrient(){
+  const need=CFG.landscape&&isTouch()&&mqPortrait.matches;
+  $("rotate").classList.toggle("on",need);
+  if(need){
+    if(!video.paused){wasPlaying=true;video.pause()}
+    clipCancel();
+  }else if(wasPlaying){wasPlaying=false;play()}
+}
+mqPortrait.addEventListener?mqPortrait.addEventListener("change",checkOrient)
+                           :mqPortrait.addListener(checkOrient);
+addEventListener("orientationchange",()=>setTimeout(checkOrient,120));
+$("rotBtn").onclick=async()=>{
+  try{goFull()}catch(e){}
+  try{await screen.orientation.lock("landscape")}catch(e){}   /* iOS desteklemez, sessizce geçilir */
+  setTimeout(checkOrient,300);
+};
+
+/* ---------- başlat ---------- */
+$("dayLbl").textContent=kisaTarih(day);$("day").value=dISO(day);
+video.volume=1;syncMute();selUI();fit();resetView();tick();goLive();idle(false);checkOrient();camUI();sunucuSaati();tazeleBaslat();
+setTimeout(()=>{if(!onIsitildi){onIsitildi=true;onizlemeIsit(false)}},2500);   /* yayın oturduktan sonra */
+</script>
+</body>
+</html>
