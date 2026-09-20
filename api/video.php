@@ -33,21 +33,16 @@ try {
         die("Bu videoya erişmek için erişim kodu gereklidir.");
     }
 
-    if (!$match) {
+    // Stealth mode: unsold matches look exactly like non-existent ones
+    if (!$match || !was_match_sold($match)) {
         http_response_code(404);
         die("Maç kaydı bulunamadı.");
     }
 
-    // Retention Check: 7-day expiry rule
+    // Retention Check: 7-day expiry rule (only reached for sold matches)
     if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
         http_response_code(410);
         die("Bu maçın 7 günlük saklama süresi dolduğu için video kaydı silinmiştir.");
-    }
-
-    // Access Control Check: must be explicitly unlocked
-    if ($match['status'] !== 'UNLOCKABLE') {
-        http_response_code(403);
-        die("Bu video henüz izlemeye açılmamıştır.");
     }
 
     // Increment Views

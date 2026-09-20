@@ -326,6 +326,16 @@ function is_match_expired($dateStr) {
 }
 
 /**
+ * Was this match's video ever sold (unlocked by facility staff)?
+ * Unsold matches must stay invisible to players (Stealth Mode), even after expiry.
+ */
+function was_match_sold($match) {
+    if (empty($match)) return false;
+    if (($match['status'] ?? '') === 'UNLOCKABLE') return true;
+    return ($match['status'] ?? '') === 'EXPIRED' && !empty($match['sold_at']);
+}
+
+/**
  * Helper to parse facility courts into structured array
  * Supports both new format: [{"name": "Açık Saha", "sport": "football", "price": 15.00}, ...]
  * and legacy format: ["Saha 1", "Saha 2"]

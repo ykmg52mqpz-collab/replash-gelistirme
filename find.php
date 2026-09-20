@@ -36,13 +36,14 @@ if ($pdo) {
                 $error = __('find.errors.not_found');
             } else {
                 // Check 7-day retention expiry
-                if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
-                    $match = null;
-                    $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
-                } elseif ($match['status'] !== 'UNLOCKABLE') {
+                if (!was_match_sold($match)) {
                     // Stealth mode: Never show details or indicate locked status to public
                     $match = null;
                     $error = __('find.errors.not_found');
+                } elseif (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
+                    // Sold earlier, retention period over
+                    $match = null;
+                    $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
                 } else {
                     // Match is UNLOCKABLE. If user submitted code, verify it
                     if (!empty($code)) {
@@ -66,13 +67,14 @@ if ($pdo) {
                 $error = __('find.errors.invalid_code');
             } else {
                 // Check 7-day retention expiry
-                if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
-                    $match = null;
-                    $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
-                } elseif ($match['status'] !== 'UNLOCKABLE') {
+                if (!was_match_sold($match)) {
                     // Stealth mode: Never show locked match details
                     $match = null;
                     $error = __('find.errors.invalid_code');
+                } elseif (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
+                    // Sold earlier, retention period over
+                    $match = null;
+                    $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
                 } else {
                     $codeValidated = true;
                     $facilityId = $match['facility_id'];
