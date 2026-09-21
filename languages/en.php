@@ -506,7 +506,7 @@ return [
                 'too_many' => 'Too many wrong codes. Please try again in {m} minutes.',
                 'video_not_found' => 'Video not found',
             'not_found' => 'No match recording found for selected criteria (Venue, Date, Time).',
-            'expired' => 'This match video has been deleted as its 7-day retention period has expired.',
+            'expired' => 'Access to this match has expired; the video is no longer available.',
             'code_mismatch' => 'The entered access code does not belong to this match slot! Please check and enter the correct code.',
             'invalid_code' => 'No match found matching this access code. Please check your code.',
             'too_short' => 'Clip is too short (must be at least 2 seconds).',
@@ -578,7 +578,7 @@ return [
                 'download' => 'Download clip',
                 'range' => 'Select between 15 and 40 seconds.'
             ],
-            'expires' => 'This video auto-deletes on {date}.'
+            'expires' => 'You can access this video until {date}. Files you download stay on your device.'
         ]
     ],
     'api' => [
@@ -587,7 +587,7 @@ return [
             'too_many' => 'Too many wrong attempts. Please try again in 15 minutes.',
             'code_required' => 'A match code is needed to open this video.',
             'not_found' => 'Video not found.',
-            'expired' => 'The 7-day storage period for this match has ended, so the video was deleted.',
+            'expired' => 'Access to this match has expired; the video is no longer available.',
         ],
     ],
     'panel' => [
@@ -644,7 +644,7 @@ return [
             'locked_state' => 'Locked',
             'final_state' => 'Final',
             'final_hint' => 'The video was opened or the time limit passed; contact Replash for corrections.',
-            'deleted_state' => 'Deleted',
+            'deleted_state' => 'Expired',
             'time_col' => 'Time',
             'day_summary' => '{t} matches · {s} sold · {l} locked',
             'auto_note' => 'Every match video received by the system appears here, locked, under its court and time. Unlock the match you were paid for and give the code to the player. Recordings are deleted 7 days after the match date.',

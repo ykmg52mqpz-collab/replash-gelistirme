@@ -45,7 +45,7 @@ try {
     }
 
     // Retention Check: 7-day expiry rule (only reached for sold matches)
-    if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
+    if (replash_match_expired($match)) {
         http_response_code(410);
         replash_video_error(410, 'expired');
     }

@@ -506,7 +506,7 @@ return [
                 'too_many' => 'Troppi codici errati. Riprova tra {m} minuti.',
                 'video_not_found' => 'Video non trovato',
             'not_found' => 'Nessuna registrazione trovata per i criteri selezionati (Centro, Data, Orario).',
-            'expired' => 'Questo video è stato eliminato poiché il periodo di conservazione di 7 giorni è scaduto.',
+            'expired' => 'L\'accesso a questa partita è scaduto; il video non è più disponibile.',
             'code_mismatch' => 'Il codice di accesso inserito non corrisponde a questa partita. Inserisci il codice corretto.',
             'invalid_code' => 'Nessuna partita trovata con questo codice. Controlla il codice.',
             'too_short' => 'La clip è troppo breve (almeno 2 secondi).',
@@ -578,7 +578,7 @@ return [
                 'download' => 'Scarica clip',
                 'range' => 'Seleziona tra 15 e 40 secondi.'
             ],
-            'expires' => 'Questo video si cancella automaticamente il {date}.'
+            'expires' => 'Puoi accedere a questo video fino al {date}. I file che scarichi restano sul tuo dispositivo.'
         ]
     ],
     'api' => [
@@ -587,7 +587,7 @@ return [
             'too_many' => 'Troppi tentativi errati. Riprova tra 15 minuti.',
             'code_required' => 'Serve il codice partita per aprire questo video.',
             'not_found' => 'Video non trovato.',
-            'expired' => 'Il periodo di conservazione di 7 giorni è terminato, il video è stato eliminato.',
+            'expired' => 'L\'accesso a questa partita è scaduto; il video non è più disponibile.',
         ],
     ],
     'panel' => [
@@ -644,7 +644,7 @@ return [
             'locked_state' => 'Bloccata',
             'final_state' => 'Definitiva',
             'final_hint' => 'Il video è stato aperto o il tempo è scaduto; contatta Replash per correzioni.',
-            'deleted_state' => 'Eliminata',
+            'deleted_state' => 'Scaduto',
             'time_col' => 'Ora',
             'day_summary' => '{t} partite · {s} vendute · {l} bloccate',
             'auto_note' => 'Ogni video ricevuto dal sistema appare qui, bloccato, sotto il campo e l’orario. Sblocca la partita pagata e dai il codice al giocatore. Le registrazioni si eliminano 7 giorni dopo la data della partita.',

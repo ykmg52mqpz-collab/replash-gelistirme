@@ -83,26 +83,48 @@ function replash_undo_count(PDO $pdo, ?string $facilityId, string $yearMonth): i
     }
 }
 
-/**
- * 7-day retention (Platform Brief): from the match date, every recording — sold or not —
- * is removed after RETENTION_DAYS. Status becomes EXPIRED and the stored playback URL is
- * cleared, so access codes and old links stop working. Sold matches keep sold_at/billable
- * for monthly billing.
- * Runs at most once per hour on normal page loads; cron/purge.php can run it on a schedule.
+/*
+ * Saklama: süre maçın gerçek bitişinden sayılır. Satılmayan kayıt REPLASH_RETENTION_UNSOLD_DAYS (3),
+ * satılan kayıt RETENTION_DAYS (7) gün sonra erişime kapanır: durum EXPIRED olur ve kayıtlı video
+ * adresi silinir, kodlar ve eski bağlantılar çalışmaz. Satış kaydı (sold_at, billable, sale_events)
+ * faturalama için korunur. Kamera bulutundaki fiziksel dosyanın silinmesi sağlayıcının saklama
+ * ayarına bağlıdır, buradan doğrulanamaz.
+ * Sayfa açıldıkça saatte en fazla bir kez çalışır; cron/purge.php ile zamanlanabilir.
  */
+const REPLASH_RETENTION_UNSOLD_DAYS = 3;
+
+/** Maçın erişim süresinin bittiği an (timestamp). */
+function replash_expires_at(array $match): int {
+    [, $end] = replash_slot_bounds($match);
+    $sold = !empty($match['sold_at']) || ($match['status'] ?? '') === 'UNLOCKABLE';
+    return $end + ($sold ? RETENTION_DAYS : REPLASH_RETENTION_UNSOLD_DAYS) * 86400;
+}
+
+function replash_match_expired(array $match): bool {
+    return ($match['status'] ?? '') === 'EXPIRED' || time() >= replash_expires_at($match);
+}
+
 function replash_purge_expired(PDO $pdo, bool $force = false): int {
     try {
         if (!$force) {
             $last = (int)get_setting('last_retention_purge', 0);
             if (time() - $last < 3600) return 0;
         }
-        $stmt = $pdo->prepare("UPDATE matches SET status = 'EXPIRED', playback_url = NULL
-            WHERE status <> 'EXPIRED' AND DATE_ADD(`date`, INTERVAL ? DAY) < CURDATE()");
-        $stmt->execute([RETENTION_DAYS]);
-        $n = $stmt->rowCount();
+        // Aday: en az 2 gün önceki maçlar (satılmayan en erken bitiş + 3 günde kapanır)
+        $stmt = $pdo->prepare("SELECT id, date, time_slot, status, sold_at, duration_sec FROM matches
+            WHERE status <> 'EXPIRED' AND `date` <= DATE_SUB(CURDATE(), INTERVAL 2 DAY)");
+        $stmt->execute();
+        $ids = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $m) {
+            if (replash_match_expired($m)) $ids[] = $m['id'];
+        }
+        foreach (array_chunk($ids, 200) as $chunk) {
+            $in = implode(',', array_fill(0, count($chunk), '?'));
+            $pdo->prepare("UPDATE matches SET status = 'EXPIRED', playback_url = NULL WHERE id IN ($in)")->execute($chunk);
+        }
         $pdo->exec("DELETE vs FROM viewer_sessions vs JOIN matches m ON m.id = vs.match_id WHERE m.status = 'EXPIRED'");
         set_setting('last_retention_purge', (string)time());
-        return $n;
+        return count($ids);
     } catch (Exception $e) {
         error_log('replash_purge_expired: ' . $e->getMessage());
         return 0;

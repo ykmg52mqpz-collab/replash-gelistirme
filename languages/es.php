@@ -506,7 +506,7 @@ return [
                 'too_many' => 'Demasiados códigos incorrectos. Inténtalo de nuevo en {m} minutos.',
                 'video_not_found' => 'Vídeo no encontrado',
             'not_found' => 'No se encontró ninguna grabación para los criterios seleccionados (Club, Fecha, Hora).',
-            'expired' => 'Este video ha sido eliminado porque su periodo de almacenamiento de 7 días ha expirado.',
+            'expired' => 'El acceso a este partido ha caducado; el vídeo ya no está disponible.',
             'code_mismatch' => 'El código introducido no corresponde a este partido. Introduce el código correcto.',
             'invalid_code' => 'No se encontró ningún partido con este código. Revisa el código.',
             'too_short' => 'El clip es demasiado corto (al menos 2 segundos).',
@@ -578,7 +578,7 @@ return [
                 'download' => 'Descargar clip',
                 'range' => 'Selecciona entre 15 y 40 segundos.'
             ],
-            'expires' => 'Este vídeo se elimina automáticamente el {date}.'
+            'expires' => 'Puedes acceder a este vídeo hasta el {date}. Los archivos que descargues se quedan en tu dispositivo.'
         ]
     ],
     'api' => [
@@ -587,7 +587,7 @@ return [
             'too_many' => 'Demasiados intentos incorrectos. Inténtalo de nuevo en 15 minutos.',
             'code_required' => 'Se necesita el código del partido para abrir este vídeo.',
             'not_found' => 'Vídeo no encontrado.',
-            'expired' => 'El periodo de conservación de 7 días ha terminado y el vídeo se ha eliminado.',
+            'expired' => 'El acceso a este partido ha caducado; el vídeo ya no está disponible.',
         ],
     ],
     'panel' => [
@@ -644,7 +644,7 @@ return [
             'locked_state' => 'Bloqueado',
             'final_state' => 'Definitivo',
             'final_hint' => 'El vídeo se abrió o pasó el plazo; contacta con Replash para correcciones.',
-            'deleted_state' => 'Eliminado',
+            'deleted_state' => 'Caducado',
             'time_col' => 'Hora',
             'day_summary' => '{t} partidos · {s} vendidos · {l} bloqueados',
             'auto_note' => 'Cada vídeo recibido por el sistema aparece aquí, bloqueado, bajo su pista y hora. Desbloquea el partido cobrado y da el código al jugador. Las grabaciones se eliminan 7 días después de la fecha del partido.',

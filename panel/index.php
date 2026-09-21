@@ -73,7 +73,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $stmtFind->execute([$matchId, $facility['id']]);
             $mRow = $stmtFind->fetch();
 
-            if ($mRow && ($mRow['status'] === 'EXPIRED' || is_match_expired($mRow['date']))) {
+            if ($mRow && (replash_match_expired($mRow))) {
                 $error = __('panel.shell.expired_sell');
             } elseif ($mRow && $mRow['status'] === 'LOCKED') {
                 // Ensure playback URL is current
@@ -112,7 +112,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 if ($row && $row['status'] === 'UNLOCKABLE') {
                     // Zaten satılmış: aynı kodu tekrar göster
                     $soldNotice = ['code' => $row['access_code'], 'court' => $row['court'], 'slot' => $row['time_slot']];
-                } elseif ($row && ($row['status'] === 'EXPIRED' || is_match_expired($row['date']))) {
+                } elseif ($row && (replash_match_expired($row))) {
                     $error = __('panel.shell.expired_sell');
                 } else {
                     $newCode = replash_new_access_code($pdo);
@@ -525,7 +525,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                             <?php if (empty($grid[$gs][$gc])): ?>
                               <span class="text-gray-300">—</span>
                             <?php else: foreach ($grid[$gs][$gc] as $cm):
-                              $expired = ($cm['status'] === 'EXPIRED' || is_match_expired($cm['date']));
+                              $expired = replash_match_expired($cm);
                               $undoState = replash_staff_undo_status($cm);
                             ?>
                               <div class="flex flex-wrap items-center gap-x-3 gap-y-2">

@@ -506,7 +506,7 @@ return [
                 'too_many' => 'Çok fazla hatalı kod denendi. Lütfen {m} dakika sonra tekrar deneyin.',
                 'video_not_found' => 'Video bulunamadı',
             'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
-            'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
+            'expired' => 'Bu maçın erişim süresi doldu; video artık izlenemez.',
             'code_mismatch' => 'Girdiğiniz erişim kodu bu maça/saat dilimine ait değildir! Lütfen doğru kodu giriniz.',
             'invalid_code' => 'Girdiğiniz erişim koduna ait maç bulunamadı. Lütfen kodu kontrol edin.',
             'too_short' => 'Kayıt çok kısa (en az 2 saniye olmalıdır).',
@@ -578,7 +578,7 @@ return [
                 'download' => 'Klibi indir',
                 'range' => '15 ile 40 saniye arasında seç.'
             ],
-            'expires' => 'Bu video {date} tarihinde otomatik silinir.'
+            'expires' => 'Bu videoya {date} saatine kadar erişebilirsin. İndirdiğin dosyalar kendi cihazında kalır.'
         ]
     ],
     'api' => [
@@ -587,7 +587,7 @@ return [
             'too_many' => 'Çok fazla hatalı deneme. Lütfen 15 dakika sonra tekrar deneyin.',
             'code_required' => 'Bu videoyu açmak için maç kodu gerekiyor.',
             'not_found' => 'Video bulunamadı.',
-            'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silindi.',
+            'expired' => 'Bu maçın erişim süresi doldu; video artık izlenemez.',
         ],
     ],
     'panel' => [
@@ -644,7 +644,7 @@ return [
             'locked_state' => 'Kilitli',
             'final_state' => 'Kesinleşti',
             'final_hint' => 'Video açıldı veya süre doldu; düzeltme için Replash ile iletişime geçin.',
-            'deleted_state' => 'Silindi',
+            'deleted_state' => 'Süresi doldu',
             'time_col' => 'Saat',
             'day_summary' => '{t} maç · {s} satıldı · {l} kilitli',
             'auto_note' => 'Sisteme gelen her maç videosu ilgili saha ve saatte kilitli olarak görünür. Ödemeyi aldığınız maçın kilidini açın ve kodu oyuncuya verin. Kayıtlar maç tarihinden 7 gün sonra silinir.',

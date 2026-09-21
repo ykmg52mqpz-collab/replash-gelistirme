@@ -48,7 +48,7 @@ if ($pdo && !$codeBlocked) {
                     // Stealth mode: Never show details or indicate locked status to public
                     $match = null;
                     $error = __('find.errors.not_found');
-                } elseif (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
+                } elseif (replash_match_expired($match)) {
                     // Sold earlier, retention period over
                     $match = null;
                     $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
@@ -80,7 +80,7 @@ if ($pdo && !$codeBlocked) {
                     replash_code_failed($pdo);
                     $match = null;
                     $error = __('find.errors.invalid_code');
-                } elseif (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
+                } elseif (replash_match_expired($match)) {
                     // Sold earlier, retention period over
                     $match = null;
                     $error = __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.');
@@ -640,8 +640,8 @@ require_once __DIR__ . '/includes/header.php';
           </div>
 
           <?php
-            $expiresTs = strtotime($match['date'] . ' +' . RETENTION_DAYS . ' days');
-            $expiresText = str_replace('{date}', formatDateLocalized(date('Y-m-d', $expiresTs), $current_lang), __('find.watch.expires'));
+            $expiresTs = replash_expires_at($match);
+            $expiresText = str_replace('{date}', formatDateLocalized(date('Y-m-d', $expiresTs), $current_lang) . ' ' . date('H:i', $expiresTs), __('find.watch.expires'));
           ?>
           <p class="mt-4 text-xs text-white/35"><?= e($expiresText) ?></p>
 
