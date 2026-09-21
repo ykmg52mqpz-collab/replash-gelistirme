@@ -867,8 +867,8 @@ return [
     'forPlayers' => [
         'hero' => [
             'eyebrow' => 'Oyuncular İçin',
-            'title' => 'Her Güzel Anınızı Ölümsüzleştirin.',
-            'subtitle' => 'Attığınız o müthiş vole, kurtardığınız imkansız penaltı ya da padeldeki kritik smash... Artık sadece anılarda kalmayacak.'
+            'title' => 'Maçınız yeniden görülmeyi hak ediyor.',
+            'subtitle' => 'Maçını izle. En güzel anları kes. Sosyal medyada paylaş. En güzel anılarınız her zaman sizinle olsun.'
         ],
         'features' => [
             '1' => [
@@ -891,7 +891,7 @@ return [
             'button' => 'Maçımı Bul & İzle'
         ],
         'whyVideo' => [
-            'title' => 'Why players want the video.',
+            'title' => 'Oyuncular videoyu neden ister.',
             'title_tr' => 'Oyuncular videoyu neden ister?',
             'cards' => [
                 '1' => [
@@ -914,6 +914,25 @@ return [
                     'title' => 'Arkadaşlarınız gördüğünde',
                     'desc' => 'Kendi tesisinizde oynayan diğer takımların kliplerini gördüğünüzde, bir sonraki rezervasyonunuza video eklemek tamamen doğal hissettirir.'
                 ]
+            ],
+            'eyebrow' => 'Oyuncular Videoyu Neden Seçer',
+            'reasons' => [
+                '1' => [
+                    'title' => 'Saklanacak bir anı',
+                    'desc' => 'Yemekten sonra fotoğraf paylaşırsın. Antrenmandan sonra bir selfie. Maçtan sonra? Neredeyse hiçbir şey. Replash sana nihayet tekrar izleyip paylaşacak bir şey verir.'
+                ],
+                '2' => [
+                    'title' => 'Yakalanan An',
+                    'desc' => 'İlk goldeki bakış. Seti kapatan vuruş. Bir şey kaydetmiyorsa olduğu anda kaybolan anlar. Replash ile senin kalırlar.'
+                ],
+                '3' => [
+                    'title' => 'Kes ve Paylaş, Sürtünmesiz',
+                    'desc' => 'Kaydı aç. 10 saniye seç. İndir. Paylaş. Hesap yok, uygulama yok, profil yok.'
+                ],
+                '4' => [
+                    'title' => 'Arkadaşların gördüğünde',
+                    'desc' => 'Aynı tesiste oynayan takımların kliplerini gördüğünde, bir sonraki rezervasyona videoyu eklemek doğal gelir.'
+                ]
             ]
         ],
         'highlights' => [
@@ -926,6 +945,80 @@ return [
                 '4' => 'Takımınızla taktiksel pozisyonları değerlendirin',
                 '5' => 'Zaman içindeki gelişiminizi kişisel olarak arşivleyin'
             ]
+        ],
+        'watch' => [
+            'eyebrow' => 'Maçınızı İzleyin',
+            'title' => 'Maçınızın tamamı, son düdükten sonra hazır.',
+            'desc' => 'Maç bittikten ve tesis videoyu etkinleştirdikten sonra, maç kodunu gir ve tüm kaydı basit bir web bağlantısından izle. İndirilecek uygulama yok, oluşturulacak hesap yok. Sadece maçın, izlemeye hazır.'
+        ],
+        'clipping' => [
+            'eyebrow' => 'En İyi Anları Kesin',
+            'title' => 'Bir gol kes. Bir rali sakla. Saniyeler içinde paylaş.',
+            'desc' => 'Replash\'in dahili bir clip cutter\'ı var. Maçınızı tarayın, 10–45 saniyelik bir an seçin ve doğrudan telefonunuza indirin. 17. dakikadaki gol. Son setin galibiyet vuruşu. Kutlama. İstediğiniz saniyeleri seçin, kesin ve telefonunuzun rulosunda olsun.',
+            'features' => [
+                '1' => [
+                    'label' => 'Kaydı aç',
+                    'desc' => 'Maçınızı herhangi bir cihazdan izleyin.'
+                ],
+                '2' => [
+                    'label' => 'Anı seç',
+                    'desc' => 'Zaman çizelgesini tara, 10–45 saniye seç.'
+                ],
+                '3' => [
+                    'label' => 'İndir',
+                    'desc' => 'Klip anında telefonunuza dışa aktarılır.'
+                ],
+                '4' => [
+                    'label' => 'Her yerde paylaş',
+                    'desc' => 'Sosyal medya platformlarında paylaşın.'
+                ]
+            ]
+        ],
+        'relive' => [
+            'eyebrow' => 'En İyi Anları Yeniden Yaşa',
+            'title' => 'Goller. Kurtarışlar. Raliler. Komik anlar. Hepsi iki kez izlemeye değer.',
+            'desc' => 'Maçı tarayın ve onu unutulmaz kılan anları tekrar izleyin. İster son dakika golü, ister zor bir kurtarış, ister incelemek istediğiniz bir rali, ister herkesi güldüren komik bir kaçırılmış şut olsun. Tüm kayıt orada.',
+            'items' => [
+                '1' => 'Kendi tekniğinizi ve pozisyonunuzu gözden geçirin',
+                '2' => 'Golleri ve harika oyunları kutlayın',
+                '3' => 'Arkadaşlarınızla komik anları ve bloopers\'ı yeniden yaşayın',
+                '4' => 'Takımınızla taktik durumları analiz edin',
+                '5' => 'Zaman içindeki ilerlemenizin kişisel kaydını tutun'
+            ]
+        ],
+        'share' => [
+            'eyebrow' => 'Arkadaşlarınla Paylaş',
+            'title' => 'Deneyim son düdükle bitmez.',
+            'desc' => 'Klibini. Veya tam maç bağlantısını. Takım arkadaşlarına, arkadaşlarına ve aileye gönder. Story\'ne koy. Sahayı etiketle. En iyi anlar paylaşıldığında daha iyidir ve maçın, insanların duyduğu değil gerçekten izleyebildiği bir şey haline gelir.'
+        ],
+        'ai' => [
+            'eyebrow' => 'AI Highlights. Yakında',
+            'title' => 'En iyi anları otomatik kes.',
+            'desc' => 'Replash gelecekte AI destekli highlight\'ları desteklemek üzere tasarlandı. Maçınızdan golleri, kurtarışları ve en heyecanlı anları otomatik olarak kısa bir reel halinde keser. Sosyal medyada paylaşmaya hazır kare ve dikey formatlar, altyazılarla. Tüm kaydı izlemeden en iyi anlarınızı bulacaksınız.',
+            'badge' => 'Yakında'
+        ],
+        'simple' => [
+            'eyebrow' => 'Karmaşık Süreç Yok',
+            'title' => 'Üç adım. Bir dakikanın altında.',
+            'steps' => [
+                '1' => [
+                    'title' => 'Tara veya Ziyaret Et',
+                    'desc' => 'Sahanızdaki QR kodu tarayın veya Replash web sitesini ziyaret edin.'
+                ],
+                '2' => [
+                    'title' => 'Kodu Gir',
+                    'desc' => 'Tesisin sana verdiği maç kodunu gir.'
+                ],
+                '3' => [
+                    'title' => 'İzleyin ve Tadını Çıkarın',
+                    'desc' => 'Maç kaydınızın tamamına anında erişin.'
+                ]
+            ]
+        ],
+        'cta' => [
+            'title' => 'Sahanıza Replash\'i sorun.',
+            'subtitle' => 'Replash partner sahalarda mevcut. Sahanız henüz sunmuyorsa, iletişime geçmelerini teşvik edin.',
+            'button' => 'Sahalar İçin Daha Fazla Bilgi'
         ]
     ],
     'contact' => [

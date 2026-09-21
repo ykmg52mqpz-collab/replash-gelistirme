@@ -867,8 +867,8 @@ return [
     'forPlayers' => [
         'hero' => [
             'eyebrow' => 'Per i Giocatori',
-            'title' => 'Rendi Immortale Ogni Grande Momento.',
-            'subtitle' => 'Quell\'incredibile tiro al volo, il rigore impossibile parato o lo smash decisivo a padel... Non rimarranno più solo nei ricordi.'
+            'title' => 'La tua partita merita di essere rivista.',
+            'subtitle' => 'Guarda la tua partita. Taglia i momenti migliori. Condividili sui social media. Lascia che i tuoi ricordi più belli restino con te per sempre.'
         ],
         'features' => [
             '1' => [
@@ -891,7 +891,7 @@ return [
             'button' => 'Trova e Guarda la Mia Partita'
         ],
         'whyVideo' => [
-            'title' => 'Why players want the video.',
+            'title' => 'Perché i giocatori vogliono il video.',
             'cards' => [
                 '1' => [
                     'num' => '01',
@@ -913,6 +913,25 @@ return [
                     'title' => 'Quando gli amici lo vedono',
                     'desc' => 'Quando vedi le clip delle squadre che hanno giocato nella tua stessa struttura, aggiungere il video alla tua prossima prenotazione diventa naturale.'
                 ]
+            ],
+            'eyebrow' => 'Perché i Giocatori Scelgono il Video',
+            'reasons' => [
+                '1' => [
+                    'title' => 'Un ricordo da tenere',
+                    'desc' => 'Dopo un pasto pubblichi una foto. Dopo un allenamento, un selfie. Dopo una partita? Quasi niente. Replash ti dà finalmente qualcosa da rivedere e condividere.'
+                ],
+                '2' => [
+                    'title' => 'Il Momento, Catturato',
+                    'desc' => 'Lo sguardo dopo il primo gol. Il colpo che chiude il set. Momenti che svaniscono nell\'istante in cui accadono, a meno che qualcosa li stia registrando. Con Replash restano tuoi.'
+                ],
+                '3' => [
+                    'title' => 'Ritaglia e Condividi, Senza Attriti',
+                    'desc' => 'Apri la registrazione. Scegli 10 secondi. Scarica. Condividi. Nessun account, nessuna app, nessun profilo.'
+                ],
+                '4' => [
+                    'title' => 'Quando gli amici lo vedono',
+                    'desc' => 'Quando vedi le clip delle squadre che hanno giocato nel tuo stesso centro, aggiungere il video alla prossima prenotazione diventa naturale.'
+                ]
             ]
         ],
         'highlights' => [
@@ -925,6 +944,80 @@ return [
                 '4' => 'Analizza situazioni tattiche con i compagni di squadra',
                 '5' => 'Conserva un archivio personale dei tuoi progressi nel tempo'
             ]
+        ],
+        'watch' => [
+            'eyebrow' => 'Guarda la Tua Partita',
+            'title' => 'La tua partita completa, disponibile dopo il fischio finale.',
+            'desc' => 'Dopo che la partita è terminata e il centro ha abilitato il video, inserisci il codice della partita e guardi l\'intera registrazione da un semplice link web. Nessuna app da scaricare, nessun account da creare. Solo la tua partita, pronta da guardare.'
+        ],
+        'clipping' => [
+            'eyebrow' => 'Ritaglia i Momenti Migliori',
+            'title' => 'Taglia un gol. Salva uno scambio. Pubblica in pochi secondi.',
+            'desc' => 'Replash ha un clip cutter integrato. Scorri la tua partita, scegli un momento di 10–45 secondi e scaricalo direttamente sul telefono. Un gol al minuto 17. Il colpo vincente dell\'ultimo set. L\'esultanza. Scegli i secondi che vuoi, tagliali, e sono nel tuo rullino.',
+            'features' => [
+                '1' => [
+                    'label' => 'Apri la registrazione',
+                    'desc' => 'Guarda la tua partita da qualsiasi dispositivo.'
+                ],
+                '2' => [
+                    'label' => 'Scegli il momento',
+                    'desc' => 'Scorri la timeline, seleziona 10–45 sec.'
+                ],
+                '3' => [
+                    'label' => 'Scarica',
+                    'desc' => 'La clip esporta sul telefono all\'istante.'
+                ],
+                '4' => [
+                    'label' => 'Condividi ovunque',
+                    'desc' => 'Condividi sui social media.'
+                ]
+            ]
+        ],
+        'relive' => [
+            'eyebrow' => 'Rivivi i Momenti Migliori',
+            'title' => 'Gol. Parate. Scambi. Momenti divertenti. Tutto vale la pena rivedere.',
+            'desc' => 'Scorri la partita e rivedi i momenti che hanno reso grande la gara. Che si tratti di un gol all\'ultimo minuto, una parata difficile, uno scambio che vuoi analizzare, o un errore esilarante che ha fatto ridere tutti. La registrazione completa è lì.',
+            'items' => [
+                '1' => 'Rivedi la tua tecnica e il tuo posizionamento',
+                '2' => 'Celebra gol e giocate di qualità',
+                '3' => 'Rivivi momenti divertenti e blooper con gli amici',
+                '4' => 'Analizza situazioni tattiche con la tua squadra',
+                '5' => 'Tieni un registro personale dei tuoi progressi'
+            ]
+        ],
+        'share' => [
+            'eyebrow' => 'Condividi con gli Amici',
+            'title' => 'L\'esperienza non finisce al fischio finale.',
+            'desc' => 'Invia la clip. O il link della partita completa. Ai compagni, agli amici e alla famiglia. Pubblicala nella tua story. Tagga il centro. I momenti migliori sono migliori quando vengono condivisi. E la tua partita diventa qualcosa che le persone possono davvero guardare, non solo sentire raccontare.'
+        ],
+        'ai' => [
+            'eyebrow' => 'Highlights AI. Prossimamente',
+            'title' => 'Taglia automaticamente i momenti migliori.',
+            'desc' => 'Replash è progettato per supportare i futuri highlights generati da AI. Auto-ritaglio di gol, parate e azioni più emozionanti della tua partita in una breve reel. Formati quadrati e verticali con sottotitoli, pronti da condividere sui social media. Troverai i tuoi momenti migliori senza guardare l\'intera registrazione.',
+            'badge' => 'Prossimamente'
+        ],
+        'simple' => [
+            'eyebrow' => 'Nessun Processo Complicato',
+            'title' => 'Tre passi. Meno di un minuto.',
+            'steps' => [
+                '1' => [
+                    'title' => 'Scansiona o Visita',
+                    'desc' => 'Scansiona il QR code nel tuo campo, o visita il sito Replash.'
+                ],
+                '2' => [
+                    'title' => 'Inserisci il Codice',
+                    'desc' => 'Inserisci il codice della partita che ti ha dato il centro.'
+                ],
+                '3' => [
+                    'title' => 'Guarda e Goditi',
+                    'desc' => 'Accedi alla registrazione completa della tua partita istantaneamente.'
+                ]
+            ]
+        ],
+        'cta' => [
+            'title' => 'Chiedi al tuo centro di Replash.',
+            'subtitle' => 'Replash è disponibile nei centri partner. Se il tuo centro non lo offre ancora, incoraggiali a contattarci.',
+            'button' => 'Scopri di più per i Centri'
         ]
     ],
     'contact' => [

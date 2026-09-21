@@ -1,218 +1,574 @@
 <?php
 require_once __DIR__ . '/includes/init.php';
 
-$pageTitle = __('forPlayers.hero.eyebrow') ?: __('nav.forPlayers');
+$pageTitle = __('nav.forPlayers');
+$metaTitle = __('meta.forPlayers.title');
+$metaDescription = __('meta.forPlayers.description');
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-24 relative overflow-hidden bg-ink-900">
-  <div class="hero-glow"></div>
+<main class="relative bg-ink-900">
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 space-y-20 sm:space-y-24">
-    
-    <!-- Hero Title -->
-    <div class="text-center max-w-3xl mx-auto">
-      <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-        <?= htmlspecialchars(__('forPlayers.hero.eyebrow') ?: 'Oyuncular İçin') ?>
-      </div>
-      <h1 class="font-display text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.15] mb-6">
-        <?= htmlspecialchars(__('forPlayers.hero.title') ?: 'Her Güzel Anınızı Ölümsüzleştirin.') ?>
-      </h1>
-      <p class="text-neutral-300 text-lg sm:text-xl leading-relaxed">
-        <?= htmlspecialchars(__('forPlayers.hero.subtitle') ?: 'Attığınız o müthiş vole, kurtardığınız imkansız penaltı ya da padeldeki kritik smash... Artık sadece anılarda kalmayacak.') ?>
-      </p>
-    </div>
-
-    <!-- 3 Big Features -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="card-elevated rounded-3xl p-8 border border-white/10 hover:border-accent/30 transition-all duration-300">
-        <img src="<?= asset('images/gen_halisaha_shot.jpg') ?>" alt="Match Action" class="rounded-2xl w-full h-44 object-cover mb-6">
-        <h3 class="font-display text-xl font-bold text-white mb-2">
-          <?= htmlspecialchars(__('forPlayers.features.1.title') ?: 'Geniş Açı HD Kayıt') ?>
-        </h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
-          <?= htmlspecialchars(__('forPlayers.features.1.desc') ?: 'Kortu ve sahayı kör nokta olmadan bütünüyle yakalayan yüksek çözünürlüklü video akışı.') ?>
-        </p>
-      </div>
-
-      <div class="card-elevated rounded-3xl p-8 border border-white/10 hover:border-accent/30 transition-all duration-300">
-        <img src="<?= asset('images/player-phone-golden.jpg') ?>" alt="Player App" class="rounded-2xl w-full h-44 object-cover mb-6">
-        <h3 class="font-display text-xl font-bold text-white mb-2">
-          <?= htmlspecialchars(__('forPlayers.features.2.title') ?: 'Saniyeler İçinde Klip Kes') ?>
-        </h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
-          <?= htmlspecialchars(__('forPlayers.features.2.desc') ?: 'Tüm maçı izlemek zorunda kalmadan en sevdiğiniz 15-30 saniyeyi seçip doğrudan cihazınıza indirin.') ?>
-        </p>
-      </div>
-
-      <div class="card-elevated rounded-3xl p-8 border border-white/10 hover:border-accent/30 transition-all duration-300">
-        <img src="<?= asset('images/gen_friends_celebrating.jpg') ?>" alt="Friends celebrating" class="rounded-2xl w-full h-44 object-cover mb-6">
-        <h3 class="font-display text-xl font-bold text-white mb-2">
-          <?= htmlspecialchars(__('forPlayers.features.3.title') ?: 'WhatsApp & Hikayeler') ?>
-        </h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
-          <?= htmlspecialchars(__('forPlayers.features.3.desc') ?: 'Maçtan sonra arkadaş grubunuza atın, en iyi hareketlerinizi Instagram Story veya TikTok\'ta paylaşın.') ?>
-        </p>
-      </div>
-    </div>
-
-    <!-- How to Watch Banner -->
-    <div class="card-elevated rounded-3xl p-8 sm:p-12 border border-white/10 bg-ink-800/80 flex flex-col md:flex-row items-center justify-between gap-8">
-      <div>
-        <span class="text-xs font-semibold uppercase tracking-wider text-accent">
-          <?= htmlspecialchars(__('forPlayers.findBanner.eyebrow') ?: 'Hemen Başla') ?>
-        </span>
-        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1 mb-2">
-          <?= htmlspecialchars(__('forPlayers.findBanner.title') ?: 'Maçını İzlemeye Hazır mısın?') ?>
-        </h2>
-        <p class="text-neutral-400 text-sm max-w-lg">
-          <?= htmlspecialchars(__('forPlayers.findBanner.subtitle') ?: 'Saha görevlisinden aldığınız erişim kodunu girin veya sahanızı seçin.') ?>
-        </p>
-      </div>
-      <a href="<?= base_url('find.php') ?>" class="rounded-full bg-accent px-8 py-3.5 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition whitespace-nowrap">
-        <?= htmlspecialchars(__('forPlayers.findBanner.button') ?: 'Maçımı Bul & İzle') ?> &rarr;
-      </a>
-    </div>
-
-    <!-- ==================== SECTION: WHY PLAYERS WANT THE VIDEO ==================== -->
-    <div class="space-y-10 pt-4">
-      <div class="max-w-3xl">
-        <h2 class="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
-          <?= htmlspecialchars(__('forPlayers.whyVideo.title') ?: 'Why players want the video.') ?>
-        </h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Card 01 -->
-        <div class="card-elevated relative rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all flex flex-col justify-between overflow-hidden">
-          <div class="absolute top-6 right-8 font-display text-4xl sm:text-5xl font-bold text-accent/25 select-none pointer-events-none">
-            <?= htmlspecialchars(__('forPlayers.whyVideo.cards.1.num') ?: '01') ?>
-          </div>
-          <div>
-            <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-              </svg>
-            </div>
-            <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-3">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.1.title') ?: 'A memory to keep') ?>
-            </h3>
-            <p class="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.1.desc') ?: 'After a meal you post a photo. After a workout, a selfie. After a match? Almost nothing. Replash finally gives you something to rewatch and share.') ?>
-            </p>
-          </div>
-        </div>
-
-        <!-- Card 02 -->
-        <div class="card-elevated relative rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all flex flex-col justify-between overflow-hidden">
-          <div class="absolute top-6 right-8 font-display text-4xl sm:text-5xl font-bold text-accent/25 select-none pointer-events-none">
-            <?= htmlspecialchars(__('forPlayers.whyVideo.cards.2.num') ?: '02') ?>
-          </div>
-          <div>
-            <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                <circle cx="12" cy="13" r="4"></circle>
-              </svg>
-            </div>
-            <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-3">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.2.title') ?: 'The Moment, Captured') ?>
-            </h3>
-            <p class="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.2.desc') ?: 'The look after the first goal. The shot that closes the set. Moments that vanish the instant they happen — unless something is recording. With Replash they stay yours.') ?>
-            </p>
-          </div>
-        </div>
-
-        <!-- Card 03 -->
-        <div class="card-elevated relative rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all flex flex-col justify-between overflow-hidden">
-          <div class="absolute top-6 right-8 font-display text-4xl sm:text-5xl font-bold text-accent/25 select-none pointer-events-none">
-            <?= htmlspecialchars(__('forPlayers.whyVideo.cards.3.num') ?: '03') ?>
-          </div>
-          <div>
-            <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="6" cy="6" r="3"></circle>
-                <circle cx="6" cy="18" r="3"></circle>
-                <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-                <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-                <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-              </svg>
-            </div>
-            <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-3">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.3.title') ?: 'Clip and Share, No Friction') ?>
-            </h3>
-            <p class="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.3.desc') ?: 'Open the recording. Pick 10 seconds. Download. Share. No account, no app, no profile.') ?>
-            </p>
-          </div>
-        </div>
-
-        <!-- Card 04 -->
-        <div class="card-elevated relative rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all flex flex-col justify-between overflow-hidden">
-          <div class="absolute top-6 right-8 font-display text-4xl sm:text-5xl font-bold text-accent/25 select-none pointer-events-none">
-            <?= htmlspecialchars(__('forPlayers.whyVideo.cards.4.num') ?: '04') ?>
-          </div>
-          <div>
-            <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-            </div>
-            <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-3">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.4.title') ?: 'When friends see it') ?>
-            </h3>
-            <p class="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              <?= htmlspecialchars(__('forPlayers.whyVideo.cards.4.desc') ?: 'When you see clips from teams that played at your own facility, adding the video to your next booking just feels natural.') ?>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== SECTION: HIGHLIGHTS & MEMORIES WITH BACKGROUND ==================== -->
-    <div class="relative rounded-3xl overflow-hidden border border-white/10 p-8 sm:p-12 lg:p-16">
-      <!-- Background Image with Gradient Overlay -->
-      <div class="absolute inset-0 z-0">
-        <img src="<?= asset('images/gen_player_watching.jpg') ?>" alt="Highlights Background" class="w-full h-full object-cover object-center opacity-25 filter brightness-90">
-        <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/80 to-ink-900/60"></div>
-      </div>
-
-      <div class="relative z-10 max-w-3xl space-y-8">
-        <div>
-          <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.2] mb-4">
-            <?= htmlspecialchars(__('forPlayers.highlights.title') ?: 'Goals. Saves. Rallies. Funny moments. All worth watching twice.') ?>
-          </h2>
-          <p class="text-neutral-300 text-base sm:text-lg leading-relaxed">
-            <?= htmlspecialchars(__('forPlayers.highlights.subtitle') ?: 'Scroll through the match and rewatch the moments that made the game. Whether it\'s a last-minute goal, a tough save, a rally you want to study, or a hilarious miss that made everyone laugh. The full recording is there.') ?>
-          </p>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <?php for ($i = 1; $i <= 5; $i++): ?>
-            <?php $itemText = __('forPlayers.highlights.items.' . $i); ?>
-            <?php if (!empty($itemText)): ?>
-              <div class="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm px-5 py-3.5 hover:border-accent/30 hover:bg-white/[0.06] transition-all">
-                <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
-                  <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
-                </div>
-                <span class="text-sm sm:text-base text-neutral-200 font-medium">
-                  <?= htmlspecialchars($itemText) ?>
-                </span>
-              </div>
-            <?php endif; ?>
-          <?php endfor; ?>
-        </div>
-      </div>
-    </div>
-
+  <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
+  <div class="absolute inset-0" aria-hidden="true">
+  <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <img src="<?= asset('images/gen_player_phone_v2.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
+  </div>
+  </div>
+  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
+  </div>
+  <div class="container-x relative text-center">
+  <h1 class="mx-auto max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
+  <?= e(__('forPlayers.hero.title')) ?>
+  </h1>
+  <p class="mx-auto mt-6 max-w-2xl text-lg text-white/55 md:text-xl"  data-reveal="up">
+  <?= e(__('forPlayers.hero.subtitle')) ?>
+  </p>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 30%, rgba(253,230,138,0.08), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="container-x relative">
+  <div class="mx-auto max-w-3xl text-center">
+  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('forPlayers.clipping.title')) ?>
+  </h2>
+  </div>
+  <p class="mt-5 text-base leading-relaxed text-white/55"  data-reveal="up">
+  <?= e(__('forPlayers.clipping.desc')) ?>
+  </p>
+  </div>
+  <div class="mx-auto mt-14 max-w-5xl"  data-reveal="up">
+  <div class="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+  <div class="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#1a1709] to-ink-900 shadow-[0_30px_100px_-20px_rgba(0,0,0,0.7)]">
+  <div class="flex items-center gap-1.5 border-b border-white/10 bg-white/[0.03] px-3 py-2">
+  <span class="h-2 w-2 rounded-full bg-red-500/60">
+  </span>
+  <span class="h-2 w-2 rounded-full bg-yellow-500/60">
+  </span>
+  <span class="h-2 w-2 rounded-full bg-green-500/60">
+  </span>
+  <span class="ml-3 text-[10px] text-white/30">replash.it/match/M-1234</span>
+  </div>
+  <div class="relative aspect-video bg-gradient-to-br from-[#201a08] to-[#110d08] overflow-hidden">
+  <img src="<?= asset('images/gen_halisaha_camera_v2.jpg') ?>" alt="" class="h-full w-full object-cover opacity-85"/>
+  <div class="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-transparent to-transparent">
+  </div>
+  <div class="absolute inset-0 flex items-center justify-center">
+  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur">
+  <svg class="h-6 w-6 text-white translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M8 5v14l11-7z">
+  </path>
+  </svg>
+  </div>
+  </div>
+  <div class="absolute left-3 top-3 flex items-center gap-1 rounded-full border border-accent/30 bg-accent/15 px-2 py-0.5 backdrop-blur">
+  <span class="h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  <span class="text-[9px] font-semibold uppercase tracking-wider text-accent">Match · 1:24:35</span>
+  </div>
+  <div class="absolute right-3 top-3 rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/60 backdrop-blur">1080p</div>
+  </div>
+  <div class="border-t border-white/8 p-3">
+  <div class="mb-2 flex items-center justify-between gap-2 text-[10px]">
+  <div class="flex items-center gap-2">
+  <span class="text-white/40">Timeline</span>
+  <span class="flex items-center gap-1 rounded-full border border-accent/30 bg-accent/15 px-2 py-0.5">
+  <span class="h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  <span class="text-[9px] font-semibold uppercase tracking-wider text-accent">AI Highlights · Soon</span>
+  </span>
+  </div>
+  <span class="font-mono text-accent">Selected: 00:17:08 → 00:17:23</span>
+  </div>
+  <div class="relative h-8 rounded-md bg-white/[0.03] overflow-hidden">
+  <div class="absolute inset-0 flex items-end gap-0.5 px-1">
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  <div class="flex-1 bg-white/15" >
+  </div>
+  </div>
+  <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent shadow-[0_0_6px_rgba(253,230,138,0.8)]" style="left:32%">
+  </div>
+  <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent/50" style="left:58%">
+  </div>
+  <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent/50" style="left:81%">
+  </div>
+  <div class="absolute inset-y-0 border-x-2 border-accent bg-accent/20" style="left:28%;width:8%">
+  <div class="absolute -top-1 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-accent shadow-glow-sm">
+  </div>
+  </div>
+  </div>
+  <div class="relative mt-1 h-3" aria-hidden="true">
+  <span class="absolute -translate-x-1/2 font-mono text-[9px] font-semibold text-accent" style="left:32%">17&#x27;</span>
+  <span class="absolute -translate-x-1/2 font-mono text-[9px] text-white/35" style="left:58%">49&#x27;</span>
+  <span class="absolute -translate-x-1/2 font-mono text-[9px] text-white/35" style="left:81%">68&#x27;</span>
+  </div>
+  <div class="mt-3 flex items-center justify-between gap-2">
+  <div class="flex items-center gap-1.5">
+  <span class="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-white/50">10s</span>
+  <span class="rounded-md border border-accent/30 bg-accent/15 px-2 py-1 text-[10px] font-semibold text-accent">15s</span>
+  <span class="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-white/50">45s</span>
+  </div>
+  <button type="button" class="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-[10px] font-semibold text-ink-900">
+  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+  </path>
+  <polyline points="7 10 12 15 17 10">
+  </polyline>
+  <line x1="12" y1="15" x2="12" y2="3">
+  </line>
+  </svg>Download Clip</button>
+  </div>
+  </div>
+  </div>
+  <div class="mx-auto w-full max-w-[260px] sm:max-w-[300px]">
+  <div class="relative">
+  <img src="<?= asset('images/gen_padel_story_blue.jpg') ?>" alt="REPLASH match clip posted to Instagram story" class="w-full h-auto rounded-[2rem] shadow-[0_30px_80px_-15px_rgba(0,0,0,0.8)]"/>
+  </div>
+  <p class="mt-3 text-center text-[10px] text-white/35">Posted to player&#x27;s own Instagram story</p>
+  </div>
+  </div>
+  </div>
+  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="flex flex-col gap-2 rounded-xl border border-white/8 bg-white/[0.025] p-4"  data-reveal="up">
+  <div class="flex items-center gap-2">
+  <span class="flex h-7 w-7 items-center justify-center rounded-lg border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M8 5v14l11-7z">
+  </path>
+  </svg>
+  </span>
+  <span class="text-[10px] font-semibold uppercase tracking-widest text-white/40">01</span>
+  </div>
+  <h3 class="text-sm font-semibold text-white">
+  <?= e(__('forPlayers.clipping.features.1.label')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/45">
+  <?= e(__('forPlayers.clipping.features.1.desc')) ?>
+  </p>
+  </div>
+  <div class="flex flex-col gap-2 rounded-xl border border-white/8 bg-white/[0.025] p-4"  data-reveal="up">
+  <div class="flex items-center gap-2">
+  <span class="flex h-7 w-7 items-center justify-center rounded-lg border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="6" cy="6" r="3">
+  </circle>
+  <circle cx="6" cy="18" r="3">
+  </circle>
+  <line x1="20" y1="4" x2="8.12" y2="15.88">
+  </line>
+  <line x1="14.47" y1="14.48" x2="20" y2="20">
+  </line>
+  <line x1="8.12" y1="8.12" x2="12" y2="12">
+  </line>
+  </svg>
+  </span>
+  <span class="text-[10px] font-semibold uppercase tracking-widest text-white/40">02</span>
+  </div>
+  <h3 class="text-sm font-semibold text-white">
+  <?= e(__('forPlayers.clipping.features.2.label')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/45">
+  <?= e(__('forPlayers.clipping.features.2.desc')) ?>
+  </p>
+  </div>
+  <div class="flex flex-col gap-2 rounded-xl border border-white/8 bg-white/[0.025] p-4"  data-reveal="up">
+  <div class="flex items-center gap-2">
+  <span class="flex h-7 w-7 items-center justify-center rounded-lg border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+  </path>
+  <polyline points="7 10 12 15 17 10">
+  </polyline>
+  <line x1="12" y1="15" x2="12" y2="3">
+  </line>
+  </svg>
+  </span>
+  <span class="text-[10px] font-semibold uppercase tracking-widest text-white/40">03</span>
+  </div>
+  <h3 class="text-sm font-semibold text-white">
+  <?= e(__('forPlayers.clipping.features.3.label')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/45">
+  <?= e(__('forPlayers.clipping.features.3.desc')) ?>
+  </p>
+  </div>
+  <div class="flex flex-col gap-2 rounded-xl border border-white/8 bg-white/[0.025] p-4"  data-reveal="up">
+  <div class="flex items-center gap-2">
+  <span class="flex h-7 w-7 items-center justify-center rounded-lg border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="18" cy="5" r="3">
+  </circle>
+  <circle cx="6" cy="12" r="3">
+  </circle>
+  <circle cx="18" cy="19" r="3">
+  </circle>
+  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49">
+  </line>
+  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49">
+  </line>
+  </svg>
+  </span>
+  <span class="text-[10px] font-semibold uppercase tracking-widest text-white/40">04</span>
+  </div>
+  <h3 class="text-sm font-semibold text-white">
+  <?= e(__('forPlayers.clipping.features.4.label')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/45">
+  <?= e(__('forPlayers.clipping.features.4.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-section-gradient">
+  <div class="container-x">
+  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('forPlayers.whyVideo.title')) ?>
+  </h2>
+  </div>
+  <div class="mt-12 grid gap-5 sm:grid-cols-2">
+  <div class="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.025] p-6 transition-colors duration-300 hover:border-accent/30"  data-reveal="up">
+  <span class="absolute right-5 top-4 font-display text-6xl font-bold text-white/[0.04] select-none">01</span>
+  <div class="relative flex items-start gap-4">
+  <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+  </path>
+  </svg>
+  </div>
+  <div class="flex-1">
+  <h3 class="mb-2 text-base font-semibold text-white">
+  <?= e(__('forPlayers.whyVideo.reasons.1.title')) ?>
+  </h3>
+  <p class="text-sm leading-relaxed text-white/55">
+  <?= e(__('forPlayers.whyVideo.reasons.1.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  <div class="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.025] p-6 transition-colors duration-300 hover:border-accent/30"  data-reveal="up">
+  <span class="absolute right-5 top-4 font-display text-6xl font-bold text-white/[0.04] select-none">02</span>
+  <div class="relative flex items-start gap-4">
+  <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+  </path>
+  <circle cx="12" cy="13" r="4">
+  </circle>
+  </svg>
+  </div>
+  <div class="flex-1">
+  <h3 class="mb-2 text-base font-semibold text-white">
+  <?= e(__('forPlayers.whyVideo.reasons.2.title')) ?>
+  </h3>
+  <p class="text-sm leading-relaxed text-white/55">
+  <?= e(__('forPlayers.whyVideo.reasons.2.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  <div class="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.025] p-6 transition-colors duration-300 hover:border-accent/30"  data-reveal="up">
+  <span class="absolute right-5 top-4 font-display text-6xl font-bold text-white/[0.04] select-none">03</span>
+  <div class="relative flex items-start gap-4">
+  <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="22" y1="2" x2="11" y2="13">
+  </line>
+  <polygon points="22 2 15 22 11 13 2 9 22 2">
+  </polygon>
+  </svg>
+  </div>
+  <div class="flex-1">
+  <h3 class="mb-2 text-base font-semibold text-white">
+  <?= e(__('forPlayers.whyVideo.reasons.3.title')) ?>
+  </h3>
+  <p class="text-sm leading-relaxed text-white/55">
+  <?= e(__('forPlayers.whyVideo.reasons.3.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  <div class="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.025] p-6 transition-colors duration-300 hover:border-accent/30"  data-reveal="up">
+  <span class="absolute right-5 top-4 font-display text-6xl font-bold text-white/[0.04] select-none">04</span>
+  <div class="relative flex items-start gap-4">
+  <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2">
+  </path>
+  <circle cx="9" cy="7" r="4">
+  </circle>
+  <path d="M23 21v-2a4 4 0 0 0-3-3.87">
+  </path>
+  <path d="M16 3.13a4 4 0 0 1 0 7.75">
+  </path>
+  </svg>
+  </div>
+  <div class="flex-1">
+  <h3 class="mb-2 text-base font-semibold text-white">
+  <?= e(__('forPlayers.whyVideo.reasons.4.title')) ?>
+  </h3>
+  <p class="text-sm leading-relaxed text-white/55">
+  <?= e(__('forPlayers.whyVideo.reasons.4.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0" aria-hidden="true">
+  <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <img src="<?= asset('images/gen_player_watching.jpg') ?>" alt="" class="h-full w-full object-cover object-right" style="opacity:0.6;filter:brightness(1.15)"/>
+  </div>
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-ink-900/40 to-ink-900/90">
+  </div>
+  </div>
+  <div class="container-x relative">
+  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('forPlayers.relive.title')) ?>
+  </h2>
+  </div>
+  <p class="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-white/55"  data-reveal="up">
+  <?= e(__('forPlayers.relive.desc')) ?>
+  </p>
+  <div class="mt-10 grid gap-4 sm:grid-cols-2">
+  <div class="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-4 py-4"  data-reveal="up">
+  <div class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+  <div class="h-1.5 w-1.5 rounded-full bg-accent">
+  </div>
+  </div>
+  <span class="text-sm leading-relaxed text-white/65">
+  <?= e(__('forPlayers.relive.items.1')) ?>
+  </span>
+  </div>
+  <div class="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-4 py-4"  data-reveal="up">
+  <div class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+  <div class="h-1.5 w-1.5 rounded-full bg-accent">
+  </div>
+  </div>
+  <span class="text-sm leading-relaxed text-white/65">
+  <?= e(__('forPlayers.relive.items.2')) ?>
+  </span>
+  </div>
+  <div class="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-4 py-4"  data-reveal="up">
+  <div class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+  <div class="h-1.5 w-1.5 rounded-full bg-accent">
+  </div>
+  </div>
+  <span class="text-sm leading-relaxed text-white/65">
+  <?= e(__('forPlayers.relive.items.3')) ?>
+  </span>
+  </div>
+  <div class="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-4 py-4"  data-reveal="up">
+  <div class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+  <div class="h-1.5 w-1.5 rounded-full bg-accent">
+  </div>
+  </div>
+  <span class="text-sm leading-relaxed text-white/65">
+  <?= e(__('forPlayers.relive.items.4')) ?>
+  </span>
+  </div>
+  <div class="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-4 py-4"  data-reveal="up">
+  <div class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15">
+  <div class="h-1.5 w-1.5 rounded-full bg-accent">
+  </div>
+  </div>
+  <span class="text-sm leading-relaxed text-white/65">
+  <?= e(__('forPlayers.relive.items.5')) ?>
+  </span>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(253,230,138,0.07), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="container-x relative">
+  <div class="mx-auto max-w-2xl rounded-2xl border border-accent/15 bg-accent/[0.04] p-10 text-center"  data-reveal="up">
+  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-accent">
+  <span class="relative flex h-1.5 w-1.5">
+  <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60">
+  </span>
+  <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  </span>
+  <?= e(__('forPlayers.ai.eyebrow')) ?>
+  </div>
+  <h2 class="mt-2 font-display text-3xl font-bold tracking-tight text-balance md:text-4xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+  <?= e(__('forPlayers.ai.title')) ?>
+  </h2>
+  <p class="mt-4 text-base leading-relaxed text-white/55">
+  <?= e(__('forPlayers.ai.desc')) ?>
+  </p>
+  <div class="mt-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
+  <span class="relative flex h-1.5 w-1.5">
+  <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60">
+  </span>
+  <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  </span>
+  <?= e(__('forPlayers.ai.badge')) ?>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.10), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="container-x relative text-center">
+  <div  data-reveal="up">
+  <h2 class="mx-auto max-w-xl font-display text-3xl font-bold tracking-tight text-balance md:text-4xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+  <?= e(__('forPlayers.cta.title')) ?>
+  </h2>
+  <p class="mx-auto mt-4 max-w-md text-sm text-white/45">
+  <?= e(__('forPlayers.cta.subtitle')) ?>
+  </p>
+  <div class="mt-8">
+  <a class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] hover:bg-accent-neon hover:shadow-[0_0_50px_rgba(254,243,199,0.5)]" href="<?= base_url('for-facilities.php') ?>">
+  <?= e(__('forPlayers.cta.button')) ?>
+  </a>
+  </div>
+  </div>
+  </div>
+  </section>
+
 </main>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-

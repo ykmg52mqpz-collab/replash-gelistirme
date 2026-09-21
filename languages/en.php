@@ -867,8 +867,8 @@ return [
     'forPlayers' => [
         'hero' => [
             'eyebrow' => 'For Players',
-            'title' => 'Immortalize Every Great Moment.',
-            'subtitle' => 'That incredible volley, the impossible penalty save, or the decisive padel smash... No longer lost to memory.'
+            'title' => 'Your match deserves to be seen again.',
+            'subtitle' => 'Watch your game. Clip the best moments. Share them on social media. Let your best memories stay with you forever.'
         ],
         'features' => [
             '1' => [
@@ -913,6 +913,25 @@ return [
                     'title' => 'When friends see it',
                     'desc' => 'When you see clips from teams that played at your own facility, adding the video to your next booking just feels natural.'
                 ]
+            ],
+            'eyebrow' => 'Why Players Pick the Video',
+            'reasons' => [
+                '1' => [
+                    'title' => 'A memory to keep',
+                    'desc' => 'After a meal you post a photo. After a workout, a selfie. After a match? Almost nothing. Replash finally gives you something to rewatch and share.'
+                ],
+                '2' => [
+                    'title' => 'The Moment, Captured',
+                    'desc' => 'The look after the first goal. The shot that closes the set. Moments that vanish the instant they happen — unless something is recording. With Replash they stay yours.'
+                ],
+                '3' => [
+                    'title' => 'Clip and Share, No Friction',
+                    'desc' => 'Open the recording. Pick 10 seconds. Download. Share. No account, no app, no profile.'
+                ],
+                '4' => [
+                    'title' => 'When friends see it',
+                    'desc' => 'When you see clips from teams that played at your own facility, adding the video to your next booking just feels natural.'
+                ]
             ]
         ],
         'highlights' => [
@@ -925,6 +944,80 @@ return [
                 '4' => 'Analyse tactical situations with your team',
                 '5' => 'Keep a personal record of your progress over time'
             ]
+        ],
+        'watch' => [
+            'eyebrow' => 'Watch Your Game',
+            'title' => 'Your full match, available after the final whistle.',
+            'desc' => 'Once the match is over and the facility has enabled the video, enter the match code and watch the full recording from a simple web link. No app to download, no account to create. Just your match, ready to watch.'
+        ],
+        'clipping' => [
+            'eyebrow' => 'Clip the Best Moments',
+            'title' => 'Cut a goal. Save a rally. Post in seconds.',
+            'desc' => 'Replash has a built-in clip cutter. Scrub through your match, pick a 10–45 second moment, and download it straight to your phone. A goal at minute 17. The winning shot of the last set. The celebration. Pick the seconds you want, clip them, and they\'re on your camera roll.',
+            'features' => [
+                '1' => [
+                    'label' => 'Open recording',
+                    'desc' => 'Watch your match from any device.'
+                ],
+                '2' => [
+                    'label' => 'Pick the moment',
+                    'desc' => 'Scrub the timeline, select 10–45 sec.'
+                ],
+                '3' => [
+                    'label' => 'Download',
+                    'desc' => 'Clip exports to your phone instantly.'
+                ],
+                '4' => [
+                    'label' => 'Share anywhere',
+                    'desc' => 'Share them on social media platforms.'
+                ]
+            ]
+        ],
+        'relive' => [
+            'eyebrow' => 'Relive the Best Moments',
+            'title' => 'Goals. Saves. Rallies. Funny moments. All worth watching twice.',
+            'desc' => 'Scroll through the match and rewatch the moments that made the game. Whether it\'s a last-minute goal, a tough save, a rally you want to study, or a hilarious miss that made everyone laugh. The full recording is there.',
+            'items' => [
+                '1' => 'Review your own technique and positioning',
+                '2' => 'Celebrate goals and great plays',
+                '3' => 'Relive funny moments and bloopers with friends',
+                '4' => 'Analyse tactical situations with your team',
+                '5' => 'Keep a personal record of your progress over time'
+            ]
+        ],
+        'share' => [
+            'eyebrow' => 'Share With Friends',
+            'title' => 'The experience doesn\'t end at the final whistle.',
+            'desc' => 'Send your clip. Or the full match link. To teammates, friends, and family. Post it to your story. Tag the venue. The best moments are better when they\'re shared, and your match becomes something people can actually watch, not just hear about.'
+        ],
+        'ai' => [
+            'eyebrow' => 'AI Highlights. Coming Soon',
+            'title' => 'Auto-cut the best moments.',
+            'desc' => 'Replash is built to support future AI-powered highlights. Auto-clipping goals, saves, and the most exciting plays from your match into a short reel. Square and vertical formats with subtitles, ready to share on social media. You\'ll find your best moments without watching the entire recording.',
+            'badge' => 'Coming Soon'
+        ],
+        'simple' => [
+            'eyebrow' => 'No Complicated Process',
+            'title' => 'Three steps. Under a minute.',
+            'steps' => [
+                '1' => [
+                    'title' => 'Scan or Visit',
+                    'desc' => 'Scan the QR code at your court, or visit the Replash website.'
+                ],
+                '2' => [
+                    'title' => 'Enter the Code',
+                    'desc' => 'Enter the match code the facility gave you.'
+                ],
+                '3' => [
+                    'title' => 'Watch and Enjoy',
+                    'desc' => 'Access your full match recording instantly.'
+                ]
+            ]
+        ],
+        'cta' => [
+            'title' => 'Ask your facility about Replash.',
+            'subtitle' => 'Replash is available at partner facilities. If your venue doesn\'t offer it yet, encourage them to get in touch.',
+            'button' => 'Learn More for Facilities'
         ]
     ],
     'contact' => [
