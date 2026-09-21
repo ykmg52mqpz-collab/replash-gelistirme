@@ -147,7 +147,7 @@ if ($pdo) {
 
             $ins = $pdo->prepare("INSERT INTO matches 
                 (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, playback_type, thumbnail_url, duration_sec, sold_at, views, billable, sport, recorded_at, available_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mp4', 'assets/images/gen_hero_main.jpg', 3600, ?, 0, ?, ?, NOW(), NOW())");
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mp4', 'assets/images/gen_hero_main.webp', 3600, ?, 0, ?, ?, NOW(), NOW())");
             
             $ins->execute([
                 $matchId,

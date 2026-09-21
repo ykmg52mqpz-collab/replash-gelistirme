@@ -13,9 +13,9 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <link rel="apple-touch-icon" href="<?= asset('images/icon-512.png') ?>">
   
   <!-- Preloads -->
-  <link rel="preload" as="image" href="<?= asset('images/replash-logo.png') ?>">
-  <link rel="preload" as="image" href="<?= asset('images/gen_hero_friends.jpg') ?>">
-  <link rel="preload" as="image" href="<?= asset('images/gen_padel_club_empty.jpg') ?>">
+  <link rel="preload" as="image" href="<?= asset('images/replash-logo.webp') ?>">
+  <link rel="preload" as="image" href="<?= asset('images/gen_hero_friends.webp') ?>">
+  <link rel="preload" as="image" href="<?= asset('images/gen_padel_club_empty.webp') ?>">
 
   <!-- Marka yazı tipi: Neue Haas Grotesk Display (Adobe Fonts kit qqj8ayc) -->
   <link rel="preconnect" href="https://use.typekit.net" crossorigin>
@@ -76,7 +76,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         
         <!-- Logo -->
         <a class="flex items-center gap-2" href="<?= base_url() ?>">
-          <img src="<?= asset('images/replash-logo.png') ?>" alt="REPLASH" class="h-8 w-auto select-none md:h-9" draggable="false"/>
+          <img src="<?= asset('images/replash-logo.webp') ?>" alt="REPLASH" class="h-8 w-auto select-none md:h-9" draggable="false"/>
           <span lang="en" style="font-weight:600" class="font-display text-xl tracking-tight text-accent md:text-2xl">replash</span>
         </a>
 

@@ -14,7 +14,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_football_night.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.45"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_football_night.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.45"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
@@ -257,8 +257,8 @@ require_once __DIR__ . '/includes/header.php';
       <span class="truncate font-mono text-[10px] text-white/70">Replash Demo Arena · Saha 1 · 19:00–20:00</span>
     </div>
     <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
-      <img src="<?= asset('images/gen_football_night.jpg') ?>" alt="" loading="lazy" class="h-full w-full object-cover opacity-90">
-      <div class="absolute right-2.5 top-2 flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-white/90" style="text-shadow:0 1px 3px rgba(0,0,0,.6)">replash.it<img src="<?= asset('images/replash-logo.png') ?>" alt="" class="h-3.5 w-auto"></div>
+      <img loading="lazy" decoding="async" src="<?= asset('images/gen_football_night.webp') ?>" alt="" loading="lazy" class="h-full w-full object-cover opacity-90">
+      <div class="absolute right-2.5 top-2 flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-white/90" style="text-shadow:0 1px 3px rgba(0,0,0,.6)">replash.it<img loading="lazy" decoding="async" src="<?= asset('images/replash-logo.webp') ?>" alt="" class="h-3.5 w-auto"></div>
       <div class="absolute bottom-2 right-2.5 font-mono text-[8px] tracking-wider text-white/80" style="text-shadow:0 1px 3px rgba(0,0,0,.6)">REPLASH DEMO ARENA · SAHA 1</div>
       <div class="absolute inset-0 flex items-center justify-center"><div class="hwp-playicon flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm"><svg class="h-4 w-4 translate-x-[1px] text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M8 5v10l7-5-7-5z"></path></svg></div></div>
     </div>

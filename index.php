@@ -24,7 +24,7 @@ require_once __DIR__ . '/includes/header.php';
   <!-- HERO (replash.info) -->
   <section id="hero-section" class="relative flex min-h-[100svh] items-center overflow-hidden bg-ink-900 pt-28 pb-20 md:pt-32 md:pb-24">
   <div id="hero-parallax" class="absolute -inset-y-[25%] inset-x-0 will-change-transform" style="transform:scale(1.1)" aria-hidden="true">
-  <img src="<?= asset('images/gen_hero_friends.jpg') ?>" alt="" fetchpriority="high" class="h-full w-full object-cover" style="opacity:0.75;object-position:center 35%"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_hero_friends.webp') ?>" alt="" fetchpriority="high" class="h-full w-full object-cover" style="opacity:0.75;object-position:center 35%"/>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/55 to-ink-900/95">
   </div>
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900/40 via-transparent to-ink-900/40">
@@ -269,7 +269,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.15" />
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_club_empty.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.15" />
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900 via-ink-900/60 to-ink-900">

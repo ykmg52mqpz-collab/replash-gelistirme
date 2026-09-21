@@ -236,7 +236,7 @@ class DB {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $sampleVideo = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-        $sampleThumb = 'assets/images/gen_hero_main.jpg';
+        $sampleThumb = 'assets/images/gen_hero_main.webp';
 
         foreach ($cameras as $cam) {
             for ($offset = 0; $offset <= 5; $offset++) {

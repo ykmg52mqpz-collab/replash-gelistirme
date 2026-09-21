@@ -7,7 +7,7 @@
       <div class="flex flex-col gap-10 md:flex-row md:justify-between">
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-2.5">
-            <img src="<?= asset('images/replash-logo.png') ?>" alt="REPLASH" class="h-12 w-auto select-none" draggable="false"/>
+            <img loading="lazy" decoding="async" src="<?= asset('images/replash-logo.webp') ?>" alt="REPLASH" class="h-12 w-auto select-none" draggable="false"/>
             <span lang="en" style="font-weight:600" class="font-display text-2xl tracking-tight text-accent">replash</span>
           </div>
           <p class="max-w-xs text-sm text-white/50 leading-relaxed"><?= e(__('footer.tagline')) ?></p>

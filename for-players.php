@@ -14,7 +14,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_player_phone_v2.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_player_phone_v2.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
@@ -61,7 +61,7 @@ require_once __DIR__ . '/includes/header.php';
   <span class="ml-3 text-[10px] text-white/30">replash.it/match/M-1234</span>
   </div>
   <div class="relative aspect-video bg-gradient-to-br from-[#201a08] to-[#110d08] overflow-hidden">
-  <img src="<?= asset('images/gen_halisaha_camera_v2.jpg') ?>" alt="" class="h-full w-full object-cover opacity-85"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_halisaha_camera_v2.webp') ?>" alt="" class="h-full w-full object-cover opacity-85"/>
   <div class="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-transparent to-transparent">
   </div>
   <div class="absolute inset-0 flex items-center justify-center">
@@ -250,7 +250,7 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   <div class="mx-auto w-full max-w-[260px] sm:max-w-[300px]">
   <div class="relative">
-  <img src="<?= asset('images/gen_padel_story_blue.jpg') ?>" alt="REPLASH match clip posted to Instagram story" class="w-full h-auto rounded-[2rem] shadow-[0_30px_80px_-15px_rgba(0,0,0,0.8)]"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_story_blue.webp') ?>" alt="REPLASH match clip posted to Instagram story" class="w-full h-auto rounded-[2rem] shadow-[0_30px_80px_-15px_rgba(0,0,0,0.8)]"/>
   </div>
   <p class="mt-3 text-center text-[10px] text-white/35">Posted to player&#x27;s own Instagram story</p>
   </div>
@@ -451,7 +451,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_player_watching.jpg') ?>" alt="" class="h-full w-full object-cover object-right" style="opacity:0.6;filter:brightness(1.15)"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_player_watching.webp') ?>" alt="" class="h-full w-full object-cover object-right" style="opacity:0.6;filter:brightness(1.15)"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-ink-900/40 to-ink-900/90">

@@ -14,7 +14,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_club_empty.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
@@ -121,7 +121,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover" style="opacity:0.12"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_club_empty.webp') ?>" alt="" class="h-full w-full object-cover" style="opacity:0.12"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-ink-900/80">

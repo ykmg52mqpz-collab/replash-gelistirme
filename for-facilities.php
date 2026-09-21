@@ -26,7 +26,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_padel_golden.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_golden.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
@@ -63,7 +63,7 @@ require_once __DIR__ . '/includes/header.php';
   <section id="calculator" class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
     <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
       <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-        <img src="<?= asset('images/gen_facility_owner_pov.jpg') ?>" alt="" class="h-full w-full object-cover opacity-30" style="filter:brightness(1.1)" />
+        <img loading="lazy" decoding="async" src="<?= asset('images/gen_facility_owner_pov.webp') ?>" alt="" class="h-full w-full object-cover opacity-30" style="filter:brightness(1.1)" />
       </div>
     </div>
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink-900/90 via-ink-900/55 to-ink-900/95" aria-hidden="true"></div>
@@ -333,7 +333,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img src="<?= asset('images/gen_marketing_bright.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.65;filter:brightness(1.15)"/>
+  <img loading="lazy" decoding="async" src="<?= asset('images/gen_marketing_bright.webp') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.65;filter:brightness(1.15)"/>
   </div>
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/85 via-ink-900/35 to-ink-900/85">

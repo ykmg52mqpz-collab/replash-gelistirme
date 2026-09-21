@@ -1097,7 +1097,7 @@ function clipSetBusyUI(busy, pct) {
 }
 // Filigran: sağ üstte "replash.it" + küçük logo, sağ altta tesis · saha (ince dijital yazı)
 var clipLogo = new Image();
-clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.png'), PHP_URL_PATH)) ?>;
+clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.webp'), PHP_URL_PATH)) ?>;
 var clipCourtLabel = <?= json_encode(mb_strtoupper(trim(($match['facility_name'] ?? '') . ' · ' . ($match['court'] ?? ''), ' ·'), 'UTF-8')) ?>;
 var CLIP_FONT = '"Share Tech Mono", "SFMono-Regular", Menlo, Consolas, monospace';
 (function () {
@@ -1684,7 +1684,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('clappr-player');
   if (container) {
     var videoSrc = <?= json_encode($directVideoSrc) ?>;
-    var posterImg = <?= json_encode(!empty($match['thumbnail_url']) ? $match['thumbnail_url'] : asset('images/gen_hero_main.jpg')) ?>;
+    var posterImg = <?= json_encode(!empty($match['thumbnail_url']) ? $match['thumbnail_url'] : asset('images/gen_hero_main.webp')) ?>;
     var mimeType = videoSrc.indexOf('.m3u8') !== -1 ? 'application/x-mpegURL' : 'video/mp4';
 
     clapprPlayer = new Clappr.Player({
