@@ -74,11 +74,11 @@ return [
                 'facility' => 'Centro',
                 'date' => 'Data',
                 'time' => 'Slot Orario',
-                'accessCode' => 'o Codice di Accesso (es: AEXF-BFFG)',
+                'accessCode' => 'o Codice di Accesso (es: 4821)',
                 'facilityPlaceholder' => 'Scegli un centro',
                 'datePlaceholder' => 'Seleziona la data',
                 'timePlaceholder' => 'Scegli lo slot',
-                'codePlaceholder' => 'AEXF-BFFG'
+                'codePlaceholder' => '4821'
             ],
             'button' => 'Guarda la Mia Partita',
             'tryIt' => 'Prova la demo'
@@ -400,7 +400,7 @@ return [
             'all_hours' => 'Tutti gli Orari',
             'search_btn' => 'Trova e Guarda Partita',
             'or_code' => 'oppure Apri Direttamente con Codice di Accesso:',
-            'code_placeholder' => 'Es: AEXF-BFFG',
+            'code_placeholder' => 'Es: 4821',
             'open_code_btn' => 'Sblocca Codice'
         ],
         'status' => [
@@ -465,7 +465,7 @@ return [
         'gate' => [
             'title' => 'Registrazione Partita Trovata!',
             'desc' => 'La registrazione della telecamera per questo slot è pronta. Inserisci il codice di accesso a 8 cifre fornito dal centro.',
-            'placeholder' => 'Codice di Accesso (Es: AEXF-BFFG)',
+            'placeholder' => 'Codice di Accesso (Es: 4821)',
             'verify_btn' => 'Verifica e Guarda Video'
         ],
         'locked_card' => [
@@ -474,6 +474,7 @@ return [
             'staff_btn' => 'Accesso Personale (PIN)'
         ],
         'errors' => [
+                'too_many' => 'Troppi codici errati. Riprova tra {m} minuti.',
                 'video_not_found' => 'Video non trovato',
             'not_found' => 'Nessuna registrazione trovata per i criteri selezionati (Centro, Data, Orario).',
             'expired' => 'Questo video è stato eliminato poiché il periodo di conservazione di 7 giorni è scaduto.',
@@ -1319,7 +1320,7 @@ return [
             'title' => 'Trova la Tua Partita con il Codice',
             'subtitle' => 'Inserisci il codice di accesso ricevuto dal personale della struttura.',
             'desc' => 'Inserisci il codice di accesso per guardare subito la tua partita registrata.',
-            'placeholder' => 'Es: AEXF-BFFG o Codice a 6 Cifre',
+            'placeholder' => 'Es: 4821',
             'button' => 'Trova & Guarda la Partita',
             'hint' => 'Nessun account, nessuna app. Inserisci il codice e guarda subito.'
         ]

@@ -108,3 +108,77 @@ function replash_purge_expired(PDO $pdo, bool $force = false): int {
         return 0;
     }
 }
+
+/*
+ * Access codes (Platform Brief v3.4): 4-digit numeric, given only when a match is unlocked.
+ * Locked matches carry a random placeholder that can never be typed as a code.
+ * Re-locking replaces the code with a placeholder, so the old code stops working.
+ * A 4-digit space is guessable, so failed attempts are rate-limited per client.
+ */
+const REPLASH_CODE_DIGITS = 4;
+const REPLASH_CODE_MAX_FAILS = 10;      // failed attempts allowed ...
+const REPLASH_CODE_WINDOW_MIN = 15;     // ... per this many minutes, per client
+
+function replash_locked_placeholder(): string {
+    return 'L-' . bin2hex(random_bytes(8));
+}
+
+/** New 4-digit code, unique among currently watchable (unlocked) matches. */
+function replash_new_access_code(PDO $pdo): string {
+    $max = 10 ** REPLASH_CODE_DIGITS - 1;
+    $check = $pdo->prepare("SELECT 1 FROM matches WHERE access_code = ? AND status = 'UNLOCKABLE' LIMIT 1");
+    for ($i = 0; $i < 200; $i++) {
+        $code = str_pad((string)random_int(0, $max), REPLASH_CODE_DIGITS, '0', STR_PAD_LEFT);
+        $check->execute([$code]);
+        if (!$check->fetchColumn()) return $code;
+    }
+    throw new RuntimeException('No free access code');
+}
+
+/** "48 21", "4821" → "4821"; older alphanumeric codes are kept (upper-case, no spaces). */
+function replash_normalize_code(string $raw): string {
+    $c = strtoupper(preg_replace('/\s+/', '', $raw));
+    if (preg_match('/^[\d\-]+$/', $c)) $c = str_replace('-', '', $c);
+    return $c;
+}
+
+/**
+ * Match for an access code. A 4-digit code can be reused after its match is locked or
+ * expired, so the watchable match wins, then the most recently sold one.
+ */
+function replash_match_by_code(PDO $pdo, string $code, bool $withFacility = false): ?array {
+    if ($code === '' || str_starts_with($code, 'L-')) return null;
+    $sql = $withFacility
+        ? "SELECT m.*, f.name AS facility_name, f.city, f.sport AS facility_sport FROM matches m JOIN facilities f ON m.facility_id = f.id"
+        : "SELECT m.* FROM matches m";
+    $stmt = $pdo->prepare($sql . " WHERE UPPER(m.access_code) = ? ORDER BY (m.status = 'UNLOCKABLE') DESC, m.sold_at DESC LIMIT 1");
+    $stmt->execute([$code]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ?: null;
+}
+
+function replash_client_key(): string {
+    // Behind Cloudflare the visitor IP is in CF-Connecting-IP
+    $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? ($_SERVER['REMOTE_ADDR'] ?? '');
+    return hash('sha256', $ip . '|' . (defined('REPLASH_TOKEN_SECRET') ? REPLASH_TOKEN_SECRET : 'replash'));
+}
+
+/** True when this client made too many wrong code attempts recently. */
+function replash_code_blocked(PDO $pdo): bool {
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM code_attempts WHERE client_key = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)");
+        $stmt->execute([replash_client_key(), REPLASH_CODE_WINDOW_MIN]);
+        return (int)$stmt->fetchColumn() >= REPLASH_CODE_MAX_FAILS;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function replash_code_failed(PDO $pdo): void {
+    try {
+        $pdo->prepare("INSERT INTO code_attempts (client_key) VALUES (?)")->execute([replash_client_key()]);
+        if (random_int(1, 50) === 1) $pdo->exec("DELETE FROM code_attempts WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
+    } catch (Exception $e) {
+        error_log('replash_code_failed: ' . $e->getMessage());
+    }
+}

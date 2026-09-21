@@ -78,10 +78,11 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 $camStream = $camStmt->fetchColumn() ?: '';
                 $playbackUrl = buildMatchPlaybackUrl($camStream, $mRow['date'], $mRow['time_slot'], (int)($mRow['duration_sec'] ?? 3600));
 
-                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
-                $upd->execute([$playbackUrl, $matchId]);
+                $newCode = replash_new_access_code($pdo);
+                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
+                $upd->execute([$newCode, $playbackUrl, $matchId]);
                 replash_log_sale_event($pdo, $mRow, 'sold', 'panel');
-                $soldNotice = ['code' => $mRow['access_code'], 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];
+                $soldNotice = ['code' => $newCode, 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];
             }
         }
 
@@ -100,8 +101,9 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 } elseif ($reason === '') {
                     $error = __('panel.shell.undo_reason_required');
                 } else {
-                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', sold_at = NULL, billable = 0 WHERE id = ? AND first_opened_at IS NULL");
-                    $upd->execute([$matchId]);
+                    // Kod iptal: oyuncunun kodu ve eski linki artık çalışmaz
+                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ? AND first_opened_at IS NULL");
+                    $upd->execute([replash_locked_placeholder(), $matchId]);
                     replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason);
                     $success = e($mRow['court'] . ' · ' . $mRow['time_slot'] . ' — ' . __('panel.shell.undone_ok'));
                 }

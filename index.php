@@ -77,7 +77,7 @@ require_once __DIR__ . '/includes/header.php';
         <p class="mb-5 text-sm text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
         <div class="flex flex-col gap-2">
           <label for="home-code" class="text-xs font-semibold uppercase tracking-wider text-white/60"><?= e(__('find.watch.codeLabel')) ?></label>
-          <input id="home-code" type="text" name="code" required placeholder="XXXX-XXXX" maxlength="10" autocomplete="off" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.3em] text-white outline-none transition placeholder:tracking-[0.3em] placeholder:text-white/25 focus:border-accent" />
+          <input id="home-code" type="text" name="code" required placeholder="0000" maxlength="9" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.3em] text-white outline-none transition placeholder:tracking-[0.3em] placeholder:text-white/25 focus:border-accent" />
         </div>
         <button type="submit" class="mt-5 w-full rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-ink-900 shadow-glow-sm transition hover:shadow-glow"><?= e(__('find.watch.button')) ?></button>
       </form>
@@ -143,7 +143,7 @@ require_once __DIR__ . '/includes/header.php';
           <div class="mt-4 pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
             <span><?= e(__('home.findPreview.fields.accessCode')) ?></span>
             <form action="<?= base_url('find.php') ?>" method="GET" class="flex items-center gap-2 w-full sm:w-auto">
-              <input type="text" name="code" placeholder="XXXX-XXXX" class="rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-white uppercase tracking-widest focus:border-accent focus:outline-none">
+              <input type="text" name="code" placeholder="0000" inputmode="numeric" class="rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-white uppercase tracking-widest focus:border-accent focus:outline-none">
               <button type="submit" class="rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent hover:text-ink-900 transition">
                 &rarr;
               </button>

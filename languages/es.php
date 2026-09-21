@@ -74,11 +74,11 @@ return [
                 'facility' => 'Centro',
                 'date' => 'Fecha',
                 'time' => 'Franja Horaria',
-                'accessCode' => 'o Código de Acceso (ej: AEXF-BFFG)',
+                'accessCode' => 'o Código de Acceso (ej: 4821)',
                 'facilityPlaceholder' => 'Elige un centro',
                 'datePlaceholder' => 'Selecciona fecha',
                 'timePlaceholder' => 'Elige tu franja',
-                'codePlaceholder' => 'AEXF-BFFG'
+                'codePlaceholder' => '4821'
             ],
             'button' => 'Ver Mi Partido',
             'tryIt' => 'Prueba la demo'
@@ -400,7 +400,7 @@ return [
             'all_hours' => 'Todos los Horarios',
             'search_btn' => 'Buscar y Ver Partido',
             'or_code' => 'o Abrir Directamente con Código de Acceso:',
-            'code_placeholder' => 'Ej: AEXF-BFFG',
+            'code_placeholder' => 'Ej: 4821',
             'open_code_btn' => 'Desbloquear Código'
         ],
         'status' => [
@@ -465,7 +465,7 @@ return [
         'gate' => [
             'title' => '¡Grabación de Partido Encontrada!',
             'desc' => 'La grabación de este horario está lista. Introduce el código de acceso de 8 dígitos proporcionado por el club.',
-            'placeholder' => 'Código de Acceso (Ej: AEXF-BFFG)',
+            'placeholder' => 'Código de Acceso (Ej: 4821)',
             'verify_btn' => 'Verificar y Ver Vídeo'
         ],
         'locked_card' => [
@@ -474,6 +474,7 @@ return [
             'staff_btn' => 'Acceso Personal (PIN)'
         ],
         'errors' => [
+                'too_many' => 'Demasiados códigos incorrectos. Inténtalo de nuevo en {m} minutos.',
                 'video_not_found' => 'Vídeo no encontrado',
             'not_found' => 'No se encontró ninguna grabación para los criterios seleccionados (Club, Fecha, Hora).',
             'expired' => 'Este video ha sido eliminado porque su periodo de almacenamiento de 7 días ha expirado.',
@@ -1319,7 +1320,7 @@ return [
             'title' => 'Encuentra tu Partido con Código',
             'subtitle' => 'Por favor introduce el código de acceso proporcionado por el personal de la instalación.',
             'desc' => 'Introduce el código de acceso de tu instalación para ver tu partido al instante.',
-            'placeholder' => 'Ej: AEXF-BFFG o Código de 6 dígitos',
+            'placeholder' => 'Ej: 4821',
             'button' => 'Buscar y Ver Partido',
             'hint' => 'Sin cuenta, sin app. Solo introduce tu código y míralo al instante.'
         ]

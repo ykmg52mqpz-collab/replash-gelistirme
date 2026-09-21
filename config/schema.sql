@@ -124,3 +124,11 @@ CREATE TABLE IF NOT EXISTS `sale_events` (
   INDEX (`facility_id`, `created_at`),
   INDEX (`match_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Failed access-code attempts (rate limiting, includes/sales.php)
+CREATE TABLE IF NOT EXISTS `code_attempts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `client_key` CHAR(64) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (`client_key`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

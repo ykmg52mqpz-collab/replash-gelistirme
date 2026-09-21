@@ -91,6 +91,14 @@ class DB {
                 INDEX (`match_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
+            // Failed access-code attempts, for rate limiting 4-digit codes (includes/sales.php)
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `code_attempts` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `client_key` CHAR(64) NOT NULL,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                INDEX (`client_key`, `created_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
             // Facility sport prices: {"football": 15, "padel": 10} (includes/billing.php)
             if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'sport_prices'")->fetch()) {
                 $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `sport_prices` TEXT NULL DEFAULT NULL");

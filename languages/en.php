@@ -74,11 +74,11 @@ return [
                 'facility' => 'Facility',
                 'date' => 'Date',
                 'time' => 'Time Slot',
-                'accessCode' => 'or Access Code (e.g. AEXF-BFFG)',
+                'accessCode' => 'or Access Code (e.g. 4821)',
                 'facilityPlaceholder' => 'Choose a venue',
                 'datePlaceholder' => 'Select date',
                 'timePlaceholder' => 'Pick your slot',
-                'codePlaceholder' => 'AEXF-BFFG'
+                'codePlaceholder' => '4821'
             ],
             'button' => 'Watch My Match',
             'tryIt' => 'Try the demo'
@@ -400,7 +400,7 @@ return [
             'all_hours' => 'All Hours',
             'search_btn' => 'Find & Watch Match',
             'or_code' => 'or Open Directly with Access Code:',
-            'code_placeholder' => 'e.g. AEXF-BFFG',
+            'code_placeholder' => 'e.g. 4821',
             'open_code_btn' => 'Unlock Code'
         ],
         'status' => [
@@ -465,7 +465,7 @@ return [
         'gate' => [
             'title' => 'Match Recording Found!',
             'desc' => 'The camera footage for this time slot is ready. Please enter the 8-character Access Code provided by the venue desk.',
-            'placeholder' => 'Access Code (e.g. AEXF-BFFG)',
+            'placeholder' => 'Access Code (e.g. 4821)',
             'verify_btn' => 'Verify & Watch Video'
         ],
         'locked_card' => [
@@ -474,6 +474,7 @@ return [
             'staff_btn' => 'Staff PIN Access'
         ],
         'errors' => [
+                'too_many' => 'Too many wrong codes. Please try again in {m} minutes.',
                 'video_not_found' => 'Video not found',
             'not_found' => 'No match recording found for selected criteria (Venue, Date, Time).',
             'expired' => 'This match video has been deleted as its 7-day retention period has expired.',
@@ -1319,7 +1320,7 @@ return [
             'title' => 'Find Your Match with Code',
             'subtitle' => 'Please enter the access code provided by your facility staff.',
             'desc' => 'Enter the access code from your facility to watch your match instantly.',
-            'placeholder' => 'E.g., AEXF-BFFG or 6-digit Code',
+            'placeholder' => 'E.g. 4821',
             'button' => 'Find & Watch Match',
             'hint' => 'No account, no app. Just enter your code and watch instantly.'
         ]

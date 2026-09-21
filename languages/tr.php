@@ -74,11 +74,11 @@ return [
                 'facility' => 'Saha',
                 'date' => 'Tarih',
                 'time' => 'Saat Slotu',
-                'accessCode' => 'veya Erişim Kodu (örn: AEXF-BFFG)',
+                'accessCode' => 'veya Erişim Kodu (örn: 4821)',
                 'facilityPlaceholder' => 'Bir saha seçin',
                 'datePlaceholder' => 'Tarih seçin',
                 'timePlaceholder' => 'Slotunuzu seçin',
-                'codePlaceholder' => 'AEXF-BFFG'
+                'codePlaceholder' => '4821'
             ],
             'button' => 'Maçımı İzle',
             'tryIt' => 'Demoyu deneyin'
@@ -400,7 +400,7 @@ return [
             'all_hours' => 'Tüm Saatler',
             'search_btn' => 'Maçı Bul & İzle',
             'or_code' => 'veya Doğrudan Erişim Kodu ile Aç:',
-            'code_placeholder' => 'Örn: AEXF-BFFG',
+            'code_placeholder' => 'Örn: 4821',
             'open_code_btn' => 'Kodu Aç'
         ],
         'status' => [
@@ -465,7 +465,7 @@ return [
         'gate' => [
             'title' => 'Maç Kaydı Bulundu!',
             'desc' => 'Bu saat slotuna ait kamera kaydı hazırdır. Videoyu izlemek için lütfen tesis görevlisinin size verdiği 8 haneli Erişim Kodunu giriniz.',
-            'placeholder' => 'Erişim Kodu (Örn: AEXF-BFFG)',
+            'placeholder' => 'Erişim Kodu (Örn: 4821)',
             'verify_btn' => 'Videoyu Doğrula & İzle'
         ],
         'locked_card' => [
@@ -474,6 +474,7 @@ return [
             'staff_btn' => 'Tesis Görevlisi Girişi (PIN)'
         ],
         'errors' => [
+                'too_many' => 'Çok fazla hatalı kod denendi. Lütfen {m} dakika sonra tekrar deneyin.',
                 'video_not_found' => 'Video bulunamadı',
             'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
             'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
@@ -1320,7 +1321,7 @@ return [
             'title' => 'Maçını Kod ile Bul',
             'subtitle' => 'Lütfen tesis görevlisinden aldığınız erişim kodunu giriniz.',
             'desc' => 'Saha görevlisinden aldığınız erişim kodunu girerek maçınızı anında izleyin.',
-            'placeholder' => 'Örn: AEXF-BFFG veya 6 Haneli Kod',
+            'placeholder' => 'Örn: 4821',
             'button' => 'Maçımı Bul & İzle',
             'hint' => 'Hesap yok, uygulama yok. Sadece kodunuzu girin ve anında izleyin.'
         ]

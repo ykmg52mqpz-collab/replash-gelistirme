@@ -16,18 +16,16 @@ try {
     }
 
     $match = null;
-    if (!empty($matchId) && !empty($accessCode)) {
-        $stmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? AND UPPER(access_code) = ? LIMIT 1");
-        $stmt->execute([$matchId, strtoupper($accessCode)]);
-        $match = $stmt->fetch();
-        if (!$match) {
-            http_response_code(403);
-            die("Girilen erişim kodu bu maça ait değildir.");
-        }
-    } elseif (!empty($accessCode)) {
-        $stmt = $pdo->prepare("SELECT * FROM matches WHERE UPPER(access_code) = ? LIMIT 1");
-        $stmt->execute([strtoupper($accessCode)]);
-        $match = $stmt->fetch();
+    $accessCode = replash_normalize_code($accessCode);
+    if ($accessCode !== '' && replash_code_blocked($pdo)) {
+        http_response_code(429);
+        die("Çok fazla hatalı deneme. Lütfen daha sonra tekrar deneyin.");
+    }
+    if (!empty($accessCode)) {
+        $match = replash_match_by_code($pdo, $accessCode);
+        // id verildiyse kod o maça ait olmalı
+        if ($match && !empty($matchId) && $match['id'] !== $matchId) $match = null;
+        if (!$match || !was_match_sold($match)) replash_code_failed($pdo);
     } elseif (!empty($matchId)) {
         http_response_code(403);
         die("Bu videoya erişmek için erişim kodu gereklidir.");

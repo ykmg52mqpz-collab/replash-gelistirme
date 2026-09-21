@@ -228,11 +228,11 @@ require_once __DIR__ . '/includes/header.php';
       <table class="w-full border-collapse text-left text-xs">
         <thead><tr class="border-b border-gray-200 bg-gray-50 text-[10px] font-medium uppercase tracking-wide text-gray-500"><th class="w-24 px-3 py-2"><?= e(__('panel.shell.time_col')) ?></th><th class="px-3 py-2">Saha 1</th><th class="px-3 py-2">Saha 2</th></tr></thead>
         <tbody>
-          <tr class="border-b border-gray-100"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">18:00–19:00</td><td class="px-3 py-2.5"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">R4TK-2M9P</div></div></td><td class="px-3 py-2.5 text-gray-300">—</td></tr>
+          <tr class="border-b border-gray-100"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">18:00–19:00</td><td class="px-3 py-2.5"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">3907</div></div></td><td class="px-3 py-2.5 text-gray-300">—</td></tr>
           <tr class="border-b border-gray-100 hwp-rowflash"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">19:00–20:00</td>
             <td class="px-3 py-2.5"><div class="relative h-9">
               <div class="hwp-a absolute inset-0 flex items-center"><div class="flex items-center gap-2"><span class="text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span><span class="hwp-press rounded-md bg-gray-900 px-2 py-1 text-[11px] font-medium text-white"><?= e(__('panel.shell.unlock')) ?></span></div></div>
-              <div class="hwp-b absolute inset-0 flex items-center"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">K7Q2-9XMB</div></div></div>
+              <div class="hwp-b absolute inset-0 flex items-center"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">4821</div></div></div>
               <svg class="hwp-cursor pointer-events-none absolute h-5 w-5 drop-shadow" style="left:92px;top:14px" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2l15 9-6.5 1.5L16 20l-2.5 1.2-3.4-7.3L5 18z" fill="#111" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>
             </div></td>
             <td class="px-3 py-2.5"><div class="flex items-center gap-2"><span class="text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span><span class="rounded-md bg-gray-900 px-2 py-1 text-[11px] font-medium text-white"><?= e(__('panel.shell.unlock')) ?></span></div></td></tr>
@@ -280,7 +280,7 @@ require_once __DIR__ . '/includes/header.php';
       <div class="text-xs text-gray-500"><?= e(__('panel.shell.sold_title')) ?> · Saha 1 · 19:00–20:00</div>
       <div class="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.give_code')) ?></div>
       <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <span class="font-mono text-2xl font-bold tracking-[0.15em] text-gray-900 sm:text-3xl"><span class="hwp-char" style="animation-delay:0.00s">K</span><span class="hwp-char" style="animation-delay:0.12s">7</span><span class="hwp-char" style="animation-delay:0.24s">Q</span><span class="hwp-char" style="animation-delay:0.36s">2</span><span class="hwp-char" style="animation-delay:0.48s">-</span><span class="hwp-char" style="animation-delay:0.60s">9</span><span class="hwp-char" style="animation-delay:0.72s">X</span><span class="hwp-char" style="animation-delay:0.84s">M</span><span class="hwp-char" style="animation-delay:0.96s">B</span></span>
+        <span class="font-mono text-2xl font-bold tracking-[0.15em] text-gray-900 sm:text-3xl"><span class="hwp-char" style="animation-delay:0.00s">4</span><span class="hwp-char" style="animation-delay:0.15s">8</span><span class="hwp-char" style="animation-delay:0.30s">2</span><span class="hwp-char" style="animation-delay:0.45s">1</span></span>
         <span class="relative inline-grid rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700">
           <span class="hwp-copy-a col-start-1 row-start-1"><?= e(__('panel.shell.copy')) ?></span>
           <span class="hwp-copy-b col-start-1 row-start-1 font-medium text-emerald-700"><?= e(__('panel.shell.copied')) ?></span>
@@ -333,7 +333,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
       <p class="mb-4 text-xs text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
       <span class="text-[10px] font-semibold uppercase tracking-wider text-white/60"><?= e(__('find.watch.codeLabel')) ?></span>
-      <div class="hwp-input mt-1.5 flex h-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] font-mono text-lg font-bold tracking-[0.3em] text-white"><span class="hwp-type">K7Q2-9XMB</span><span class="hwp-caret ml-0.5 h-5 w-px bg-accent"></span></div>
+      <div class="hwp-input mt-1.5 flex h-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] font-mono text-lg font-bold tracking-[0.3em] text-white"><span class="hwp-type">4821</span><span class="hwp-caret ml-0.5 h-5 w-px bg-accent"></span></div>
       <div class="hwp-go mt-4 w-full rounded-xl bg-accent px-4 py-2.5 text-center text-sm font-bold text-ink-900"><?= e(__('find.watch.button')) ?></div>
     </div>
   </div>

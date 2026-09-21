@@ -113,7 +113,7 @@ try {
         ]);
     } else {
         $matchId = 'm-' . bin2hex(random_bytes(5));
-        $accessCode = strtoupper(substr(bin2hex(random_bytes(4)), 0, 4) . '-' . substr(bin2hex(random_bytes(4)), 0, 4));
+        $accessCode = replash_locked_placeholder(); // 4 haneli kod kilit açılınca verilir
 
         $insMatch = $pdo->prepare("INSERT INTO matches 
             (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, playback_type, thumbnail_url, duration_sec, size_bytes, recording_id, sport, recorded_at, available_at)

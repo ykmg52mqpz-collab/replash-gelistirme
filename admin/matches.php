@@ -26,8 +26,9 @@ if ($pdo) {
             $playbackUrl = buildMatchPlaybackUrl($camStream, $mRow['date'], $mRow['time_slot'], (int)($mRow['duration_sec'] ?? 3600));
 
             $wasLocked = ($mRow['status'] !== 'UNLOCKABLE');
-            $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', playback_url = ?, sold_at = IF(status = 'UNLOCKABLE', sold_at, NOW()), billable = 1 WHERE id = ?");
-            $upd->execute([$playbackUrl, $matchId]);
+            if ($wasLocked) $mRow['access_code'] = replash_new_access_code($pdo);
+            $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = ?, sold_at = IF(status = 'UNLOCKABLE', sold_at, NOW()), billable = 1 WHERE id = ?");
+            $upd->execute([$mRow['access_code'], $playbackUrl, $matchId]);
             if ($wasLocked) replash_log_sale_event($pdo, $mRow, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
             $success = "{$mRow['facility_name']} - {$mRow['court']} ({$mRow['time_slot']}) satışı onaylandı! Erişim Kodu: <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
         }
@@ -39,8 +40,8 @@ if ($pdo) {
         $stmtRow = $pdo->prepare("SELECT * FROM matches WHERE id = ? LIMIT 1");
         $stmtRow->execute([$matchId]);
         $lockRow = $stmtRow->fetch();
-        $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', sold_at = NULL, billable = 0 WHERE id = ?");
-        $upd->execute([$matchId]);
+        $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ?");
+        $upd->execute([replash_locked_placeholder(), $matchId]);
         if ($lockRow && $lockRow['status'] === 'UNLOCKABLE') replash_log_sale_event($pdo, $lockRow, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), trim((string)($_POST['reason'] ?? '')) ?: null);
         $success = "Maç başarıyla KİLİTLİ (Satış Bekliyor) durumuna alındı.";
     }
@@ -64,7 +65,7 @@ if ($pdo) {
         $date = trim($_POST['date'] ?? '');
         $timeSlot = trim($_POST['time_slot'] ?? '');
         $status = $_POST['status'] ?? 'UNLOCKABLE';
-        $accessCode = strtoupper(trim($_POST['access_code'] ?? ''));
+        $accessCode = replash_normalize_code((string)($_POST['access_code'] ?? ''));
         $playbackUrl = trim($_POST['playback_url'] ?? '');
         $durationSec = (int)($_POST['duration_sec'] ?? 3600);
 
@@ -75,6 +76,18 @@ if ($pdo) {
             $stmtRow = $pdo->prepare("SELECT * FROM matches WHERE id = ? LIMIT 1");
             $stmtRow->execute([$matchId]);
             $before = $stmtRow->fetch();
+            // Kilitli maçın kodu olmaz; açık maçın kodu başka açık maçla çakışamaz
+            if ($status === 'LOCKED') {
+                $accessCode = replash_locked_placeholder();
+            } elseif ($status === 'UNLOCKABLE') {
+                $clash = null;
+                if ($accessCode !== '' && !str_starts_with($accessCode, 'L-')) {
+                    $cs = $pdo->prepare("SELECT id FROM matches WHERE access_code = ? AND status = 'UNLOCKABLE' AND id <> ? LIMIT 1");
+                    $cs->execute([$accessCode, $matchId]);
+                    $clash = $cs->fetchColumn();
+                }
+                if ($accessCode === '' || str_starts_with($accessCode, 'L-') || $clash) $accessCode = replash_new_access_code($pdo);
+            }
             $upd = $pdo->prepare("UPDATE matches SET 
                 court = ?, date = ?, time_slot = ?, status = ?, access_code = ?, playback_url = ?, duration_sec = ?,
                 billable = CASE WHEN ? = 'UNLOCKABLE' THEN 1 WHEN ? = 'EXPIRED' THEN billable ELSE 0 END,
@@ -98,7 +111,7 @@ if ($pdo) {
         $date = trim($_POST['date'] ?? date('Y-m-d'));
         $slot = trim($_POST['time_slot'] ?? '20:00–21:00');
         $status = $_POST['status'] ?? 'UNLOCKABLE';
-        $customAccessCode = strtoupper(trim($_POST['access_code'] ?? ''));
+        $customAccessCode = replash_normalize_code((string)($_POST['access_code'] ?? ''));
 
         if (!empty($facilityId) && !empty($court) && !empty($date) && !empty($slot)) {
             $facStmt = $pdo->prepare("SELECT * FROM facilities WHERE id = ? LIMIT 1");
@@ -117,7 +130,17 @@ if ($pdo) {
             $slotStartCompact = str_replace(':', '', $slotStart);
             $dateCompact = str_replace('-', '', $date);
             $matchCode = "MATCH-{$dateCompact}-{$slotStartCompact}";
-            $accessCode = !empty($customAccessCode) ? $customAccessCode : strtoupper(substr(bin2hex(random_bytes(4)), 0, 4) . '-' . substr(bin2hex(random_bytes(4)), 0, 4));
+            if ($status !== 'UNLOCKABLE') {
+                $accessCode = replash_locked_placeholder();
+            } else {
+                $accessCode = $customAccessCode;
+                if ($accessCode !== '') {
+                    $cs = $pdo->prepare("SELECT 1 FROM matches WHERE access_code = ? AND status = 'UNLOCKABLE' LIMIT 1");
+                    $cs->execute([$accessCode]);
+                    if ($cs->fetchColumn()) $accessCode = '';
+                }
+                if ($accessCode === '') $accessCode = replash_new_access_code($pdo);
+            }
             $matchId = 'm-' . bin2hex(random_bytes(5));
             $soldAt = ($status === 'UNLOCKABLE') ? date('Y-m-d H:i:s') : null;
             $billable = ($status === 'UNLOCKABLE') ? 1 : 0;
@@ -203,6 +226,11 @@ if ($pdo) {
     $stmtM = $pdo->prepare($sqlMatches);
     $stmtM->execute($queryParams);
     $matchesList = $stmtM->fetchAll();
+    // Kilitli maçların kodu yok (yer tutucu); listede boş gösterilir
+    foreach ($matchesList as &$ml) {
+        $ml['shown_code'] = str_starts_with((string)$ml['access_code'], 'L-') ? '' : $ml['access_code'];
+    }
+    unset($ml);
 }
 
 $internalShell = __('nav.admin');
@@ -443,15 +471,15 @@ require_once __DIR__ . '/../includes/header.php';
                   <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                     <button 
                       type="button" 
-                      onclick="navigator.clipboard.writeText('<?= e($m['access_code']) ?>'); alert('Erişim kodu kopyalandı: <?= e($m['access_code']) ?>');"
+                      onclick="navigator.clipboard.writeText('<?= e($m['shown_code']) ?>'); alert('Erişim kodu kopyalandı: <?= e($m['shown_code']) ?>');"
                       title="Kopyalamak İçin Tıklayın"
                       class="inline-flex items-center gap-1.5 font-mono text-sm font-bold text-accent bg-accent/10 hover:bg-accent/20 px-2.5 py-1 rounded-lg border border-accent/30 transition cursor-pointer"
                     >
-                      <?= e($m['access_code']) ?>
+                      <?= e($m['shown_code']) ?>
                       <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                   <?php else: ?>
-                    <span class="text-xs text-neutral-500 italic font-mono"><?= e($m['access_code']) ?></span>
+                    <span class="text-xs text-neutral-500 italic font-mono"><?= e($m['shown_code']) ?></span>
                   <?php endif; ?>
                 </td>
 
@@ -493,7 +521,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <!-- View Match Link -->
                     <a 
-                      href="<?= base_url('find.php?code=' . urlencode($m['access_code'])) ?>" 
+                      href="<?= base_url('find.php?code=' . urlencode($m['shown_code'])) ?>" 
                       target="_blank" 
                       title="Videoyu Aç & İzle" 
                       class="p-1.5 rounded-lg bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10"
@@ -504,7 +532,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <!-- Edit Modal Trigger -->
                     <button 
                       type="button" 
-                      data-edit="<?= e(json_encode(['id' => $m['id'], 'title' => $m['facility_name'] . ' · ' . $m['code'], 'court' => $m['court'], 'date' => $m['date'], 'time_slot' => $m['time_slot'], 'access_code' => $m['access_code'], 'status' => $m['status'], 'playback_url' => $m['playback_url'], 'duration_sec' => (int)($m['duration_sec'] ?? 3600)], JSON_UNESCAPED_UNICODE)) ?>"
+                      data-edit="<?= e(json_encode(['id' => $m['id'], 'title' => $m['facility_name'] . ' · ' . $m['code'], 'court' => $m['court'], 'date' => $m['date'], 'time_slot' => $m['time_slot'], 'access_code' => $m['shown_code'], 'status' => $m['status'], 'playback_url' => $m['playback_url'], 'duration_sec' => (int)($m['duration_sec'] ?? 3600)], JSON_UNESCAPED_UNICODE)) ?>"
                       onclick="openEditMatch(this)"
                       title="Maçı Düzenle" 
                       class="p-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 border border-accent/30"
@@ -552,7 +580,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label class="block"><span class="mb-1 block font-medium text-white/50">Saat</span><input type="text" name="time_slot" id="em_time_slot" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono"></label>
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Erişim kodu</span><input type="text" name="access_code" id="em_access_code" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono font-bold uppercase text-accent"></label>
+        <label class="block"><span class="mb-1 block font-medium text-white/50">Erişim kodu</span><input type="text" name="access_code" id="em_access_code" inputmode="numeric" placeholder="Boş bırakılırsa otomatik" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono font-bold uppercase text-accent"></label>
         <label class="block"><span class="mb-1 block font-medium text-white/50">Durum</span>
           <select name="status" id="em_status" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent">
             <option value="UNLOCKABLE" class="bg-ink-900">Satıldı (açık)</option>

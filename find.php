@@ -5,7 +5,7 @@ $pageTitle = __('find.title');
 $metaTitle = __('meta.find.title');
 $metaDescription = __('meta.find.description');
 
-$code = strtoupper(trim($_GET['code'] ?? ''));
+$code = replash_normalize_code((string)($_GET['code'] ?? ''));
 $facilityId = $_GET['facility_id'] ?? '';
 $court = $_GET['court'] ?? '';
 $date = $_GET['date'] ?? '';
@@ -15,7 +15,13 @@ $match = null;
 $error = null;
 $codeValidated = false;
 
-if ($pdo) {
+// 4 haneli kod tahmin edilebilir: çok sayıda yanlış denemeden sonra kısa süre kod kabul edilmez
+$codeBlocked = ($pdo && $code !== '' && replash_code_blocked($pdo));
+if ($codeBlocked) {
+    $error = str_replace('{m}', (string)REPLASH_CODE_WINDOW_MIN, __('find.errors.too_many'));
+}
+
+if ($pdo && !$codeBlocked) {
     try {
         if (!empty($facilityId) && !empty($date)) {
             // 1. User searched by Facility & Date (and optional Time Slot / Court)
@@ -54,6 +60,7 @@ if ($pdo) {
                             $codeValidated = true;
                         } else {
                             $codeValidated = false;
+                            replash_code_failed($pdo);
                             $error = __('find.errors.code_mismatch');
                         }
                     }
@@ -61,16 +68,16 @@ if ($pdo) {
             }
         } elseif (!empty($code)) {
             // 2. User searched solely with an access code (direct code search)
-            $stmt = $pdo->prepare("SELECT m.*, f.name as facility_name, f.city, f.sport as facility_sport FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE UPPER(m.access_code) = ? LIMIT 1");
-            $stmt->execute([$code]);
-            $match = $stmt->fetch();
+            $match = replash_match_by_code($pdo, $code, true);
 
             if (!$match) {
+                replash_code_failed($pdo);
                 $error = __('find.errors.invalid_code');
             } else {
                 // Check 7-day retention expiry
                 if (!was_match_sold($match)) {
                     // Stealth mode: Never show locked match details
+                    replash_code_failed($pdo);
                     $match = null;
                     $error = __('find.errors.invalid_code');
                 } elseif (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
@@ -161,7 +168,7 @@ require_once __DIR__ . '/includes/header.php';
     <label class="text-xs font-semibold uppercase tracking-wider text-white/60">
     <?= e(__('find.watch.codeLabel')) ?>
     </label>
-    <input type="text" name="code" required value="<?= e($code) ?>" placeholder="XXXX-XXXX" maxlength="10" autocomplete="off" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-accent text-center font-mono text-2xl font-bold tracking-[0.3em] placeholder:tracking-[0.3em] placeholder:text-white/25" />
+    <input type="text" name="code" required value="<?= e($code) ?>" placeholder="0000" maxlength="9" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-accent text-center font-mono text-2xl font-bold tracking-[0.3em] placeholder:tracking-[0.3em] placeholder:text-white/25" />
     </div>
     <button type="submit" class="mt-5 w-full rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-ink-900 shadow-glow-sm transition hover:shadow-glow disabled:opacity-60">
     <?= e(__('find.watch.button')) ?>
@@ -212,7 +219,8 @@ require_once __DIR__ . '/includes/header.php';
               <input 
                 type="text" 
                 name="code" 
-                placeholder="<?= e(__('searchSettings.codeOnly.placeholder', 'Örn: AEXF-BFFG veya 6 Haneli Kod')) ?>" 
+                inputmode="numeric"
+                placeholder="<?= e(__('searchSettings.codeOnly.placeholder', 'Örn: 4821')) ?>" 
                 required 
                 style="color: #000000 !important;"
                 class="w-full rounded-2xl bg-white text-black font-bold text-sm sm:text-base pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-neutral-500 placeholder:font-normal uppercase tracking-wider shadow-inner"
@@ -266,6 +274,7 @@ require_once __DIR__ . '/includes/header.php';
                 <input 
                   type="text" 
                   name="code" 
+                  inputmode="numeric"
                   value="<?= e($code) ?>" 
                   required 
                   placeholder="<?= e(__('searchSettings.codeOnly.placeholder')) ?>" 
@@ -324,7 +333,7 @@ require_once __DIR__ . '/includes/header.php';
               <div class="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-400">
                 <span><?= e(__('find.fields.or_code')) ?></span>
                 <form action="find.php" method="GET" class="flex items-center gap-2 w-full sm:w-auto">
-                  <input type="text" name="code" value="<?= e($code) ?>" placeholder="<?= e(__('find.fields.code_placeholder')) ?>" class="rounded-lg border border-white/10 bg-ink-900 px-3 py-1.5 text-xs text-neutral-200 uppercase tracking-widest focus:border-accent focus:outline-none">
+                  <input type="text" name="code" value="<?= e($code) ?>" inputmode="numeric" placeholder="<?= e(__('find.fields.code_placeholder')) ?>" class="rounded-lg border border-white/10 bg-ink-900 px-3 py-1.5 text-xs text-neutral-200 uppercase tracking-widest focus:border-accent focus:outline-none">
                   <button type="submit" class="rounded-lg bg-accent/20 border border-accent/40 text-accent px-3 py-1.5 font-semibold hover:bg-accent hover:text-ink-900 transition">
                     <?= e(__('find.fields.open_code_btn')) ?> &rarr;
                   </button>
@@ -351,7 +360,7 @@ require_once __DIR__ . '/includes/header.php';
       <?php $isExpiredError = ($error === __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.')); ?>
       <!-- Uyarı kutusu (replash.info FindForm) -->
       <div class="mx-auto mb-8 max-w-2xl rounded-2xl border border-red-400/30 bg-red-400/10 p-5">
-        <?php if ($isExpiredError): ?>
+        <?php if ($isExpiredError || $codeBlocked): ?>
           <p class="font-semibold text-red-200"><?= e($error) ?></p>
         <?php else: ?>
           <div class="font-semibold text-red-200"><?= e(__('find.errors.video_not_found')) ?></div>
@@ -840,6 +849,7 @@ require_once __DIR__ . '/includes/header.php';
                 <input 
                   type="text" 
                   name="code" 
+                  inputmode="numeric"
                   placeholder="<?= e(__('find.gate.placeholder')) ?>" 
                   required 
                   autofocus

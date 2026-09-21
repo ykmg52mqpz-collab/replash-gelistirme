@@ -36,18 +36,23 @@ try {
     }
 
     if ($action === 'verify_code') {
-        $code = trim($_GET['code'] ?? '');
-        if (empty($code)) {
+        $code = replash_normalize_code((string)($_GET['code'] ?? ''));
+        if ($code === '') {
             echo json_encode(['ok' => false, 'error' => 'Code required']);
+            exit;
+        }
+        if (replash_code_blocked($pdo)) {
+            http_response_code(429);
+            echo json_encode(['ok' => false, 'error' => 'Too many attempts']);
             exit;
         }
 
         // Only unlocked, non-expired matches; never return playback URLs or codes
-        $stmt = $pdo->prepare("SELECT m.id, m.court, m.date, m.time_slot, m.sport, m.status, f.name as facility_name FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE UPPER(m.access_code) = ? LIMIT 1");
-        $stmt->execute([strtoupper($code)]);
-        $match = $stmt->fetch();
+        $row = replash_match_by_code($pdo, $code, true);
+        $match = $row ? array_intersect_key($row, array_flip(['id', 'court', 'date', 'time_slot', 'sport', 'status', 'facility_name'])) : null;
 
         if (!$match || $match['status'] !== 'UNLOCKABLE' || is_match_expired($match['date'])) {
+            replash_code_failed($pdo);
             echo json_encode(['ok' => false, 'error' => 'Geçersiz veya süresi dolmuş kod']);
             exit;
         }
