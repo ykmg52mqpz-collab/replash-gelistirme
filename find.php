@@ -690,6 +690,7 @@ require_once __DIR__ . '/includes/header.php';
                   <a 
                     id="modal-download-btn"
                     href="#"
+                    onclick="return clipDownloadClick(event)"
                     download="replash_clip.mp4"
                     class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent py-3 px-3 text-xs font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition text-center"
                   >
@@ -784,6 +785,15 @@ require_once __DIR__ . '/includes/header.php';
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                       </svg>
                     </button>
+                  </div>
+
+                  <!-- Dosya kabul etmeyen platformlar: önce kaydet, sonra platformu aç (otomatik indirme yok) -->
+                  <div id="modal-social-steps" class="mt-4 hidden rounded-2xl border border-white/10 bg-ink-900/90 p-4 text-center">
+                    <p id="modal-social-text" class="mb-3 text-xs text-white/70"></p>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button type="button" onclick="clipSaveToGallery()" class="rounded-xl bg-white/10 px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-white/15"><?= e(__('find.modal.save_to_gallery')) ?></button>
+                      <a id="modal-social-open" href="#" target="_blank" rel="noopener" class="rounded-xl bg-accent px-3 py-2.5 text-xs font-bold text-ink-900 transition hover:bg-accent-neon"></a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -948,6 +958,10 @@ var I18N = {
   clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
   clipWait: <?= json_encode(__('find.modal.clip_wait')) ?>,
   clipSaved: <?= json_encode(__('find.modal.clip_saved')) ?>,
+  saveToGallery: <?= json_encode(__('find.modal.save_to_gallery')) ?>,
+  socialSteps: <?= json_encode(__('find.modal.social_steps')) ?>,
+  openPlatform: <?= json_encode(__('find.modal.open_platform')) ?>,
+  noDirectShare: <?= json_encode(__('find.modal.no_direct_share')) ?>,
   clipPreparingTitle: <?= json_encode(__('find.modal.preparing_title')) ?>,
   clipPreparingDesc: <?= json_encode(__('find.modal.preparing_desc')) ?>,
   clipReadyTitle: <?= json_encode(__('find.modal.title')) ?>,
@@ -1168,7 +1182,7 @@ function clipOfferBlob(clip, blob) {
   var dl = document.getElementById('modal-download-btn');
   if (dl) { dl.href = clipBlobUrl; dl.setAttribute('download', clip.filename); dl.classList.remove('pointer-events-none', 'opacity-50'); }
   var lbl = document.getElementById('modal-download-label');
-  if (lbl) lbl.textContent = I18N.downloadVideo + ' (' + ext.toUpperCase() + ')';
+  if (lbl) lbl.textContent = I18N.saveToGallery;
   var fmt = document.getElementById('modal-clip-format');
   if (fmt) fmt.textContent = ext.toUpperCase() + ' Video';
   clipSetStatus('');
@@ -1473,6 +1487,8 @@ function openClipModal(clip) {
   if (fmtEl) fmtEl.textContent = 'MP4 Video';
   clipSetStatus('');
   clipSetBusyUI(false);
+  var steps = document.getElementById('modal-social-steps');
+  if (steps) steps.classList.add('hidden');
 
   if (modal) modal.classList.remove('hidden');
 }
@@ -1512,6 +1528,9 @@ function clipFileNow() {
   if (!currentClip || !currentClip.blob) return null;
   return new File([currentClip.blob], currentClip.filename, { type: currentClip.blob.type });
 }
+function clipIsIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
 function clipDownloadNow() {
   var dl = document.getElementById('modal-download-btn');
   if (!dl || !dl.href || dl.getAttribute('href') === '#') return;
@@ -1521,6 +1540,21 @@ function clipDownloadNow() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+// Galeriye kaydet: iPhone/iPad'de paylaşım menüsü açılır ("Videoyu Kaydet" -> Fotoğraflar);
+// diğer cihazlarda dosya indirilir (Android'de galeride görünür)
+function clipSaveToGallery() {
+  if (!currentClip || clipBusy) return;
+  if (clipIsIOS() && clipNativeShare(clipFileNow(), clipDownloadNow)) return;
+  clipDownloadNow();
+}
+function clipDownloadClick(e) {
+  if (clipIsIOS() && clipFileNow() && navigator.canShare) {
+    e.preventDefault();
+    clipSaveToGallery();
+    return false;
+  }
+  return true;
 }
 function clipShareTitle() {
   return "Replash (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
@@ -1541,7 +1575,7 @@ function clipNativeShare(file, onFail) {
 async function shareClipFileOrLink() {
   if (!currentClip) return;
   if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
-  var fallback = function () { clipDownloadNow(); clipSetStatus(I18N.clipSaved); };
+  var fallback = function () { clipShowSteps(null); };
   if (clipNativeShare(clipFileNow(), fallback)) return;
   if (!currentClip.blob && navigator.canShare) {
     // Sunucudan kesilen klip: önce dosya alınır, sonra paylaşılır
@@ -1560,32 +1594,41 @@ function openClipShare() {
   createClipFromRangeInputs();
 }
 
-// Platform düğmeleri (WhatsApp, Instagram, TikTok, YouTube, X, Facebook)
-// Telefonda: paylaşım menüsü klip dosyası ekli açılır. Bilgisayarda: klip iner ve platform
-// tıklamayla aynı anda açılır (beklemeden; yoksa tarayıcı açılır pencereyi engeller).
+var CLIP_PLATFORMS = {
+  whatsapp: { name: 'WhatsApp', url: function (touch) { return touch ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/'; } },
+  instagram: { name: 'Instagram', url: function () { return 'https://www.instagram.com/'; } },
+  tiktok: { name: 'TikTok', url: function () { return 'https://www.tiktok.com/upload'; } },
+  youtube: { name: 'YouTube', url: function () { return 'https://studio.youtube.com/'; } },
+  x: { name: 'X', url: function () { return 'https://x.com/compose/post'; } },
+  facebook: { name: 'Facebook', url: function () { return 'https://www.facebook.com/'; } }
+};
+// Doğrudan dosya paylaşımı yoksa: klip indirilmez; kullanıcı "Galeriye kaydet" ve "platformu aç" arasından seçer
+function clipShowSteps(platform) {
+  var box = document.getElementById('modal-social-steps');
+  var txt = document.getElementById('modal-social-text');
+  var open = document.getElementById('modal-social-open');
+  if (!box) return;
+  var p = platform ? CLIP_PLATFORMS[platform] : null;
+  txt.textContent = p ? I18N.socialSteps.replace(/\{p\}/g, p.name) : I18N.noDirectShare;
+  if (p) {
+    open.href = p.url(clipIsTouchDevice());
+    open.textContent = I18N.openPlatform.replace('{p}', p.name);
+    open.classList.remove('hidden');
+  } else {
+    open.classList.add('hidden');
+  }
+  box.classList.remove('hidden');
+  clipSetStatus('');
+}
+
+// Platform düğmeleri: telefonda paylaşım menüsü klip dosyası ekli açılır (uygulama seçilir).
+// Paylaşım menüsü yoksa hiçbir şey indirilmez; kaydet / platformu aç seçenekleri gösterilir.
 function shareToSocial(platform) {
   if (!currentClip) return;
   if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
-  var touch = clipIsTouchDevice();
-  var targets = {
-    whatsapp: touch ? "https://api.whatsapp.com/send" : "https://web.whatsapp.com/",
-    x: "https://x.com/compose/post",
-    facebook: "https://www.facebook.com/",
-    instagram: "https://www.instagram.com/",
-    tiktok: "https://www.tiktok.com/upload",
-    youtube: "https://studio.youtube.com/"
-  };
-  if (!targets[platform]) return;
-
-  var openTarget = function () {
-    var win = window.open(targets[platform], '_blank');
-    if (!win) clipSetStatus(I18N.clipDownloaded);
-  };
-  if (touch && clipNativeShare(clipFileNow(), function () { clipDownloadNow(); openTarget(); })) return;
-
-  clipDownloadNow();
-  clipSetStatus(I18N.clipDownloaded);
-  openTarget();
+  if (!CLIP_PLATFORMS[platform]) return;
+  if (clipIsTouchDevice() && clipNativeShare(clipFileNow(), function () { clipShowSteps(platform); })) return;
+  clipShowSteps(platform);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
