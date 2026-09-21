@@ -7,8 +7,8 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= e(isset($pageTitle) ? $pageTitle . ' | ' . APP_NAME : APP_NAME . ' | ' . __('home.hero.title')) ?></title>
-  <meta name="description" content="<?= e(__('home.hero.subtitle')) ?>">
+  <title><?= e($metaTitle ?? (isset($pageTitle) ? $pageTitle . ' | ' . APP_NAME : APP_NAME . ' | ' . __('home.hero.title'))) ?></title>
+  <meta name="description" content="<?= e($metaDescription ?? __('home.hero.subtitle')) ?>">
   <link rel="icon" type="image/x-icon" href="<?= asset('images/icon-512.png') ?>">
   <link rel="apple-touch-icon" href="<?= asset('images/icon-512.png') ?>">
   
@@ -40,7 +40,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
       }
     }
   </script>
-  <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+  <link rel="stylesheet" href="<?= asset('css/style.css') ?>?v=<?= @filemtime(REPLASH_ROOT . '/assets/css/style.css') ?>">
 </head>
 <body class="font-body bg-ink-900 text-white antialiased min-h-screen flex flex-col selection:bg-accent selection:text-ink-900">
 

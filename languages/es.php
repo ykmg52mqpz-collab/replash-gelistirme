@@ -3,11 +3,11 @@ return [
     'nav' => [
         'home' => 'Inicio',
         'howItWorks' => 'Cómo Funciona',
-        'forFacilities' => 'Para Clubes',
+        'forFacilities' => 'Para Centros',
         'forPlayers' => 'Para Jugadores',
-        'about' => 'Quiénes Somos',
-        'find' => 'Buscar Partido',
-        'bookDemo' => 'Solicitar Demo',
+        'about' => 'Nosotros',
+        'find' => 'Encuentra Tu Partido',
+        'bookDemo' => 'Solicita una demo',
         'contact' => 'Contacto',
         'panel' => 'Panel de Club',
         'admin' => 'Administración',
@@ -18,156 +18,185 @@ return [
     ],
     'home' => [
         'hero' => [
-            'badge' => 'Para Clubes Deportivos Amateurs',
-            'title' => 'Juega. Graba. Revive.',
-            'subtitle' => 'Dales a los jugadores un partido para revivir. Nuevos ingresos para tu club. Replash graba partidos automáticamente y los prepara para ver, recortar y compartir.',
-            'cta' => 'Solicitar Demo',
-            'ctaSecondary' => 'Cómo Funciona'
+            'badge' => 'Para Centros Deportivos Amateur',
+            'title' => 'Play. Record. Relive.',
+            'subtitle' => 'Dale a los jugadores un partido para revivir. Un nuevo ingreso para tu centro. Replash graba los partidos automáticamente y los deja listos para ver, recortar y compartir.',
+            'cta' => 'Solicita una demo',
+            'ctaSecondary' => 'Cómo funciona'
         ],
         'intro' => [
-            'eyebrow' => 'Para Gestores de Centros Deportivos',
-            'slogan' => 'Un nuevo flujo de ingresos cada mes. Sin costes iniciales.',
-            'tagline' => 'Más que solo alquilar una pista.',
-            'sports' => 'Disponible hoy para fútbol y pádel. Diseñado para escalar a más deportes.',
-            'cta' => 'Habla con Nosotros'
+            'eyebrow' => 'Para Propietarios de Centros',
+            'slogan' => 'Un nuevo flujo de ingresos cada mes. Sin coste inicial.',
+            'tagline' => 'Más que tiempo de pista.',
+            'sports' => 'Disponible hoy para fútbol y pádel. Diseñado para crecer con otros deportes.',
+            'cta' => 'Habla con nosotros'
         ],
         'twoLayer' => [
-            'eyebrow' => 'Oportunidad en Dos Niveles',
-            'title' => 'Para los jugadores. Y para tu club.',
-            'subtitle' => 'Replash da a los jugadores un partido para revivir y a tu centro un nuevo servicio para ofrecer. Un solo sistema, doble valor.',
+            'eyebrow' => 'Valor en Ambos Lados',
+            'title' => 'Para los jugadores. Y para tu centro.',
+            'subtitle' => 'Replash da a los jugadores un partido que revivir y a tu centro un nuevo servicio que ofrecer. Un sistema, dos tipos de valor.',
             'layer1' => [
-                'label' => 'Para Jugadores',
+                'label' => 'Para los Jugadores',
                 'stat' => '0%',
-                'title' => 'de los partidos amateurs nunca se graban.',
-                'desc' => 'El mejor momento de un partido desaparece en el instante en que ocurre. Con Replash, los jugadores salen de la pista con el partido completo, listo para ver, recortar y compartir.'
+                'title' => 'de los partidos amateur nunca se graba.',
+                'desc' => 'El mejor momento de un partido se desvanece en el instante en que ocurre. Con Replash los jugadores salen de la pista con el partido completo, listo para ver, recortar y compartir.'
             ],
             'layer2' => [
-                'label' => 'Para Clubes',
+                'label' => 'Para el Centro',
                 'title' => 'Un nuevo servicio que los jugadores realmente quieren.',
-                'desc' => 'Cada partido grabado es un servicio adicional y un nuevo ingreso, sin inversión inicial y con un solo clic del personal. Tu club se convierte en el lugar donde los partidos se reviven.'
+                'desc' => 'Cada partido grabado es un servicio más que ofrecer y un nuevo ingreso — sin coste inicial, una sola acción del personal. Tu centro se convierte en el lugar donde los partidos se reviven.'
             ]
         ],
         'whatIs' => [
             'eyebrow' => '¿Qué es Replash?',
-            'title' => 'Grabación automática de partidos para instalaciones deportivas.',
-            'description' => 'Replash es una plataforma automatizada de grabación y acceso a partidos para centros deportivos. Graba los encuentros, los organiza por pista, fecha y hora, y permite a los jugadores encontrar su partido mediante código QR o enlace web. Sin esfuerzo para tu personal.',
+            'title' => 'Grabación automática de partidos para centros deportivos cotidianos.',
+            'description' => 'Replash es una plataforma de grabación y acceso automático de partidos para centros deportivos amateur. Graba los partidos, los organiza por centro, fecha y hora, y permite a los jugadores encontrar su partido fácilmente mediante un código QR o un enlace web. Sin ningún trabajo manual de tu personal.',
             'items' => [
                 '1' => [
                     'title' => 'Grabación Automática',
-                    'desc' => 'Cámaras fijas PoE graban cada partido en el momento en que empieza. Sin botones, sin configuración ni intervención del personal.'
+                    'desc' => 'Cámaras PoE fijas graban cada partido en el momento en que comienza. Sin botones, sin configuración, sin intervención del personal.'
                 ],
                 '2' => [
                     'title' => 'Organizado por Franja Horaria',
-                    'desc' => 'Cada grabación se etiqueta por centro, fecha y horario. Localizable al instante en la página "Buscar Partido".'
+                    'desc' => 'Cada grabación se etiqueta por centro, fecha y franja horaria. Al instante buscable a través de la página \'Encuentra Tu Partido\'.'
                 ],
                 '3' => [
                     'title' => 'Mira, Recorta, Comparte',
-                    'desc' => 'Los jugadores ven su partido, recortan jugadas de 10–45s, las descargan y comparten en redes sociales. Sin necesidad de app ni cuenta.'
+                    'desc' => 'Los jugadores ven su partido, recortan highlights de 10–45 segundos, los descargan y los comparten en redes sociales. No se necesita app. No se necesita cuenta.'
                 ]
             ]
         ],
         'findPreview' => [
-            'eyebrow' => 'Búsqueda Rápida',
+            'eyebrow' => 'Encuentra Tu Partido',
             'title' => 'Tres campos. Tu partido.',
-            'desc' => 'No requiere descargar apps ni registrarse. Escanea el código QR en la pista o introduce tu código de acceso tras el partido.',
+            'desc' => 'No hace falta descargar app. No hace falta cuenta. No hace falta contraseña. Los jugadores salen del campo, escanean un QR o visitan el sitio y ven su partido.',
             'fields' => [
-                'facility' => 'Club / Pista',
+                'facility' => 'Centro',
                 'date' => 'Fecha',
                 'time' => 'Franja Horaria',
                 'accessCode' => 'o Código de Acceso (ej: AEXF-BFFG)',
-                'facilityPlaceholder' => 'Selecciona un club',
+                'facilityPlaceholder' => 'Elige un centro',
                 'datePlaceholder' => 'Selecciona fecha',
-                'timePlaceholder' => 'Selecciona hora',
+                'timePlaceholder' => 'Elige tu franja',
                 'codePlaceholder' => 'AEXF-BFFG'
             ],
-            'button' => 'Buscar y Ver Partido',
-            'tryIt' => 'Probar Demo en Vivo'
+            'button' => 'Ver Mi Partido',
+            'tryIt' => 'Prueba la demo'
         ],
         'whyFacilities' => [
-            'eyebrow' => 'Por Qué los Clubes Eligen Replash',
-            'title' => 'Los clubes no solo alquilan tiempo de pista. Venden la experiencia en torno al partido.',
+            'eyebrow' => 'Por Qué los Centros Eligen Replash',
+            'title' => 'Los centros ya no venden solo tiempo de pista. Venden la experiencia alrededor del partido.',
             'cta' => 'Para Clubes',
             'items' => [
                 '1' => [
                     'title' => 'Nuevo Servicio Digital',
-                    'desc' => 'Ofrece algo que tus competidores no tienen. Una experiencia de vídeo profesional a precio amateur.'
+                    'desc' => 'Ofrece algo que tus competidores no. Una experiencia de video profesional a un precio amateur.'
                 ],
                 '2' => [
-                    'title' => 'Diferénciate',
-                    'desc' => 'En un mercado donde los clubes compiten por precio, una experiencia memorable genera lealtad.'
+                    'title' => 'Destaca',
+                    'desc' => 'En un mercado donde los centros compiten por precio, una experiencia memorable crea fidelidad.'
                 ],
                 '3' => [
+                    'title' => 'Mejor Experiencia del Jugador',
+                    'desc' => 'Los jugadores asocian sus mejores momentos con tu centro. Vuelven a por más.'
+                ],
+                '4' => [
+                    'title' => 'Oportunidad de Ingresos',
+                    'desc' => 'Cada video comprado genera valor tanto para los jugadores como para tu centro.'
+                ],
+                '5' => [
                     'title' => 'Cero Complejidad',
-                    'desc' => 'Replash gestiona cámaras, almacenamiento en la nube y entrega. Tu equipo realiza un solo toque por venta.'
+                    'desc' => 'Replash gestiona cámaras, almacenamiento y entrega. Tu equipo hace una sola acción por venta.'
+                ],
+                '6' => [
+                    'title' => 'Marca Moderna',
+                    'desc' => 'Muestra que tu centro es innovador. Tecnología que los jugadores notan y de la que hablan.'
                 ]
             ]
         ],
         'whatPlayersGet' => [
-            'eyebrow' => 'Qué Obtienen los Jugadores',
-            'title' => 'Qué reciben tus jugadores. Y por qué regresan.',
+            'eyebrow' => 'Lo Que Obtienen los Jugadores',
+            'title' => 'Lo que obtienen tus jugadores. Y por qué vuelven.',
             'cta' => 'Para Jugadores',
             'items' => [
                 '1' => [
-                    'title' => 'Ven su Partido Completo',
-                    'desc' => 'Acceden a la grabación completa del encuentro. Goles, paradas, puntos y todas las emociones.'
+                    'title' => 'Mira Su Partido',
+                    'desc' => 'Accede a la grabación completa de su partido. Goles, paradas, peloteos y todo lo demás.'
                 ],
                 '2' => [
-                    'title' => 'Recortan los Mejores Momentos',
-                    'desc' => 'Cortan clips de 10 a 45 segundos directamente en Replash. Un golazo, una volea, una celebración. Descarga inmediata al móvil.'
+                    'title' => 'Recorta los Mejores Momentos',
+                    'desc' => 'Corta highlights de 10–45 segundos dentro de Replash. Un gol, un peloteo, una celebración. Descarga al móvil al instante.'
                 ],
                 '3' => [
-                    'title' => 'Comparten en Redes Sociales',
-                    'desc' => 'Comparten los vídeos en sus perfiles sociales sin marca de agua invasiva. El jugador es dueño de su contenido.'
+                    'title' => 'Comparte en Redes',
+                    'desc' => 'Comparte el clip directamente en plataformas de redes sociales. No se necesita perfil Replash. El jugador posee cada share.'
+                ],
+                '4' => [
+                    'title' => 'Highlights de IA (Próximamente)',
+                    'desc' => 'Detección de highlights con IA. Auto-recorte de los momentos más emocionantes del partido.'
                 ]
             ]
         ],
         'faq' => [
             'eyebrow' => 'Preguntas Frecuentes',
-            'title' => 'Todo lo que quieres saber antes de empezar.',
-            'subtitle' => 'Respuestas a las preguntas más habituales de clubes y jugadores.',
+            'title' => 'Todo lo que necesitas saber antes de decir sí.',
+            'subtitle' => 'Respuestas a las preguntas que más hacen centros y jugadores.',
             'items' => [
                 '1' => [
-                    'q' => '¿Qué se instala exactamente en mi club?',
-                    'a' => 'Cámaras fijas PoE de alta definición con gran angular. En pistas de pádel, montadas en el techo o pared alta; en fútbol, en postes en las esquinas. La instalación dura un día y no interrumpe el uso de las pistas. Todo el cableado queda oculto.'
+                    'q' => '¿Qué se instala exactamente en mi centro?',
+                    'a' => 'Cámaras fijas PoE de gran angular. En pistas de pádel, montadas en el techo o pared alta; en campos de fútbol, montadas en los postes de las esquinas alrededor del campo. La instalación toma un día y no interrumpe las operaciones. Todo el cableado se oculta. El equipo de Replash gestiona todo, desde el montaje hasta la configuración de red.'
                 ],
                 '2' => [
                     'q' => '¿Hay costes iniciales o compromisos contractuales?',
-                    'a' => 'No. Replash cubre el 100% de cámaras, instalación, mantenimiento y actualizaciones. Sin cuota fija mensual. El compromiso mínimo es de 6 meses con reparto mensual transparente de ingresos.'
+                    'a' => 'No. Replash cubre el 100% del coste. Cámaras, instalación, mantenimiento, actualizaciones de software. Sin cuotas mensuales. El compromiso mínimo es de 6 meses. Durante la duración del contrato, tu centro recibe la misma parte de ingresos acordada cada mes.'
                 ],
                 '3' => [
-                    'q' => '¿Cómo funciona el reparto de ingresos?',
-                    'a' => 'A final de cada mes, todos los vídeos vendidos se registran en el panel de administración. La parte de tu club queda en tu poder y el resto se liquida con Replash.'
+                    'q' => '¿Cómo comparte Replash los ingresos con el centro?',
+                    'a' => 'Al final de cada mes, todos los videos desbloqueados se registran a través del panel de administración. La parte definida en tu contrato se queda en tu centro; el importe restante se paga a Replash a fin de mes. Cuanto más activas estén tus pistas, más gana tu centro — cada nuevo partido son ingresos adicionales. Todo se concilia automáticamente desde el panel. Con cero coste operativo por tu parte.'
                 ],
                 '4' => [
-                    'q' => '¿Mi personal tiene que hacer algo en cada partido?',
-                    'a' => 'Un solo toque. Cuando el equipo solicita el vídeo, recepción lo habilita desde el panel. Todo lo demás funciona de forma 100% automatizada.'
+                    'q' => '¿Mi personal tiene que hacer algo por cada partido?',
+                    'a' => 'Un toque. Cuando el equipo quiere el vídeo, recepción lo activa desde el panel. Todo lo demás (grabación, almacenamiento, entrega del código, clip cutter) es totalmente automático.'
                 ],
                 '5' => [
-                    'q' => '¿Qué sucede si una cámara falla o hay un problema técnico?',
-                    'a' => 'Replash monitoriza todas las cámaras 24/7 de forma remota. Cualquier incidencia es detectada y resuelta rápidamente por nuestro equipo.'
+                    'q' => '¿Qué pasa si una cámara falla o hay un problema técnico?',
+                    'a' => 'Replash monitoriza todas las cámaras 24/7. En raros casos de fallo, nuestro equipo de soporte es notificado automáticamente y lo resuelve remotamente. Generalmente en horas. Si se pierde una grabación, esa venta no aparece en tu informe y no se te cobra.'
                 ],
                 '6' => [
-                    'q' => '¿En cuánto tiempo podemos empezar a operar?',
-                    'a' => 'Una vez aprobada tu solicitud, fijamos la fecha de instalación según tu conveniencia. La mayoría de los centros están activos en menos de 3 semanas.'
+                    'q' => '¿Qué tan rápido podemos empezar?',
+                    'a' => 'Después de que tu solicitud sea aprobada (normalmente en 3 días), programamos la instalación en un momento que te convenga. La mayoría de los centros están operativos en 3 semanas desde el primer contacto.'
                 ],
                 '7' => [
                     'q' => '¿Los jugadores pueden compartir clips en redes sociales?',
                     'a' => 'Sí. Es el núcleo de la experiencia. Los jugadores seleccionan clips de 10-45s, los descargan en formato MP4 a su móvil y los publican en Instagram, TikTok o WhatsApp.'
                 ],
                 '8' => [
-                    'q' => '¿Qué pasa con el RGPD y la privacidad?',
-                    'a' => 'Las cámaras solo apuntan al terreno de juego. Sin audio ni reconocimiento facial. Todas las grabaciones se eliminan automáticamente tras 7 días.'
+                    'q' => '¿Pueden los jugadores compartir clips en redes sociales?',
+                    'a' => 'Sí. Esa es la experiencia central. Replash tiene un clip cutter integrado dentro de la plataforma. Los jugadores eligen un momento de 10–45 segundos del partido, descargan el clip a su móvil y lo comparten en plataformas de redes sociales bajo su propia cuenta. Replash es el lugar donde se hace el clip. El compartir ocurre en los canales propios del jugador.'
                 ],
                 '9' => [
                     'q' => '¿Y si no disponemos de buena conexión Wi-Fi?',
                     'a' => 'Las cámaras PoE disponen de almacenamiento local en búfer. Las caídas breves de conexión no pierden datos. Para pistas exteriores sin Wi-Fi, ofrecemos conectividad LTE/SIM.'
+                ],
+                '10' => [
+                    'q' => '¿Y el RGPD?',
+                    'a' => 'Replash cumple totalmente con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Hay un modelo de notificación de tres niveles (señalización de entrada + QR + notificación de reserva). Se proporciona un archivo de Justificación de Privacidad y Legal antes de la instalación.'
+                ],
+                '12' => [
+                    'q' => '¿Qué pasa si no tenemos una conexión WiFi fuerte?',
+                    'a' => 'Las cámaras PoE funcionan con un búfer local. Las caídas cortas de conexión no causan pérdida de datos. Para centros outdoor sin WiFi, la conectividad LTE/SIM autónoma está totalmente soportada. El equipo de Replash gestiona toda la configuración.'
                 ]
+            ],
+            'categories' => [
+                'facilities' => 'Para Centros',
+                'players' => 'Para Jugadores',
+                'privacy' => 'Privacidad y Tech'
             ]
         ],
         'cta' => [
-            'title' => 'Lleva una nueva experiencia digital a tu centro.',
+            'title' => 'Actualiza tu centro con una nueva experiencia digital de partido.',
             'subtitle' => 'Contáctanos para conocer condiciones, plazos e instalación.',
-            'button' => 'Descubrir para Clubes',
+            'button' => 'Descubre para Centros',
             'secondary' => 'Contacto'
         ]
     ],
@@ -389,7 +418,7 @@ return [
             'tiers_title' => 'Tramos mensuales',
             'note' => 'Las partes se calculan sobre las ventas de vídeo brutas, sin descontar antes el IVA. Los vídeos gratuitos, reembolsados o cancelados se excluyen.',
             'sport_football' => 'Fútbol',
-            'sport_padel' => 'Pádel',
+            'sport_padel' => 'Pádel'
         ],
         'chart' => [
             'title' => 'Resumen de Ventas e Ingresos',
@@ -595,9 +624,18 @@ return [
             ]
         ],
         'stats' => [
-            '1' => ['val' => '100%', 'label' => 'Grabación Automática'],
-            '2' => ['val' => '< 8 min', 'label' => 'Tiempo de Disponibilidad'],
-            '3' => ['val' => '0 Esfuerzo', 'label' => 'Para el Personal']
+            '1' => [
+                'val' => '100%',
+                'label' => 'Grabación Automática'
+            ],
+            '2' => [
+                'val' => '< 8 min',
+                'label' => 'Tiempo de Disponibilidad'
+            ],
+            '3' => [
+                'val' => '0 Esfuerzo',
+                'label' => 'Para el Personal'
+            ]
         ],
         'everydaySport' => [
             'title' => 'Diseñado para el deporte cotidiano.',
@@ -734,5 +772,31 @@ return [
         'label' => 'Ángulo de Cámara:',
         'camera_n' => 'Cámara {n}',
         'switching' => 'Cambiando de cámara...'
+    ],
+    'meta' => [
+        'home' => [
+            'title' => 'Replash | Un nuevo flujo de ingresos para tu centro: video automático de partidos',
+            'description' => 'Grabación automática de partidos para centros deportivos amateur. Mira, recorta y comparte los mejores momentos de tu partido.'
+        ],
+        'find' => [
+            'title' => 'Encuentra Tu Partido. Replash',
+            'description' => '¿Tienes el código del partido? Introdúcelo y mira tu partido amateur de fútbol o pádel. Sin app, sin cuenta.'
+        ],
+        'howItWorks' => [
+            'title' => 'Cómo Funciona. Replash',
+            'description' => 'Mira cómo Replash graba, organiza y entrega automáticamente videos de partidos a los jugadores en tu centro.'
+        ],
+        'forFacilities' => [
+            'title' => 'Para Centros. Replash',
+            'description' => 'Convierte tu centro deportivo en una experiencia moderna de partido. Cero complejidad operativa, nuevo servicio digital, modelo probado.'
+        ],
+        'forPlayers' => [
+            'title' => 'Para Jugadores. Replash',
+            'description' => 'Mira tu partido, recorta los mejores momentos y compártelos en redes sociales. Tu partido, listo para revivir.'
+        ],
+        'about' => [
+            'title' => 'Nosotros. Replash',
+            'description' => 'Replash está construyendo la capa de replay para el deporte amateur, respaldado por la Università degli Studi di Milano. Llevando video de estilo profesional a los partidos cotidianos.'
+        ]
     ]
 ];

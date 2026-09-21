@@ -18,156 +18,185 @@ return [
     ],
     'home' => [
         'hero' => [
-            'badge' => 'For Amateur Sports Venues',
+            'badge' => 'For Amateur Sport Facilities',
             'title' => 'Play. Record. Relive.',
-            'subtitle' => 'Give players a match to relive. A new revenue stream for your venue. Replash automatically records matches and makes them ready to watch, clip, and share.',
+            'subtitle' => 'Give players a match to relive. A new revenue stream for your venue. Replash records matches automatically and makes them ready to watch, clip, and share.',
             'cta' => 'Book a demo',
             'ctaSecondary' => 'See how it works'
         ],
         'intro' => [
-            'eyebrow' => 'For Sports Facility Managers',
-            'slogan' => 'A new revenue stream every month. Zero upfront cost.',
-            'tagline' => 'More than just court time.',
-            'sports' => 'Available today for football and padel. Built to scale with more sports.',
+            'eyebrow' => 'For Facility Owners',
+            'slogan' => 'A new revenue stream every month. With zero upfront cost.',
+            'tagline' => 'More than pitch time.',
+            'sports' => 'Available today for football and padel. Built to grow with other sports.',
             'cta' => 'Talk to us'
         ],
         'twoLayer' => [
             'eyebrow' => 'Value on Both Sides',
             'title' => 'For the players. And for your facility.',
-            'subtitle' => 'Replash gives players a match to relive and your venue a new service to offer. One system, two kinds of value.',
+            'subtitle' => 'Replash gives players a match to relive and your facility a new service to offer. One system, two kinds of value.',
             'layer1' => [
                 'label' => 'For Players',
                 'stat' => '0%',
                 'title' => 'of amateur matches are never recorded.',
-                'desc' => 'The best moment of a match vanishes the second it happens. With Replash, players walk off the pitch with the full match, ready to watch, clip, and share.'
+                'desc' => 'The best moment of a match fades the instant it happens. With Replash players leave the court with the full match, ready to watch, clip and share.'
             ],
             'layer2' => [
                 'label' => 'For the Facility',
                 'title' => 'A new service players actually want.',
-                'desc' => 'Every recorded match is an extra service to offer and a new revenue stream, with zero upfront cost and a single action from staff. Your venue becomes where matches are relived.'
+                'desc' => 'Every recorded match is one more service to offer and new revenue — no upfront cost, one staff action. Your facility becomes the place where matches get relived.'
             ]
         ],
         'whatIs' => [
             'eyebrow' => 'What is Replash?',
-            'title' => 'Automatic match recording for sports venues.',
-            'description' => 'Replash is an automated match recording and player access platform for amateur sports facilities. It records games, organizes them by pitch, date and time slot, and lets players find their match via QR code or web link. Zero manual effort from your staff.',
+            'title' => 'Automatic match recording for everyday sports venues.',
+            'description' => 'Replash is an automatic match recording and access platform for amateur sports venues. It records games, organises them by venue, date, and time, and lets players find their match easily through a QR code or web link. Without any manual work from your staff.',
             'items' => [
                 '1' => [
                     'title' => 'Automatic Recording',
-                    'desc' => 'Fixed PoE cameras record every match the second it begins. No buttons, no setup, no staff intervention.'
+                    'desc' => 'Fixed PoE cameras record every match the moment it begins. No buttons, no configuration, no staff intervention.'
                 ],
                 '2' => [
-                    'title' => 'Organized by Time Slot',
-                    'desc' => 'Every recording is tagged by venue, date, and time slot. Instantly searchable via the "Find Match" page.'
+                    'title' => 'Organised by Time Slot',
+                    'desc' => 'Each recording is tagged by venue, date, and time slot. Instantly searchable through the \'Find Your Match\' page.'
                 ],
                 '3' => [
                     'title' => 'Watch, Clip, Share',
-                    'desc' => 'Players watch their game, cut 10–45s highlights, download and share on social media. No app required. No account required.'
+                    'desc' => 'Players watch their match, cut 10–45 second highlights, download them, and share them on social media. No app needed. No account needed.'
                 ]
             ]
         ],
         'findPreview' => [
-            'eyebrow' => 'Quick Search',
+            'eyebrow' => 'Find Your Match',
             'title' => 'Three fields. Your match.',
-            'desc' => 'No app download required. No account required. Scan the QR code or enter your access code after the game.',
+            'desc' => 'No app download needed. No account needed. No password needed. Players walk off the pitch, scan a QR or visit the site, and watch their match.',
             'fields' => [
-                'facility' => 'Venue / Club',
+                'facility' => 'Facility',
                 'date' => 'Date',
                 'time' => 'Time Slot',
                 'accessCode' => 'or Access Code (e.g. AEXF-BFFG)',
-                'facilityPlaceholder' => 'Select a venue',
+                'facilityPlaceholder' => 'Choose a venue',
                 'datePlaceholder' => 'Select date',
-                'timePlaceholder' => 'Select slot',
+                'timePlaceholder' => 'Pick your slot',
                 'codePlaceholder' => 'AEXF-BFFG'
             ],
-            'button' => 'Find & Watch Match',
-            'tryIt' => 'Try Live Demo'
+            'button' => 'Watch My Match',
+            'tryIt' => 'Try the demo'
         ],
         'whyFacilities' => [
-            'eyebrow' => 'Why Venues Choose Replash',
-            'title' => 'Venues do not just sell court time. They sell the experience around the game.',
+            'eyebrow' => 'Why Facilities Choose Replash',
+            'title' => 'Facilities no longer sell only pitch time. They sell the experience around the match.',
             'cta' => 'For Facilities',
             'items' => [
                 '1' => [
                     'title' => 'New Digital Service',
-                    'desc' => 'Offer something your competitors do not have. Professional video experience at an amateur price point.'
+                    'desc' => 'Offer something your competitors don\'t. A professional video experience at an amateur price point.'
                 ],
                 '2' => [
                     'title' => 'Stand Out',
                     'desc' => 'In a market where venues compete on price, a memorable experience creates loyalty.'
                 ],
                 '3' => [
+                    'title' => 'Better Player Experience',
+                    'desc' => 'Players associate their best moments with your facility. They come back for more.'
+                ],
+                '4' => [
+                    'title' => 'Revenue Opportunity',
+                    'desc' => 'Every video purchased generates value for both players and your facility.'
+                ],
+                '5' => [
                     'title' => 'Zero Complexity',
-                    'desc' => 'Replash handles cameras, cloud storage, and delivery. Your team performs one single simple action per sale.'
+                    'desc' => 'Replash handles cameras, storage, and delivery. Your team does one simple action per sale.'
+                ],
+                '6' => [
+                    'title' => 'Modern Brand',
+                    'desc' => 'Show that your facility is forward-thinking. Technology that players notice and talk about.'
                 ]
             ]
         ],
         'whatPlayersGet' => [
             'eyebrow' => 'What Players Get',
-            'title' => 'What your players get. And why they return.',
+            'title' => 'What your players get. And why they keep coming back.',
             'cta' => 'For Players',
             'items' => [
                 '1' => [
-                    'title' => 'Watch Their Full Match',
-                    'desc' => 'Access the entire match recording. Goals, saves, rallies, and everything in between.'
+                    'title' => 'Watch Their Match',
+                    'desc' => 'Access the full recording of their game. Goals, saves, rallies, and everything in between.'
                 ],
                 '2' => [
-                    'title' => 'Clip the Best Moments',
-                    'desc' => 'Cut 10–45 second highlights directly in Replash. A goal, a rally, a celebration. Download to phone instantly.'
+                    'title' => 'Clip Best Moments',
+                    'desc' => 'Cut 10–45 second highlights right inside Replash. A goal, a rally, a celebration. Download to phone instantly.'
                 ],
                 '3' => [
-                    'title' => 'Share on Socials',
-                    'desc' => 'Share clips directly on social media platforms. No Replash profile required. The player owns every share.'
+                    'title' => 'Share to Social',
+                    'desc' => 'Share the clip directly on social media platforms. No Replash profile needed. The player owns every share.'
+                ],
+                '4' => [
+                    'title' => 'AI Highlights (Coming Soon)',
+                    'desc' => 'Future AI-powered highlight detection. Auto-cut clips of the most exciting moments from the match.'
                 ]
             ]
         ],
         'faq' => [
-            'eyebrow' => 'Frequently Asked Questions',
-            'title' => 'Everything you want to know before saying yes.',
-            'subtitle' => 'Answers to questions venues and players ask most often.',
+            'eyebrow' => 'Common Questions',
+            'title' => 'Everything you need to know before saying yes.',
+            'subtitle' => 'Answers to the questions facilities and players ask most.',
             'items' => [
                 '1' => [
-                    'q' => 'What exactly gets installed at my venue?',
-                    'a' => 'Fixed wide-angle PoE IP cameras. On padel courts, mounted to the ceiling or high wall; on football pitches, mounted to corner poles around the pitch. Installation takes one day and does not disrupt operations. All cables are concealed and managed by Replash.'
+                    'q' => 'What exactly gets installed at my facility?',
+                    'a' => 'Fixed PoE wide-angle cameras. On padel courts, mounted on the ceiling or a high wall; on football pitches, mounted on the corner posts around the pitch. Installation takes one day and doesn\'t interrupt operations. All cabling is concealed. The Replash team handles everything from mounting to network setup.'
                 ],
                 '2' => [
-                    'q' => 'Are there upfront costs or long-term lock-ins?',
-                    'a' => 'No. Replash covers 100% of hardware, installation, maintenance, and software updates. No monthly fee. The minimum commitment is 6 months, with predictable monthly revenue sharing.'
+                    'q' => 'Are there any upfront costs or contract commitments?',
+                    'a' => 'No. Replash covers 100% of the cost. Cameras, installation, maintenance, software updates. No monthly fees. Minimum commitment is 6 months. For the duration of the contract, your facility receives the same agreed revenue share every month.'
                 ],
                 '3' => [
-                    'q' => 'How does the revenue split work?',
-                    'a' => 'At the end of each month, all unlocked videos are tracked via the management panel. Your contracted share stays with your venue; the remainder is settled with Replash. The more games sold, the more you earn.'
+                    'q' => 'How does Replash share revenue with the facility?',
+                    'a' => 'At the end of each month, all unlocked videos are tracked through the admin panel. The share defined in your contract stays with your facility; the remaining amount is paid to Replash at month-end. The more active your courts, the more your facility earns — every new match is additional revenue. Everything is reconciled automatically from the panel. With zero operational cost on your side.'
                 ],
                 '4' => [
-                    'q' => 'Does my staff have to do anything for each match?',
-                    'a' => 'Just one single tap. When a team wants the video, reception unlocks the slot from the dashboard. Everything else is completely automated.'
+                    'q' => 'Does my staff have to do anything per match?',
+                    'a' => 'One tap. When the team wants the video, the front desk enables it from the panel. Everything else (recording, storage, code delivery, clip cutter) is fully automatic.'
                 ],
                 '5' => [
-                    'q' => 'What if a camera breaks or there is a technical issue?',
-                    'a' => 'Replash monitors all cameras 24/7 remotely. In rare cases of failure, our team is alerted automatically and resolves it quickly.'
+                    'q' => 'What happens if a camera fails or there\'s a technical issue?',
+                    'a' => 'Replash monitors all cameras 24/7. In rare cases of failure, our support team is notified automatically and resolves it remotely. Usually within hours. If a recording is lost, that sale doesn\'t appear in your report and you\'re not charged.'
                 ],
                 '6' => [
                     'q' => 'How quickly can we get started?',
-                    'a' => 'Once your application is approved, installation is scheduled at a convenient time. Most venues are fully operational within 3 weeks of first contact.'
+                    'a' => 'After your application is approved (typically within 3 days), we schedule installation at a time that suits you. Most facilities are up and running within 3 weeks of first contact.'
                 ],
                 '7' => [
                     'q' => 'Can players really share clips to social media?',
                     'a' => 'Yes. That is the core experience. Replash includes an in-browser clip cutter. Players select 10–45s moments, download MP4s directly to their phone, and post them anywhere.'
                 ],
                 '8' => [
-                    'q' => 'What about GDPR and privacy?',
-                    'a' => 'Cameras only capture the playing surface. No locker rooms, no entrances. No audio recording, no facial recognition. Footage is automatically deleted after 7 days.'
+                    'q' => 'Can players actually share clips on social media?',
+                    'a' => 'Yes. That\'s the core experience. Replash has a built-in clip cutter inside the platform. Players pick a 10–45 second moment from the match, download the clip to their phone, and share it on social media platforms under their own account. Replash is the place where the clip is made. Sharing happens on the player\'s own channels.'
                 ],
                 '9' => [
                     'q' => 'What if we don’t have strong Wi-Fi at the courts?',
                     'a' => 'PoE cameras operate with local buffer storage so brief network drops never cause data loss. For outdoor courts without Wi-Fi, LTE/SIM cellular gateways are fully supported.'
+                ],
+                '10' => [
+                    'q' => 'What about GDPR?',
+                    'a' => 'Replash is fully compliant with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). A three-tier notice model is in place (entrance signage + QR + booking notification). A Privacy & Legal Justification file is provided before installation.'
+                ],
+                '12' => [
+                    'q' => 'What if we don\'t have a strong WiFi connection?',
+                    'a' => 'PoE cameras run on a local buffer. Short connection drops don\'t cause data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. The Replash team handles all setup.'
                 ]
+            ],
+            'categories' => [
+                'facilities' => 'For Facilities',
+                'players' => 'For Players',
+                'privacy' => 'Privacy & Tech'
             ]
         ],
         'cta' => [
-            'title' => 'Bring a modern digital experience to your venue.',
+            'title' => 'Upgrade your facility with a new digital match experience.',
             'subtitle' => 'Contact us to learn about installation, timelines, and revenue models.',
-            'button' => 'Discover for Facilities',
+            'button' => 'Explore for Facilities',
             'secondary' => 'Contact Us'
         ]
     ],
@@ -389,7 +418,7 @@ return [
             'tiers_title' => 'Monthly tiers',
             'note' => 'Shares are calculated on gross video sales; VAT is not deducted first. Free, refunded or cancelled videos are excluded.',
             'sport_football' => 'Football',
-            'sport_padel' => 'Padel',
+            'sport_padel' => 'Padel'
         ],
         'chart' => [
             'title' => 'Sales & Revenue Overview',
@@ -595,9 +624,18 @@ return [
             ]
         ],
         'stats' => [
-            '1' => ['val' => '100%', 'label' => 'Automated Recording'],
-            '2' => ['val' => '< 8 min', 'label' => 'Ready Time'],
-            '3' => ['val' => '0 Effort', 'label' => 'For Facility Staff']
+            '1' => [
+                'val' => '100%',
+                'label' => 'Automated Recording'
+            ],
+            '2' => [
+                'val' => '< 8 min',
+                'label' => 'Ready Time'
+            ],
+            '3' => [
+                'val' => '0 Effort',
+                'label' => 'For Facility Staff'
+            ]
         ],
         'everydaySport' => [
             'title' => 'Built for everyday sport.',
@@ -734,5 +772,31 @@ return [
         'label' => 'Camera Angle:',
         'camera_n' => 'Camera {n}',
         'switching' => 'Switching camera...'
+    ],
+    'meta' => [
+        'home' => [
+            'title' => 'Replash | A new revenue stream for your venue: automatic match video',
+            'description' => 'Automatic match recording for amateur sport facilities. Watch, clip, and share the best moments of your match.'
+        ],
+        'find' => [
+            'title' => 'Find Your Match. Replash',
+            'description' => 'Got your match code? Enter it and watch your amateur football or padel match. No app, no account.'
+        ],
+        'howItWorks' => [
+            'title' => 'How It Works. Replash',
+            'description' => 'See how Replash automatically records, organises, and delivers match videos to players at your facility.'
+        ],
+        'forFacilities' => [
+            'title' => 'For Facilities. Replash',
+            'description' => 'Turn your sports venue into a modern match experience. Zero operational complexity, new digital service, proven model.'
+        ],
+        'forPlayers' => [
+            'title' => 'For Players. Replash',
+            'description' => 'Watch your match, clip the best moments, and share them on social media. Your match, ready to relive.'
+        ],
+        'about' => [
+            'title' => 'About. Replash',
+            'description' => 'Replash is building the replay layer for amateur sports, backed by Università degli Studi di Milano. Bringing professional-style video to everyday matches.'
+        ]
     ]
 ];

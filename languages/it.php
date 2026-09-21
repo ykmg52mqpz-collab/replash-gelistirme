@@ -19,7 +19,7 @@ return [
     'home' => [
         'hero' => [
             'badge' => 'Per Centri Sportivi Amatoriali',
-            'title' => 'Gioca. Registra. Rivivi.',
+            'title' => 'Play. Record. Relive.',
             'subtitle' => 'Dai ai giocatori una partita da rivivere. Un nuovo ricavo per il tuo centro. Replash registra le partite in automatico e le rende pronte da guardare, ritagliare e condividere.',
             'cta' => 'Richiedi una demo',
             'ctaSecondary' => 'Scopri come funziona'
@@ -58,7 +58,7 @@ return [
                 ],
                 '2' => [
                     'title' => 'Organizzata per Slot Orario',
-                    'desc' => 'Ogni registrazione è taggata per sede, data e slot orario. Immediatamente ricercabile tramite la pagina "Trova la Partita".'
+                    'desc' => 'Ogni registrazione è taggata per sede, data e slot orario. Immediatamente ricercabile tramite la pagina \'Trova la Partita\'.'
                 ],
                 '3' => [
                     'title' => 'Guarda, Ritaglia, Condividi',
@@ -67,21 +67,21 @@ return [
             ]
         ],
         'findPreview' => [
-            'eyebrow' => 'Ricerca Rapida',
+            'eyebrow' => 'Trova la Tua Partita',
             'title' => 'Tre campi. La tua partita.',
-            'desc' => 'Nessuna app da scaricare richiesta. Nessun account richiesto. I giocatori escono dal campo, scansionano un QR o visitano il sito, e guardano la partita.',
+            'desc' => 'Nessuna app da scaricare richiesta. Nessun account richiesto. Nessuna password richiesta. I giocatori escono dal campo, scansionano un QR o visitano il sito, e guardano la partita.',
             'fields' => [
-                'facility' => 'Centro / Club',
+                'facility' => 'Centro',
                 'date' => 'Data',
-                'time' => 'Fascia Oraria',
+                'time' => 'Slot Orario',
                 'accessCode' => 'o Codice di Accesso (es: AEXF-BFFG)',
-                'facilityPlaceholder' => 'Seleziona un centro',
-                'datePlaceholder' => 'Seleziona data',
-                'timePlaceholder' => 'Seleziona orario',
+                'facilityPlaceholder' => 'Scegli un centro',
+                'datePlaceholder' => 'Seleziona la data',
+                'timePlaceholder' => 'Scegli lo slot',
                 'codePlaceholder' => 'AEXF-BFFG'
             ],
-            'button' => 'Trova e Guarda la Partita',
-            'tryIt' => 'Prova la Demo dal Vivo'
+            'button' => 'Guarda la Mia Partita',
+            'tryIt' => 'Prova la demo'
         ],
         'whyFacilities' => [
             'eyebrow' => 'Perché i Centri Scelgono Replash',
@@ -97,8 +97,20 @@ return [
                     'desc' => 'In un mercato dove i centri competono sul prezzo, un\'esperienza memorabile crea fidelizzazione.'
                 ],
                 '3' => [
+                    'title' => 'Migliore Esperienza per i Giocatori',
+                    'desc' => 'I giocatori associano i loro momenti migliori al tuo centro. Tornano per rivivere quell\'emozione.'
+                ],
+                '4' => [
+                    'title' => 'Opportunità di Guadagno',
+                    'desc' => 'Ogni video acquistato genera valore sia per i giocatori che per il tuo centro.'
+                ],
+                '5' => [
                     'title' => 'Zero Complessità',
                     'desc' => 'Replash gestisce telecamere, archiviazione e consegna. Il tuo team compie una sola azione semplice per ogni vendita.'
+                ],
+                '6' => [
+                    'title' => 'Brand Moderno',
+                    'desc' => 'Dimostra che il tuo centro è innovativo. Una tecnologia che i giocatori notano e di cui parlano.'
                 ]
             ]
         ],
@@ -118,6 +130,10 @@ return [
                 '3' => [
                     'title' => 'Condividono sui Social',
                     'desc' => 'Condividono la clip direttamente sulle piattaforme social media. Nessun profilo Replash. Il giocatore possiede ogni condivisione.'
+                ],
+                '4' => [
+                    'title' => 'Highlights AI (Prossimamente)',
+                    'desc' => 'Futuri highlights generati da AI. Auto-tagliano i momenti più emozionanti della partita.'
                 ]
             ]
         ],
@@ -155,13 +171,26 @@ return [
                     'a' => 'Sì. È l\'esperienza centrale. Replash ha un clip cutter integrato nella piattaforma. I giocatori scelgono un momento di 10–45 secondi della partita, scaricano la clip sul telefono e la condividono sui social media sotto il proprio account. Replash è il luogo dove la clip viene fatta. La condivisione avviene sui canali del giocatore.'
                 ],
                 '8' => [
-                    'q' => 'E il GDPR?',
-                    'a' => 'Replash è pienamente conforme a GDPR, CEDU Articolo 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). È in atto un modello di notifica a tre livelli (segnaletica all\'ingresso + QR + notifica prenotazione). Un file Privacy & Legal Justification viene fornito prima dell\'installazione.'
+                    'q' => 'I giocatori possono davvero condividere clip sui social media?',
+                    'a' => 'Sì. È l\'esperienza centrale. Replash ha un clip cutter integrato nella piattaforma. I giocatori scelgono un momento di 10–45 secondi della partita, scaricano la clip sul telefono e la condividono sui social media sotto il proprio account. Replash è il luogo dove la clip viene fatta. La condivisione avviene sui canali del giocatore.'
                 ],
                 '9' => [
                     'q' => 'E se non abbiamo una connessione WiFi forte?',
                     'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
+                ],
+                '10' => [
+                    'q' => 'E il GDPR?',
+                    'a' => 'Replash è pienamente conforme a GDPR, CEDU Articolo 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). È in atto un modello di notifica a tre livelli (segnaletica all\'ingresso + QR + notifica prenotazione). Un file Privacy & Legal Justification viene fornito prima dell\'installazione.'
+                ],
+                '12' => [
+                    'q' => 'E se non abbiamo una connessione WiFi forte?',
+                    'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
                 ]
+            ],
+            'categories' => [
+                'facilities' => 'Per i Centri',
+                'players' => 'Per i Giocatori',
+                'privacy' => 'Privacy & Tech'
             ]
         ],
         'cta' => [
@@ -389,7 +418,7 @@ return [
             'tiers_title' => 'Scaglioni mensili',
             'note' => 'Le quote sono calcolate sulle vendite video lorde, senza dedurre prima l’IVA. Video gratuiti, rimborsati o annullati sono esclusi.',
             'sport_football' => 'Calcio',
-            'sport_padel' => 'Padel',
+            'sport_padel' => 'Padel'
         ],
         'chart' => [
             'title' => 'Analisi Vendite e Incassi',
@@ -595,9 +624,18 @@ return [
             ]
         ],
         'stats' => [
-            '1' => ['val' => '100%', 'label' => 'Registrazione Automatica'],
-            '2' => ['val' => '< 8 min', 'label' => 'Tempo di Disponibilità'],
-            '3' => ['val' => '0 Sforzo', 'label' => 'Per lo Staff']
+            '1' => [
+                'val' => '100%',
+                'label' => 'Registrazione Automatica'
+            ],
+            '2' => [
+                'val' => '< 8 min',
+                'label' => 'Tempo di Disponibilità'
+            ],
+            '3' => [
+                'val' => '0 Sforzo',
+                'label' => 'Per lo Staff'
+            ]
         ],
         'everydaySport' => [
             'title' => 'Creato per lo sport di ogni giorno.',
@@ -734,5 +772,31 @@ return [
         'label' => 'Angolazione Telecamera:',
         'camera_n' => '{n}ª Telecamera',
         'switching' => 'Passaggio alla telecamera...'
+    ],
+    'meta' => [
+        'home' => [
+            'title' => 'Replash | Un nuovo flusso di ricavi per il tuo centro: video automatici delle partite',
+            'description' => 'Registrazione automatica delle partite per centri sportivi amatoriali. Guarda, ritaglia e condividi i momenti migliori della tua partita.'
+        ],
+        'find' => [
+            'title' => 'Trova la Tua Partita. Replash',
+            'description' => 'Hai il codice della partita? Inseriscilo e guarda la tua partita di calcio o padel amatoriale. Niente app, niente account.'
+        ],
+        'howItWorks' => [
+            'title' => 'Come Funziona. Replash',
+            'description' => 'Scopri come Replash registra, organizza e consegna automaticamente i video delle partite ai giocatori nel tuo centro.'
+        ],
+        'forFacilities' => [
+            'title' => 'Per i Centri. Replash',
+            'description' => 'Trasforma il tuo centro sportivo in un\'esperienza moderna. Zero complessità operativa, nuovo servizio digitale, modello provato.'
+        ],
+        'forPlayers' => [
+            'title' => 'Per i Giocatori. Replash',
+            'description' => 'Guarda la tua partita, ritaglia i momenti migliori e condividili sui social media. La tua partita, pronta da rivivere.'
+        ],
+        'about' => [
+            'title' => 'Chi Siamo. Replash',
+            'description' => 'Replash sta costruendo il replay layer per lo sport amatoriale, sostenuto dall\'Università degli Studi di Milano. Portando video di livello professionale alle partite di tutti i giorni.'
+        ]
     ]
 ];
