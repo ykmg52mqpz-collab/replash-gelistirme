@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
@@ -120,7 +120,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover" style="opacity:0.12"/>
   </div>
   </div>

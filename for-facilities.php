@@ -25,7 +25,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_padel_golden.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
@@ -62,7 +62,7 @@ require_once __DIR__ . '/includes/header.php';
   ?>
   <section id="calculator" class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
     <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div class="absolute -inset-y-[30%] inset-x-0">
+      <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
         <img src="<?= asset('images/gen_facility_owner_pov.jpg') ?>" alt="" class="h-full w-full object-cover opacity-30" style="filter:brightness(1.1)" />
       </div>
     </div>
@@ -332,7 +332,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_marketing_bright.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.65;filter:brightness(1.15)"/>
   </div>
   </div>

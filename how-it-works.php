@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_football_night.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.45"/>
   </div>
   </div>
@@ -90,7 +90,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
   <span class="text-white/85">18:00 – 19:00</span>
   </div>
-  <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
+  <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm hw-slot" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
   <span class="text-white/85">19:00 – 20:00</span>
   </div>
   <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
@@ -107,8 +107,8 @@ require_once __DIR__ . '/includes/header.php';
   </svg>
   <span class="text-sm text-white/85">+ Match Video</span>
   </div>
-  <div class="relative h-5 w-9 rounded-full">
-  <div class="absolute top-0.5 h-4 w-4 rounded-full bg-white shadow">
+  <div class="relative h-5 w-9 rounded-full hw-toggle">
+  <div class="absolute top-0.5 h-4 w-4 rounded-full bg-white shadow hw-knob">
   </div>
   </div>
   </div>
@@ -168,19 +168,19 @@ require_once __DIR__ . '/includes/header.php';
   <rect x="280" y="60" width="30" height="60">
   </rect>
   </g>
-  <circle r="2.5" fill="rgb(253,230,138)">
+  <circle r="2.5" fill="rgb(253,230,138)" cx="160" cy="90"><animate attributeName="cx" values="160;120;100;130;160;200;220;190;160" dur="10s" begin="0s" repeatCount="indefinite"/><animate attributeName="cy" values="90;70;100;120;90;70;100;120;90" dur="10s" begin="0s" repeatCount="indefinite"/>
   </circle>
-  <circle r="3" fill="white">
+  <circle r="3" fill="white" cx="90" cy="70"><animate attributeName="cx" values="90;110;95;90" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="70;85;100;70" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle r="3" fill="white">
+  <circle r="3" fill="white" cx="140" cy="110"><animate attributeName="cx" values="140;160;145;140" dur="12s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="110;100;130;110" dur="12s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle r="3" fill="#111" stroke="white" stroke-width="0.5">
+  <circle r="3" fill="#111" stroke="white" stroke-width="0.5" cx="230" cy="80"><animate attributeName="cx" values="230;210;220;230" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="80;95;110;80" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
-  <circle r="3" fill="#111" stroke="white" stroke-width="0.5">
+  <circle r="3" fill="#111" stroke="white" stroke-width="0.5" cx="180" cy="110"><animate attributeName="cx" values="180;200;185;180" dur="12s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="110;95;125;110" dur="12s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
   </svg>
   <div class="absolute right-2 top-2 flex items-center gap-1.5 rounded bg-black/50 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white/85 backdrop-blur-sm">
-  <span class="h-1.5 w-1.5 rounded-full bg-red-500">
+  <span class="h-1.5 w-1.5 rounded-full bg-red-500 hw-blink">
   </span>Rec 47:12</div>
   <div class="absolute bottom-2 left-2 font-mono text-[9px] uppercase tracking-widest text-white/50">Cam 01 · Auto</div>
   </div>
@@ -232,20 +232,20 @@ require_once __DIR__ . '/includes/header.php';
   </line>
   </svg>Recording · 00:47:12</div>
   <div class="flex flex-col gap-2">
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2"  data-reveal="left">
+  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0s">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Facility</span>
   <span class="text-sm text-white/85">Example FC</span>
   </div>
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2"  data-reveal="left">
+  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0.4s">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Date</span>
   <span class="text-sm text-white/85">Tue · Nov 12</span>
   </div>
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2"  data-reveal="left">
+  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0.8s">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Slot</span>
   <span class="text-sm text-white/85">19:00 – 20:00</span>
   </div>
   </div>
-  <div class="mt-3 flex items-center gap-2 text-xs text-accent"  data-reveal="up">
+  <div class="mt-3 flex items-center gap-2 text-xs text-accent hw-indexed">
   <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
   </path>
@@ -301,12 +301,12 @@ require_once __DIR__ . '/includes/header.php';
   <span class="text-white/60">4/4</span>
   <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-white/8 text-white/40">SOLD</span>
   </div>
-  <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm">
+  <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm hw-row">
   <span class="text-white/80">19:00</span>
   <span class="text-white/60">4/4</span>
-  <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-  <span style="position:absolute">Pending</span>
-  <span>Unlockable</span>
+  <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider hw-badge">
+  <span class="hw-out" style="position:absolute">Pending</span>
+  <span class="hw-in">Unlockable</span>
   </span>
   </div>
   <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm">
@@ -359,23 +359,23 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex flex-col gap-1">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Facility</span>
   <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85" style="opacity:0.25">Example FC</span>
+  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:0s">Example FC</span>
   </div>
   </div>
   <div class="flex flex-col gap-1">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Date</span>
   <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85" style="opacity:0.25">Nov 12</span>
+  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:0.8s">Nov 12</span>
   </div>
   </div>
   <div class="flex flex-col gap-1">
   <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Time slot</span>
   <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85" style="opacity:0.25">19:00 – 20:00</span>
+  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:1.6s">19:00 – 20:00</span>
   </div>
   </div>
   </div>
-  <div class="mt-3 flex items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm font-semibold text-ink-900" style="opacity:0.3">
+  <div class="mt-3 flex items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm font-semibold text-ink-900 hw-watch" style="opacity:0.3">
   <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
   <path d="M8 5v10l7-5-7-5z">
   </path>
@@ -447,7 +447,7 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   <div class="absolute inset-x-3 bottom-3">
   <div class="relative h-1 rounded-full bg-white/15">
-  <div class="absolute top-0 h-1 rounded-full bg-accent" style="left:18%;width:8%">
+  <div class="absolute top-0 h-1 rounded-full bg-accent hw-clip" style="left:18%;width:8%">
   </div>
   </div>
   <div class="mt-1.5 flex justify-between font-mono text-[9px] uppercase tracking-widest text-white/50">
@@ -458,7 +458,7 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   <div class="mt-3 flex items-center justify-between">
   <span class="text-xs text-white/50">Clip 00:28</span>
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-2 hw-share">
   <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">IG</span>
   <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">TT</span>
   <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">WA</span>

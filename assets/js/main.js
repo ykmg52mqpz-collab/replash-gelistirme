@@ -19,6 +19,35 @@
   document.querySelectorAll('[data-reveal]').forEach(function (el) { revealObserver.observe(el); });
 })();
 
+// Bölüm arka planı paralaksı (replash.info ParallaxImage karşılığı):
+// bölüm ekrana girerken görsel -%16'dan başlar, çıkarken +%16'ya varır.
+(function () {
+  var layers = document.querySelectorAll('[data-parallax]');
+  if (!layers.length) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var ticking = false;
+  var update = function () {
+    var vh = window.innerHeight;
+    layers.forEach(function (layer) {
+      var host = layer.parentElement;
+      var r = host.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) return;
+      var strength = parseFloat(layer.getAttribute('data-parallax')) || 16;
+      var progress = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      layer.style.transform = 'translate3d(0,' + (-strength + progress * 2 * strength).toFixed(2) + '%,0)';
+    });
+    ticking = false;
+  };
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+// Hareket azaltma tercihi: maketlerdeki SVG (SMIL) animasyonlarını durdur
+if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('svg').forEach(function (svg) { if (svg.pauseAnimations) svg.pauseAnimations(); });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Header scroll effect
   const pillHeader = document.querySelector('.glass-pill');

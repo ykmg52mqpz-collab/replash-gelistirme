@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_player_phone_v2.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
   </div>
@@ -93,125 +93,125 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   <div class="relative h-8 rounded-md bg-white/[0.03] overflow-hidden">
   <div class="absolute inset-0 flex items-end gap-0.5 px-1">
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:30.00%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:60.68%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:69.52%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:74.96%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:75.99%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:72.28%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:64.26%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:53.05%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:40.25%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:27.72%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:17.30%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:10.45%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:8.12%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:10.50%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:17.06%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:26.62%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:37.50%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:47.82%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:55.81%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:60.04%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:59.68%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:74.64%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:65.55%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:53.69%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:40.77%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:28.68%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:19.17%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:13.57%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:12.62%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:16.32%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:23.90%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:34.03%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:44.95%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:54.76%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:61.77%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:64.72%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:62.97%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:56.65%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:46.59%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:34.23%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:21.36%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:29.86%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:21.37%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:17.09%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:17.53%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:22.47%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:30.96%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:41.51%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:52.30%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:61.46%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:67.39%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:68.99%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:65.86%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:58.33%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:47.44%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:34.73%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:22.07%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:11.30%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:3.94%">
   </div>
-  <div class="flex-1 bg-white/15" >
+  <div class="flex-1 bg-white/15" style="height:1.02%">
   </div>
   </div>
   <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent shadow-[0_0_6px_rgba(253,230,138,0.8)]" style="left:32%">
@@ -450,7 +450,7 @@ require_once __DIR__ . '/includes/header.php';
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
   <img src="<?= asset('images/gen_player_watching.jpg') ?>" alt="" class="h-full w-full object-cover object-right" style="opacity:0.6;filter:brightness(1.15)"/>
   </div>
   </div>

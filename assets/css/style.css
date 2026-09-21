@@ -235,3 +235,64 @@ h3.font-display {
     transition: none;
   }
 }
+
+/* Nasıl Çalışır maketleri — replash.info StepMockups animasyonlarının CSS karşılığı
+   (süre ve zamanlama dizileri canlıdaki framer-motion değerleriyle aynı) */
+.hw-slot    { animation: hw-slot 6s ease-in-out infinite; }
+.hw-toggle  { background: rgba(255,255,255,0.08); animation: hw-toggle 6s ease-in-out infinite; }
+.hw-knob    { left: 0; transform: translateX(2px); animation: hw-knob 6s ease-in-out infinite; }
+.hw-blink   { animation: hw-blink 1.4s ease-in-out infinite; }
+.hw-chip    { opacity: 0; animation: hw-chip 6s ease-out infinite both; }
+.hw-indexed { opacity: 0; animation: hw-indexed 6s linear infinite; }
+.hw-row     { animation: hw-row 6s ease-in-out infinite; }
+.hw-badge   { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); animation: hw-badge 6s ease-in-out infinite; }
+.hw-out     { animation: hw-out 6s linear infinite; }
+.hw-in      { animation: hw-in 6s linear infinite; }
+.hw-field   { animation: hw-field 8s linear infinite both; }
+.hw-watch   { animation: hw-watch 8s linear infinite; }
+.hw-clip    { animation: hw-clip 6s ease-in-out infinite; }
+.hw-share   { opacity: 0.4; animation: hw-share 6s linear infinite; }
+
+@keyframes hw-slot {
+  0%, 100% { border-color: rgba(255,255,255,0.08); background-color: rgba(255,255,255,0.02); }
+  25%, 50%, 75% { border-color: rgba(253,230,138,0.55); background-color: rgba(253,230,138,0.06); }
+}
+@keyframes hw-toggle {
+  0%, 35%, 100% { background-color: rgba(255,255,255,0.08); }
+  50%, 85% { background-color: rgb(253,230,138); }
+}
+@keyframes hw-knob {
+  0%, 35%, 100% { transform: translateX(2px); }
+  50%, 85% { transform: translateX(18px); }
+}
+@keyframes hw-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+@keyframes hw-chip {
+  0%, 100% { opacity: 0; transform: translateX(-12px); }
+  15%, 50%, 85% { opacity: 1; transform: none; }
+}
+@keyframes hw-indexed { 0%, 50%, 70%, 100% { opacity: 0; } 85% { opacity: 1; } }
+@keyframes hw-row {
+  0%, 100% { background-color: rgba(255,255,255,0); }
+  33%, 66% { background-color: rgba(253,230,138,0.08); }
+}
+@keyframes hw-badge {
+  0%, 35%, 100% { background-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+  50%, 85% { background-color: rgb(253,230,138); color: rgb(10,10,10); }
+}
+@keyframes hw-out { 0%, 35%, 100% { opacity: 1; } 50%, 85% { opacity: 0; } }
+@keyframes hw-in  { 0%, 35%, 100% { opacity: 0; } 50%, 85% { opacity: 1; } }
+@keyframes hw-field { 0%, 15%, 100% { opacity: 0.25; } 30%, 85% { opacity: 1; } }
+@keyframes hw-watch { 0%, 30%, 50%, 100% { opacity: 0.3; } 65%, 90% { opacity: 1; } }
+@keyframes hw-clip {
+  0%, 100% { left: 18%; width: 8%; }
+  33.3% { left: 22%; width: 14%; }
+  66.6% { left: 26%; width: 18%; }
+}
+@keyframes hw-share { 0%, 50%, 100% { opacity: 0.4; } 65%, 85% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-slot, .hw-toggle, .hw-knob, .hw-blink, .hw-chip, .hw-indexed, .hw-row, .hw-badge,
+  .hw-out, .hw-in, .hw-field, .hw-watch, .hw-clip, .hw-share { animation: none; }
+  .hw-chip, .hw-indexed, .hw-field, .hw-watch, .hw-share { opacity: 1 !important; }
+  .hw-in { opacity: 0; }
+}
