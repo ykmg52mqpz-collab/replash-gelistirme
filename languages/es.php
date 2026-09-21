@@ -431,6 +431,7 @@ return [
             'copied' => '¡Enlace del partido copiado!'
         ],
         'modal' => [
+                'clip_downloaded' => 'El clip se guardó en tu dispositivo. Sube el vídeo en la página que se abrió para compartirlo.',
                 'clip_wait' => 'El clip se está preparando, podrás compartirlo cuando esté listo.',
                 'preparing_clip' => 'Preparando clip… {s}/{t} s',
                 'clip_ready' => 'Clip listo.',

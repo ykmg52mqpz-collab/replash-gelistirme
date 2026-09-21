@@ -431,6 +431,7 @@ return [
             'copied' => 'Link della partita copiato!'
         ],
         'modal' => [
+                'clip_downloaded' => 'La clip è stata salvata sul tuo dispositivo. Carica il video nella pagina che si è aperta per condividerlo.',
                 'clip_wait' => 'La clip è in preparazione, potrai condividerla appena è pronta.',
                 'preparing_clip' => 'Preparazione clip… {s}/{t} s',
                 'clip_ready' => 'Clip pronta.',

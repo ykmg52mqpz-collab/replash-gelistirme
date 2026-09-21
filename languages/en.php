@@ -431,6 +431,7 @@ return [
             'copied' => 'Match link copied!'
         ],
         'modal' => [
+                'clip_downloaded' => 'The clip was saved to your device. Upload the video on the page that opened to share it.',
                 'clip_wait' => 'The clip is being prepared, you can share it when it is ready.',
                 'preparing_clip' => 'Preparing clip… {s}/{t} s',
                 'clip_ready' => 'Clip ready.',

@@ -942,6 +942,7 @@ var I18N = {
   clipReady: <?= json_encode(__('find.modal.clip_ready')) ?>,
   clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
   clipWait: <?= json_encode(__('find.modal.clip_wait')) ?>,
+  clipDownloaded: <?= json_encode(__('find.modal.clip_downloaded')) ?>,
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
@@ -1388,79 +1389,80 @@ async function getClipVideoFile() {
   }
 }
 
-// Share clip as actual video file via Web Share API level 2
+// ===== Klip paylaşımı: her zaman klibin kendisi (video dosyası) paylaşılır, site linki değil =====
+function clipIsTouchDevice() {
+  return window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
+}
+// Tarayıcıda kesilmiş klip hazırsa beklemeden dosya olarak döner (paylaşım tıklamayla aynı anda başlamalı)
+function clipFileNow() {
+  if (!currentClip || !currentClip.blob) return null;
+  return new File([currentClip.blob], currentClip.filename, { type: currentClip.blob.type });
+}
+function clipDownloadNow() {
+  var dl = document.getElementById('modal-download-btn');
+  if (!dl || !dl.href || dl.getAttribute('href') === '#') return;
+  var a = document.createElement('a');
+  a.href = dl.href;
+  a.download = dl.getAttribute('download') || 'replash_klip.mp4';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function clipShareTitle() {
+  return "Replash (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
+}
+// Cihazın paylaşım menüsünü klip dosyası ekli açar; olmazsa false döner
+function clipNativeShare(file, onFail) {
+  if (!file || !navigator.canShare || !navigator.share) return false;
+  try {
+    if (!navigator.canShare({ files: [file] })) return false;
+  } catch (e) { return false; }
+  navigator.share({ files: [file], title: clipShareTitle() }).catch(function (e) {
+    if (e && e.name !== 'AbortError' && onFail) onFail();
+  });
+  return true;
+}
+
+// "Paylaş" düğmesi: klip dosyasını paylaşım menüsüyle gönder; desteklenmiyorsa dosyayı indir
 async function shareClipFileOrLink() {
   if (!currentClip) return;
   if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
-  var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
-  var clipUrl = window.location.origin + window.location.pathname + "?code=" + encodeURIComponent(accessCode) + "&t=" + currentClip.start;
-  var title = "Replash Clip (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
-
-  // Try file sharing first if supported
-  if (navigator.canShare) {
-    try {
-      var file = await getClipVideoFile();
-      if (file && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: title,
-          text: title + " " + clipUrl,
-          files: [file]
-        });
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      console.log("File share fallback:", e);
-    }
+  var fallback = function () { clipDownloadNow(); clipSetStatus(I18N.clipDownloaded); };
+  if (clipNativeShare(clipFileNow(), fallback)) return;
+  if (!currentClip.blob && navigator.canShare) {
+    // Sunucudan kesilen klip: önce dosya alınır, sonra paylaşılır
+    var file = await getClipVideoFile();
+    if (clipNativeShare(file, fallback)) return;
   }
-
-  // Fallback: standard navigator.share or clipboard
-  if (navigator.share) {
-    navigator.share({
-      title: title,
-      text: title,
-      url: clipUrl
-    }).catch(function(){});
-  } else {
-    navigator.clipboard.writeText(clipUrl);
-    alert(I18N.copied);
-  }
+  fallback();
 }
 
-// Direct Social Sharing (WhatsApp, Instagram, TikTok, YouTube, X, Facebook)
-// Platform sekmesi tıklamayla aynı anda (beklemeden) açılır; yoksa tarayıcı açılır pencereyi engeller.
+// Platform düğmeleri (WhatsApp, Instagram, TikTok, YouTube, X, Facebook)
+// Telefonda: paylaşım menüsü klip dosyası ekli açılır. Bilgisayarda: klip iner ve platform
+// tıklamayla aynı anda açılır (beklemeden; yoksa tarayıcı açılır pencereyi engeller).
 function shareToSocial(platform) {
   if (!currentClip) return;
   if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
-  var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
-  var clipUrl = window.location.origin + window.location.pathname + "?code=" + encodeURIComponent(accessCode) + "&t=" + currentClip.start;
-  var shareText = "Replash Maç Klibim (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
-  var fullText = shareText + "\n" + clipUrl;
-
+  var touch = clipIsTouchDevice();
   var targets = {
-    whatsapp: "https://api.whatsapp.com/send?text=" + encodeURIComponent(fullText),
-    x: "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(clipUrl),
-    facebook: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(clipUrl),
+    whatsapp: touch ? "https://api.whatsapp.com/send" : "https://web.whatsapp.com/",
+    x: "https://x.com/compose/post",
+    facebook: "https://www.facebook.com/",
     instagram: "https://www.instagram.com/",
     tiktok: "https://www.tiktok.com/upload",
     youtube: "https://studio.youtube.com/"
   };
   if (!targets[platform]) return;
 
-  // Video yüklemesi isteyen platformlar için klip dosyası da aynı anda indirilir
-  if (platform === 'instagram' || platform === 'tiktok' || platform === 'youtube') {
-    var dl = document.getElementById('modal-download-btn');
-    var a = document.createElement('a');
-    a.href = dl ? dl.href : '#';
-    a.download = (dl && dl.getAttribute('download')) || 'replash_klip.mp4';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    clipSetStatus(I18N.fileShareNotSupported);
-  }
+  var openTarget = function () {
+    var win = window.open(targets[platform], '_blank');
+    if (!win) clipSetStatus(I18N.clipDownloaded);
+  };
+  if (touch && clipNativeShare(clipFileNow(), function () { clipDownloadNow(); openTarget(); })) return;
 
-  var win = window.open(targets[platform], '_blank');
-  if (!win) window.location.href = targets[platform]; // açılır pencere engellendiyse aynı sekmede aç
+  clipDownloadNow();
+  clipSetStatus(I18N.clipDownloaded);
+  openTarget();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
