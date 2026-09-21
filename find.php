@@ -94,8 +94,15 @@ if ($pdo && !$codeBlocked) {
             }
         }
 
-        // Oyuncu maçı kodla açtı: izlenme sayılır, satış kesinleşir (includes/sales.php)
+        // Ödeme alınmış maçın videosu hazır mı? (maçtan önce satışta kod videodan önce verilir)
+        $videoState = null;
         if ($match && $codeValidated && $match['status'] === 'UNLOCKABLE') {
+            $videoState = replash_video_state($pdo, $match);
+        }
+        $videoReady = $videoState && $videoState['state'] === 'ready';
+
+        // Oyuncu videoyu açtı: izlenme sayılır, satış kesinleşir (includes/sales.php)
+        if ($videoReady) {
             replash_record_match_open($pdo, $match['id']);
         }
 
@@ -107,7 +114,7 @@ if ($pdo && !$codeBlocked) {
         }
 
         // Video kaynağı yoksa (kamera adresi ve kayıt adresi boş) örnek video açma: bulunamadı göster
-        if ($match && $codeValidated) {
+        if ($match && $codeValidated && $videoReady) {
             $hasSource = !empty($match['playback_url']) || count(array_filter(array_column($matchCameras, 'stream_url'))) > 0;
             if (!$hasSource && !empty($match['camera_id'])) {
                 $cs = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? LIMIT 1");
@@ -410,7 +417,55 @@ require_once __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <!-- Video Screen or Gate Lock Screen -->
-        <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
+        <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated && !$videoReady):
+          $vs = $videoState['state'];
+          $fmt = function ($ts) { return date('H:i', $ts); };
+          $stepState = [
+            'paid' => 'done',
+            'rec' => in_array($vs, ['processing', 'delayed'], true) ? 'done' : ($vs === 'playing' ? 'active' : 'todo'),
+            'prep' => in_array($vs, ['processing', 'delayed'], true) ? 'active' : 'todo',
+            'ready' => 'todo',
+          ];
+          $msg = str_replace(['{start}', '{eta}'], [$fmt($videoState['start']), $fmt($videoState['eta'])], __('find.pending.msg_' . $vs));
+        ?>
+          <!-- Ödeme alındı, video henüz hazır değil: aşamalar ve tahmini süre -->
+          <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8" aria-live="polite">
+            <div class="flex items-start gap-4">
+              <span class="grid h-11 w-11 flex-none place-items-center rounded-full bg-emerald-400/15 text-emerald-300">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              </span>
+              <div>
+                <h2 class="font-display text-xl font-bold text-white sm:text-2xl"><?= e(__('find.pending.title')) ?></h2>
+                <p class="mt-1 text-sm text-white/55"><?= e(__('find.pending.subtitle')) ?></p>
+              </div>
+            </div>
+
+            <ol class="mt-7 grid gap-3 sm:grid-cols-4">
+              <?php foreach (['paid', 'rec', 'prep', 'ready'] as $i => $step): $st = $stepState[$step]; ?>
+                <li class="flex items-center gap-3 rounded-xl border px-3.5 py-3 <?= $st === 'active' ? 'border-accent/40 bg-accent/[0.07]' : 'border-white/10 bg-white/[0.02]' ?>">
+                  <span class="grid h-7 w-7 flex-none place-items-center rounded-full text-xs font-bold <?= $st === 'done' ? 'bg-emerald-400/20 text-emerald-300' : ($st === 'active' ? 'bg-accent text-ink-900' : 'bg-white/10 text-white/40') ?>">
+                    <?php if ($st === 'done'): ?><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg><?php else: ?><?= $i + 1 ?><?php endif; ?>
+                  </span>
+                  <span class="text-sm <?= $st === 'todo' ? 'text-white/40' : 'text-white' ?>"><?= e(__('find.pending.step_' . $step)) ?><?php if ($st === 'active'): ?><span class="ml-1 inline-block animate-pulse text-accent">…</span><?php endif; ?></span>
+                </li>
+              <?php endforeach; ?>
+            </ol>
+
+            <div class="mt-6 rounded-xl border <?= $vs === 'delayed' ? 'border-red-400/30 bg-red-400/10 text-red-100' : 'border-white/10 bg-ink-900/60 text-white/80' ?> px-4 py-3.5 text-sm">
+              <?= e($msg) ?>
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-white/45">
+              <span><?= e(__('find.pending.auto_refresh')) ?></span>
+              <button type="button" onclick="location.reload()" class="rounded-lg border border-white/15 px-3 py-1.5 font-semibold text-white/80 transition hover:border-accent hover:text-accent"><?= e(__('find.pending.refresh')) ?></button>
+            </div>
+          </div>
+          <script>
+            // Video hazır olunca sayfa kendiliğinden oynatıcıya geçer
+            setTimeout(function () { if (!document.hidden) location.reload(); else document.addEventListener('visibilitychange', function () { location.reload(); }, { once: true }); }, 30000);
+          </script>
+
+        <?php elseif ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
           <?php 
           $cameraList = [];
           $directVideoSrc = '';
@@ -976,7 +1031,7 @@ require_once __DIR__ . '/includes/header.php';
       </section>
 </main>
 
-<?php if ($match && $match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
+<?php if ($match && $match['status'] === 'UNLOCKABLE' && $codeValidated && $videoReady): ?>
 <!-- Clappr Video Player Integration & Multi-Camera Switcher & Clip Recording -->
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 <script>

@@ -390,6 +390,20 @@ return [
         'pages' => 'Pages'
     ],
     'find' => [
+        'pending' => [
+            'title' => 'Payment received, your match is unlocked',
+            'subtitle' => 'Your code is valid. The video opens on this page automatically when it is ready.',
+            'step_paid' => 'Payment received',
+            'step_rec' => 'Recording the match',
+            'step_prep' => 'Preparing the video',
+            'step_ready' => 'Ready to watch',
+            'msg_upcoming' => 'Your match starts at {start}. The video will be here at about {eta}.',
+            'msg_playing' => 'Your match is being recorded. The video will be here at about {eta}.',
+            'msg_processing' => 'The video is being prepared. Estimated ready time: {eta}.',
+            'msg_delayed' => 'The video is taking longer than expected. Your code is valid; try again in a few minutes or ask the facility.',
+            'auto_refresh' => 'This page refreshes every 30 seconds.',
+            'refresh' => 'Refresh now',
+        ],
         'title' => 'Find & Watch Your Match',
         'subtitle' => 'Select your venue and match time to locate your recording, or open it directly using your access code.',
         'fields' => [
@@ -553,6 +567,17 @@ return [
         ]
     ],
     'panel' => [
+        'presale' => [
+            'title' => 'Sell before the match',
+            'hint' => 'Give the code as soon as you get paid; the video opens after the match.',
+            'court' => 'Court',
+            'button' => 'Sell and give code',
+            'invalid' => 'Invalid court or time.',
+            'state_upcoming' => 'Video pending · ~{t}',
+            'state_playing' => 'Recording · ~{t}',
+            'state_processing' => 'Preparing · ~{t}',
+            'state_delayed' => 'Video delayed, check the camera',
+        ],
         'login' => [
             'title' => 'Venue Staff Login',
             'subtitle' => 'Please enter your venue\'s 6-digit PIN code.',

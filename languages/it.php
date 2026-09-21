@@ -390,6 +390,20 @@ return [
         'pages' => 'Pagine'
     ],
     'find' => [
+        'pending' => [
+            'title' => 'Pagamento ricevuto, la tua partita è sbloccata',
+            'subtitle' => 'Il tuo codice è valido. Il video si apre in questa pagina appena è pronto.',
+            'step_paid' => 'Pagamento ricevuto',
+            'step_rec' => 'Registrazione in corso',
+            'step_prep' => 'Preparazione del video',
+            'step_ready' => 'Pronto da guardare',
+            'msg_upcoming' => 'La tua partita inizia alle {start}. Il video sarà qui verso le {eta}.',
+            'msg_playing' => 'La tua partita è in registrazione. Il video sarà qui verso le {eta}.',
+            'msg_processing' => 'Il video è in preparazione. Pronto previsto: {eta}.',
+            'msg_delayed' => 'Il video sta richiedendo più tempo del previsto. Il codice è valido; riprova tra qualche minuto o chiedi al centro.',
+            'auto_refresh' => 'Questa pagina si aggiorna ogni 30 secondi.',
+            'refresh' => 'Aggiorna ora',
+        ],
         'title' => 'Trova e Guarda la Tua Partita',
         'subtitle' => 'Seleziona la tua struttura e l\'orario della partita per trovare il video, oppure aprilo direttamente con il tuo codice di accesso.',
         'fields' => [
@@ -553,6 +567,17 @@ return [
         ]
     ],
     'panel' => [
+        'presale' => [
+            'title' => 'Vendi prima della partita',
+            'hint' => 'Dai il codice appena ricevi il pagamento; il video si apre dopo la partita.',
+            'court' => 'Campo',
+            'button' => 'Vendi e dai il codice',
+            'invalid' => 'Campo o orario non valido.',
+            'state_upcoming' => 'Video in attesa · ~{t}',
+            'state_playing' => 'In registrazione · ~{t}',
+            'state_processing' => 'In preparazione · ~{t}',
+            'state_delayed' => 'Video in ritardo, controlla la telecamera',
+        ],
         'login' => [
             'title' => 'Accesso Personale Centro',
             'subtitle' => 'Inserisci il codice PIN a 6 cifre della tua struttura.',

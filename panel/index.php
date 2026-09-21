@@ -86,6 +86,50 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             }
         }
 
+        // Maçtan önce satış: kayıt henüz gelmeden saha + saat için satış yapılır, kod hemen verilir.
+        // Kamera kaydı geldiğinde aynı saha/tarih/saat kaydına bağlanır (api/hooks/recording.php).
+        if (isset($_POST['action']) && $_POST['action'] === 'presell') {
+            $psCourt = trim((string)($_POST['court'] ?? ''));
+            $psDate = (string)($_POST['date'] ?? date('Y-m-d'));
+            $psHour = (int)($_POST['hour'] ?? -1);
+            $courtData = null;
+            foreach (get_facility_courts_data($facility) as $cd) { if ($cd['name'] === $psCourt) { $courtData = $cd; break; } }
+            $validDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $psDate) && $psDate >= date('Y-m-d') && $psDate <= date('Y-m-d', strtotime('+7 days'));
+            if (!$courtData || !$validDate || $psHour < 0 || $psHour > 23) {
+                $error = __('panel.presale.invalid');
+            } else {
+                $psSlot = sprintf('%02d:00–%02d:00', $psHour, $psHour + 1);
+                $ex = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
+                $ex->execute([$facility['id'], $psCourt, $psDate, $psSlot]);
+                $row = $ex->fetch();
+                if ($row && $row['status'] === 'UNLOCKABLE') {
+                    // Zaten satılmış: aynı kodu tekrar göster
+                    $soldNotice = ['code' => $row['access_code'], 'court' => $row['court'], 'slot' => $row['time_slot']];
+                } elseif ($row && ($row['status'] === 'EXPIRED' || is_match_expired($row['date']))) {
+                    $error = __('panel.shell.expired_sell');
+                } else {
+                    $newCode = replash_new_access_code($pdo);
+                    if ($row) {
+                        $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'")
+                            ->execute([$newCode, $row['id']]);
+                        $logRow = $row;
+                    } else {
+                        $camStmt = $pdo->prepare("SELECT id FROM cameras WHERE facility_id = ? AND court = ? ORDER BY id ASC LIMIT 1");
+                        $camStmt->execute([$facility['id'], $psCourt]);
+                        $logRow = ['id' => 'm-' . bin2hex(random_bytes(5)), 'facility_id' => $facility['id']];
+                        $pdo->prepare("INSERT INTO matches
+                            (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, duration_sec, sold_at, views, billable, sport, source)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, 3600, NOW(), 0, 1, ?, 'presale')")
+                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . sprintf('%02d00', $psHour), $newCode,
+                                       $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
+                    }
+                    replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
+                    $soldNotice = ['code' => $newCode, 'court' => $psCourt, 'slot' => $psSlot];
+                    $presaleDay = $psDate; // tablo satılan günü göstersin
+                }
+            }
+        }
+
         // Handle Re-locking Action (Locking an Unlocked Slot / Revoking Access)
         if (isset($_POST['action']) && $_POST['action'] === 'mark_locked') {
             $matchId = $_POST['match_id'] ?? '';
@@ -236,7 +280,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
 
 // ===== Maçlar ve Slotlar: tarih kısıtı olmayan ay takvimi + seçili günün saha × saat tablosu =====
 $tab = (($_GET['tab'] ?? '') === 'account') ? 'account' : 'matches';
-$viewDay = (isset($_GET['day']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['day'])) ? $_GET['day'] : date('Y-m-d');
+$viewDay = $presaleDay ?? ((isset($_GET['day']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['day'])) ? $_GET['day'] : date('Y-m-d'));
 $viewMonth = (isset($_GET['month']) && preg_match('/^\d{4}-\d{2}$/', $_GET['month'])) ? $_GET['month'] : substr($viewDay, 0, 7);
 $dayMatches = [];
 $monthCounts = [];
@@ -398,6 +442,30 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
               <div class="text-sm text-gray-500"><?= e(str_replace(['{t}', '{s}', '{l}'], [$dayTotals['t'], $dayTotals['s'], $dayTotals['l']], __('panel.shell.day_summary'))) ?></div>
             </div>
 
+            <?php if ($viewDay >= date('Y-m-d') && $viewDay <= date('Y-m-d', strtotime('+7 days'))):
+              $psDefaultHour = ($viewDay === date('Y-m-d')) ? (int)date('G') : 18; ?>
+              <!-- Maçtan önce satış: ödeme alınınca kod hemen verilir, video maç bitince açılır -->
+              <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3">
+                <input type="hidden" name="action" value="presell">
+                <input type="hidden" name="date" value="<?= e($viewDay) ?>">
+                <div class="mr-auto min-w-[180px]">
+                  <div class="text-sm font-medium text-gray-900"><?= e(__('panel.presale.title')) ?></div>
+                  <div class="text-xs text-gray-500"><?= e(__('panel.presale.hint')) ?></div>
+                </div>
+                <label class="text-xs text-gray-600"><?= e(__('panel.presale.court')) ?>
+                  <select name="court" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
+                    <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
+                  </select>
+                </label>
+                <label class="text-xs text-gray-600"><?= e(__('panel.shell.time_col')) ?>
+                  <select name="hour" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 font-mono text-sm text-gray-900">
+                    <?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= $h === $psDefaultHour ? 'selected' : '' ?>><?= sprintf('%02d:00–%02d:00', $h, $h + 1) ?></option><?php endfor; ?>
+                  </select>
+                </label>
+                <button type="submit" class="rounded-md bg-gray-900 px-3.5 py-2 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.presale.button')) ?></button>
+              </form>
+            <?php endif; ?>
+
             <?php if (empty($dayMatches)): ?>
               <div class="px-5 py-12 text-center text-sm text-gray-500"><?= e(__('panel.shell.no_matches')) ?></div>
             <?php else: ?>
@@ -428,6 +496,9 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                   <div class="min-w-[110px]">
                                     <div class="text-[11px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div>
                                     <button type="button" data-copy="<?= e($cm['access_code']) ?>" title="<?= e(__('panel.shell.copy')) ?>" class="select-all font-mono text-base font-semibold tracking-wider text-gray-900 hover:underline"><?= e($cm['access_code']) ?></button>
+                                    <?php $vs = replash_video_state($pdo, $cm); if ($vs['state'] !== 'ready'): ?>
+                                      <div class="mt-0.5 text-[11px] <?= $vs['state'] === 'delayed' ? 'font-medium text-red-700' : 'text-gray-500' ?>"><?= e(str_replace('{t}', date('H:i', $vs['eta']), __('panel.presale.state_' . $vs['state']))) ?></div>
+                                    <?php endif; ?>
                                   </div>
                                   <?php if ($undoState['allowed']): ?>
                                     <button type="button" data-relock="<?= e($cm['id']) ?>" data-label="<?= e($gc . ' · ' . $gs) ?>" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"

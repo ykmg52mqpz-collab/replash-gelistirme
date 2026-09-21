@@ -390,6 +390,20 @@ return [
         'pages' => 'Sayfalar'
     ],
     'find' => [
+        'pending' => [
+            'title' => 'Ödeme alındı, maçının kilidi açık',
+            'subtitle' => 'Kodun geçerli. Video hazır olunca bu sayfada kendiliğinden açılır.',
+            'step_paid' => 'Ödeme alındı',
+            'step_rec' => 'Maç kaydediliyor',
+            'step_prep' => 'Video hazırlanıyor',
+            'step_ready' => 'İzlemeye hazır',
+            'msg_upcoming' => 'Maçın {start} saatinde başlıyor. Video yaklaşık {eta} saatinde burada olacak.',
+            'msg_playing' => 'Maçın şu an kaydediliyor. Video yaklaşık {eta} saatinde burada olacak.',
+            'msg_processing' => 'Video hazırlanıyor. Tahmini hazır olma saati: {eta}.',
+            'msg_delayed' => 'Video beklenenden uzun sürüyor. Kodun geçerli; birkaç dakika sonra tekrar dene ya da tesise sor.',
+            'auto_refresh' => 'Bu sayfa 30 saniyede bir kendini yeniler.',
+            'refresh' => 'Şimdi yenile',
+        ],
         'title' => 'Maçını Bul & İzle',
         'subtitle' => 'Sahanızı ve maç saatinizi seçerek kaydınızı bulun veya doğrudan erişim kodunuzla videonuzu açın.',
         'fields' => [
@@ -553,6 +567,17 @@ return [
         ]
     ],
     'panel' => [
+        'presale' => [
+            'title' => 'Maçtan önce sat',
+            'hint' => 'Ödemeyi alınca kodu hemen ver; video maç bitince açılır.',
+            'court' => 'Saha',
+            'button' => 'Sat ve kod ver',
+            'invalid' => 'Saha veya saat geçersiz.',
+            'state_upcoming' => 'Video bekleniyor · ~{t}',
+            'state_playing' => 'Kaydediliyor · ~{t}',
+            'state_processing' => 'Hazırlanıyor · ~{t}',
+            'state_delayed' => 'Video gecikti, kamerayı kontrol edin',
+        ],
         'login' => [
             'title' => 'Tesis Görevlisi Girişi',
             'subtitle' => 'Lütfen tesisinize ait 6 haneli PIN kodunu giriniz.',

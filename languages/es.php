@@ -390,6 +390,20 @@ return [
         'pages' => 'Páginas'
     ],
     'find' => [
+        'pending' => [
+            'title' => 'Pago recibido, tu partido está desbloqueado',
+            'subtitle' => 'Tu código es válido. El vídeo se abre en esta página cuando esté listo.',
+            'step_paid' => 'Pago recibido',
+            'step_rec' => 'Grabando el partido',
+            'step_prep' => 'Preparando el vídeo',
+            'step_ready' => 'Listo para ver',
+            'msg_upcoming' => 'Tu partido empieza a las {start}. El vídeo estará aquí hacia las {eta}.',
+            'msg_playing' => 'Tu partido se está grabando. El vídeo estará aquí hacia las {eta}.',
+            'msg_processing' => 'El vídeo se está preparando. Hora estimada: {eta}.',
+            'msg_delayed' => 'El vídeo está tardando más de lo previsto. Tu código es válido; inténtalo en unos minutos o pregunta en el centro.',
+            'auto_refresh' => 'Esta página se actualiza cada 30 segundos.',
+            'refresh' => 'Actualizar ahora',
+        ],
         'title' => 'Busca y Mira tu Partido',
         'subtitle' => 'Selecciona tu club y la hora del partido para encontrar el vídeo, o ábrelo directamente con tu código de acceso.',
         'fields' => [
@@ -553,6 +567,17 @@ return [
         ]
     ],
     'panel' => [
+        'presale' => [
+            'title' => 'Vender antes del partido',
+            'hint' => 'Da el código en cuanto cobres; el vídeo se abre al terminar el partido.',
+            'court' => 'Pista',
+            'button' => 'Vender y dar código',
+            'invalid' => 'Pista u hora no válida.',
+            'state_upcoming' => 'Vídeo pendiente · ~{t}',
+            'state_playing' => 'Grabando · ~{t}',
+            'state_processing' => 'Preparando · ~{t}',
+            'state_delayed' => 'Vídeo con retraso, revisa la cámara',
+        ],
         'login' => [
             'title' => 'Acceso Personal de Club',
             'subtitle' => 'Introduce el código PIN de 6 dígitos de tu centro.',

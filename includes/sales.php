@@ -182,3 +182,44 @@ function replash_code_failed(PDO $pdo): void {
         error_log('replash_code_failed: ' . $e->getMessage());
     }
 }
+
+/*
+ * Video readiness for a sold match (shown on the player page).
+ * A match can be sold before its recording exists (pre-sale at the desk). The player's code
+ * works right away; the page shows the stage until the video can be played.
+ * Ready = recording reported by the camera (available_at), or, for time-window cloud playback,
+ * the slot ended PROCESSING_MINUTES ago and the court has a camera.
+ */
+const REPLASH_DELAY_GRACE_MIN = 30; // after the estimate, show "taking longer than expected"
+
+/** [start, end] timestamps of a match slot like "21:00–22:00" (end may be 24:00). */
+function replash_slot_bounds(array $match): array {
+    $parts = preg_split('/[–\-]/u', (string)$match['time_slot']);
+    $start = strtotime($match['date'] . ' ' . trim($parts[0] ?? '00:00'));
+    $endRaw = trim($parts[1] ?? '');
+    if ($endRaw === '24:00') $endRaw = '23:59:59';
+    $end = $endRaw !== '' ? strtotime($match['date'] . ' ' . $endRaw) : $start + (int)($match['duration_sec'] ?? 3600);
+    if ($end <= $start) $end += 86400;
+    if ($endRaw === '23:59:59') $end += 1;
+    return [$start, $end];
+}
+
+/**
+ * Returns ['state' => ready|upcoming|playing|processing|delayed, 'start', 'end', 'eta'] (timestamps).
+ */
+function replash_video_state(PDO $pdo, array $match, ?int $now = null): array {
+    $now = $now ?? time();
+    [$start, $end] = replash_slot_bounds($match);
+    $eta = $end + (defined('PROCESSING_MINUTES') ? PROCESSING_MINUTES : 8) * 60;
+    $out = ['start' => $start, 'end' => $end, 'eta' => $eta];
+
+    if (!empty($match['available_at']) && strtotime($match['available_at']) <= $now) return ['state' => 'ready'] + $out;
+    if ($now < $start) return ['state' => 'upcoming'] + $out;
+    if ($now < $end) return ['state' => 'playing'] + $out;
+    if ($now >= $eta) {
+        $cam = $pdo->prepare("SELECT 1 FROM cameras WHERE facility_id = ? AND court = ? AND stream_url <> '' LIMIT 1");
+        $cam->execute([$match['facility_id'], $match['court']]);
+        if ($cam->fetchColumn()) return ['state' => 'ready'] + $out;
+    }
+    return ['state' => ($now < $eta + REPLASH_DELAY_GRACE_MIN * 60) ? 'processing' : 'delayed'] + $out;
+}
