@@ -582,6 +582,13 @@ return [
         ]
     ],
     'panel' => [
+        'cameras' => [
+            'title' => 'Kameralar',
+            'online' => 'Çalışıyor',
+            'offline' => 'Kapalı',
+            'last_seen' => 'Son sinyal: {t}',
+            'never' => 'Hiç sinyal yok',
+        ],
         'presale' => [
             'title' => 'Maçtan önce sat',
             'hint' => 'Ödemeyi alınca kodu hemen ver; video maç bitince açılır.',

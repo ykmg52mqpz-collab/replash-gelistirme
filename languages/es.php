@@ -582,6 +582,13 @@ return [
         ]
     ],
     'panel' => [
+        'cameras' => [
+            'title' => 'Cámaras',
+            'online' => 'Funciona',
+            'offline' => 'Apagada',
+            'last_seen' => 'Última señal: {t}',
+            'never' => 'Sin señal',
+        ],
         'presale' => [
             'title' => 'Vender antes del partido',
             'hint' => 'Da el código en cuanto cobres; el vídeo se abre al terminar el partido.',

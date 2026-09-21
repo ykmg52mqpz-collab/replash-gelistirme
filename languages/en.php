@@ -582,6 +582,13 @@ return [
         ]
     ],
     'panel' => [
+        'cameras' => [
+            'title' => 'Cameras',
+            'online' => 'Working',
+            'offline' => 'Offline',
+            'last_seen' => 'Last signal: {t}',
+            'never' => 'No signal yet',
+        ],
         'presale' => [
             'title' => 'Sell before the match',
             'hint' => 'Give the code as soon as you get paid; the video opens after the match.',

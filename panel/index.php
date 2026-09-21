@@ -404,6 +404,25 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
           $dayTotals = ['t' => count($dayMatches), 's' => 0, 'l' => 0];
           foreach ($dayMatches as $dm) { if ($dm['status'] === 'UNLOCKABLE') $dayTotals['s']++; elseif ($dm['status'] === 'LOCKED') $dayTotals['l']++; }
         ?>
+        <?php if (!empty($facilityCameras)): ?>
+          <!-- Kamera durumu: kapalı kamera fark edilmeden maç kaydı kaçmasın -->
+          <div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm">
+            <span class="text-xs font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.cameras.title')) ?></span>
+            <?php foreach ($facilityCameras as $fc):
+              $seen = !empty($fc['last_seen_at']) ? strtotime($fc['last_seen_at']) : 0;
+              if (($fc['status'] ?? '') === 'offline') { $dot = 'bg-red-600'; $txt = __('panel.cameras.offline'); $cls = 'text-red-700 font-medium'; }
+              elseif ($seen && time() - $seen <= 7200) { $dot = 'bg-emerald-600'; $txt = __('panel.cameras.online'); $cls = 'text-gray-700'; }
+              else { $dot = 'bg-gray-400'; $txt = $seen ? str_replace('{t}', date(date('Y-m-d', $seen) === date('Y-m-d') ? 'H:i' : 'd.m H:i', $seen), __('panel.cameras.last_seen')) : __('panel.cameras.never'); $cls = 'text-gray-500'; }
+            ?>
+              <span class="inline-flex items-center gap-2" title="<?= e($fc['court']) ?>">
+                <span class="h-2 w-2 rounded-full <?= $dot ?>"></span>
+                <span class="text-gray-900"><?= e($fc['name'] ?: $fc['court']) ?></span>
+                <span class="<?= $cls ?>"><?= e($txt) ?></span>
+              </span>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+
         <div class="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
 
           <!-- Ay takvimi (tarih kısıtı yok) -->

@@ -582,6 +582,13 @@ return [
         ]
     ],
     'panel' => [
+        'cameras' => [
+            'title' => 'Telecamere',
+            'online' => 'Attiva',
+            'offline' => 'Spenta',
+            'last_seen' => 'Ultimo segnale: {t}',
+            'never' => 'Nessun segnale',
+        ],
         'presale' => [
             'title' => 'Vendi prima della partita',
             'hint' => 'Dai il codice appena ricevi il pagamento; il video si apre dopo la partita.',
