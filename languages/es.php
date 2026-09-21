@@ -50,7 +50,7 @@ return [
         'whatIs' => [
             'eyebrow' => '¿Qué es Replash?',
             'title' => 'Grabación automática de partidos para centros deportivos cotidianos.',
-            'description' => 'Replash es una plataforma de grabación y acceso automático de partidos para centros deportivos amateur. Graba los partidos, los organiza por centro, fecha y hora, y permite a los jugadores encontrar su partido fácilmente mediante un código QR o un enlace web. Sin ningún trabajo manual de tu personal.',
+            'description' => 'Replash es una plataforma de grabación y acceso automático de partidos para centros deportivos amateur. Graba los partidos automáticamente y los organiza por pista, fecha y hora. Recepción cobra y desbloquea el vídeo con un toque; los jugadores ven su partido con un código de 4 cifras.',
             'items' => [
                 '1' => [
                     'title' => 'Grabación Automática',
@@ -58,11 +58,11 @@ return [
                 ],
                 '2' => [
                     'title' => 'Organizado por Franja Horaria',
-                    'desc' => 'Cada grabación se etiqueta por centro, fecha y franja horaria. Al instante buscable a través de la página \'Encuentra Tu Partido\'.'
+                    'desc' => 'Cada grabación se etiqueta por pista, fecha y franja horaria. El jugador la abre al instante en \'Encuentra Tu Partido\' con su código de 4 cifras.'
                 ],
                 '3' => [
                     'title' => 'Mira, Recorta, Comparte',
-                    'desc' => 'Los jugadores ven su partido, recortan highlights de 10–45 segundos, los descargan y los comparten en redes sociales. No se necesita app. No se necesita cuenta.'
+                    'desc' => 'Los jugadores ven su partido, recortan highlights de 15–40 segundos, los descargan y los comparten en redes sociales. No se necesita app. No se necesita cuenta.'
                 ]
             ]
         ],
@@ -125,7 +125,7 @@ return [
                 ],
                 '2' => [
                     'title' => 'Recorta los Mejores Momentos',
-                    'desc' => 'Corta highlights de 10–45 segundos dentro de Replash. Un gol, un peloteo, una celebración. Descarga al móvil al instante.'
+                    'desc' => 'Corta highlights de 15–40 segundos dentro de Replash. Un gol, un peloteo, una celebración. Descarga al móvil al instante.'
                 ],
                 '3' => [
                     'title' => 'Comparte en Redes',
@@ -168,11 +168,11 @@ return [
                 ],
                 '7' => [
                     'q' => '¿Los jugadores pueden compartir clips en redes sociales?',
-                    'a' => 'Sí. Es el núcleo de la experiencia. Los jugadores seleccionan clips de 10-45s, los descargan en formato MP4 a su móvil y los publican en Instagram, TikTok o WhatsApp.'
+                    'a' => 'Sí. Es el núcleo de la experiencia. Los jugadores seleccionan clips de 15–40s, los descargan en formato MP4 a su móvil y los publican en Instagram, TikTok o WhatsApp.'
                 ],
                 '8' => [
                     'q' => '¿Pueden los jugadores compartir clips en redes sociales?',
-                    'a' => 'Sí. Esa es la experiencia central. Replash tiene un clip cutter integrado dentro de la plataforma. Los jugadores eligen un momento de 10–45 segundos del partido, descargan el clip a su móvil y lo comparten en plataformas de redes sociales bajo su propia cuenta. Replash es el lugar donde se hace el clip. El compartir ocurre en los canales propios del jugador.'
+                    'a' => 'Sí. Esa es la experiencia central. Replash tiene un clip cutter integrado dentro de la plataforma. Los jugadores eligen un momento de 15–40 segundos del partido, descargan el clip a su móvil y lo comparten en plataformas de redes sociales bajo su propia cuenta. Replash es el lugar donde se hace el clip. El compartir ocurre en los canales propios del jugador.'
                 ],
                 '9' => [
                     'q' => '¿Y si no disponemos de buena conexión Wi-Fi?',
@@ -255,7 +255,7 @@ return [
             '6' => [
                 'label' => 'Paso 6',
                 'title' => 'Mira, Recorta, Comparte',
-                'desc' => 'Los jugadores miran el partido completo, cortan highlights de 10–45 segundos con el clip cutter integrado, los descargan y los comparten en redes sociales. Bajo su propia identidad.',
+                'desc' => 'Los jugadores miran el partido completo, cortan highlights de 15–40 segundos con el clip cutter integrado, los descargan y los comparten en redes sociales. Bajo su propia identidad.',
                 'marco' => [
                     'time' => '20:15',
                     'example' => 'Marco ve el gol del minuto 17, recorta un highlight de 20 segundos, lo descarga y lo comparte en sus redes sociales. Sus amigos lo ven. El ciclo vuelve a empezar.'
@@ -1167,7 +1167,7 @@ return [
                 '3' => [
                     'num' => '03',
                     'title' => 'Corta y Comparte, Sin Fricción',
-                    'desc' => 'Abre la grabación. Elige 10 segundos. Descarga. Comparte. Sin cuenta, sin app, sin perfil.'
+                    'desc' => 'Abre la grabación. Elige 15–40 segundos. Descarga. Comparte. Sin cuenta, sin app, sin perfil.'
                 ],
                 '4' => [
                     'num' => '04',
@@ -1187,7 +1187,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Recorta y Comparte, Sin Fricción',
-                    'desc' => 'Abre la grabación. Elige 10 segundos. Descarga. Comparte. Sin cuenta, sin app, sin perfil.'
+                    'desc' => 'Abre la grabación. Elige 15–40 segundos. Descarga. Comparte. Sin cuenta, sin app, sin perfil.'
                 ],
                 '4' => [
                     'title' => 'Cuando tus amigos lo ven',
@@ -1214,7 +1214,7 @@ return [
         'clipping' => [
             'eyebrow' => 'Recorta los Mejores Momentos',
             'title' => 'Corta un gol. Guarda un peloteo. Publica en segundos.',
-            'desc' => 'Replash tiene un clip cutter integrado. Recorre tu partido, elige un momento de 10–45 segundos y descárgalo directamente a tu móvil. Un gol en el minuto 17. El golpe ganador del último set. La celebración. Elige los segundos que quieras, recórtalos y estarán en el carrete de tu móvil.',
+            'desc' => 'Replash tiene un clip cutter integrado. Recorre tu partido, elige un momento de 15–40 segundos y descárgalo directamente a tu móvil. Un gol en el minuto 17. El golpe ganador del último set. La celebración. Elige los segundos que quieras, recórtalos y estarán en el carrete de tu móvil.',
             'features' => [
                 '1' => [
                     'label' => 'Abre la grabación',
@@ -1222,7 +1222,7 @@ return [
                 ],
                 '2' => [
                     'label' => 'Elige el momento',
-                    'desc' => 'Recorre la línea de tiempo, selecciona 10–45 seg.'
+                    'desc' => 'Recorre la línea de tiempo, selecciona 15–40 seg.'
                 ],
                 '3' => [
                     'label' => 'Descarga',

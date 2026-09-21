@@ -50,7 +50,7 @@ return [
         'whatIs' => [
             'eyebrow' => 'What is Replash?',
             'title' => 'Automatic match recording for everyday sports venues.',
-            'description' => 'Replash is an automatic match recording and access platform for amateur sports venues. It records games, organises them by venue, date, and time, and lets players find their match easily through a QR code or web link. Without any manual work from your staff.',
+            'description' => 'Replash is an automatic match recording and access platform for amateur sports venues. It records every game automatically and organises it by court, date and time. The front desk takes payment and unlocks the video with one tap; players watch their match with a 4-digit code.',
             'items' => [
                 '1' => [
                     'title' => 'Automatic Recording',
@@ -58,11 +58,11 @@ return [
                 ],
                 '2' => [
                     'title' => 'Organised by Time Slot',
-                    'desc' => 'Each recording is tagged by venue, date, and time slot. Instantly searchable through the \'Find Your Match\' page.'
+                    'desc' => 'Each recording is tagged by court, date and time slot. Players open it instantly on \'Find Your Match\' with their 4-digit code.'
                 ],
                 '3' => [
                     'title' => 'Watch, Clip, Share',
-                    'desc' => 'Players watch their match, cut 10–45 second highlights, download them, and share them on social media. No app needed. No account needed.'
+                    'desc' => 'Players watch their match, cut 15–40 second highlights, download them, and share them on social media. No app needed. No account needed.'
                 ]
             ]
         ],
@@ -125,7 +125,7 @@ return [
                 ],
                 '2' => [
                     'title' => 'Clip Best Moments',
-                    'desc' => 'Cut 10–45 second highlights right inside Replash. A goal, a rally, a celebration. Download to phone instantly.'
+                    'desc' => 'Cut 15–40 second highlights right inside Replash. A goal, a rally, a celebration. Download to phone instantly.'
                 ],
                 '3' => [
                     'title' => 'Share to Social',
@@ -168,11 +168,11 @@ return [
                 ],
                 '7' => [
                     'q' => 'Can players really share clips to social media?',
-                    'a' => 'Yes. That is the core experience. Replash includes an in-browser clip cutter. Players select 10–45s moments, download MP4s directly to their phone, and post them anywhere.'
+                    'a' => 'Yes. That is the core experience. Replash includes an in-browser clip cutter. Players select 15–40s moments, download MP4s directly to their phone, and post them anywhere.'
                 ],
                 '8' => [
                     'q' => 'Can players actually share clips on social media?',
-                    'a' => 'Yes. That\'s the core experience. Replash has a built-in clip cutter inside the platform. Players pick a 10–45 second moment from the match, download the clip to their phone, and share it on social media platforms under their own account. Replash is the place where the clip is made. Sharing happens on the player\'s own channels.'
+                    'a' => 'Yes. That\'s the core experience. Replash has a built-in clip cutter inside the platform. Players pick a 15–40 second moment from the match, download the clip to their phone, and share it on social media platforms under their own account. Replash is the place where the clip is made. Sharing happens on the player\'s own channels.'
                 ],
                 '9' => [
                     'q' => 'What if we don’t have strong Wi-Fi at the courts?',
@@ -255,7 +255,7 @@ return [
             '6' => [
                 'label' => 'Step 6',
                 'title' => 'Watch, Clip, Share',
-                'desc' => 'Players watch the full match, cut 10–45 second highlights with the built-in clip cutter, download them, and share them on social media. Under their own identity.',
+                'desc' => 'Players watch the full match, cut 15–40 second highlights with the built-in clip cutter, download them, and share them on social media. Under their own identity.',
                 'marco' => [
                     'time' => '20:15',
                     'example' => 'Marco watches the goal at minute 17, clips a 20-second highlight, downloads it, and shares it on his social media. His friends see it. The cycle begins again.'
@@ -1167,7 +1167,7 @@ return [
                 '3' => [
                     'num' => '03',
                     'title' => 'Clip and Share, No Friction',
-                    'desc' => 'Open the recording. Pick 10 seconds. Download. Share. No account, no app, no profile.'
+                    'desc' => 'Open the recording. Pick 15–40 seconds. Download. Share. No account, no app, no profile.'
                 ],
                 '4' => [
                     'num' => '04',
@@ -1187,7 +1187,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Clip and Share, No Friction',
-                    'desc' => 'Open the recording. Pick 10 seconds. Download. Share. No account, no app, no profile.'
+                    'desc' => 'Open the recording. Pick 15–40 seconds. Download. Share. No account, no app, no profile.'
                 ],
                 '4' => [
                     'title' => 'When friends see it',
@@ -1214,7 +1214,7 @@ return [
         'clipping' => [
             'eyebrow' => 'Clip the Best Moments',
             'title' => 'Cut a goal. Save a rally. Post in seconds.',
-            'desc' => 'Replash has a built-in clip cutter. Scrub through your match, pick a 10–45 second moment, and download it straight to your phone. A goal at minute 17. The winning shot of the last set. The celebration. Pick the seconds you want, clip them, and they\'re on your camera roll.',
+            'desc' => 'Replash has a built-in clip cutter. Scrub through your match, pick a 15–40 second moment, and download it straight to your phone. A goal at minute 17. The winning shot of the last set. The celebration. Pick the seconds you want, clip them, and they\'re on your camera roll.',
             'features' => [
                 '1' => [
                     'label' => 'Open recording',
@@ -1222,7 +1222,7 @@ return [
                 ],
                 '2' => [
                     'label' => 'Pick the moment',
-                    'desc' => 'Scrub the timeline, select 10–45 sec.'
+                    'desc' => 'Scrub the timeline, select 15–40 sec.'
                 ],
                 '3' => [
                     'label' => 'Download',

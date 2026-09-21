@@ -418,6 +418,7 @@ require_once __DIR__ . '/includes/header.php';
           $q = __("home.faq.items.{$i}.q");
           $a = __("home.faq.items.{$i}.a");
           if ($q === "home.faq.items.{$i}.q") continue;
+          if ($i === 8) continue; // 7. soruyla aynı soru (canlıdaki metinde tekrar)
           $open = ($i === 1);
         ?>
           <div class="faq-item" data-reveal="up">
