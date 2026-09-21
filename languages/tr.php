@@ -204,38 +204,62 @@ return [
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
             'title' => 'Altı basit adım. Ekibiniz için sıfır karmaşıklık.',
-            'subtitle' => 'İlk vuruştan maç tekrarına kadar tüm süreci Replash yönetir. Aşağıda Salı akşamı yapılan bir maç örneğiyle her adım açıklanmıştır.'
+            'subtitle' => 'İlk vuruştan tekrar oynatmaya kadar, Replash aradaki her şeyi halleder. Aşağıda: her adım, Marco\'nun salı gecesi padel maçı somut örnek olarak açıklanıyor.'
         ],
         'steps' => [
             '1' => [
                 'label' => 'Adım 1',
                 'title' => 'Maç Rezerve Edilir ve Oynanır',
-                'desc' => 'Oyuncular sahayı her zamanki gibi rezerve eder ve oynar. Sahadaki deneyimde hiçbir şey değişmez; Replash arka planda sessizce çalışır. Çoğu takım maç başlamadan resepsiyondan video eklenmesini ister.'
+                'desc' => 'Oyuncular kortu normal şekilde rezerve eder ve oynar. Saha üzerindeki oyuncu deneyiminde hiçbir şey değişmez. Replash arka planda sessizce çalışır. Ve takımların çoğu sahaya vardığında resepsiyona gidip maç videosunu, daha maç başlamadan, rezervasyona eklenmesini ister.',
+                'marco' => [
+                    'time' => '',
+                    'example' => 'Marco slotunu rezerve eder. Sahaya vardığında resepsiyona gider ve \'maç videosu da eklemek istiyorum\' der. Resepsiyonist +Maç Videosu opsiyonunu rezervasyona ekler. Marco girişte Replash tabelasını görür (GDPR-uyumlu) ve videosunun zaten yolda olduğunu bilerek maçı oynar.'
+                ]
             ],
             '2' => [
                 'label' => 'Adım 2',
-                'title' => 'Replash Otomatik Olarak Kaydeder',
-                'desc' => 'Sahaya monte edilen sabit PoE kameralar maçı baştan sona kaydeder. Düğme yok, manuel kontrol yok, personel müdahalesi yok.'
+                'title' => 'Replash Otomatik Kaydeder',
+                'desc' => 'Sahaya kurulan sabit PoE kameralar maçın tamamını başından sonuna yakalar. Tuş yok, manuel kontrol yok, personel müdahalesi yok.',
+                'marco' => [
+                    'time' => '19:00 → 20:00',
+                    'example' => 'Marco ve arkadaşları oynarken PoE kameralar maçı sessizce kaydeder. Saha bakımcısı hiçbir şey yapmaz. Ayar yok, başlat/durdur yok. Kayıt, satış onaylanana kadar geçici tamponda tutulur.'
+                ]
             ],
             '3' => [
                 'label' => 'Adım 3',
-                'title' => 'Tesis Videoyu Aktif Eder',
-                'desc' => 'Takım videoyu istediğinde tesis görevlisi Replash panelinden tek dokunuşla kaydı onaylar. Gereken tek işlem budur ve sadece birkaç saniye sürer.'
+                'title' => 'Tesis Videoyu Etkinleştirir',
+                'desc' => 'Takım videoyu istediğinde, tesis personeli Replash panelinden tek dokunuşla etkinleştirir. Gereken tek tekrarlı işlem budur ve saniyeler sürer.',
+                'marco' => [
+                    'time' => '20:05',
+                    'example' => 'Resepsiyonda personel Replash panelini açar, bugünün 19:00–20:00 dilimini bulur ve Marco\'nun takımı için videoyu etkinleştirir. Başka teknik adım yok.'
+                ]
             ],
             '4' => [
                 'label' => 'Adım 4',
-                'title' => 'Maç Kodunu Alın',
-                'desc' => 'Video aktif edildiğinde takıma benzersiz bir erişim kodu verilir (resepsiyonda veya girişteki QR ile). Tek kod tüm takım için geçerlidir.'
+                'title' => 'Maç Kodunu Al',
+                'desc' => 'Video etkinleştirilir etkinleştirilmez takım benzersiz bir maç kodu alır — resepsiyonda ya da girişteki QR ile. Tüm takım için tek kod.',
+                'marco' => [
+                    'time' => '20:06',
+                    'example' => 'Marco maç kodunu resepsiyondan alır. Aynı kod dört oyuncunun hepsi için çalışır.'
+                ]
             ],
             '5' => [
                 'label' => 'Adım 5',
-                'title' => 'Kodu Replash\'e Girin',
-                'desc' => 'Oyuncular web sitesine girer, maç kodunu yazar ve video anında açılır. Hesap açma, uygulama indirme veya halka açık liste yoktur.'
+                'title' => 'Kodu Replash\'e Gir',
+                'desc' => 'Oyuncular replash.it\'ya gider, maç kodunu girer ve video açılır. Hesap yok, uygulama yok, herkese açık liste yok.',
+                'marco' => [
+                    'time' => '20:08',
+                    'example' => 'Marco telefonundan replash.it\'yu ziyaret eder, maç kodunu girer ve kaydı anında oynatılır.'
+                ]
             ],
             '6' => [
                 'label' => 'Adım 6',
-                'title' => 'İzle, Klip Kes, Paylaş',
-                'desc' => 'Oyuncular tüm maçı izler, dahili klip kesiciyle 10–45 saniyelik anları keser, telefonlarına indirir ve doğrudan sosyal medyada paylaşır.'
+                'title' => 'İzle, Kes, Paylaş',
+                'desc' => 'Oyuncular maçın tamamını izler, dahili clip cutter ile 10–45 saniyelik highlight\'lar keser, indirir ve sosyal medyada kendi kimlikleriyle paylaşır.',
+                'marco' => [
+                    'time' => '20:15',
+                    'example' => 'Marco 17. dakikadaki golü izler, 20 saniyelik bir highlight keser, indirir ve sosyal medyasında paylaşır. Arkadaşları görür. Döngü tekrar başlar.'
+                ]
             ]
         ],
         'mockups' => [
@@ -278,8 +302,68 @@ return [
             ]
         ],
         'cta' => [
-            'title' => 'Harekete geçmeye hazır mısınız?',
-            'button' => 'Pilot Saha Başvurusu'
+            'title' => 'Çalışırken görmeye hazır mısınız?',
+            'button' => 'Demo iste'
+        ],
+        'marcoIntro' => [
+            'name' => 'Marco',
+            'context' => 'Example Padel Club\'da Salı 19:00–20:00 arası 4 oyunculu padel maçı oynuyor'
+        ],
+        'tech' => [
+            'eyebrow' => 'Teknik Genel Bakış',
+            'title' => 'Güvenilirlik ve düşük bakım için tasarlandı.',
+            'items' => [
+                '1' => [
+                    'title' => 'Sabit PoE Kameralar',
+                    'desc' => 'Tavana veya yüksek duvara bir kez monte edilen geniş açılı outdoor 1080p kameralar. Hareketli parça yok, operatör gerekmez.'
+                ],
+                '2' => [
+                    'title' => 'AB Bazlı Bulut Depolama',
+                    'desc' => 'Kayıtlar AB veri merkezlerinde güvenle işlenir ve saklanır. Tasarımla GDPR uyumlu, her yerden erişilebilir.'
+                ],
+                '3' => [
+                    'title' => 'Slot Bazlı Segmentasyon',
+                    'desc' => 'Her kayıt rezervasyon slotuna göre otomatik olarak kırpılır ve etiketlenir.'
+                ],
+                '4' => [
+                    'title' => '7 Gün Saklama',
+                    'desc' => 'Tüm kayıtlar 7 gün sonra otomatik silinir. Depolama temiz, gizlilik korunmuş.'
+                ],
+                '5' => [
+                    'title' => 'Esnek Bağlantı',
+                    'desc' => 'Ethernet tercih edilir; PoE yerel tampon kısa kesintileri emer; WiFi\'siz outdoor sahalar için LTE/SIM yedek.'
+                ],
+                '6' => [
+                    'title' => 'Düşük Bakım Tasarımı',
+                    'desc' => 'Sistem gözetimsiz çalışır. Sorunlar çoğunlukla operasyonları etkilemeden önce uzaktan çözülür.'
+                ]
+            ]
+        ],
+        'architecture' => [
+            'eyebrow' => 'Dört Katmanlı Mimari',
+            'title' => 'Dikey entegre. Amatör spor için sıfırdan inşa edildi.',
+            'layers' => [
+                '1' => [
+                    'name' => 'Edge',
+                    'function' => 'Sahada PoE IP kameralar',
+                    'detail' => 'Saha açıkken sürekli kayıt. Bağlantı kesintileri için yerel tampon.'
+                ],
+                '2' => [
+                    'name' => 'Cloud',
+                    'function' => 'AB bazlı nesne depolama',
+                    'detail' => 'Yalnızca tesisin etkinleştirdiği maçlar uzun süreli saklanır. Diğerleri kısa süre sonra silinir.'
+                ],
+                '3' => [
+                    'name' => 'Web',
+                    'function' => 'Maçını Bul + clip cutter + paneller',
+                    'detail' => 'Oyuncu akışı, saha admin paneli, Replash admin paneli. Hepsi tek çatı altında.'
+                ],
+                '4' => [
+                    'name' => 'Billing',
+                    'function' => 'Mutabakat motoru',
+                    'detail' => 'Otomatik gelir paylaşımı, tamamen izlenebilir, aylık ödemeyle.'
+                ]
+            ]
         ]
     ],
     'common' => [
@@ -799,5 +883,19 @@ return [
             'title' => 'Hakkımızda. Replash',
             'description' => 'Replash, Università degli Studi di Milano tarafından desteklenen amatör spor için replay katmanını inşa ediyor. Profesyonel tarzda video günlük maçlara.'
         ]
+    ],
+    'footer' => [
+        'tagline' => 'Sadece bir maçtan fazlası.',
+        'links' => [
+            'howItWorks' => 'Nasıl Çalışır',
+            'forFacilities' => 'Sahalar İçin',
+            'forPlayers' => 'Oyuncular İçin',
+            'find' => 'Maçını Bul',
+            'about' => 'Hakkımızda',
+            'contact' => 'İletişim'
+        ],
+        'privacy' => 'Gizlilik Politikası',
+        'rights' => 'Tüm hakları saklıdır.',
+        'cookie' => 'Çerez Politikası'
     ]
 ];

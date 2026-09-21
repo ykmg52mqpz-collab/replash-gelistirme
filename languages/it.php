@@ -210,32 +210,56 @@ return [
             '1' => [
                 'label' => 'Passo 1',
                 'title' => 'La Partita Viene Prenotata e Giocata',
-                'desc' => 'I giocatori prenotano un campo normalmente e giocano. Nulla cambia nell\'esperienza sul campo. Replash funziona in silenzio in background. E la maggior parte delle squadre si avvicina alla reception del centro e chiede di aggiungere il video della partita prima ancora che la partita inizi.'
+                'desc' => 'I giocatori prenotano un campo normalmente e giocano. Nulla cambia nell\'esperienza sul campo. Replash funziona in silenzio in background. E la maggior parte delle squadre si avvicina alla reception del centro e chiede di aggiungere il video della partita prima ancora che la partita inizi.',
+                'marco' => [
+                    'time' => '',
+                    'example' => 'Marco prenota il suo slot. Quando arriva al centro, si avvicina alla reception e dice \'vorrei aggiungere il video della partita\'. Il receptionist aggiunge il +Video Partita alla prenotazione. Marco vede la segnaletica Replash all\'ingresso (GDPR-conforme) e gioca sapendo che il video è già in arrivo.'
+                ]
             ],
             '2' => [
                 'label' => 'Passo 2',
                 'title' => 'Replash Registra Automaticamente',
-                'desc' => 'Le telecamere PoE fisse installate nel centro catturano l\'intera partita dall\'inizio alla fine. Nessun pulsante, nessun controllo manuale, nessun intervento dello staff.'
+                'desc' => 'Le telecamere PoE fisse installate nel centro catturano l\'intera partita dall\'inizio alla fine. Nessun pulsante, nessun controllo manuale, nessun intervento dello staff.',
+                'marco' => [
+                    'time' => '19:00 → 20:00',
+                    'example' => 'Mentre Marco e i suoi amici giocano, le telecamere PoE registrano in silenzio la partita. Il gestore del campo non fa nulla. Nessuna configurazione, nessun start/stop. La registrazione viene tenuta in un buffer temporaneo finché la vendita non è confermata.'
+                ]
             ],
             '3' => [
                 'label' => 'Passo 3',
                 'title' => 'Il Centro Abilita il Video',
-                'desc' => 'Quando la squadra vuole il video, lo staff del centro lo abilita dal pannello Replash con un tocco. È l\'unica azione ricorrente richiesta, e richiede pochi secondi.'
+                'desc' => 'Quando la squadra vuole il video, lo staff del centro lo abilita dal pannello Replash con un tocco. È l\'unica azione ricorrente richiesta, e richiede pochi secondi.',
+                'marco' => [
+                    'time' => '20:05',
+                    'example' => 'Alla reception lo staff apre il pannello Replash, trova lo slot 19:00–20:00 di oggi e abilita il video per la squadra di Marco. Nessun altro passaggio tecnico.'
+                ]
             ],
             '4' => [
                 'label' => 'Passo 4',
                 'title' => 'Ricevi il Codice della Partita',
-                'desc' => 'Appena il video è abilitato, la squadra riceve un codice partita univoco: alla reception o tramite il QR all\'ingresso. Un solo codice per tutta la squadra.'
+                'desc' => 'Appena il video è abilitato, la squadra riceve un codice partita univoco: alla reception o tramite il QR all\'ingresso. Un solo codice per tutta la squadra.',
+                'marco' => [
+                    'time' => '20:06',
+                    'example' => 'Marco riceve il codice della partita dalla reception. Lo stesso codice funziona per tutti e quattro i giocatori.'
+                ]
             ],
             '5' => [
                 'label' => 'Passo 5',
                 'title' => 'Inserisci il Codice su Replash',
-                'desc' => 'I giocatori vanno su replash.eu, inseriscono il codice della partita e il video si apre. Nessun account, nessuna app, nessuna lista pubblica.'
+                'desc' => 'I giocatori vanno su replash.it, inseriscono il codice della partita e il video si apre. Nessun account, nessuna app, nessuna lista pubblica.',
+                'marco' => [
+                    'time' => '20:08',
+                    'example' => 'Marco visita replash.it dal telefono, inserisce il codice della partita e la sua registrazione parte all\'istante.'
+                ]
             ],
             '6' => [
                 'label' => 'Passo 6',
                 'title' => 'Guarda, Ritaglia, Condividi',
-                'desc' => 'I giocatori guardano la partita, tagliano clip di 10–45 secondi con il clip cutter integrato, le scaricano e le condividono sui social media. Sotto la propria identità.'
+                'desc' => 'I giocatori guardano la partita, tagliano clip di 10–45 secondi con il clip cutter integrato, le scaricano e le condividono sui social media. Sotto la propria identità.',
+                'marco' => [
+                    'time' => '20:15',
+                    'example' => 'Marco guarda il gol al minuto 17, taglia una clip di 20 secondi, la scarica e la condivide sui suoi social media. Gli amici la vedono. Il ciclo ricomincia.'
+                ]
             ]
         ],
         'mockups' => [
@@ -280,6 +304,66 @@ return [
         'cta' => [
             'title' => 'Pronto a vederlo in azione?',
             'button' => 'Richiedi una demo'
+        ],
+        'marcoIntro' => [
+            'name' => 'Marco',
+            'context' => 'Gioca una partita di padel a 4 al Example Padel Club, martedì 19:00–20:00'
+        ],
+        'tech' => [
+            'eyebrow' => 'Panoramica Tecnica',
+            'title' => 'Costruito per affidabilità e bassa manutenzione.',
+            'items' => [
+                '1' => [
+                    'title' => 'Telecamere PoE Fisse',
+                    'desc' => 'Telecamere grandangolari outdoor 1080p montate una volta su soffitto o parete alta. Nessuna parte mobile, nessun operatore.'
+                ],
+                '2' => [
+                    'title' => 'Archiviazione Cloud UE',
+                    'desc' => 'Registrazioni elaborate e archiviate in modo sicuro in data center UE. GDPR-compliant by design, accessibili ovunque.'
+                ],
+                '3' => [
+                    'title' => 'Segmentazione per Slot Orario',
+                    'desc' => 'Ogni registrazione automaticamente ritagliata e taggata per slot di prenotazione per un accesso preciso.'
+                ],
+                '4' => [
+                    'title' => 'Conservazione 7 Giorni',
+                    'desc' => 'Tutte le riprese eliminate automaticamente dopo 7 giorni. Archiviazione pulita, privacy intatta.'
+                ],
+                '5' => [
+                    'title' => 'Connettività Resiliente',
+                    'desc' => 'Ethernet preferito; PoE local buffer assorbe brevi interruzioni; LTE/SIM come fallback per centri outdoor senza WiFi.'
+                ],
+                '6' => [
+                    'title' => 'Bassa Manutenzione',
+                    'desc' => 'Il sistema funziona senza sorveglianza. La maggior parte dei problemi risolta da remoto prima che influisca sulle operazioni.'
+                ]
+            ]
+        ],
+        'architecture' => [
+            'eyebrow' => 'Architettura a Quattro Livelli',
+            'title' => 'Verticalmente integrata. Costruita da zero per lo sport amatoriale.',
+            'layers' => [
+                '1' => [
+                    'name' => 'Edge',
+                    'function' => 'Telecamere PoE IP nel centro',
+                    'detail' => 'Registrazione continua mentre il centro è aperto. Buffer locale per cadute di connessione.'
+                ],
+                '2' => [
+                    'name' => 'Cloud',
+                    'function' => 'Archiviazione oggetti UE',
+                    'detail' => 'Solo le partite abilitate dal centro vengono conservate a lungo termine. Le altre eliminate poco dopo.'
+                ],
+                '3' => [
+                    'name' => 'Web',
+                    'function' => 'Trova la Partita + clip cutter + pannelli',
+                    'detail' => 'Flusso giocatore, pannello admin centro, pannello admin Replash. Tutto sotto un solo tetto.'
+                ],
+                '4' => [
+                    'name' => 'Billing',
+                    'function' => 'Motore di riconciliazione',
+                    'detail' => 'Split ricavi automatico, completamente tracciato, con regolamento mensile.'
+                ]
+            ]
         ]
     ],
     'common' => [
@@ -798,5 +882,19 @@ return [
             'title' => 'Chi Siamo. Replash',
             'description' => 'Replash sta costruendo il replay layer per lo sport amatoriale, sostenuto dall\'Università degli Studi di Milano. Portando video di livello professionale alle partite di tutti i giorni.'
         ]
+    ],
+    'footer' => [
+        'tagline' => 'Più di una semplice partita.',
+        'links' => [
+            'howItWorks' => 'Come Funziona',
+            'forFacilities' => 'Per i Centri',
+            'forPlayers' => 'Per i Giocatori',
+            'find' => 'Trova la Partita',
+            'about' => 'Chi Siamo',
+            'contact' => 'Contatti'
+        ],
+        'privacy' => 'Privacy Policy',
+        'rights' => 'Tutti i diritti riservati.',
+        'cookie' => 'Cookie Policy'
     ]
 ];

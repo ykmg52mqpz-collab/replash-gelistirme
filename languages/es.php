@@ -203,39 +203,63 @@ return [
     'howItWorks' => [
         'hero' => [
             'eyebrow' => 'Cómo Funciona',
-            'title' => 'Seis pasos sencillos. Cero complejidad para tu equipo.',
-            'subtitle' => 'Desde el saque inicial hasta la repetición, Replash gestiona todo el proceso. A continuación, cada paso explicado con el partido de los martes de Marco como ejemplo real.'
+            'title' => 'Seis pasos simples. Cero complejidad para tu equipo.',
+            'subtitle' => 'Del saque inicial a la repetición, Replash gestiona todo lo que hay en medio. Abajo: cada paso explicado, con el partido de pádel del martes por la noche de Marco como ejemplo concreto.'
         ],
         'steps' => [
             '1' => [
                 'label' => 'Paso 1',
-                'title' => 'El Partido se Reserva y se Juega',
-                'desc' => 'Los jugadores reservan una pista de forma habitual y juegan. Nada cambia en el terreno de juego; Replash funciona en segundo plano. La mayoría de los equipos solicita añadir el vídeo en recepción antes de empezar.'
+                'title' => 'El Partido se Reserva y Juega',
+                'desc' => 'Los jugadores reservan una pista normalmente y juegan. Nada cambia en la experiencia del jugador en pista. Replash funciona silenciosamente en segundo plano. Y la mayoría de los equipos se acercan a la recepción del centro y piden añadir el video del partido antes de que comience.',
+                'marco' => [
+                    'time' => '',
+                    'example' => 'Marco reserva su franja. Cuando llega al centro, se acerca a la recepción y dice \'quiero añadir el video del partido\'. El recepcionista añade el +Video del Partido a la reserva. Marco ve la señalización Replash en la entrada (RGPD-conforme) y juega sabiendo que el video ya está en camino.'
+                ]
             ],
             '2' => [
                 'label' => 'Paso 2',
                 'title' => 'Replash Graba Automáticamente',
-                'desc' => 'Las cámaras fijas PoE instaladas en el centro capturan todo el partido de principio a fin. Sin botones, sin control manual, sin intervención del personal.'
+                'desc' => 'Cámaras PoE fijas instaladas en el centro capturan todo el partido de principio a fin. Sin botones, sin control manual, sin intervención del personal.',
+                'marco' => [
+                    'time' => '19:00 → 20:00',
+                    'example' => 'Mientras Marco y sus amigos juegan, las cámaras PoE graban silenciosamente el partido. El encargado de pista no hace nada. Sin configuración, sin iniciar/parar. La grabación se mantiene en un búfer temporal hasta que se confirme la venta.'
+                ]
             ],
             '3' => [
                 'label' => 'Paso 3',
-                'title' => 'El Club Habilita el Vídeo',
-                'desc' => 'Cuando el equipo desea el vídeo, el personal de recepción lo habilita desde el panel de Replash con un solo toque. Es la única acción requerida y toma segundos.'
+                'title' => 'El Centro Activa el Vídeo',
+                'desc' => 'Cuando el equipo quiere el vídeo, el personal del centro lo activa desde el panel de Replash con un toque. Es la única acción recurrente necesaria, y lleva segundos.',
+                'marco' => [
+                    'time' => '20:05',
+                    'example' => 'En recepción el personal abre el panel de Replash, encuentra la franja de hoy 19:00–20:00 y activa el vídeo para el equipo de Marco. Ningún otro paso técnico.'
+                ]
             ],
             '4' => [
                 'label' => 'Paso 4',
                 'title' => 'Recibe el Código del Partido',
-                'desc' => 'En cuanto el vídeo se activa, el equipo recibe un código único en recepción o escaneando el código QR en la entrada. Un solo código para todo el equipo.'
+                'desc' => 'En cuanto se activa el vídeo, el equipo recibe un código de partido único — en recepción o mediante el QR de la entrada. Un solo código para todo el equipo.',
+                'marco' => [
+                    'time' => '20:06',
+                    'example' => 'Marco recibe el código de su partido en recepción. El mismo código funciona para los cuatro jugadores.'
+                ]
             ],
             '5' => [
                 'label' => 'Paso 5',
                 'title' => 'Introduce el Código en Replash',
-                'desc' => 'Los jugadores entran en la web, introducen el código del partido y el vídeo se reproduce al instante. Sin crear cuentas ni descargar aplicaciones.'
+                'desc' => 'Los jugadores van a replash.it, introducen el código del partido y el vídeo se abre. Sin cuenta, sin app, sin lista pública.',
+                'marco' => [
+                    'time' => '20:08',
+                    'example' => 'Marco visita replash.it desde su móvil, introduce el código del partido y su grabación se reproduce al instante.'
+                ]
             ],
             '6' => [
                 'label' => 'Paso 6',
                 'title' => 'Mira, Recorta, Comparte',
-                'desc' => 'Los jugadores ven el partido completo, recortan jugadas de 10–45 segundos con la herramienta integrada, las descargan al móvil y las comparten en sus redes sociales.'
+                'desc' => 'Los jugadores miran el partido completo, cortan highlights de 10–45 segundos con el clip cutter integrado, los descargan y los comparten en redes sociales. Bajo su propia identidad.',
+                'marco' => [
+                    'time' => '20:15',
+                    'example' => 'Marco ve el gol del minuto 17, recorta un highlight de 20 segundos, lo descarga y lo comparte en sus redes sociales. Sus amigos lo ven. El ciclo vuelve a empezar.'
+                ]
             ]
         ],
         'mockups' => [
@@ -279,7 +303,67 @@ return [
         ],
         'cta' => [
             'title' => '¿Listo para verlo en acción?',
-            'button' => 'Solicitar Demo'
+            'button' => 'Solicita una demo'
+        ],
+        'marcoIntro' => [
+            'name' => 'Marco',
+            'context' => 'Juega un partido de pádel a 4 en Example Padel Club, martes 19:00–20:00'
+        ],
+        'tech' => [
+            'eyebrow' => 'Visión Técnica',
+            'title' => 'Construido para fiabilidad y bajo mantenimiento.',
+            'items' => [
+                '1' => [
+                    'title' => 'Cámaras PoE Fijas',
+                    'desc' => 'Cámaras 1080p de gran angular outdoor montadas una vez en el techo o pared alta. Sin partes móviles, sin operador necesario.'
+                ],
+                '2' => [
+                    'title' => 'Almacenamiento Cloud UE',
+                    'desc' => 'Grabaciones procesadas y almacenadas de forma segura en centros de datos de la UE. RGPD por diseño, accesibles desde cualquier lugar.'
+                ],
+                '3' => [
+                    'title' => 'Segmentación por Franja',
+                    'desc' => 'Cada grabación se recorta y etiqueta automáticamente por franja de reserva para un acceso preciso.'
+                ],
+                '4' => [
+                    'title' => 'Retención 7 Días',
+                    'desc' => 'Todas las grabaciones se eliminan automáticamente después de 7 días. Almacenamiento limpio, privacidad intacta.'
+                ],
+                '5' => [
+                    'title' => 'Conectividad Resiliente',
+                    'desc' => 'Ethernet preferido; búfer local PoE absorbe caídas cortas; LTE/SIM de respaldo para centros outdoor sin WiFi.'
+                ],
+                '6' => [
+                    'title' => 'Diseño de Bajo Mantenimiento',
+                    'desc' => 'El sistema funciona desatendido. La mayoría de los problemas se resuelven remotamente antes de afectar las operaciones.'
+                ]
+            ]
+        ],
+        'architecture' => [
+            'eyebrow' => 'Arquitectura de Cuatro Capas',
+            'title' => 'Verticalmente integrada. Construida desde cero para el deporte amateur.',
+            'layers' => [
+                '1' => [
+                    'name' => 'Edge',
+                    'function' => 'Cámaras IP PoE en el centro',
+                    'detail' => 'Grabación continua mientras el centro está abierto. Búfer local para caídas de conexión.'
+                ],
+                '2' => [
+                    'name' => 'Cloud',
+                    'function' => 'Almacenamiento de objetos en la UE',
+                    'detail' => 'Solo los partidos activados por el centro se conservan a largo plazo. Los demás se eliminan poco después.'
+                ],
+                '3' => [
+                    'name' => 'Web',
+                    'function' => 'Encuentra Tu Partido + clip cutter + paneles',
+                    'detail' => 'Flujo del jugador, panel admin del centro, panel admin Replash. Todo bajo un mismo techo.'
+                ],
+                '4' => [
+                    'name' => 'Billing',
+                    'function' => 'Motor de conciliación',
+                    'detail' => 'Reparto de ingresos automático, totalmente trazado, con liquidación mensual.'
+                ]
+            ]
         ]
     ],
     'common' => [
@@ -798,5 +882,19 @@ return [
             'title' => 'Nosotros. Replash',
             'description' => 'Replash está construyendo la capa de replay para el deporte amateur, respaldado por la Università degli Studi di Milano. Llevando video de estilo profesional a los partidos cotidianos.'
         ]
+    ],
+    'footer' => [
+        'tagline' => 'Más que solo un partido.',
+        'links' => [
+            'howItWorks' => 'Cómo Funciona',
+            'forFacilities' => 'Para Centros',
+            'forPlayers' => 'Para Jugadores',
+            'find' => 'Encuentra Tu Partido',
+            'about' => 'Nosotros',
+            'contact' => 'Contacto'
+        ],
+        'privacy' => 'Política de Privacidad',
+        'rights' => 'Todos los derechos reservados.',
+        'cookie' => 'Política de Cookies'
     ]
 ];

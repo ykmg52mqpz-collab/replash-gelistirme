@@ -9,7 +9,7 @@
             <img src="<?= asset('images/replash-logo.png') ?>" alt="REPLASH" class="h-10 w-auto select-none" draggable="false"/>
             <span lang="en" style="font-weight:600" class="font-display text-2xl tracking-tight text-accent">replash</span>
           </div>
-          <p class="max-w-xs text-sm text-white/50 leading-relaxed"><?= e(__('home.intro.tagline')) ?></p>
+          <p class="max-w-xs text-sm text-white/50 leading-relaxed"><?= e(__('footer.tagline')) ?></p>
           
           <!-- Language Selector in Footer -->
           <div role="group" aria-label="Language" class="inline-flex items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium backdrop-blur w-fit">
@@ -50,7 +50,7 @@
 
       <!-- Bottom Bar -->
       <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/5 pt-6 text-xs text-white/35 md:flex-row md:items-center">
-        <span>&copy; <?= date('Y') ?> <span lang="en">replash.eu</span>. <?= e(__('common.all_rights_reserved')) ?></span>
+        <span>&copy; <?= date('Y') ?> <span lang="en">replash.it</span>. <?= e(__('common.all_rights_reserved')) ?></span>
         <div class="flex items-center gap-5">
           <a class="hover:text-white transition" href="<?= base_url('about.php') ?>"><?= e(__('common.privacy_policy')) ?></a>
           <a class="hover:text-white transition" href="<?= base_url('about.php') ?>"><?= e(__('common.cookie_policy', 'Cookie Policy')) ?></a>

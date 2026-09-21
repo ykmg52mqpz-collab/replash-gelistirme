@@ -210,32 +210,56 @@ return [
             '1' => [
                 'label' => 'Step 1',
                 'title' => 'Match is Booked & Played',
-                'desc' => 'Players book a court normally and play. Nothing changes in the player experience on the pitch. Replash runs silently in the background. And most teams walk up to the facility reception and ask to add the match video before the match even starts.'
+                'desc' => 'Players book a court normally and play. Nothing changes in the player experience on the pitch. Replash runs silently in the background. And most teams walk up to the facility reception and ask to add the match video before the match even starts.',
+                'marco' => [
+                    'time' => '',
+                    'example' => 'Marco books his slot. When he arrives at the venue, he walks up to reception and says \'I\'d like to add the match video\'. The receptionist adds +Match Video to the booking. Marco sees Replash signage at the entrance (GDPR-compliant) and plays knowing the video is already on the way.'
+                ]
             ],
             '2' => [
                 'label' => 'Step 2',
                 'title' => 'Replash Records Automatically',
-                'desc' => 'Fixed PoE cameras installed at the venue capture the entire match from start to finish. No buttons, no manual control, no staff intervention.'
+                'desc' => 'Fixed PoE cameras installed at the venue capture the entire match from start to finish. No buttons, no manual control, no staff intervention.',
+                'marco' => [
+                    'time' => '19:00 → 20:00',
+                    'example' => 'While Marco and his friends play, PoE cameras silently record the match. The court keeper does nothing. No setup, no start/stop. The recording is held in a temporary buffer until the sale is confirmed.'
+                ]
             ],
             '3' => [
                 'label' => 'Step 3',
                 'title' => 'The Facility Enables the Video',
-                'desc' => 'When the team wants the video, the facility staff enables it from the Replash panel with one tap. It\'s the only recurring action required, and it takes seconds.'
+                'desc' => 'When the team wants the video, the facility staff enables it from the Replash panel with one tap. It\'s the only recurring action required, and it takes seconds.',
+                'marco' => [
+                    'time' => '20:05',
+                    'example' => 'At the front desk the staff opens the Replash panel, finds today\'s 19:00–20:00 slot and enables the video for Marco\'s team. No other technical step.'
+                ]
             ],
             '4' => [
                 'label' => 'Step 4',
                 'title' => 'Get the Match Code',
-                'desc' => 'As soon as the video is enabled, the team gets a unique match code — at the front desk or via the QR at the entrance. One code for the whole team.'
+                'desc' => 'As soon as the video is enabled, the team gets a unique match code — at the front desk or via the QR at the entrance. One code for the whole team.',
+                'marco' => [
+                    'time' => '20:06',
+                    'example' => 'Marco gets his match code from the front desk. The same code works for all four players.'
+                ]
             ],
             '5' => [
                 'label' => 'Step 5',
                 'title' => 'Enter the Code on Replash',
-                'desc' => 'Players go to replash.eu, enter the match code, and the video opens. No account, no app, no public listing.'
+                'desc' => 'Players go to replash.it, enter the match code, and the video opens. No account, no app, no public listing.',
+                'marco' => [
+                    'time' => '20:08',
+                    'example' => 'Marco visits replash.it on his phone, enters the match code, and his recording plays instantly.'
+                ]
             ],
             '6' => [
                 'label' => 'Step 6',
                 'title' => 'Watch, Clip, Share',
-                'desc' => 'Players watch the full match, cut 10–45 second highlights with the built-in clip cutter, download them, and share them on social media. Under their own identity.'
+                'desc' => 'Players watch the full match, cut 10–45 second highlights with the built-in clip cutter, download them, and share them on social media. Under their own identity.',
+                'marco' => [
+                    'time' => '20:15',
+                    'example' => 'Marco watches the goal at minute 17, clips a 20-second highlight, downloads it, and shares it on his social media. His friends see it. The cycle begins again.'
+                ]
             ]
         ],
         'mockups' => [
@@ -280,6 +304,66 @@ return [
         'cta' => [
             'title' => 'Ready to see it in action?',
             'button' => 'Book a demo'
+        ],
+        'marcoIntro' => [
+            'name' => 'Marco',
+            'context' => 'Plays a 4-player padel match at Example Padel Club, Tuesday 19:00–20:00'
+        ],
+        'tech' => [
+            'eyebrow' => 'Technical Overview',
+            'title' => 'Built for reliability and low maintenance.',
+            'items' => [
+                '1' => [
+                    'title' => 'Fixed PoE Cameras',
+                    'desc' => 'Wide-angle outdoor-rated 1080p cameras mounted once on the ceiling or high wall. No moving parts, no operator needed.'
+                ],
+                '2' => [
+                    'title' => 'EU-Based Cloud Storage',
+                    'desc' => 'Recordings processed and stored securely in EU data centres. GDPR-compliant by design, accessible from anywhere.'
+                ],
+                '3' => [
+                    'title' => 'Time-Slot Segmentation',
+                    'desc' => 'Every recording automatically trimmed and tagged by booking slot for precise access.'
+                ],
+                '4' => [
+                    'title' => '7-Day Retention',
+                    'desc' => 'All footage automatically deleted after 7 days. Storage clean, privacy intact.'
+                ],
+                '5' => [
+                    'title' => 'Resilient Connectivity',
+                    'desc' => 'Ethernet preferred; PoE local buffer absorbs short outages; LTE/SIM fallback for outdoor venues without WiFi.'
+                ],
+                '6' => [
+                    'title' => 'Low-Maintenance Design',
+                    'desc' => 'System runs unattended. Most issues resolved remotely before they affect operations.'
+                ]
+            ]
+        ],
+        'architecture' => [
+            'eyebrow' => 'Four-Layer Architecture',
+            'title' => 'Vertically integrated. Built from scratch for amateur sport.',
+            'layers' => [
+                '1' => [
+                    'name' => 'Edge',
+                    'function' => 'PoE IP cameras at the venue',
+                    'detail' => 'Continuous recording while the venue is open. Local buffer for connection drops.'
+                ],
+                '2' => [
+                    'name' => 'Cloud',
+                    'function' => 'EU-based object storage',
+                    'detail' => 'Only matches enabled by the facility are kept long-term. The rest deleted shortly after.'
+                ],
+                '3' => [
+                    'name' => 'Web',
+                    'function' => 'Find Your Match + clip cutter + panels',
+                    'detail' => 'Player flow, facility admin panel, Replash admin panel. All under one roof.'
+                ],
+                '4' => [
+                    'name' => 'Billing',
+                    'function' => 'Reconciliation engine',
+                    'detail' => 'Automatic revenue split, fully tracked, with monthly settlement.'
+                ]
+            ]
         ]
     ],
     'common' => [
@@ -798,5 +882,19 @@ return [
             'title' => 'About. Replash',
             'description' => 'Replash is building the replay layer for amateur sports, backed by Università degli Studi di Milano. Bringing professional-style video to everyday matches.'
         ]
+    ],
+    'footer' => [
+        'tagline' => 'More than just a match.',
+        'links' => [
+            'howItWorks' => 'How It Works',
+            'forFacilities' => 'For Facilities',
+            'forPlayers' => 'For Players',
+            'find' => 'Find Your Match',
+            'about' => 'About',
+            'contact' => 'Contact'
+        ],
+        'privacy' => 'Privacy Policy',
+        'rights' => 'All rights reserved.',
+        'cookie' => 'Cookie Policy'
     ]
 ];
