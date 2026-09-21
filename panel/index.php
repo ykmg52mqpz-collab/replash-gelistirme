@@ -725,11 +725,11 @@ require_once __DIR__ . '/../includes/header.php';
             <table class="w-full text-left border-collapse min-w-[750px]">
               <thead>
                 <tr class="border-b border-white/10 bg-white/[0.03]">
-                  <th class="p-3 text-center text-[11px] font-bold text-neutral-400 uppercase tracking-wider w-16 border-r border-white/10">
+                  <th class="px-4 py-3 text-center text-[11px] font-bold text-neutral-400 uppercase tracking-wider w-16 border-r border-white/10">
                     <?= e(__('panel.modals.cal_time')) ?>
                   </th>
                   <?php foreach ($calendarDays as $cDay): ?>
-                    <th class="p-3 text-center border-r border-white/10 last:border-r-0 <?= $cDay['is_today'] ? 'bg-cyan-500/10 text-cyan-300' : 'text-neutral-300' ?>">
+                    <th class="px-4 py-3 text-center border-r border-white/10 last:border-r-0 <?= $cDay['is_today'] ? 'bg-cyan-500/10 text-cyan-300' : 'text-neutral-300' ?>">
                       <div class="text-[11px] font-semibold uppercase tracking-wider"><?= e($cDay['day_name']) ?></div>
                       <div class="text-xs font-bold <?= $cDay['is_today'] ? 'text-cyan-400 font-mono' : 'text-neutral-400' ?>"><?= e($cDay['display_date']) ?></div>
                     </th>
@@ -742,7 +742,7 @@ require_once __DIR__ . '/../includes/header.php';
                   $endHourStr = sprintf('%02d:00', ($hour + 1) % 24);
                   $slotFormatted = "{$startHourStr}–{$endHourStr}";
                 ?>
-                  <tr class="hover:bg-white/[0.02] transition">
+                  <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
                     <td class="p-2 text-center font-mono text-[11px] font-medium text-neutral-400 border-r border-white/10 bg-white/[0.01]">
                       <?= $startHourStr ?>
                     </td>
@@ -805,14 +805,14 @@ require_once __DIR__ . '/../includes/header.php';
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-ink-900/60 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+              <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
                 <tr>
-                  <th class="p-4"><?= e(__('panel.table.th_court')) ?> & Slot</th>
-                  <th class="p-4"><?= e(__('panel.table.th_date')) ?></th>
-                  <th class="p-4"><?= e(__('panel.table.th_status')) ?></th>
-                  <th class="p-4"><?= e(__('panel.table.th_code')) ?></th>
-                  <th class="p-4 text-center"><?= e(__('common.views')) ?></th>
-                  <th class="p-4 text-right"><?= e(__('panel.table.th_video')) ?></th>
+                  <th class="px-4 py-3"><?= e(__('panel.table.th_court')) ?> & Slot</th>
+                  <th class="px-4 py-3"><?= e(__('panel.table.th_date')) ?></th>
+                  <th class="px-4 py-3"><?= e(__('panel.table.th_status')) ?></th>
+                  <th class="px-4 py-3"><?= e(__('panel.table.th_code')) ?></th>
+                  <th class="px-4 py-3 text-center"><?= e(__('common.views')) ?></th>
+                  <th class="px-4 py-3 text-right"><?= e(__('panel.table.th_video')) ?></th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/5 text-neutral-300">
@@ -824,20 +824,20 @@ require_once __DIR__ . '/../includes/header.php';
                   </tr>
                 <?php else: ?>
                   <?php foreach ($matches as $m): ?>
-                    <tr class="hover:bg-white/[0.02] transition">
-                      <td class="p-4">
+                    <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
+                      <td class="px-4 py-2.5">
                         <div class="font-semibold text-white"><?= e($m['court']) ?></div>
                         <div class="text-xs text-neutral-400 font-mono"><?= e($m['time_slot']) ?></div>
                       </td>
-                      <td class="p-4 text-xs font-mono"><?= formatDateLocalized($m['date'], $current_lang) ?></td>
-                      <td class="p-4">
+                      <td class="px-4 py-2.5 text-xs font-mono"><?= formatDateLocalized($m['date'], $current_lang) ?></td>
+                      <td class="px-4 py-2.5">
                         <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                           <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-bold text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>UNLOCKABLE</span>
                         <?php else: ?>
                           <span class="inline-flex items-center gap-1.5 rounded-full bg-red-400/15 px-2.5 py-0.5 text-[11px] font-bold text-red-300"><span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>LOCKED</span>
                         <?php endif; ?>
                       </td>
-                      <td class="p-4">
+                      <td class="px-4 py-2.5">
                         <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                           <button 
                             type="button" 
@@ -852,12 +852,12 @@ require_once __DIR__ . '/../includes/header.php';
                           <span class="text-xs text-neutral-500 italic">-</span>
                         <?php endif; ?>
                       </td>
-                      <td class="p-4 text-center">
+                      <td class="px-4 py-2.5 text-center">
                         <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-white/5 text-neutral-300">
                           <?= (int)($m['views'] ?? 0) ?>
                         </span>
                       </td>
-                      <td class="p-4 text-right">
+                      <td class="px-4 py-2.5 text-right">
                         <div class="flex items-center justify-end gap-2">
                           <?php if ($m['status'] === 'LOCKED'): ?>
                             <form action="index.php" method="POST" class="inline-block">

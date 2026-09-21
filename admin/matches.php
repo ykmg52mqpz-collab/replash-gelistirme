@@ -187,13 +187,13 @@ if ($pdo) {
     $matchesList = $stmtM->fetchAll();
 }
 
+$internalShell = __('nav.admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-20 relative">
-  <div class="hero-glow"></div>
+<main class="min-h-screen pb-10 relative">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+  <div class="container-x py-10 relative z-10">
 
     <!-- Top Breadcrumb & Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
@@ -245,7 +245,7 @@ require_once __DIR__ . '/../includes/header.php';
 
     <!-- Summary Metrics -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+      <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
         <span class="text-xs font-semibold text-neutral-400">Toplam Maç Kaydı</span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-white"><?= $statsTotal ?></span>
@@ -253,7 +253,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       </div>
 
-      <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+      <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
         <span class="text-xs font-semibold text-neutral-400">Satışa Açılan (Satıldı)</span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-emerald-400"><?= $statsSold ?></span>
@@ -261,7 +261,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       </div>
 
-      <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+      <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
         <span class="text-xs font-semibold text-neutral-400">Satış Bekleyen (Kilitli)</span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-amber-400"><?= $statsLocked ?></span>
@@ -269,7 +269,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       </div>
 
-      <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between">
+      <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
         <span class="text-xs font-semibold text-neutral-400">Toplam Platform Cirosu</span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-accent"><?= number_format($totalPlatformRevenue, 0, ',', '.') ?></span>
@@ -279,7 +279,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <!-- Filter & Search Toolbar -->
-    <div class="card-elevated rounded-2xl p-5 border border-white/10 mb-8">
+    <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 mb-8">
       <form action="matches.php" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
         
         <!-- Facility Filter -->
@@ -404,7 +404,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <!-- Matches Table -->
-    <div class="card-elevated rounded-3xl overflow-hidden border border-white/10">
+    <div class="rounded-2xl bg-white/[0.02] overflow-hidden border border-white/10">
       <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 class="font-display text-xl font-bold text-white">Maç Listesi & Satış Kontrolü</h2>
@@ -414,16 +414,16 @@ require_once __DIR__ . '/../includes/header.php';
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
-          <thead class="bg-ink-900/60 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+          <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
             <tr>
-              <th class="p-4">Tesis & Şehir</th>
-              <th class="p-4">Saha & Slot</th>
-              <th class="p-4">Tarih</th>
-              <th class="p-4">Durum</th>
-              <th class="p-4">Erişim Kodu</th>
-              <th class="p-4">Satış Tarihi / Fiyat</th>
-              <th class="p-4 text-center">İzlenme</th>
-              <th class="p-4 text-right">İşlemler</th>
+              <th class="px-4 py-3">Tesis & Şehir</th>
+              <th class="px-4 py-3">Saha & Slot</th>
+              <th class="px-4 py-3">Tarih</th>
+              <th class="px-4 py-3">Durum</th>
+              <th class="px-4 py-3">Erişim Kodu</th>
+              <th class="px-4 py-3">Satış Tarihi / Fiyat</th>
+              <th class="px-4 py-3 text-center">İzlenme</th>
+              <th class="px-4 py-3 text-right">İşlemler</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5 text-neutral-300">
@@ -436,20 +436,20 @@ require_once __DIR__ . '/../includes/header.php';
             <?php endif; ?>
 
             <?php foreach ($matchesList as $m): ?>
-              <tr class="hover:bg-white/[0.02] transition">
-                <td class="p-4">
+              <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
+                <td class="px-4 py-2.5">
                   <div class="font-bold text-white"><?= e($m['facility_name']) ?></div>
                   <div class="text-xs text-neutral-400"><?= e($m['city']) ?> · <?= strtoupper(e($m['facility_sport'])) ?></div>
                 </td>
                 
-                <td class="p-4">
+                <td class="px-4 py-2.5">
                   <div class="font-semibold text-neutral-200"><?= e($m['court']) ?></div>
                   <div class="text-xs text-neutral-400 font-mono"><?= e($m['time_slot']) ?></div>
                 </td>
 
-                <td class="p-4 text-xs font-mono"><?= e($m['date']) ?></td>
+                <td class="px-4 py-2.5 text-xs font-mono"><?= e($m['date']) ?></td>
 
-                <td class="p-4">
+                <td class="px-4 py-2.5">
                   <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -467,7 +467,7 @@ require_once __DIR__ . '/../includes/header.php';
                   <?php endif; ?>
                 </td>
 
-                <td class="p-4">
+                <td class="px-4 py-2.5">
                   <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                     <button 
                       type="button" 
@@ -483,7 +483,7 @@ require_once __DIR__ . '/../includes/header.php';
                   <?php endif; ?>
                 </td>
 
-                <td class="p-4 text-xs">
+                <td class="px-4 py-2.5 text-xs">
                   <?php if (!empty($m['sold_at'])): ?>
                     <div class="text-neutral-300 font-mono"><?= date('d.m.Y H:i', strtotime($m['sold_at'])) ?></div>
                     <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price']))) ?><?= empty($m['billable']) ? ' · ücretsiz' : '' ?></div>
@@ -492,13 +492,13 @@ require_once __DIR__ . '/../includes/header.php';
                   <?php endif; ?>
                 </td>
 
-                <td class="p-4 text-center">
+                <td class="px-4 py-2.5 text-center">
                   <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-white/5 text-neutral-300">
                     <?= (int)($m['views'] ?? 0) ?>
                   </span>
                 </td>
 
-                <td class="p-4 text-right">
+                <td class="px-4 py-2.5 text-right">
                   <div class="inline-flex items-center gap-1.5">
                     <!-- Status Toggle Button -->
                     <?php if ($m['status'] === 'LOCKED'): ?>
@@ -551,7 +551,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                   <!-- Inline Edit Modal -->
                   <div id="editMatch_<?= e($m['id']) ?>" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-                    <div class="card-elevated rounded-3xl p-6 border border-accent/40 bg-ink-900 w-full max-w-xl text-left shadow-2xl space-y-4">
+                    <div class="rounded-2xl bg-white/[0.02] p-6 border border-accent/40 bg-ink-900 w-full max-w-xl text-left shadow-2xl space-y-4">
                       <div class="flex items-center justify-between pb-3 border-b border-white/10">
                         <div>
                           <h3 class="font-display text-lg font-bold text-white">Maç Kaydını Düzenle</h3>

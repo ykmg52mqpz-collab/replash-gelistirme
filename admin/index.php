@@ -477,52 +477,32 @@ if ($isAdmin && $pdo) {
     $totals = $stmtTotals->fetch(PDO::FETCH_ASSOC) ?: [];
 }
 
+$internalShell = __('nav.admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-20 relative">
-  <div class="hero-glow"></div>
+<main class="min-h-screen pb-10 relative">
 
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+  <div class="container-x py-10 relative z-10">
 
     <?php if (!$isAdmin): ?>
-      <!-- Admin Login -->
-      <div class="max-w-md mx-auto card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 text-center">
-        <div class="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center mx-auto mb-4">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        </div>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">Platform Admin Girişi</h1>
-        <p class="text-neutral-400 text-xs sm:text-sm mb-6">Replash sistem yöneticisi hesabınızla giriş yapınız.</p>
-
-        <?php if (!$pdo): ?>
-          <div class="rounded-xl border border-rose-500/30 bg-rose-500/15 p-3.5 text-rose-300 text-xs font-medium mb-4 text-left leading-relaxed">
-            <strong class="font-bold flex items-center gap-1 text-rose-200 mb-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              Veritabanı Bağlantı Hatası:
-            </strong>
-            <?= e($dbError ?: 'MySQL sunucusuna bağlanılamıyor. Lütfen config/config.php veya .env dosyasını kontrol ediniz.') ?>
-          </div>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-          <div class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-300 text-xs font-medium mb-4 text-left">
-            <?= e($error) ?>
-          </div>
-        <?php endif; ?>
-
-        <form action="index.php" method="POST" class="space-y-4 text-left">
+      <!-- Yönetim girişi (replash.info AdminApp) -->
+      <div class="grid min-h-[60vh] place-items-center">
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
           <input type="hidden" name="admin_login" value="1">
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">E-Posta</label>
-            <input type="email" name="email" autocomplete="username" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
+          <h1 class="font-display text-xl font-bold">Platform Admin</h1>
+          <p class="mb-5 mt-1 text-sm text-white/50">Replash sistem yöneticisi hesabınızla giriş yapın.</p>
+          <div class="flex flex-col gap-3">
+            <input type="email" name="email" autocomplete="username" required placeholder="E-posta" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none focus:border-accent">
+            <input type="password" name="password" autocomplete="current-password" required placeholder="Şifre" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none focus:border-accent">
           </div>
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Şifre</label>
-            <input type="password" name="password" autocomplete="current-password" required class="w-full rounded-xl border border-white/10 bg-ink-900 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none">
-          </div>
-          <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-            Giriş Yap &rarr;
-          </button>
+          <?php if (!$pdo): ?>
+            <div class="mt-3 rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">Veritabanına bağlanılamıyor. Sunucu ayarlarını kontrol edin.</div>
+          <?php endif; ?>
+          <?php if ($error): ?>
+            <div class="mt-3 rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200"><?= e($error) ?></div>
+          <?php endif; ?>
+          <button type="submit" class="mt-4 w-full rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink-900">Giriş</button>
         </form>
       </div>
 
@@ -554,7 +534,7 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <!-- Facility Filter Toolbar for Analytics -->
-      <div class="card-elevated rounded-2xl p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="rounded-2xl bg-white/[0.02] p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span class="text-xs font-semibold uppercase tracking-wider text-accent">Finansal Raporlama & Gelir Analizi</span>
           <h2 class="font-display text-xl font-bold text-white flex items-center gap-2 mt-0.5">
@@ -583,8 +563,7 @@ require_once __DIR__ . '/../includes/header.php';
 
       <!-- Financial Metric Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-emerald-500/10 blur-xl group-hover:bg-emerald-500/20 transition"></div>
+        <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden">
           <div>
             <span class="text-xs font-semibold text-neutral-400">Bugünkü Hasılat</span>
             <div class="mt-2 flex items-baseline gap-1.5">
@@ -598,8 +577,7 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-sky-500/10 blur-xl group-hover:bg-sky-500/20 transition"></div>
+        <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden">
           <div>
             <span class="text-xs font-semibold text-neutral-400">Bu Haftaki Hasılat</span>
             <div class="mt-2 flex items-baseline gap-1.5">
@@ -613,8 +591,7 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-accent/10 blur-xl group-hover:bg-accent/20 transition"></div>
+        <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden">
           <div>
             <span class="text-xs font-semibold text-neutral-400">Bu Ayki Hasılat</span>
             <div class="mt-2 flex items-baseline gap-1.5">
@@ -628,8 +605,7 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl group-hover:bg-purple-500/20 transition"></div>
+        <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden">
           <div>
             <span class="text-xs font-semibold text-neutral-400">Toplam Ciro / Ödeme</span>
             <div class="mt-2 flex items-baseline gap-1.5">
@@ -645,7 +621,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Interactive Graphical Revenue Chart -->
-      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-10">
+      <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 mb-10">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
           <div>
             <div class="flex items-center gap-2">
@@ -688,7 +664,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Facility Breakdown Performance Table -->
-      <div class="card-elevated rounded-3xl overflow-hidden border border-white/10 mb-10">
+      <div class="rounded-2xl bg-white/[0.02] overflow-hidden border border-white/10 mb-10">
         <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 class="font-display text-xl font-bold text-white">Tesis Bazlı Gelir & Performans Tablosu</h2>
@@ -699,17 +675,17 @@ require_once __DIR__ . '/../includes/header.php';
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
-            <thead class="bg-ink-900/60 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+            <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
               <tr>
-                <th class="p-4">Tesis Adı & Şehir</th>
-                <th class="p-4">Video Fiyatı</th>
-                <th class="p-4 text-center">Bugünkü Satış</th>
-                <th class="p-4 text-center">Bu Ay Satış & Kademe</th>
-                <th class="p-4 text-right">Bu Ay Tesis Payı</th>
-                <th class="p-4 text-right">Bu Ay Replash Faturası</th>
-                <th class="p-4 text-center">Toplam Satış</th>
-                <th class="p-4 text-right">Toplam Ciro</th>
-                <th class="p-4 text-right">İşlem</th>
+                <th class="px-4 py-3">Tesis Adı & Şehir</th>
+                <th class="px-4 py-3">Video Fiyatı</th>
+                <th class="px-4 py-3 text-center">Bugünkü Satış</th>
+                <th class="px-4 py-3 text-center">Bu Ay Satış & Kademe</th>
+                <th class="px-4 py-3 text-right">Bu Ay Tesis Payı</th>
+                <th class="px-4 py-3 text-right">Bu Ay Replash Faturası</th>
+                <th class="px-4 py-3 text-center">Toplam Satış</th>
+                <th class="px-4 py-3 text-right">Toplam Ciro</th>
+                <th class="px-4 py-3 text-right">İşlem</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5 text-neutral-300">
@@ -719,8 +695,8 @@ require_once __DIR__ . '/../includes/header.php';
                 $fbPrices = [];
                 foreach (get_facility_courts_data($fb) as $pc) { $fbPrices[$pc['sport']] = ucfirst($pc['sport']) . ' ' . replash_money($pc['price'], 0); }
               ?>
-                <tr class="hover:bg-white/[0.02] transition <?= $selectedFacilityId === $fb['id'] ? 'bg-accent/5' : '' ?>">
-                  <td class="p-4">
+                <tr class="border-b border-white/5 hover:bg-white/[0.02] transition <?= $selectedFacilityId === $fb['id'] ? 'bg-accent/5' : '' ?>">
+                  <td class="px-4 py-2.5">
                     <div class="font-bold text-white flex items-center gap-2">
                       <?= e($fb['name']) ?>
                       <?php if ($selectedFacilityId === $fb['id']): ?>
@@ -729,29 +705,29 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                     <div class="text-xs text-neutral-400"><?= e($fb['city']) ?> · <?= strtoupper(e($fb['sport'])) ?></div>
                   </td>
-                  <td class="p-4 text-xs font-mono font-semibold text-neutral-200">
+                  <td class="px-4 py-2.5 text-xs font-mono font-semibold text-neutral-200">
                     <?= e(implode(' · ', $fbPrices)) ?>
                   </td>
-                  <td class="p-4 text-center">
+                  <td class="px-4 py-2.5 text-center">
                     <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md">
                       <?= (int)$fb['today_sold'] ?> ad (<?= e(replash_money((float)$fb['today_revenue'], 0)) ?>)
                     </span>
                   </td>
-                  <td class="p-4 text-center">
+                  <td class="px-4 py-2.5 text-center">
                     <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-md">
                       <?= (int)$fb['month_sold'] ?> ad · %<?= (int)$fbSplit['facility_pct'] ?>
                     </span>
                     <div class="text-[10px] text-neutral-500 mt-1">brüt <?= e(replash_money($fbSplit['gross'], 0)) ?></div>
                   </td>
-                  <td class="p-4 text-right font-mono text-xs font-semibold text-emerald-400"><?= e(replash_money($fbSplit['facility_share'])) ?></td>
-                  <td class="p-4 text-right font-mono text-xs font-bold text-white"><?= e(replash_money($fbSplit['replash_share'])) ?></td>
-                  <td class="p-4 text-center font-mono text-xs text-neutral-300">
+                  <td class="px-4 py-2.5 text-right font-mono text-xs font-semibold text-emerald-400"><?= e(replash_money($fbSplit['facility_share'])) ?></td>
+                  <td class="px-4 py-2.5 text-right font-mono text-xs font-bold text-white"><?= e(replash_money($fbSplit['replash_share'])) ?></td>
+                  <td class="px-4 py-2.5 text-center font-mono text-xs text-neutral-300">
                     <?= (int)$fb['sold_matches'] ?> / <?= (int)$fb['total_matches'] ?>
                   </td>
-                  <td class="p-4 text-right font-mono text-sm font-bold text-accent">
+                  <td class="px-4 py-2.5 text-right font-mono text-sm font-bold text-accent">
                     <?= e(replash_money((float)$fb['total_revenue'], 0)) ?>
                   </td>
-                  <td class="p-4 text-right">
+                  <td class="px-4 py-2.5 text-right">
                     <?php if ($selectedFacilityId === $fb['id']): ?>
                       <a href="index.php" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-300 text-xs font-semibold hover:bg-rose-500/20 transition">
                         Filtreyi Kaldır
@@ -771,15 +747,15 @@ require_once __DIR__ . '/../includes/header.php';
 
       <!-- Operational Summary Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10">
           <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Toplam Kaydedilen Maç</div>
           <div class="font-display text-3xl font-bold text-white mt-1"><?= $stats['total_matches'] ?></div>
         </div>
-        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10">
           <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Satılan (Açık) Videolar</div>
           <div class="font-display text-3xl font-bold text-accent mt-1"><?= $stats['sold_matches'] ?></div>
         </div>
-        <div class="card-elevated rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10">
           <div class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Aktif Kameralar</div>
           <div class="font-display text-3xl font-bold text-emerald-400 mt-1"><?= $stats['active_cameras'] ?> / <?= count($cameras) ?></div>
         </div>
@@ -789,7 +765,7 @@ require_once __DIR__ . '/../includes/header.php';
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
         
         <!-- Facilities List & Add Modal -->
-        <div class="card-elevated rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+        <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-4">
               <div>
@@ -1107,7 +1083,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <!-- Cameras List & Stream Management -->
-        <div class="card-elevated rounded-3xl p-6 border border-white/10">
+        <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10">
           <div class="flex items-center justify-between mb-4">
             <div>
               <h2 class="font-display text-xl font-bold text-white">Kamera & Canlı Yayınlar</h2>
@@ -1164,7 +1140,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Search Form Display Settings -->
-      <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10 mb-8 bg-ink-800/80">
+      <div class="rounded-2xl bg-white/[0.02] p-6 sm:p-8 border border-white/10 mb-8 bg-ink-800/80">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
           <div>
             <span class="text-xs font-semibold uppercase tracking-wider text-accent">Site Görünüm Ayarları</span>
@@ -1215,20 +1191,20 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Leads / Contact Requests -->
-      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-10">
+      <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 mb-10">
         <h2 class="font-display text-xl font-bold text-white mb-4">Gelen Pilot Başvuruları & Talepler</h2>
         <?php if (empty($leads)): ?>
           <p class="text-xs text-neutral-500">Henüz yeni bir başvuru bulunmuyor.</p>
         <?php else: ?>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-ink-900 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
+              <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
                 <tr>
-                  <th class="p-3">Ad / Tesis</th>
-                  <th class="p-3">İletişim</th>
-                  <th class="p-3">Şehir / Spor</th>
-                  <th class="p-3">Mesaj</th>
-                  <th class="p-3">Tarih</th>
+                  <th class="px-4 py-3">Ad / Tesis</th>
+                  <th class="px-4 py-3">İletişim</th>
+                  <th class="px-4 py-3">Şehir / Spor</th>
+                  <th class="px-4 py-3">Mesaj</th>
+                  <th class="px-4 py-3">Tarih</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/5 text-neutral-300">

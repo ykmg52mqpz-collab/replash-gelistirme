@@ -127,13 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
+$internalShell = __('nav.admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-20 relative">
-  <div class="hero-glow"></div>
+<main class="min-h-screen pb-10 relative">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+  <div class="container-x py-10 relative z-10">
 
     <!-- Top Breadcrumb & Header Navigation -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
@@ -193,7 +193,7 @@ require_once __DIR__ . '/../includes/header.php';
           <input type="hidden" name="action" value="save_calculator">
 
           <!-- Sports & Models Header Card -->
-          <div class="card-elevated rounded-3xl p-6 border border-white/10 space-y-5">
+          <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 space-y-5">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
               <div>
                 <h2 class="font-display text-xl font-bold text-white flex items-center gap-2">
@@ -353,7 +353,7 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
 
           <!-- General Calculator & Hook Settings -->
-          <div class="card-elevated rounded-3xl p-6 border border-white/10 space-y-4">
+          <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 space-y-4">
             <h3 class="font-display text-lg font-bold text-white pb-3 border-b border-white/10">Genel Ayarlar & Aksiyon Bloğu</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -431,7 +431,7 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
 
           <!-- Live Calculator Card Preview -->
-          <div class="card-elevated rounded-3xl border border-white/15 bg-ink-900/95 p-6 backdrop-blur shadow-2xl space-y-6">
+          <div class="rounded-2xl bg-white/[0.02] border border-white/15 bg-ink-900/95 p-6 backdrop-blur shadow-2xl space-y-6">
             
             <div class="text-center">
               <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent mb-2">
@@ -542,7 +542,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 <!-- Add New Sport Modal -->
 <div id="addSportModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-  <div class="max-w-lg w-full card-elevated rounded-3xl p-6 sm:p-8 border border-white/20 bg-ink-950 shadow-2xl relative">
+  <div class="max-w-lg w-full rounded-2xl bg-white/[0.02] p-6 sm:p-8 border border-white/20 bg-ink-950 shadow-2xl relative">
     <div class="flex items-center justify-between mb-5 pb-3 border-b border-white/10">
       <h3 class="font-display text-lg font-bold text-accent">Yeni Spor Türü & Gelir Modeli Ekle</h3>
       <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
