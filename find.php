@@ -1018,33 +1018,88 @@ function clipSetStatus(text) {
   el.textContent = text || '';
   el.classList.toggle('hidden', !text);
 }
+// Filigran: sağ üstte "replash.it" + Replash logosu (logo aynı kaynaktan yüklenir, tuval kirlenmesin)
+var clipLogo = new Image();
+clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.png'), PHP_URL_PATH)) ?>;
+var clipDrawTimer = null;
+function clipDrawWatermark(ctx, w, h) {
+  var logoH = Math.round(h * 0.075);
+  var margin = Math.round(h * 0.035);
+  var fontPx = Math.round(logoH * 0.5);
+  var text = 'replash.it';
+  ctx.font = '600 ' + fontPx + 'px "neue-haas-grotesk-display", "Helvetica Neue", Arial, sans-serif';
+  var textW = ctx.measureText(text).width;
+  var logoW = clipLogo.complete && clipLogo.naturalWidth ? Math.round(logoH * clipLogo.naturalWidth / clipLogo.naturalHeight) : 0;
+  var gap = Math.round(logoH * 0.25);
+  var padX = Math.round(logoH * 0.3), padY = Math.round(logoH * 0.18);
+  var boxW = padX + textW + (logoW ? gap + logoW : 0) + padX;
+  var boxH = logoH + padY * 2;
+  var x = w - margin - boxW, y = margin;
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  var r = boxH / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + boxW - r, y); ctx.arc(x + boxW - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+  ctx.lineTo(x + r, y + boxH); ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = Math.round(fontPx * 0.2);
+  ctx.fillText(text, x + padX, y + boxH / 2);
+  ctx.shadowBlur = 0;
+  if (logoW) ctx.drawImage(clipLogo, x + padX + textW + gap, y + padY, logoW, logoH);
+  ctx.restore();
+}
+// Videoyu her karede tuvale çizip filigranı ekleyen görüntü akışı
+function clipWatermarkedVideoTrack(el) {
+  var w = el.videoWidth || 1280, h = el.videoHeight || 720;
+  if (w > 1920) { h = Math.round(h * 1920 / w); w = 1920; }
+  var canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  var draw = function () {
+    try { ctx.drawImage(el, 0, 0, w, h); } catch (e) {}
+    clipDrawWatermark(ctx, w, h);
+  };
+  draw();
+  if (clipDrawTimer) clearInterval(clipDrawTimer);
+  clipDrawTimer = setInterval(draw, 1000 / 30);
+  return canvas.captureStream(30).getVideoTracks()[0];
+}
 function clipStartRecorder(el, silent) {
   var mime = clipMimeType();
   var cap = el.captureStream ? el.captureStream() : el.mozCaptureStream();
-  var stream = cap;
+  var audio = cap.getAudioTracks();
   if (silent) {
     // Gizli kopyanın sesi hoparlöre gitmeden kayda alınır
     try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      var dest = ctx.createMediaStreamDestination();
-      ctx.createMediaElementSource(el).connect(dest);
-      stream = new MediaStream(cap.getVideoTracks().concat(dest.stream.getAudioTracks()));
-      el._clipAudioCtx = ctx;
+      var actx = new (window.AudioContext || window.webkitAudioContext)();
+      var dest = actx.createMediaStreamDestination();
+      actx.createMediaElementSource(el).connect(dest);
+      audio = dest.stream.getAudioTracks();
+      el._clipAudioCtx = actx;
     } catch (e) {
       el.muted = true;
-      stream = new MediaStream(cap.getVideoTracks());
+      audio = [];
     }
   }
+  var video;
+  try { video = clipWatermarkedVideoTrack(el); } catch (e) { video = null; }
+  var stream = new MediaStream((video ? [video] : cap.getVideoTracks()).concat(audio));
   clipChunks = [];
-  clipRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 5000000 });
+  clipRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 });
   clipRecorder.ondataavailable = function (e) { if (e.data && e.data.size) clipChunks.push(e.data); };
   clipRecorder.start(250);
   return mime;
 }
 function clipFinishRecorder(mime) {
   return new Promise(function (resolve) {
-    if (!clipRecorder || clipRecorder.state === 'inactive') { resolve(null); return; }
-    clipRecorder.onstop = function () { resolve(new Blob(clipChunks, { type: mime.split(';')[0] })); };
+    var done = function (blob) {
+      if (clipDrawTimer) { clearInterval(clipDrawTimer); clipDrawTimer = null; }
+      resolve(blob);
+    };
+    if (!clipRecorder || clipRecorder.state === 'inactive') { done(null); return; }
+    clipRecorder.onstop = function () { done(new Blob(clipChunks, { type: mime.split(';')[0] })); };
     clipRecorder.stop();
   });
 }
