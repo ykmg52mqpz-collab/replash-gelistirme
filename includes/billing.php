@@ -32,11 +32,38 @@ const REPLASH_SHARE_TIERS = [
     [0, 20],
 ];
 
+/** Sports a facility can offer (key => admin label). */
+const REPLASH_SPORTS = [
+    'football'   => 'Futbol',
+    'padel'      => 'Padel',
+    'tennis'     => 'Tenis',
+    'basketball' => 'Basketbol',
+];
+
 /**
- * Standard video price for a sport; falls back to $fallback for sports without a fixed price.
+ * A facility's own per-sport video prices from facilities.sport_prices (JSON).
  */
-function replash_video_price($sport, $fallback = 0.0): float {
-    return (float)(REPLASH_VIDEO_PRICES[strtolower((string)$sport)] ?? $fallback);
+function replash_facility_prices($facility): array {
+    $raw = is_array($facility) ? ($facility['sport_prices'] ?? null) : null;
+    $decoded = $raw ? json_decode((string)$raw, true) : null;
+    $out = [];
+    if (is_array($decoded)) {
+        foreach ($decoded as $sport => $price) {
+            if (is_numeric($price) && $price >= 0) $out[strtolower((string)$sport)] = (float)$price;
+        }
+    }
+    return $out;
+}
+
+/**
+ * Video price for a sport: the facility's own price if set, else the standard
+ * (Billing Guide) price, else $fallback (legacy court/facility price).
+ */
+function replash_video_price($sport, $fallback = 0.0, $facility = null): float {
+    $sport = strtolower(trim((string)$sport));
+    $own = replash_facility_prices($facility);
+    if (isset($own[$sport])) return $own[$sport];
+    return (float)(REPLASH_VIDEO_PRICES[$sport] ?? $fallback);
 }
 
 /**
@@ -92,12 +119,26 @@ function replash_valid_sale_sql(string $m = 'm'): string {
  * SQL expression: price of one valid sale for the match row.
  * $fallbackSql is used for sports without a standard price (e.g. "f.unit_price").
  */
-function replash_sale_price_sql(string $m = 'm', string $fallbackSql = 'f.unit_price'): string {
+function replash_sale_price_sql(string $m = 'm', string $fallbackSql = 'f.unit_price', ?array $facilityPrices = null, ?string $f = 'f'): string {
     $cases = '';
     foreach (REPLASH_VIDEO_PRICES as $sport => $price) {
         $cases .= " WHEN '" . $sport . "' THEN " . number_format($price, 2, '.', '');
     }
-    return "(CASE LOWER({$m}.sport){$cases} ELSE COALESCE({$fallbackSql}, 0) END)";
+    $standard = "(CASE LOWER({$m}.sport){$cases} ELSE COALESCE({$fallbackSql}, 0) END)";
+    if ($facilityPrices !== null) {
+        // One facility (panel): its own prices as literals
+        $own = '';
+        foreach ($facilityPrices as $sport => $price) {
+            if (!preg_match('/^[a-z]+$/', $sport)) continue;
+            $own .= " WHEN '" . $sport . "' THEN " . number_format((float)$price, 2, '.', '');
+        }
+        return $own === '' ? $standard : "(CASE LOWER({$m}.sport){$own} ELSE {$standard} END)";
+    }
+    if ($f !== null) {
+        // Joined facilities table: read facilities.sport_prices JSON per row
+        return "COALESCE(CAST(JSON_VALUE({$f}.sport_prices, CONCAT('$.', LOWER({$m}.sport))) AS DECIMAL(10,2)), {$standard})";
+    }
+    return $standard;
 }
 
 /**

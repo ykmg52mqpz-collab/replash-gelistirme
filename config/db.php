@@ -91,6 +91,11 @@ class DB {
                 INDEX (`match_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
+            // Facility sport prices: {"football": 15, "padel": 10} (includes/billing.php)
+            if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'sport_prices'")->fetch()) {
+                $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `sport_prices` TEXT NULL DEFAULT NULL");
+            }
+
             // Ensure settings table exists
             $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
                 `key_name` VARCHAR(64) NOT NULL PRIMARY KEY,

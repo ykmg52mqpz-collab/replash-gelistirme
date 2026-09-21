@@ -82,3 +82,29 @@ function replash_undo_count(PDO $pdo, ?string $facilityId, string $yearMonth): i
         return 0;
     }
 }
+
+/**
+ * 7-day retention (Platform Brief): from the match date, every recording — sold or not —
+ * is removed after RETENTION_DAYS. Status becomes EXPIRED and the stored playback URL is
+ * cleared, so access codes and old links stop working. Sold matches keep sold_at/billable
+ * for monthly billing.
+ * Runs at most once per hour on normal page loads; cron/purge.php can run it on a schedule.
+ */
+function replash_purge_expired(PDO $pdo, bool $force = false): int {
+    try {
+        if (!$force) {
+            $last = (int)get_setting('last_retention_purge', 0);
+            if (time() - $last < 3600) return 0;
+        }
+        $stmt = $pdo->prepare("UPDATE matches SET status = 'EXPIRED', playback_url = NULL
+            WHERE status <> 'EXPIRED' AND DATE_ADD(`date`, INTERVAL ? DAY) < CURDATE()");
+        $stmt->execute([RETENTION_DAYS]);
+        $n = $stmt->rowCount();
+        $pdo->exec("DELETE vs FROM viewer_sessions vs JOIN matches m ON m.id = vs.match_id WHERE m.status = 'EXPIRED'");
+        set_setting('last_retention_purge', (string)time());
+        return $n;
+    } catch (Exception $e) {
+        error_log('replash_purge_expired: ' . $e->getMessage());
+        return 0;
+    }
+}

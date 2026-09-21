@@ -43,6 +43,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
 
 $isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 
+/**
+ * Tesis sporları ve spor başına video fiyatı (facilities.sport_prices).
+ */
+function admin_sport_prices_from_post(): array {
+    $out = [];
+    $enabled = $_POST['sport_enabled'] ?? [];
+    $prices = $_POST['sport_price'] ?? [];
+    foreach (REPLASH_SPORTS as $key => $label) {
+        if (!empty($enabled[$key])) {
+            $p = (isset($prices[$key]) && is_numeric($prices[$key])) ? (float)$prices[$key] : (REPLASH_VIDEO_PRICES[$key] ?? 0);
+            $out[$key] = round(max(0, $p), 2);
+        }
+    }
+    return $out;
+}
+
+/** Sahaları seçili sporlara bağla; sahada kullanılan ama işaretlenmemiş sporu standart fiyatla ekle. */
+function admin_apply_sport_prices(array &$courtList, array &$sportPrices): void {
+    if (empty($sportPrices)) $sportPrices = ['football' => REPLASH_VIDEO_PRICES['football']];
+    foreach ($courtList as &$ci) {
+        $sp = strtolower((string)($ci['sport'] ?? ''));
+        if (!isset(REPLASH_SPORTS[$sp])) $sp = array_key_first($sportPrices);
+        if (!isset($sportPrices[$sp])) $sportPrices[$sp] = REPLASH_VIDEO_PRICES[$sp] ?? 0;
+        $ci['sport'] = $sp;
+        $ci['price'] = $sportPrices[$sp];
+    }
+    unset($ci);
+}
+
+function admin_sport_price_fields(array $prices, string $uid): void {
+    ?>
+    <div class="space-y-2">
+      <div class="text-xs font-semibold text-white">Sporlar ve video fiyatları</div>
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <?php foreach (REPLASH_SPORTS as $key => $label): $on = isset($prices[$key]); $val = $prices[$key] ?? (REPLASH_VIDEO_PRICES[$key] ?? ''); ?>
+          <label class="flex items-center gap-3 rounded-lg border border-white/10 px-3 py-2">
+            <input type="checkbox" name="sport_enabled[<?= $key ?>]" value="1" <?= $on ? 'checked' : '' ?> class="h-4 w-4">
+            <span class="flex-1 text-xs"><?= e($label) ?></span>
+            <span class="text-xs text-white/40">€</span>
+            <input type="number" step="0.5" min="0" name="sport_price[<?= $key ?>]" value="<?= e($val) ?>" class="w-20 rounded-md border border-white/10 bg-transparent px-2 py-1 text-right font-mono text-xs" aria-label="<?= e($label) ?> fiyatı">
+          </label>
+        <?php endforeach; ?>
+      </div>
+      <p class="text-[11px] text-white/40">Her saha aşağıda seçtiğiniz spora göre bu fiyatla satılır. Varsayılanlar Billing Guide'dan gelir (futbol €15, padel €10).</p>
+    </div>
+    <?php
+}
+
+
 $facilities = [];
 $cameras = [];
 $leads = [];
@@ -118,6 +167,10 @@ if ($isAdmin && $pdo) {
         if (empty($courtList)) {
             $courtList = [['name' => 'Saha 1', 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']]];
         }
+        $sportPrices = admin_sport_prices_from_post();
+        admin_apply_sport_prices($courtList, $sportPrices);
+        $unitPrice = (float)reset($sportPrices);
+        $currency = REPLASH_BILLING_CURRENCY;
 
         $facId = 'fac-' . strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
         $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
@@ -136,8 +189,8 @@ if ($isAdmin && $pdo) {
         }
         $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-        $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects), $pin, $unitPrice, $currency]);
+        $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency, sport_prices) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), $pin, $unitPrice, $currency, json_encode($sportPrices)]);
 
         // Add cameras for each court
         $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
@@ -238,9 +291,21 @@ if ($isAdmin && $pdo) {
         if (empty($courtList)) {
             $courtList = [['name' => 'Saha 1', 'sport' => $sport, 'price' => $unitPrice, 'cameras' => ['']]];
         }
+        $sportPrices = admin_sport_prices_from_post();
+        admin_apply_sport_prices($courtList, $sportPrices);
+        $unitPrice = (float)reset($sportPrices);
+        $currency = REPLASH_BILLING_CURRENCY;
 
         if (!empty($facId) && !empty($name) && !empty($pin)) {
-            $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+            // Kamera kimlikleri tesis adı değişse de sabit kalsın (kayıt sistemi channel_id ile bağlanıyor)
+            $slugStmt = $pdo->prepare("SELECT slug FROM facilities WHERE id = ?");
+            $slugStmt->execute([$facId]);
+            $slug = $slugStmt->fetchColumn() ?: strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+            // Mevcut kameralar saha + sıra ile eşleşir; kimlik, kanal ve anahtar korunur
+            $oldCams = [];
+            $tokStmt = $pdo->prepare("SELECT id, court, channel_id, token FROM cameras WHERE facility_id = ? ORDER BY id");
+            $tokStmt->execute([$facId]);
+            foreach ($tokStmt->fetchAll() as $ot) { $oldCams[$ot['court']][] = $ot; }
 
             $courtObjects = [];
             $distinctSports = [];
@@ -256,8 +321,8 @@ if ($isAdmin && $pdo) {
             }
             $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ? WHERE id = ?");
-            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects), $facId]);
+            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
+            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
 
             // Sync cameras
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
@@ -269,9 +334,10 @@ if ($isAdmin && $pdo) {
                 $camNum = 1;
                 $totalCams = count($cItem['cameras']);
                 foreach ($cItem['cameras'] as $cStream) {
-                    $camId = ($camNum === 1) ? "cam-{$slug}-{$cSlug}" : "cam-{$slug}-{$cSlug}-{$camNum}";
-                    $channelId = ($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}";
-                    $token = 'camk_' . bin2hex(random_bytes(8));
+                    $prev = $oldCams[$c][$camNum - 1] ?? null;
+                    $camId = $prev['id'] ?? (($camNum === 1) ? "cam-{$slug}-{$cSlug}" : "cam-{$slug}-{$cSlug}-{$camNum}");
+                    $channelId = $prev['channel_id'] ?? (($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}");
+                    $token = $prev['token'] ?? ('camk_' . bin2hex(random_bytes(8)));
                     $camName = ($totalCams > 1) ? "{$name} · {$c} · {$camNum}. Kamera" : "{$name} · {$c}";
                     $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream]);
                     $camNum++;
@@ -809,31 +875,11 @@ require_once __DIR__ . '/../includes/header.php';
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label class="block text-neutral-400 mb-1 font-medium">Spor Türü</label>
-                    <select name="sport" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
-                      <option value="football">Futbol (Halı Saha)</option>
-                      <option value="padel">Padel</option>
-                      <option value="tennis">Tenis</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-neutral-400 mb-1 font-medium">6 Haneli PIN</label>
-                    <input type="text" name="pin" maxlength="6" placeholder="343434" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white font-mono focus:border-accent focus:outline-none">
-                  </div>
-                  <div>
-                    <label class="block text-neutral-400 mb-1 font-medium">Video Satış Fiyatı</label>
-                    <div class="flex gap-1.5">
-                      <input type="number" step="0.5" name="unit_price" value="250.00" required class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
-                      <select name="currency" class="rounded-xl border border-white/10 bg-ink-800 px-2 text-white focus:border-accent focus:outline-none">
-                        <option value="TRY">TRY</option>
-                        <option value="EUR">EUR</option>
-                        <option value="USD">USD</option>
-                      </select>
-                    </div>
-                  </div>
+                <div>
+                  <label class="block text-neutral-400 mb-1 font-medium">6 haneli PIN</label>
+                  <input type="text" name="pin" maxlength="6" inputmode="numeric" required class="w-40 rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white font-mono focus:border-accent focus:outline-none">
                 </div>
+                <?php admin_sport_price_fields(['football' => REPLASH_VIDEO_PRICES['football']], 'new'); ?>
 
                 <!-- Dynamic Courts & Multiple Camera Stream URLs -->
                 <div class="pt-2 border-t border-white/10 space-y-3">
@@ -871,10 +917,6 @@ require_once __DIR__ . '/../includes/header.php';
                             <option value="tennis">Tenis</option>
                             <option value="basketball">Basketbol</option>
                           </select>
-                        </div>
-                        <div>
-                          <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
-                          <input type="number" step="0.5" name="courts[0][price]" value="250.00" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
                         </div>
                       </div>
 
@@ -967,32 +1009,15 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
                       </div>
 
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        <div>
-                          <label class="block text-neutral-400 mb-1 font-medium">Varsayılan Spor</label>
-                          <select name="sport" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
-                            <option value="football" <?= $f['sport'] === 'football' ? 'selected' : '' ?>>Futbol (Halı Saha)</option>
-                            <option value="padel" <?= $f['sport'] === 'padel' ? 'selected' : '' ?>>Padel</option>
-                            <option value="tennis" <?= $f['sport'] === 'tennis' ? 'selected' : '' ?>>Tenis</option>
-                            <option value="basketball" <?= ($f['sport'] ?? '') === 'basketball' ? 'selected' : '' ?>>Basketbol</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-neutral-400 mb-1 font-medium">6 Haneli PIN</label>
-                          <input type="text" name="pin" maxlength="6" value="<?= e($f['pin']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
-                        </div>
-                        <div>
-                          <label class="block text-neutral-400 mb-1 font-medium">Birim Fiyat & Para Birimi</label>
-                          <div class="flex gap-1">
-                            <input type="number" step="0.5" name="unit_price" value="<?= e($f['unit_price']) ?>" required class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
-                            <select name="currency" class="rounded-lg border border-white/10 bg-ink-900 px-1.5 text-white text-xs focus:border-accent focus:outline-none">
-                              <option value="TRY" <?= $f['currency'] === 'TRY' ? 'selected' : '' ?>>TRY</option>
-                              <option value="EUR" <?= $f['currency'] === 'EUR' ? 'selected' : '' ?>>EUR</option>
-                              <option value="USD" <?= $f['currency'] === 'USD' ? 'selected' : '' ?>>USD</option>
-                            </select>
-                          </div>
-                        </div>
+                      <div>
+                        <label class="block text-neutral-400 mb-1 font-medium">6 haneli PIN</label>
+                        <input type="text" name="pin" maxlength="6" inputmode="numeric" value="<?= e($f['pin']) ?>" required class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
                       </div>
+                      <?php
+                        $fPrices = replash_facility_prices($f);
+                        if (!$fPrices) { foreach (get_facility_courts_data($f) as $cd) { $fPrices[$cd['sport']] = $cd['price']; } }
+                        admin_sport_price_fields($fPrices, $f['id']);
+                      ?>
 
                       <!-- Courts & Multiple Stream URLs for this facility -->
                       <div class="pt-2 border-t border-white/10 space-y-3">
@@ -1048,10 +1073,6 @@ require_once __DIR__ . '/../includes/header.php';
                                     <option value="tennis" <?= $cSport === 'tennis' ? 'selected' : '' ?>>Tenis</option>
                                     <option value="basketball" <?= $cSport === 'basketball' ? 'selected' : '' ?>>Basketbol</option>
                                   </select>
-                                </div>
-                                <div>
-                                  <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
-                                  <input type="number" step="0.5" name="courts[<?= $cIdx ?>][price]" value="<?= e($cPrice) ?>" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-xs focus:border-accent focus:outline-none">
                                 </div>
                               </div>
 
@@ -1350,10 +1371,6 @@ function addCourtBlock(containerId) {
           <option value="tennis">Tenis</option>
           <option value="basketball">Basketbol</option>
         </select>
-      </div>
-      <div>
-        <label class="block text-neutral-400 mb-1 text-[11px] font-medium">Saha Satış Fiyatı</label>
-        <input type="number" step="0.5" name="courts[${nextIdx}][price]" value="250.00" placeholder="Fiyat" class="w-full rounded-lg border border-white/10 ${inputBgClass} p-2 text-white text-xs focus:border-accent focus:outline-none">
       </div>
     </div>
     <div class="pt-1.5 space-y-1.5">

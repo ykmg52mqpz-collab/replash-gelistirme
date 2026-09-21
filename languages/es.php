@@ -457,6 +457,7 @@ return [
             'staff_btn' => 'Acceso Personal (PIN)'
         ],
         'errors' => [
+                'video_not_found' => 'Vídeo no encontrado',
             'not_found' => 'No se encontró ninguna grabación para los criterios seleccionados (Club, Fecha, Hora).',
             'expired' => 'Este video ha sido eliminado porque su periodo de almacenamiento de 7 días ha expirado.',
             'code_mismatch' => 'El código introducido no corresponde a este partido. Introduce el código correcto.',

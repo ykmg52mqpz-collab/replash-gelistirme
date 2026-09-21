@@ -352,15 +352,10 @@ require_once __DIR__ . '/includes/header.php';
         <?php if ($isExpiredError): ?>
           <p class="font-semibold text-red-200"><?= e($error) ?></p>
         <?php else: ?>
-          <div class="font-semibold text-red-200"><?= e(__('find.watch.notFound.title')) ?></div>
-          <p class="mt-1 text-sm text-white/60"><?= e(__('find.watch.notFound.desc')) ?></p>
+          <div class="font-semibold text-red-200"><?= e(__('find.errors.video_not_found')) ?></div>
         <?php endif; ?>
       </div>
-      <?php if (!$isExpiredError): ?>
-        <div class="mx-auto -mt-5 mb-8 max-w-2xl">
-          <a href="<?= base_url('contact.php') ?>" class="inline-block rounded-xl border border-white/15 px-5 py-2.5 text-sm text-white/80 transition hover:border-accent hover:text-accent"><?= e(__('find.watch.refund.open')) ?></a>
-        </div>
-      <?php endif; ?>
+
     <?php endif; ?>
 
     <!-- MATCH RESULT & PLAYER CONTAINER -->

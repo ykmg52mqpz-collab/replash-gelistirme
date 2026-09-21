@@ -457,6 +457,7 @@ return [
             'staff_btn' => 'Tesis Görevlisi Girişi (PIN)'
         ],
         'errors' => [
+                'video_not_found' => 'Video bulunamadı',
             'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
             'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
             'code_mismatch' => 'Girdiğiniz erişim kodu bu maça/saat dilimine ait değildir! Lütfen doğru kodu giriniz.',

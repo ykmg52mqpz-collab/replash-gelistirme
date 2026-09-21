@@ -61,9 +61,16 @@ if (!$slot) $slot = '18:00–19:00';
 
 try {
     // 2. Find Camera by channelId or camera id
-    $stmt = $pdo->prepare("SELECT c.*, f.id as fac_id, f.sport FROM cameras c JOIN facilities f ON c.facility_id = f.id WHERE c.channel_id = ? OR c.id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT c.*, f.id as fac_id, f.sport AS facility_sport, f.courts, f.unit_price, f.sport_prices FROM cameras c JOIN facilities f ON c.facility_id = f.id WHERE c.channel_id = ? OR c.id = ? LIMIT 1");
     $stmt->execute([$channelId, $channelId]);
     $cam = $stmt->fetch();
+    if ($cam) {
+        // Maçın sporu: kameranın bağlı olduğu sahanın sporu (tesis birden çok spor sunabilir)
+        $cam['sport'] = trim(explode(',', (string)$cam['facility_sport'])[0]) ?: 'football';
+        foreach (get_facility_courts_data(['courts' => $cam['courts'], 'sport' => $cam['sport'], 'unit_price' => $cam['unit_price'], 'sport_prices' => $cam['sport_prices']]) as $cd) {
+            if ($cd['name'] === $cam['court']) { $cam['sport'] = $cd['sport']; break; }
+        }
+    }
 
     if (!$cam) {
         http_response_code(404);

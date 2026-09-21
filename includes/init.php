@@ -18,6 +18,11 @@ try {
     error_log("DB Connection Warning: " . $e->getMessage());
 }
 
+// 7 günlük saklama: süresi dolan kayıtlar (saatte en fazla bir kez)
+if ($pdo) {
+    replash_purge_expired($pdo);
+}
+
 // Language Handling
 if (isset($_GET['lang']) && in_array(strtolower($_GET['lang']), $SUPPORTED_LANGUAGES)) {
     $_SESSION['lang'] = strtolower($_GET['lang']);
@@ -361,14 +366,14 @@ function get_facility_courts_data($facility) {
             $result[] = [
                 'name' => $c['name'] ?? 'Saha',
                 'sport' => $sport,
-                'price' => replash_video_price($sport, $courtPrice) // standard price for football/padel (billing.php)
+                'price' => replash_video_price($sport, $courtPrice, $facility) // facility sport price (billing.php)
             ];
         } else {
             $sport = $facility['sport'] ?? 'padel';
             $result[] = [
                 'name' => (string)$c,
                 'sport' => $sport,
-                'price' => replash_video_price($sport, (float)($facility['unit_price'] ?? 6.00))
+                'price' => replash_video_price($sport, (float)($facility['unit_price'] ?? 6.00), $facility)
             ];
         }
     }

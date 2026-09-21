@@ -457,6 +457,7 @@ return [
             'staff_btn' => 'Staff PIN Access'
         ],
         'errors' => [
+                'video_not_found' => 'Video not found',
             'not_found' => 'No match recording found for selected criteria (Venue, Date, Time).',
             'expired' => 'This match video has been deleted as its 7-day retention period has expired.',
             'code_mismatch' => 'The entered access code does not belong to this match slot! Please check and enter the correct code.',

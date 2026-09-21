@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `facilities` (
   `sport` VARCHAR(32) NOT NULL DEFAULT 'padel',
   `courts` TEXT NOT NULL,
   `pin` VARCHAR(10) NOT NULL,
+  `sport_prices` TEXT NULL DEFAULT NULL,
   `unit_price` DECIMAL(10,2) NOT NULL DEFAULT 6.00,
   `currency` VARCHAR(5) NOT NULL DEFAULT 'EUR',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP

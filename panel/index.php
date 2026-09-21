@@ -242,7 +242,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
         // Fetch statistics for this facility
         // Billing rules (includes/billing.php): valid sales only, standard price per sport
         $validSql = replash_valid_sale_sql('m');
-        $priceSql = replash_sale_price_sql('m', number_format((float)($facility['unit_price'] ?? 0), 2, '.', ''));
+        $priceSql = replash_sale_price_sql('m', number_format((float)($facility['unit_price'] ?? 0), 2, '.', ''), replash_facility_prices($facility), null);
         $saleDateSql = replash_sale_date_sql('m');
 
         $stmtStats = $pdo->prepare("SELECT 

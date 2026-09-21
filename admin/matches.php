@@ -193,7 +193,7 @@ if ($pdo) {
     $totalPlatformRevenue = (float)$revenueStmt->fetchColumn();
 
     // Fetch Filtered Matches List
-    $sqlMatches = "SELECT m.*, f.name as facility_name, f.city, f.sport as facility_sport, f.unit_price, f.currency 
+    $sqlMatches = "SELECT m.*, f.name as facility_name, f.city, f.sport as facility_sport, f.unit_price, f.currency, f.sport_prices 
         FROM matches m 
         JOIN facilities f ON m.facility_id = f.id 
         {$whereSql} 
@@ -458,7 +458,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="px-4 py-2.5 text-xs">
                   <?php if (!empty($m['sold_at'])): ?>
                     <div class="text-neutral-300 font-mono"><?= date('d.m.Y H:i', strtotime($m['sold_at'])) ?></div>
-                    <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price']))) ?><?= empty($m['billable']) ? ' · ücretsiz' : '' ?></div>
+                    <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price'], $m))) ?><?= empty($m['billable']) ? ' · ücretsiz' : '' ?></div>
                   <?php else: ?>
                     <span class="text-neutral-500 italic">Satış Yapılmadı</span>
                   <?php endif; ?>
