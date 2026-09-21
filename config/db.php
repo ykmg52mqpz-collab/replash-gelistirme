@@ -91,6 +91,22 @@ class DB {
                 INDEX (`match_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
+            // Satış anındaki tutar (fiyat sonradan değişince eski rapor değişmez) ve olay tutarı
+            if (!$pdo->query("SHOW COLUMNS FROM `matches` LIKE 'sale_price'")->fetch()) {
+                $pdo->exec("ALTER TABLE `matches` ADD COLUMN `sale_price` DECIMAL(10,2) NULL DEFAULT NULL, ADD COLUMN `sale_currency` CHAR(3) NULL DEFAULT NULL");
+            }
+            // Tutarı olmayan eski satışlara bir kez o anki fiyat yazılır; sonraki fiyat değişikliği geçmişi değiştirmez
+            if (function_exists('replash_backfill_sale_prices')) {
+                $done = $pdo->query("SELECT 1 FROM settings WHERE key_name = 'sale_price_backfilled' LIMIT 1");
+                if (!$done || !$done->fetchColumn()) {
+                    replash_backfill_sale_prices($pdo);
+                    $pdo->exec("INSERT INTO settings (key_name, value) VALUES ('sale_price_backfilled', '1') ON DUPLICATE KEY UPDATE value = '1'");
+                }
+            }
+            if (!$pdo->query("SHOW COLUMNS FROM `sale_events` LIKE 'amount'")->fetch()) {
+                $pdo->exec("ALTER TABLE `sale_events` ADD COLUMN `amount` DECIMAL(10,2) NULL DEFAULT NULL, ADD COLUMN `currency` CHAR(3) NULL DEFAULT NULL");
+            }
+
             // Failed access-code attempts, for rate limiting 4-digit codes (includes/sales.php)
             $pdo->exec("CREATE TABLE IF NOT EXISTS `code_attempts` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,

@@ -37,13 +37,55 @@ function replash_record_match_open(PDO $pdo, string $matchId): void {
  * Append an entry to the sale audit trail.
  * $action: sold | undone | admin_sold | admin_undone
  */
-function replash_log_sale_event(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null): void {
+function replash_log_sale_event(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null, ?float $amount = null, ?string $currency = null): void {
     try {
-        $pdo->prepare("INSERT INTO sale_events (match_id, facility_id, action, actor, reason) VALUES (?, ?, ?, ?, ?)")
-            ->execute([$match['id'], $match['facility_id'], $action, $actor, $reason]);
+        $pdo->prepare("INSERT INTO sale_events (match_id, facility_id, action, actor, reason, amount, currency) VALUES (?, ?, ?, ?, ?, ?, ?)")
+            ->execute([$match['id'], $match['facility_id'], $action, $actor, $reason, $amount, $currency]);
     } catch (Exception $e) {
         error_log('replash_log_sale_event: ' . $e->getMessage());
     }
+}
+
+/**
+ * Satış anındaki tutarı maça yazar (T07): saha sporunun tesis fiyatı, yoksa standart fiyat.
+ * Sonradan fiyat değişse de o satışın raporu değişmez. Döner: [tutar, para birimi].
+ */
+function replash_snapshot_price(PDO $pdo, string $matchId): array {
+    $st = $pdo->prepare("SELECT m.id AS m_id, m.court AS m_court, m.sport AS m_sport, m.sale_price AS m_sale_price,
+            m.sale_currency AS m_sale_currency, f.*
+        FROM matches m JOIN facilities f ON f.id = m.facility_id WHERE m.id = ? LIMIT 1");
+    $st->execute([$matchId]);
+    $row = $st->fetch(PDO::FETCH_ASSOC);
+    if (!$row) return [null, null];
+    if ($row['m_sale_price'] !== null) return [(float)$row['m_sale_price'], $row['m_sale_currency'] ?: REPLASH_BILLING_CURRENCY];
+    $fallback = (float)($row['unit_price'] ?? 0);
+    $sport = $row['m_sport'] ?: 'football';
+    foreach (get_facility_courts_data($row) as $cd) {
+        if ($cd['name'] === $row['m_court']) { $fallback = (float)$cd['price']; break; }
+    }
+    $price = replash_video_price($sport, $fallback, $row);
+    $cur = strtoupper(substr((string)($row['currency'] ?? ''), 0, 3)) ?: REPLASH_BILLING_CURRENCY;
+    $pdo->prepare("UPDATE matches SET sale_price = ?, sale_currency = ? WHERE id = ? AND sale_price IS NULL")->execute([$price, $cur, $row['m_id']]);
+    return [$price, $cur];
+}
+
+/** Tutarı olmayan satılmış maçlara güncel kuralla tutar yazar (tek seferlik geçiş; sonra no-op). */
+function replash_backfill_sale_prices(PDO $pdo): int {
+    try {
+        $expr = replash_sale_price_sql_live('m', 'f.unit_price', null, 'f');
+        return (int)$pdo->exec("UPDATE matches m JOIN facilities f ON f.id = m.facility_id
+            SET m.sale_price = {$expr}, m.sale_currency = COALESCE(NULLIF(f.currency, ''), '" . REPLASH_BILLING_CURRENCY . "')
+            WHERE m.sold_at IS NOT NULL AND m.sale_price IS NULL");
+    } catch (Exception $e) {
+        error_log('replash_backfill_sale_prices: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+/** Satış olayı: tutarı dondurur ve olayı tutarıyla yazar. */
+function replash_record_sale(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null): void {
+    [$amount, $cur] = replash_snapshot_price($pdo, $match['id']);
+    replash_log_sale_event($pdo, $match, $action, $actor, $reason, $amount, $cur);
 }
 
 /**

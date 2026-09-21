@@ -29,7 +29,7 @@ if ($pdo) {
             if ($wasLocked) $mRow['access_code'] = replash_new_access_code($pdo);
             $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = IF(status = 'UNLOCKABLE', sold_at, NOW()), billable = 1 WHERE id = ?");
             $upd->execute([$mRow['access_code'], $playbackUrl, $matchId]);
-            if ($wasLocked) replash_log_sale_event($pdo, $mRow, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
+            if ($wasLocked) replash_record_sale($pdo, $mRow, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
             $success = "{$mRow['facility_name']} - {$mRow['court']} ({$mRow['time_slot']}) satışı onaylandı! Erişim Kodu: <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
         }
     }
@@ -40,10 +40,31 @@ if ($pdo) {
         $stmtRow = $pdo->prepare("SELECT * FROM matches WHERE id = ? LIMIT 1");
         $stmtRow->execute([$matchId]);
         $lockRow = $stmtRow->fetch();
-        $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ?");
+        $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0, sale_price = NULL, sale_currency = NULL WHERE id = ?");
         $upd->execute([replash_locked_placeholder(), $matchId]);
         if ($lockRow && $lockRow['status'] === 'UNLOCKABLE') replash_log_sale_event($pdo, $lockRow, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), trim((string)($_POST['reason'] ?? '')) ?: null);
         $success = "Maç başarıyla KİLİTLİ (Satış Bekliyor) durumuna alındı.";
+    }
+
+    // 2b. İade (T20): müşteriye para geri verildi. Açık maçın erişimi kapanır; satış faturadan çıkar.
+    if (isset($_POST['action']) && $_POST['action'] === 'refund_match') {
+        $matchId = $_POST['match_id'] ?? '';
+        $reason = trim(mb_substr((string)($_POST['reason'] ?? ''), 0, 300)) ?: null;
+        $stmtRow = $pdo->prepare("SELECT * FROM matches WHERE id = ? LIMIT 1");
+        $stmtRow->execute([$matchId]);
+        $rRow = $stmtRow->fetch();
+        if ($rRow && !empty($rRow['sold_at']) && (int)$rRow['billable'] === 1) {
+            if ($rRow['status'] === 'UNLOCKABLE') {
+                $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, billable = 0 WHERE id = ?")->execute([replash_locked_placeholder(), $matchId]);
+            } else {
+                $pdo->prepare("UPDATE matches SET billable = 0 WHERE id = ?")->execute([$matchId]);
+            }
+            replash_log_sale_event($pdo, $rRow, 'refunded', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), $reason,
+                $rRow['sale_price'] !== null ? (float)$rRow['sale_price'] : null, $rRow['sale_currency'] ?? null);
+            $success = "İade kaydedildi: {$rRow['court']} · {$rRow['time_slot']}. Satış aylık hesaptan çıkarıldı.";
+        } else {
+            $error = "Bu maçta iade edilecek geçerli bir satış yok.";
+        }
     }
 
     // 3. Delete Match Action
@@ -95,8 +116,11 @@ if ($pdo) {
                 WHERE id = ?");
             $upd->execute([$court, $date, $timeSlot, $status, $accessCode, $playbackUrl, $durationSec, $status, $status, $status, $status, $matchId]);
             if ($before && $before['status'] !== $status) {
-                if ($status === 'UNLOCKABLE') replash_log_sale_event($pdo, $before, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
-                elseif ($before['status'] === 'UNLOCKABLE' && $status === 'LOCKED') replash_log_sale_event($pdo, $before, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
+                if ($status === 'UNLOCKABLE') replash_record_sale($pdo, $before, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
+                elseif ($before['status'] === 'UNLOCKABLE' && $status === 'LOCKED') {
+                    $pdo->prepare("UPDATE matches SET sale_price = NULL, sale_currency = NULL WHERE id = ?")->execute([$matchId]);
+                    replash_log_sale_event($pdo, $before, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), null, isset($before['sale_price']) ? (float)$before['sale_price'] : null, $before['sale_currency'] ?? null);
+                }
             }
             $success = "Maç bilgileri başarıyla güncellendi.";
         } else {
@@ -144,6 +168,9 @@ if ($pdo) {
             $matchId = 'm-' . bin2hex(random_bytes(5));
             $soldAt = ($status === 'UNLOCKABLE') ? date('Y-m-d H:i:s') : null;
             $billable = ($status === 'UNLOCKABLE') ? 1 : 0;
+            // Maçın sporu sahanın sporudur (tesis birden çok spor sunabilir)
+            $courtSport = trim(explode(',', (string)($fac['sport'] ?? 'football'))[0]) ?: 'football';
+            foreach (get_facility_courts_data($fac) as $cd) { if ($cd['name'] === $court) { $courtSport = $cd['sport']; break; } }
 
             $ins = $pdo->prepare("INSERT INTO matches 
                 (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, playback_type, thumbnail_url, duration_sec, sold_at, views, billable, sport, recorded_at, available_at) 
@@ -162,8 +189,11 @@ if ($pdo) {
                 $playbackUrl,
                 $soldAt,
                 $billable,
-                $fac['sport'] ?? 'padel'
+                $courtSport
             ]);
+            if ($status === 'UNLOCKABLE') {
+                replash_record_sale($pdo, ['id' => $matchId, 'facility_id' => $facilityId], 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), 'manuel ekleme');
+            }
 
             $success = "Yeni maç kaydı ({$court} · {$slot}) başarıyla oluşturuldu!";
         }
@@ -516,6 +546,16 @@ require_once __DIR__ . '/../includes/header.php';
                         <button type="submit" title="Kilitle / Satış Bekliyor Yap" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
                           Kilitle
                         </button>
+                      </form>
+                    <?php endif; ?>
+
+                    <?php if (!empty($m['sold_at']) && (int)$m['billable'] === 1): ?>
+                      <!-- İade: para geri verildi, satış hesaptan çıkar -->
+                      <form action="matches.php" method="POST" class="inline-block" onsubmit="var r = prompt('İade sebebi:'); if (r === null) return false; this.reason.value = r; return true;">
+                        <input type="hidden" name="action" value="refund_match">
+                        <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
+                        <input type="hidden" name="reason" value="">
+                        <button type="submit" title="Müşteriye iade edildi" class="p-1.5 rounded-lg bg-white/5 text-neutral-300 hover:bg-white/10 border border-white/10 text-xs font-semibold">İade</button>
                       </form>
                     <?php endif; ?>
 

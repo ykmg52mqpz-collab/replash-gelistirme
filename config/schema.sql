@@ -132,3 +132,7 @@ CREATE TABLE IF NOT EXISTS `code_attempts` (
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   INDEX (`client_key`, `created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Satış anındaki tutar ve olay tutarı (config/db.php ensureSchemaUpdates ile eklenir)
+-- ALTER TABLE matches ADD COLUMN sale_price DECIMAL(10,2) NULL, ADD COLUMN sale_currency CHAR(3) NULL;
+-- ALTER TABLE sale_events ADD COLUMN amount DECIMAL(10,2) NULL, ADD COLUMN currency CHAR(3) NULL;

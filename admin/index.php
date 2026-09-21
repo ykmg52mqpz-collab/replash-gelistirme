@@ -46,6 +46,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
 
 $isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 
+// Aylık mutabakat CSV (T20): geçerli satışlar satış anındaki tutarla, kademe ve paylar, iadeler
+if ($isAdmin && $pdo && ($_GET['export'] ?? '') === 'statement') {
+    $fid = (string)($_GET['facility_id'] ?? '');
+    $ym = preg_match('/^\d{4}-\d{2}$/', (string)($_GET['month'] ?? '')) ? $_GET['month'] : date('Y-m');
+    $fst = $pdo->prepare("SELECT * FROM facilities WHERE id = ? LIMIT 1");
+    $fst->execute([$fid]);
+    $fac = $fst->fetch();
+    if (!$fac) { http_response_code(404); exit('Tesis bulunamadı'); }
+    $st = replash_monthly_statement($pdo, $fid, $ym);
+    $price = replash_sale_price_sql('m', 'f.unit_price');
+    $rows = $pdo->prepare("SELECT m.date, m.time_slot, m.court, m.sport, m.sold_at, m.status, {$price} AS amount, COALESCE(m.sale_currency, f.currency, 'EUR') AS cur
+        FROM matches m JOIN facilities f ON f.id = m.facility_id
+        WHERE m.facility_id = ? AND " . replash_valid_sale_sql('m') . " AND DATE_FORMAT(" . replash_sale_date_sql('m') . ", '%Y-%m') = ?
+        ORDER BY m.sold_at, m.date, m.time_slot");
+    $rows->execute([$fid, $ym]);
+    $ref = $pdo->prepare("SELECT se.created_at, se.reason, se.amount, se.currency, m.date, m.time_slot, m.court FROM sale_events se
+        LEFT JOIN matches m ON m.id = se.match_id WHERE se.facility_id = ? AND se.action = 'refunded' AND DATE_FORMAT(se.created_at, '%Y-%m') = ? ORDER BY se.created_at");
+    $ref->execute([$fid, $ym]);
+    $slug = preg_replace('/[^a-z0-9]+/i', '-', strtolower($fac['name']));
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="replash-mutabakat-' . $slug . '-' . $ym . '.csv"');
+    $out = fopen('php://output', 'w');
+    fwrite($out, "\xEF\xBB\xBF"); // Excel için UTF-8 işareti
+    fputcsv($out, ['Tesis', $fac['name'], 'Dönem', $ym, 'Para birimi', $st['currency']], ';');
+    fputcsv($out, [], ';');
+    fputcsv($out, ['Maç tarihi', 'Saat', 'Saha', 'Spor', 'Satış zamanı', 'Durum', 'Tutar', 'Para birimi'], ';');
+    foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        fputcsv($out, [$r['date'], $r['time_slot'], $r['court'], $r['sport'], $r['sold_at'], $r['status'], number_format((float)$r['amount'], 2, ',', ''), $r['cur']], ';');
+    }
+    fputcsv($out, [], ';');
+    fputcsv($out, ['Geçerli satış', $st['valid_sales']], ';');
+    fputcsv($out, ['Brüt satış', number_format($st['gross'], 2, ',', '')], ';');
+    fputcsv($out, ['Tesis payı %', $st['facility_pct']], ';');
+    fputcsv($out, ['Tesis payı', number_format($st['facility_share'], 2, ',', '')], ';');
+    fputcsv($out, ['Replash payı', number_format($st['replash_share'], 2, ',', '')], ';');
+    $refRows = $ref->fetchAll(PDO::FETCH_ASSOC);
+    if ($refRows) {
+        fputcsv($out, [], ';');
+        fputcsv($out, ['İADELER (bu dönemde, satıştan düşülmüştür)'], ';');
+        fputcsv($out, ['İade zamanı', 'Maç tarihi', 'Saat', 'Saha', 'Tutar', 'Para birimi', 'Sebep'], ';');
+        foreach ($refRows as $r) {
+            fputcsv($out, [$r['created_at'], $r['date'], $r['time_slot'], $r['court'], $r['amount'] !== null ? number_format((float)$r['amount'], 2, ',', '') : '', $r['currency'], $r['reason']], ';');
+        }
+    }
+    fclose($out);
+    exit;
+}
+
 /**
  * Tesis sporları ve spor başına video fiyatı (facilities.sport_prices).
  */
@@ -1278,6 +1326,24 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <?php if ($adminTab === 'audit'): ?>
+      <!-- Aylık mutabakat dışa aktarımı -->
+      <form method="GET" action="index.php" class="mb-5 flex flex-wrap items-end gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+        <input type="hidden" name="export" value="statement">
+        <div class="mr-auto">
+          <div class="text-sm font-semibold text-white">Aylık mutabakat (CSV)</div>
+          <div class="text-xs text-white/50">Geçerli satışlar satış anındaki tutarla, kademe, tesis ve Replash payı, iadeler.</div>
+        </div>
+        <label class="text-xs text-white/60">Tesis
+          <select name="facility_id" class="mt-1 block rounded-lg border border-white/10 bg-ink-900 px-2.5 py-1.5 text-sm text-white">
+            <?php foreach ($facilities as $fOpt): ?><option value="<?= e($fOpt['id']) ?>"><?= e($fOpt['name']) ?></option><?php endforeach; ?>
+          </select>
+        </label>
+        <label class="text-xs text-white/60">Ay
+          <input type="month" name="month" value="<?= date('Y-m') ?>" class="mt-1 block rounded-lg border border-white/10 bg-ink-900 px-2.5 py-1.5 text-sm text-white">
+        </label>
+        <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-ink-900">CSV indir</button>
+      </form>
+
       <!-- SATIŞ DENETİMİ: satış / geri alma kayıtları (silinmez) -->
       <p class="mb-5 inline-block rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/50">
         ⓘ Tesisler satışı yalnızca ilk <?= REPLASH_UNDO_WINDOW_MIN ?> dakikada, video açılmadıysa ve neden yazarak geri alabilir. Daha sonraki düzeltmeler yalnızca buradan (Maçlar sekmesi) yapılır.
@@ -1304,11 +1370,11 @@ require_once __DIR__ . '/../includes/header.php';
       <div class="overflow-x-auto rounded-2xl border border-white/10">
         <table class="w-full min-w-[860px] text-sm">
           <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
-            <tr><th class="px-4 py-3">Zaman</th><th class="px-4 py-3">Tesis</th><th class="px-4 py-3">Maç</th><th class="px-4 py-3">İşlem</th><th class="px-4 py-3">Kim</th><th class="px-4 py-3">Neden</th></tr>
+            <tr><th class="px-4 py-3">Zaman</th><th class="px-4 py-3">Tesis</th><th class="px-4 py-3">Maç</th><th class="px-4 py-3">İşlem</th><th class="px-4 py-3 text-right">Tutar</th><th class="px-4 py-3">Kim</th><th class="px-4 py-3">Neden</th></tr>
           </thead>
           <tbody>
             <?php if (empty($auditEvents)): ?>
-              <tr><td colspan="6" class="px-4 py-8 text-center text-white/40">Kayıt yok.</td></tr>
+              <tr><td colspan="7" class="px-4 py-8 text-center text-white/40">Kayıt yok.</td></tr>
             <?php endif; ?>
             <?php
               $actionLabels = [
@@ -1317,6 +1383,7 @@ require_once __DIR__ . '/../includes/header.php';
                 'admin_sold' => ['Yönetim açtı', 'bg-emerald-400/15 text-emerald-300'],
                 'admin_undone' => ['Yönetim geri aldı', 'bg-white/10 text-white/70'],
                 'admin_deleted' => ['Yönetim sildi', 'bg-white/10 text-white/70'],
+                'refunded' => ['İade edildi', 'bg-amber-400/15 text-amber-300'],
               ];
             ?>
             <?php foreach ($auditEvents as $ev): [$al, $ac] = $actionLabels[$ev['action']] ?? [$ev['action'], 'bg-white/10 text-white/70']; ?>
@@ -1325,6 +1392,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="px-4 py-2.5"><?= e($ev['facility_name'] ?? $ev['facility_id']) ?></td>
                 <td class="px-4 py-2.5 text-xs"><?= e(($ev['court'] ?? '—') . ' · ' . ($ev['date'] ?? '') . ' · ' . ($ev['time_slot'] ?? '')) ?></td>
                 <td class="px-4 py-2.5"><span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold <?= $ac ?>"><?= e($al) ?></span></td>
+                <td class="px-4 py-2.5 text-right font-mono text-xs text-white/70"><?= isset($ev['amount']) && $ev['amount'] !== null ? e(replash_money((float)$ev['amount'])) : '—' ?></td>
                 <td class="px-4 py-2.5 font-mono text-xs text-white/50"><?= e($ev['actor']) ?></td>
                 <td class="px-4 py-2.5 text-xs text-white/70"><?= e($ev['reason'] ?? '') ?></td>
               </tr>

@@ -85,7 +85,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 $newCode = replash_new_access_code($pdo);
                 $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
                 $upd->execute([$newCode, $playbackUrl, $matchId]);
-                replash_log_sale_event($pdo, $mRow, 'sold', 'panel');
+                replash_record_sale($pdo, $mRow, 'sold', 'panel');
                 $soldNotice = ['code' => $newCode, 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];
             }
         }
@@ -130,7 +130,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                             ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . str_replace(':', '', $psStart), $newCode,
                                        $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
                     }
-                    replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
+                    replash_record_sale($pdo, $logRow, 'sold', 'panel', 'presale');
                     $soldNotice = ['code' => $newCode, 'court' => $psCourt, 'slot' => $psSlot];
                     $presaleDay = $psDate; // tablo satılan günü göstersin
                 }
@@ -153,9 +153,9 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                     $error = __('panel.shell.undo_reason_required');
                 } else {
                     // Kod iptal: oyuncunun kodu ve eski linki artık çalışmaz
-                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ? AND first_opened_at IS NULL");
+                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0, sale_price = NULL, sale_currency = NULL WHERE id = ? AND first_opened_at IS NULL");
                     $upd->execute([replash_locked_placeholder(), $matchId]);
-                    replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason);
+                    replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason, isset($mRow['sale_price']) ? (float)$mRow['sale_price'] : null, $mRow['sale_currency'] ?? null);
                     $success = e($mRow['court'] . ' · ' . $mRow['time_slot'] . ' — ' . __('panel.shell.undone_ok'));
                 }
             }
