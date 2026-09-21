@@ -95,14 +95,17 @@ if (isset($_SESSION['facility_id']) && $pdo) {
         if (isset($_POST['action']) && $_POST['action'] === 'presell') {
             $psCourt = trim((string)($_POST['court'] ?? ''));
             $psDate = (string)($_POST['date'] ?? date('Y-m-d'));
-            $psHour = (int)($_POST['hour'] ?? -1);
+            $psStart = (string)($_POST['start'] ?? '');
+            $psDur = (int)($_POST['duration'] ?? 60);
             $courtData = null;
             foreach (get_facility_courts_data($facility) as $cd) { if ($cd['name'] === $psCourt) { $courtData = $cd; break; } }
             $validDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $psDate) && $psDate >= date('Y-m-d') && $psDate <= date('Y-m-d', strtotime('+7 days'));
-            if (!$courtData || !$validDate || $psHour < 0 || $psHour > 23) {
+            if (!$courtData || !$validDate || !preg_match('/^([01]\d|2[0-3]):(00|30)$/', $psStart) || !in_array($psDur, [60, 90, 120], true)) {
                 $error = __('panel.presale.invalid');
             } else {
-                $psSlot = sprintf('%02d:00–%02d:00', $psHour, $psHour + 1);
+                $psStartTs = strtotime($psDate . ' ' . $psStart);
+                $psSlot = $psStart . '–' . date('H:i', $psStartTs + $psDur * 60);
+                $psHour = (int)substr($psStart, 0, 2);
                 $ex = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
                 $ex->execute([$facility['id'], $psCourt, $psDate, $psSlot]);
                 $row = $ex->fetch();
@@ -123,8 +126,8 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                         $logRow = ['id' => 'm-' . bin2hex(random_bytes(5)), 'facility_id' => $facility['id']];
                         $pdo->prepare("INSERT INTO matches
                             (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, duration_sec, sold_at, views, billable, sport, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, 3600, NOW(), 0, 1, ?, 'presale')")
-                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . sprintf('%02d00', $psHour), $newCode,
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, " . ($psDur * 60) . ", NOW(), 0, 1, ?, 'presale')")
+                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . str_replace(':', '', $psStart), $newCode,
                                        $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
                     }
                     replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
@@ -466,7 +469,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             </div>
 
             <?php if ($viewDay >= date('Y-m-d') && $viewDay <= date('Y-m-d', strtotime('+7 days'))):
-              $psDefaultHour = ($viewDay === date('Y-m-d')) ? (int)date('G') : 18; ?>
+              $psDefault = ($viewDay === date('Y-m-d')) ? sprintf('%02d:%s', (int)date('G'), (int)date('i') >= 30 ? '30' : '00') : '18:00'; ?>
               <!-- Maçtan önce satış: ödeme alınınca kod hemen verilir, video maç bitince açılır -->
               <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3">
                 <input type="hidden" name="action" value="presell">
@@ -476,15 +479,28 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                   <div class="text-xs text-gray-500"><?= e(__('panel.presale.hint')) ?></div>
                 </div>
                 <label class="text-xs text-gray-600"><?= e(__('panel.presale.court')) ?>
-                  <select name="court" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
-                    <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
+                  <select name="court" id="psCourt" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
+                    <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>" data-sport="<?= e(strtolower($cd['sport'])) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
                   </select>
                 </label>
-                <label class="text-xs text-gray-600"><?= e(__('panel.shell.time_col')) ?>
-                  <select name="hour" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 font-mono text-sm text-gray-900">
-                    <?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= $h === $psDefaultHour ? 'selected' : '' ?>><?= sprintf('%02d:00–%02d:00', $h, $h + 1) ?></option><?php endfor; ?>
+                <label class="text-xs text-gray-600"><?= e(__('panel.presale.start')) ?>
+                  <select name="start" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 font-mono text-sm text-gray-900">
+                    <?php for ($m = 6 * 60; $m <= 23 * 60 + 30; $m += 30): $hv = sprintf('%02d:%02d', intdiv($m, 60), $m % 60); ?><option value="<?= $hv ?>" <?= $hv === $psDefault ? 'selected' : '' ?>><?= $hv ?></option><?php endfor; ?>
                   </select>
                 </label>
+                <label class="text-xs text-gray-600"><?= e(__('panel.presale.duration')) ?>
+                  <select name="duration" id="psDuration" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
+                    <?php foreach ([60, 90, 120] as $dm): ?><option value="<?= $dm ?>"><?= $dm ?> <?= e(__('panel.presale.minutes')) ?></option><?php endforeach; ?>
+                  </select>
+                </label>
+                <script>
+                  // Padel genelde 90 dk, futbol 60 dk: saha seçilince varsayılan süre
+                  (function () {
+                    var c = document.getElementById('psCourt'), d = document.getElementById('psDuration');
+                    var set = function () { var o = c.options[c.selectedIndex]; d.value = (o && o.getAttribute('data-sport') === 'padel') ? '90' : '60'; };
+                    c.addEventListener('change', set); set();
+                  })();
+                </script>
                 <button type="submit" class="rounded-md bg-gray-900 px-3.5 py-2 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.presale.button')) ?></button>
               </form>
             <?php endif; ?>

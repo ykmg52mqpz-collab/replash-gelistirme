@@ -599,6 +599,9 @@ return [
             'never' => 'Sin señal',
         ],
         'presale' => [
+            'start' => 'Inicio',
+            'duration' => 'Duración',
+            'minutes' => 'min',
             'title' => 'Vender antes del partido',
             'hint' => 'Da el código en cuanto cobres; el vídeo se abre al terminar el partido.',
             'court' => 'Pista',

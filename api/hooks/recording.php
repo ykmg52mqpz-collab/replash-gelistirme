@@ -50,16 +50,22 @@ $recordingId = $data['recordingId'] ?? null;
 $date = $data['date'] ?? null;
 $slot = $data['slot'] ?? null;
 
-if (!$slot && isset($data['startedAt'])) {
-    $time = strtotime($data['startedAt']);
-    $hour = date('H', $time);
-    $nextHour = str_pad((int)$hour + 1, 2, '0', STR_PAD_LEFT);
-    $slot = "{$hour}:00–{$nextHour}:00";
-    if (!$date) $date = date('Y-m-d', $time);
+// Gerçek başlangıç/bitiş (dakikasıyla): 18:30'da başlayan ya da 90 dk süren maç doğru dilime düşer
+if (!$slot && isset($data['startedAt']) && ($startTs = strtotime((string)$data['startedAt']))) {
+    $endTs = isset($data['endedAt']) ? strtotime((string)$data['endedAt']) : false;
+    if (!$endTs || $endTs <= $startTs) $endTs = $startTs + max(60, $durationSec);
+    $durationSec = $endTs - $startTs;
+    $slot = date('H:i', $startTs) . '–' . date('H:i', $endTs);
+    if (!$date) $date = date('Y-m-d', $startTs);
 }
 
+// Saat bilgisi olmayan bildirim yanlış dilime yazılmasın
+if (!$slot || !preg_match('/^\d{2}:\d{2}\s*[–-]\s*\d{2}:\d{2}$/u', $slot)) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'Missing startedAt or slot']);
+    exit;
+}
 if (!$date) $date = date('Y-m-d');
-if (!$slot) $slot = '18:00–19:00';
 
 try {
     // 2. Find Camera by channelId or camera id
@@ -84,10 +90,33 @@ try {
     $updCam = $pdo->prepare("UPDATE cameras SET status = 'online', last_seen_at = NOW() WHERE id = ?");
     $updCam->execute([$cam['id']]);
 
-    // 3. Upsert Match (Idempotent per facility + court + date + slot)
-    $stmt = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
-    $stmt->execute([$cam['facility_id'], $cam['court'], $date, $slot]);
-    $existing = $stmt->fetch();
+    // 3. Upsert Match — aynı kayıt tekrar gelirse ikinci maç açılmaz
+    $existing = false;
+    if ($recordingId) {
+        $stmt = $pdo->prepare("SELECT * FROM matches WHERE recording_id = ? AND facility_id = ? LIMIT 1");
+        $stmt->execute([$recordingId, $cam['facility_id']]);
+        $existing = $stmt->fetch();
+    }
+    if (!$existing) {
+        $stmt = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
+        $stmt->execute([$cam['facility_id'], $cam['court'], $date, $slot]);
+        $existing = $stmt->fetch();
+    }
+    if (!$existing) {
+        // Maçtan önce satılmış dilim: başlangıcı 45 dk içinde olan kayda bağlanır, dilim gerçek saate çekilir
+        [$recStart] = replash_slot_bounds(['date' => $date, 'time_slot' => $slot]);
+        $stmt = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND source = 'presale' AND available_at IS NULL");
+        $stmt->execute([$cam['facility_id'], $cam['court'], $date]);
+        foreach ($stmt->fetchAll() as $cand) {
+            [$cStart] = replash_slot_bounds($cand);
+            if (abs($cStart - $recStart) <= 45 * 60) {
+                $pdo->prepare("UPDATE matches SET time_slot = ? WHERE id = ?")->execute([$slot, $cand['id']]);
+                $cand['time_slot'] = $slot;
+                $existing = $cand;
+                break;
+            }
+        }
+    }
 
     $slotStart = explode('–', $slot)[0];
     $dateCompact = str_replace('-', '', $date);

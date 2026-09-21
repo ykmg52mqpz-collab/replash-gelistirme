@@ -599,6 +599,9 @@ return [
             'never' => 'Hiç sinyal yok',
         ],
         'presale' => [
+            'start' => 'Başlangıç',
+            'duration' => 'Süre',
+            'minutes' => 'dk',
             'title' => 'Maçtan önce sat',
             'hint' => 'Ödemeyi alınca kodu hemen ver; video maç bitince açılır.',
             'court' => 'Saha',

@@ -599,6 +599,9 @@ return [
             'never' => 'No signal yet',
         ],
         'presale' => [
+            'start' => 'Start',
+            'duration' => 'Length',
+            'minutes' => 'min',
             'title' => 'Sell before the match',
             'hint' => 'Give the code as soon as you get paid; the video opens after the match.',
             'court' => 'Court',
