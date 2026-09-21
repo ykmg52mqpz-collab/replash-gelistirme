@@ -113,7 +113,6 @@ require_once __DIR__ . '/includes/header.php';
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
             <?= e(__('searchSettings.codeOnly.hint')) ?>
           </span>
-          <span class="font-mono text-neutral-500 text-[11px]">Örn: AEXF-BFFG / 343434</span>
         </div>
       </div>
     </section>
@@ -178,7 +177,7 @@ require_once __DIR__ . '/includes/header.php';
           <div class="mt-4 pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
             <span><?= e(__('home.findPreview.fields.accessCode')) ?></span>
             <form action="<?= base_url('find.php') ?>" method="GET" class="flex items-center gap-2 w-full sm:w-auto">
-              <input type="text" name="code" placeholder="AEXF-BFFG" class="rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-white uppercase tracking-widest focus:border-accent focus:outline-none">
+              <input type="text" name="code" placeholder="XXXX-XXXX" class="rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-white uppercase tracking-widest focus:border-accent focus:outline-none">
               <button type="submit" class="rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent hover:text-ink-900 transition">
                 &rarr;
               </button>

@@ -51,7 +51,7 @@ require_once __DIR__ . '/includes/header.php';
   <span class="text-xs font-semibold uppercase tracking-widest text-accent">
   <?= e(__('about.mission.eyebrow')) ?>
   </span>
-  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“Her amatör maçı daha unutulmaz, daha paylaşılabilir ve daha değerli hale getirmek.”</p>
+  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“<?= e(__('about.mission.text')) ?>”</p>
   </div>
   <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-8"  data-reveal="up">
   <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
@@ -67,7 +67,7 @@ require_once __DIR__ . '/includes/header.php';
   <span class="text-xs font-semibold uppercase tracking-widest text-accent">
   <?= e(__('about.vision.eyebrow')) ?>
   </span>
-  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“Her spor tesisinin maç kaydını ışıklar, soyunma odaları veya online rezervasyon kadar doğal bir şekilde sunabildiği bir gelecek.”</p>
+  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“<?= e(__('about.vision.text')) ?>”</p>
   </div>
   </div>
   </div>

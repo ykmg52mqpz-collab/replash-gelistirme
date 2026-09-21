@@ -223,9 +223,6 @@ require_once __DIR__ . '/includes/header.php';
               <span class="w-2 h-2 rounded-full bg-accent flex-shrink-0"></span>
               <span><?= e(__('searchSettings.codeOnly.hint', 'Hesap yok, uygulama yok. Sadece kodunuzu girin ve anında izleyin.')) ?></span>
             </div>
-            <div class="font-mono text-[11px] text-neutral-500">
-              Örnek Kod: <strong class="text-neutral-400">AEXF-BFFG</strong> / <strong class="text-neutral-400">343434</strong>
-            </div>
           </div>
         </div>
       <?php else: ?>
@@ -273,9 +270,6 @@ require_once __DIR__ . '/includes/header.php';
               </button>
             </form>
 
-            <div class="mt-6 pt-4 border-t border-white/5 text-[11px] text-neutral-500 font-mono">
-              Örnek Kod: <strong class="text-neutral-400">AEXF-BFFG</strong> / <strong class="text-neutral-400">343434</strong>
-            </div>
           </div>
         <?php else: ?>
           <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10 mb-10">
