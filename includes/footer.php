@@ -25,6 +25,8 @@
         <nav class="flex flex-col gap-2">
           <span class="text-xs font-semibold uppercase tracking-widest text-white/25 mb-1"><?= e(__('nav.forPlayers')) ?></span>
           <a class="text-sm text-white/50 transition hover:text-white" href="<?= base_url('find.php') ?>"><?= e(__('footer.links.find')) ?></a>
+          <a class="text-sm text-white/50 transition hover:text-accent" href="<?= base_url('panel/index.php') ?>"><?= e(__('nav.panel')) ?> (PIN)</a>
+          <a class="text-sm text-white/50 transition hover:text-accent" href="<?= base_url('admin/index.php') ?>"><?= e(__('nav.admin')) ?></a>
         </nav>
         <div class="flex flex-col gap-4">
           <span class="text-xs font-semibold uppercase tracking-widest text-white/25">Get Started</span>
