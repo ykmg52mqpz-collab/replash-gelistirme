@@ -1,219 +1,257 @@
 <?php
 require_once __DIR__ . '/includes/init.php';
 
-$pageTitle = __('about.hero.eyebrow') ?: __('nav.about');
+$pageTitle = __('nav.about');
+$metaTitle = __('meta.about.title');
+$metaDescription = __('meta.about.description');
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-24 relative overflow-hidden bg-ink-900">
-  <div class="hero-glow"></div>
+<main class="relative bg-ink-900">
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 space-y-20 sm:space-y-24">
-    
-    <!-- Hero Title -->
-    <div class="text-center max-w-3xl mx-auto">
-      <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-        <?= htmlspecialchars(__('about.hero.eyebrow') ?: 'Hakkımızda') ?>
-      </div>
-      <h1 class="font-display text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.15] mb-6">
-        <?= htmlspecialchars(__('about.hero.title') ?: 'Amatör Sporu Dijitalleştiren Teknoloji') ?>
-      </h1>
-      <p class="text-neutral-300 text-lg sm:text-xl leading-relaxed">
-        <?= htmlspecialchars(__('about.hero.subtitle') ?: 'Replash, sahalarda oynanan milyonlarca amatör maçın kaybolup gitmesini engellemek ve modern spor tesislerine dijital güç kazandırmak için kuruldu.') ?>
-      </p>
-    </div>
-
-    <!-- ==================== MISSION & VISION CARDS ==================== -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Mission Card -->
-      <div class="card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/30 transition-all">
-        <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <circle cx="12" cy="12" r="6"></circle>
-            <circle cx="12" cy="12" r="2"></circle>
-          </svg>
-        </div>
-        <div class="text-xs font-bold uppercase tracking-widest text-accent mb-3">
-          <?= htmlspecialchars(__('about.missionVision.mission.eyebrow') ?: 'MİSYONUMUZ') ?>
-        </div>
-        <p class="text-neutral-300 text-base sm:text-lg leading-relaxed font-light">
-          <?= htmlspecialchars(__('about.missionVision.mission.quote') ?: '"Her amatör maçı daha unutulmaz, daha paylaşılabilir ve daha değerli kılmak."') ?>
-        </p>
-      </div>
-
-      <!-- Vision Card -->
-      <div class="card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 bg-white/[0.02] hover:border-accent/30 transition-all">
-        <div class="w-12 h-12 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-6">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="M4.93 4.93l1.41 1.41"></path>
-            <path d="M17.66 17.66l1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="M6.34 17.66l-1.41 1.41"></path>
-            <path d="M19.07 4.93l-1.41 1.41"></path>
-            <circle cx="12" cy="12" r="4"></circle>
-          </svg>
-        </div>
-        <div class="text-xs font-bold uppercase tracking-widest text-accent mb-3">
-          <?= htmlspecialchars(__('about.missionVision.vision.eyebrow') ?: 'VİZYONUMUZ') ?>
-        </div>
-        <p class="text-neutral-300 text-base sm:text-lg leading-relaxed font-light">
-          <?= htmlspecialchars(__('about.missionVision.vision.quote') ?: '"Her spor tesisinin ışıklandırma, soyunma odası veya online rezervasyon sunması kadar doğal bir şekilde maç kaydı sunabildiği bir gelecek."') ?>
-        </p>
-      </div>
-    </div>
-
-    <!-- ==================== STORY SECTION ==================== -->
-    <div class="pt-4 max-w-4xl">
-      <h2 class="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-[1.15] mb-6">
-        <?= htmlspecialchars(__('about.story.title') ?: 'Oynamayı sevenlerden, oynamayı sevenler için.') ?>
-      </h2>
-      <p class="text-neutral-300 text-base sm:text-lg leading-relaxed mb-8">
-        <?= htmlspecialchars(__('about.story.desc') ?: 'Replash\'i her hafta gördüğümüz basit bir ihtiyaçtan kurduk: Harika bir maç oynuyorsunuz ve geriye tekrar izleyecek hiçbir şey kalmıyor. Amatör futbol ve padel, profesyonel sporun sahip olduğu en güzel anları yeniden yaşama şansını hak ediyor.') ?>
-      </p>
-
-      <div class="space-y-4">
-        <?php for ($i = 1; $i <= 3; $i++): ?>
-          <div class="flex items-center gap-3.5">
-            <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
-              <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
-            </div>
-            <span class="text-sm sm:text-base text-neutral-300 font-medium">
-              <?= htmlspecialchars(__('about.story.bullets.' . $i)) ?>
-            </span>
-          </div>
-        <?php endfor; ?>
-      </div>
-    </div>
-
-    <!-- ==================== STATS ROW ==================== -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-      <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10">
-        <div class="font-display text-4xl sm:text-5xl font-bold text-accent mb-2">
-          <?= htmlspecialchars(__('about.stats.1.val') ?: '%100') ?>
-        </div>
-        <div class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-          <?= htmlspecialchars(__('about.stats.1.label') ?: 'Otomatik Kayıt') ?>
-        </div>
-      </div>
-      <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10">
-        <div class="font-display text-4xl sm:text-5xl font-bold text-accent mb-2">
-          <?= htmlspecialchars(__('about.stats.2.val') ?: '< 8 dk') ?>
-        </div>
-        <div class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-          <?= htmlspecialchars(__('about.stats.2.label') ?: 'Hazır Olma Süresi') ?>
-        </div>
-      </div>
-      <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10">
-        <div class="font-display text-4xl sm:text-5xl font-bold text-accent mb-2">
-          <?= htmlspecialchars(__('about.stats.3.val') ?: '0 Efor') ?>
-        </div>
-        <div class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-          <?= htmlspecialchars(__('about.stats.3.label') ?: 'Tesis Personeli İçin') ?>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== BUILT FOR EVERYDAY SPORT ==================== -->
-    <div class="pt-8 sm:pt-12 border-t border-white/5 space-y-12">
-      <div class="text-center">
-        <h2 class="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-          <?= htmlspecialchars(__('about.everydaySport.title') ?: 'Gündelik spor için tasarlandı.') ?>
-        </h2>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Football Facilities -->
-        <div class="card-elevated rounded-3xl p-6 sm:p-7 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all text-center flex flex-col items-center">
-          <div class="w-14 h-14 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-5">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-              <path d="M2 12h20"></path>
-            </svg>
-          </div>
-          <h3 class="font-display text-base sm:text-lg font-bold text-white mb-2">
-            <?= htmlspecialchars(__('about.everydaySport.cards.football.title') ?: 'Futbol Tesisleri') ?>
-          </h3>
-          <p class="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-            <?= htmlspecialchars(__('about.everydaySport.cards.football.desc') ?: 'Premium bir deneyim sunmak isteyen halı saha, 7\'ye 7 ve futsal tesisleri.') ?>
-          </p>
-        </div>
-
-        <!-- Padel Clubs -->
-        <div class="card-elevated rounded-3xl p-6 sm:p-7 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all text-center flex flex-col items-center">
-          <div class="w-14 h-14 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-5">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <ellipse cx="12" cy="9" rx="6" ry="7"></ellipse>
-              <path d="M12 16v6"></path>
-              <path d="M10 22h4"></path>
-              <circle cx="10" cy="7" r="0.8" fill="currentColor"></circle>
-              <circle cx="14" cy="7" r="0.8" fill="currentColor"></circle>
-              <circle cx="12" cy="10" r="0.8" fill="currentColor"></circle>
-            </svg>
-          </div>
-          <h3 class="font-display text-base sm:text-lg font-bold text-white mb-2">
-            <?= htmlspecialchars(__('about.everydaySport.cards.padel.title') ?: 'Padel Kulüpleri') ?>
-          </h3>
-          <p class="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-            <?= htmlspecialchars(__('about.everydaySport.cards.padel.desc') ?: 'Hızla büyüyen pazarda öne çıkmak isteyen modern padel tesisleri.') ?>
-          </p>
-        </div>
-
-        <!-- Amateur Sports Venues -->
-        <div class="card-elevated rounded-3xl p-6 sm:p-7 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all text-center flex flex-col items-center">
-          <div class="w-14 h-14 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-5">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-              <path d="M9 22v-4h6v4"></path>
-              <path d="M8 6h.01"></path>
-              <path d="M16 6h.01"></path>
-              <path d="M8 10h.01"></path>
-              <path d="M16 10h.01"></path>
-              <path d="M8 14h.01"></path>
-              <path d="M16 14h.01"></path>
-            </svg>
-          </div>
-          <h3 class="font-display text-base sm:text-lg font-bold text-white mb-2">
-            <?= htmlspecialchars(__('about.everydaySport.cards.venues.title') ?: 'Amatör Spor Tesisleri') ?>
-          </h3>
-          <p class="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-            <?= htmlspecialchars(__('about.everydaySport.cards.venues.desc') ?: 'Düzenli, tekrarlayan maçlara ev sahipliği yapan ve unutulmaz bir deneyim sunmak isteyen her tesis.') ?>
-          </p>
-        </div>
-
-        <!-- Players -->
-        <div class="card-elevated rounded-3xl p-6 sm:p-7 border border-white/10 bg-white/[0.02] hover:border-accent/40 transition-all text-center flex flex-col items-center">
-          <div class="w-14 h-14 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mb-5">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-          <h3 class="font-display text-base sm:text-lg font-bold text-white mb-2">
-            <?= htmlspecialchars(__('about.everydaySport.cards.players.title') ?: 'Oyuncular') ?>
-          </h3>
-          <p class="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-            <?= htmlspecialchars(__('about.everydaySport.cards.players.desc') ?: 'Kendi kimlikleri altında maçlarını izlemek, klip kesmek ve paylaşmak isteyen amatör oyuncular.') ?>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Contact CTA -->
-    <div class="text-center pt-8">
-      <a href="<?= base_url('contact.php') ?>" class="inline-flex rounded-full bg-accent px-8 py-3.5 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-        <?= htmlspecialchars(__('about.cta') ?: 'Bizimle İletişime Geçin') ?> &rarr;
-      </a>
-    </div>
-
+  <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
+  <div class="absolute inset-0" aria-hidden="true">
+  <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover object-center" style="opacity:0.5"/>
   </div>
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
+  </div>
+  </div>
+  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
+  </div>
+  <div class="container-x relative text-center">
+  <h1 class="mx-auto max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
+  <?= e(__('about.hero.title')) ?>
+  </h1>
+  <p class="mx-auto mt-6 max-w-2xl text-lg text-white/55 md:text-xl"  data-reveal="up">
+  <?= e(__('about.hero.subtitle')) ?>
+  </p>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-section-gradient">
+  <div class="container-x">
+  <div class="grid gap-6 md:grid-cols-2">
+  <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-8"  data-reveal="up">
+  <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="10">
+  </circle>
+  <circle cx="12" cy="12" r="6">
+  </circle>
+  <circle cx="12" cy="12" r="2" fill="currentColor">
+  </circle>
+  </svg>
+  </div>
+  <span class="text-xs font-semibold uppercase tracking-widest text-accent">
+  <?= e(__('about.mission.eyebrow')) ?>
+  </span>
+  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“Her amatör maçı daha unutulmaz, daha paylaşılabilir ve daha değerli hale getirmek.”</p>
+  </div>
+  <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-8"  data-reveal="up">
+  <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2 12h20">
+  </path>
+  <path d="M2 12c0-5.523 4.477-10 10-10s10 4.477 10 10">
+  </path>
+  <circle cx="12" cy="12" r="3">
+  </circle>
+  </svg>
+  </div>
+  <span class="text-xs font-semibold uppercase tracking-widest text-accent">
+  <?= e(__('about.vision.eyebrow')) ?>
+  </span>
+  <p class="mt-3 text-lg font-medium leading-relaxed text-white/80">“Her spor tesisinin maç kaydını ışıklar, soyunma odaları veya online rezervasyon kadar doğal bir şekilde sunabildiği bir gelecek.”</p>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-section-gradient">
+  <div class="container-x">
+  <div class="mx-auto max-w-2xl"  data-reveal="up">
+  <div class="max-w-3xl "  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('about.founders.title')) ?>
+  </h2>
+  </div>
+  <p class="mt-5 text-base leading-relaxed text-white/60">
+  <?= e(__('about.founders.desc')) ?>
+  </p>
+  <div class="mt-7 flex flex-col gap-3">
+  <div class="flex items-center gap-2.5">
+  <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10">
+  <span class="h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  </span>
+  <span class="text-sm text-white/65">
+  <?= e(__('about.founders.values.1')) ?>
+  </span>
+  </div>
+  <div class="flex items-center gap-2.5">
+  <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10">
+  <span class="h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  </span>
+  <span class="text-sm text-white/65">
+  <?= e(__('about.founders.values.2')) ?>
+  </span>
+  </div>
+  <div class="flex items-center gap-2.5">
+  <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10">
+  <span class="h-1.5 w-1.5 rounded-full bg-accent">
+  </span>
+  </span>
+  <span class="text-sm text-white/65">
+  <?= e(__('about.founders.values.3')) ?>
+  </span>
+  </div>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0" aria-hidden="true">
+  <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" >
+  <img src="<?= asset('images/gen_padel_club_empty.jpg') ?>" alt="" class="h-full w-full object-cover" style="opacity:0.12"/>
+  </div>
+  </div>
+  <div class="absolute inset-0 bg-ink-900/80">
+  </div>
+  </div>
+  <div class="container-x relative">
+  <div class="mx-auto max-w-2xl text-center">
+  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('about.story.title')) ?>
+  </h2>
+  </div>
+  <p class="mt-5 text-base leading-relaxed text-white/60"  data-reveal="up">
+  <?= e(__('about.story.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-section-gradient">
+  <div class="container-x">
+  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
+  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
+  <?= e(__('about.whoWeServe.title')) ?>
+  </h2>
+  </div>
+  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="rounded-2xl border border-white/8 bg-white/[0.025] p-6 text-center"  data-reveal="up">
+  <div class="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="10">
+  </circle>
+  <path d="M12 2l3 6-3 4-3-4 3-6z">
+  </path>
+  <path d="M22 12l-6 3-4-3 4-3 6 3z">
+  </path>
+  <path d="M12 22l-3-6 3-4 3 4-3 6z">
+  </path>
+  <path d="M2 12l6-3 4 3-4 3-6-3z">
+  </path>
+  </svg>
+  </div>
+  <h3 class="mb-2 text-sm font-semibold text-white">
+  <?= e(__('about.whoWeServe.items.1.title')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/50">
+  <?= e(__('about.whoWeServe.items.1.desc')) ?>
+  </p>
+  </div>
+  <div class="rounded-2xl border border-white/8 bg-white/[0.025] p-6 text-center"  data-reveal="up">
+  <div class="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <ellipse cx="12" cy="9" rx="6" ry="7">
+  </ellipse>
+  <line x1="12" y1="16" x2="12" y2="22">
+  </line>
+  <circle cx="9" cy="8" r="0.5" fill="currentColor">
+  </circle>
+  <circle cx="14" cy="7" r="0.5" fill="currentColor">
+  </circle>
+  <circle cx="11" cy="11" r="0.5" fill="currentColor">
+  </circle>
+  </svg>
+  </div>
+  <h3 class="mb-2 text-sm font-semibold text-white">
+  <?= e(__('about.whoWeServe.items.2.title')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/50">
+  <?= e(__('about.whoWeServe.items.2.desc')) ?>
+  </p>
+  </div>
+  <div class="rounded-2xl border border-white/8 bg-white/[0.025] p-6 text-center"  data-reveal="up">
+  <div class="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 21h18">
+  </path>
+  <path d="M5 21V7l7-4 7 4v14">
+  </path>
+  <path d="M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01">
+  </path>
+  </svg>
+  </div>
+  <h3 class="mb-2 text-sm font-semibold text-white">
+  <?= e(__('about.whoWeServe.items.3.title')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/50">
+  <?= e(__('about.whoWeServe.items.3.desc')) ?>
+  </p>
+  </div>
+  <div class="rounded-2xl border border-white/8 bg-white/[0.025] p-6 text-center"  data-reveal="up">
+  <div class="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2">
+  </path>
+  <circle cx="9" cy="7" r="4">
+  </circle>
+  <path d="M23 21v-2a4 4 0 0 0-3-3.87">
+  </path>
+  <path d="M16 3.13a4 4 0 0 1 0 7.75">
+  </path>
+  </svg>
+  </div>
+  <h3 class="mb-2 text-sm font-semibold text-white">
+  <?= e(__('about.whoWeServe.items.4.title')) ?>
+  </h3>
+  <p class="text-xs leading-relaxed text-white/50">
+  <?= e(__('about.whoWeServe.items.4.desc')) ?>
+  </p>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <section class="section-y border-t border-white/5 bg-section-gradient relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.10), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="container-x relative text-center">
+  <div  data-reveal="up">
+  <h2 class="mx-auto max-w-lg font-display text-3xl font-bold tracking-tight text-balance md:text-4xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+  <?= e(__('about.cta.title')) ?>
+  </h2>
+  <div class="mt-8">
+  <a class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] hover:bg-accent-neon hover:shadow-[0_0_50px_rgba(254,243,199,0.5)]" href="<?= base_url('contact.php') ?>">
+  <?= e(__('about.cta.button')) ?>
+  </a>
+  </div>
+  </div>
+  </div>
+  </section>
+
 </main>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-

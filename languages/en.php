@@ -804,9 +804,9 @@ return [
     ],
     'about' => [
         'hero' => [
-            'eyebrow' => 'About Us',
-            'title' => 'Technology that Digitalizes Amateur Sport',
-            'subtitle' => 'Replash was built to ensure millions of amateur matches aren\'t lost to memory and to give modern sports venues digital superpower.'
+            'eyebrow' => 'About Replash',
+            'title' => 'Bringing the replay to everyday amateur sport.',
+            'subtitle' => 'Replash brings professional-grade video to everyday amateur football and padel matches.'
         ],
         'missionVision' => [
             'mission' => [
@@ -819,13 +819,14 @@ return [
             ]
         ],
         'story' => [
-            'title' => 'From people who love to play, for people who love to play.',
-            'desc' => 'We built Replash from something simple we see every week: you play a great match, and there\'s nothing left to rewatch. Amateur football and padel deserve the same chance to relive their best moments that professional sport has.',
+            'title' => 'Amateur sport deserves better than being forgotten.',
+            'desc' => 'Every weekend, thousands of matches are played and forgotten. Players give everything on the pitch. And walk away with nothing but a memory. Replash was created to change that. We believe every match has a story worth telling, and every player deserves to see it again. And share it.',
             'bullets' => [
                 '1' => 'Born from amateur sport, not from a slide',
                 '2' => 'Built on a real player need',
                 '3' => 'Made for facilities and players across Europe'
-            ]
+            ],
+            'eyebrow' => 'The Idea'
         ],
         'stats' => [
             '1' => [
@@ -862,7 +863,95 @@ return [
                 ]
             ]
         ],
-        'cta' => 'Contact Us'
+        'cta' => [
+            'title' => 'Want to bring Replash to your facility?',
+            'button' => 'Contact Us'
+        ],
+        'unimi' => [
+            'eyebrow' => 'Università degli Studi di Milano',
+            'title' => 'Our university stands behind us.',
+            'desc' => 'Replash was born inside the Economics, Behaviour Data and Policy program at Università degli Studi di Milano. The project\'s foundation is academic: behavioral economics, habit formation, and how markets respond to new consumption patterns. The university\'s support gives us the institutional grounding to build responsibly. From GDPR posture to data ethics.',
+            'badge' => 'Università degli Studi di Milano',
+            'items' => [
+                '1' => [
+                    'title' => 'Academic Foundation',
+                    'desc' => 'Founded on observed behavioral patterns: identity-building through documentation (Goffman, 1959), sport-sharing scale (Strava), and Gen Z social motivation.'
+                ],
+                '2' => [
+                    'title' => 'Institutional Backing',
+                    'desc' => 'Developed with academic guidance from UniMi. IP framework, GDPR posture, and ethical data practices shaped within a university-grade environment.'
+                ],
+                '3' => [
+                    'title' => 'Real-World Lab',
+                    'desc' => 'Replash creates an environment with real customers and real data. Connected to UniMi for research, internships, and applied learning inside a GDPR-compliant production environment.'
+                ]
+            ]
+        ],
+        'founders' => [
+            'eyebrow' => 'Who\'s behind it',
+            'title' => 'From people who love to play, for people who love to play.',
+            'desc' => 'We built Replash from something simple we see every week: you play a great match, and there\'s nothing left to rewatch. Amateur football and padel deserve the same chance to relive their best moments that professional sport has.',
+            'values' => [
+                '1' => 'Born from amateur sport, not from a slide',
+                '2' => 'Built on a real player need',
+                '3' => 'Made for facilities and players across Europe'
+            ]
+        ],
+        'mission' => [
+            'eyebrow' => 'Our Mission',
+            'text' => 'To make every amateur match more memorable, more shareable, and more valuable.'
+        ],
+        'vision' => [
+            'eyebrow' => 'Our Vision',
+            'text' => 'A future where every sports facility can offer match recording as naturally as it offers lights, changing rooms, or online booking.'
+        ],
+        'whoWeServe' => [
+            'eyebrow' => 'Who We Serve',
+            'title' => 'Built for everyday sport.',
+            'items' => [
+                '1' => [
+                    'title' => 'Football Facilities',
+                    'desc' => 'Five-a-side, seven-a-side, and futsal venues looking to offer a premium experience.'
+                ],
+                '2' => [
+                    'title' => 'Padel Clubs',
+                    'desc' => 'Modern padel facilities that want to stand out in a rapidly growing market.'
+                ],
+                '3' => [
+                    'title' => 'Amateur Sports Venues',
+                    'desc' => 'Any venue that hosts regular, recurring matches and wants to offer something memorable.'
+                ],
+                '4' => [
+                    'title' => 'Players',
+                    'desc' => 'Amateur players who want to watch, clip, and share their match. Under their own identity.'
+                ]
+            ]
+        ],
+        'values' => [
+            'eyebrow' => 'Our Values',
+            'items' => [
+                '1' => [
+                    'title' => 'Simplicity',
+                    'desc' => 'Technology should disappear into the background. The experience should feel effortless.'
+                ],
+                '2' => [
+                    'title' => 'Privacy',
+                    'desc' => 'Players trust us with their data. We take that seriously. No facial recognition, no surveillance, full GDPR posture.'
+                ],
+                '3' => [
+                    'title' => 'Reliability',
+                    'desc' => 'Every match recorded, every time. Facilities and players can count on Replash to work.'
+                ],
+                '4' => [
+                    'title' => 'Player Experience',
+                    'desc' => 'Everything we build starts with the question: does this make the player\'s experience better?'
+                ],
+                '5' => [
+                    'title' => 'Facility Growth',
+                    'desc' => 'Replash only succeeds when the facilities we work with succeed. That\'s built into the model.'
+                ]
+            ]
+        ]
     ],
     'forPlayers' => [
         'hero' => [
@@ -1026,10 +1115,7 @@ return [
             'title' => 'Bring Your Facility into the Future',
             'subtitle' => 'Fill out the form below to apply for a pilot venue or ask any questions you may have.'
         ],
-        'success' => [
-            'title' => 'Application Received!',
-            'desc' => 'Our team will contact you as soon as possible. Thank you for your interest.'
-        ],
+        'success' => 'Message received! We\'ll be in touch within 24 hours.',
         'errors' => [
             'required' => 'Please enter your name and email address.',
             'general' => 'An error occurred during submission: '
@@ -1052,7 +1138,34 @@ return [
             'message' => 'Your Message or Questions',
             'messagePlaceholder' => 'Write details about your facility or any questions you have...',
             'submit' => 'Submit Application'
-        ]
+        ],
+        'eyebrow' => 'Get in Touch',
+        'title' => 'Let\'s talk about your facility.',
+        'subtitle' => 'Whether you want a demo, have questions, or are ready to get started. We\'re here.',
+        'fields' => [
+            'name' => 'Your Name',
+            'facilityName' => 'Facility Name',
+            'email' => 'Email Address',
+            'phone' => 'Phone Number (optional)',
+            'sport' => 'Sport',
+            'message' => 'Tell us about your facility (optional)',
+            'sportOptions' => [
+                'football' => 'Football / Futsal',
+                'padel' => 'Padel',
+                'other' => 'Other'
+            ],
+            'sportOtherPlaceholder' => 'Specify your sport...'
+        ],
+        'submit' => 'Send Message',
+        'submitting' => 'Sending...',
+        'error' => 'Something went wrong. Please try again in a moment.',
+        'trust' => 'No commitment required. Free consultation. Response within 24 hours.',
+        'whatsapp' => [
+            'aria' => 'Chat on WhatsApp',
+            'prefill' => 'Hi! I\'d like to know more about Replash for my facility.'
+        ],
+        'whatsappIntro' => 'Hi! I\'d like to apply to the Replash pilot program:',
+        'whatsappSubmit' => 'Send via WhatsApp'
     ],
     'searchSettings' => [
         'codeOnly' => [

@@ -804,9 +804,9 @@ return [
     ],
     'about' => [
         'hero' => [
-            'eyebrow' => 'Hakkımızda',
-            'title' => 'Amatör Sporu Dijitalleştiren Teknoloji',
-            'subtitle' => 'Replash, sahalarda oynanan milyonlarca amatör maçın kaybolup gitmesini engellemek ve modern spor tesislerine dijital güç kazandırmak için kuruldu.'
+            'eyebrow' => 'Replash Hakkında',
+            'title' => 'Tekrar izlemeyi günlük amatör spora getiriyoruz.',
+            'subtitle' => 'Replash, her gün oynanan amatör futbol ve padel maçlarına profesyonel kalitede video deneyimi getirir.'
         ],
         'missionVision' => [
             'mission' => [
@@ -819,13 +819,14 @@ return [
             ]
         ],
         'story' => [
-            'title' => 'Oynamayı sevenlerden, oynamayı sevenler için.',
-            'desc' => 'Replash\'i her hafta gördüğümüz basit bir ihtiyaçtan kurduk: Harika bir maç oynuyorsunuz ve geriye tekrar izleyecek hiçbir şey kalmıyor. Amatör futbol ve padel, profesyonel sporun sahip olduğu en güzel anları yeniden yaşama şansını hak ediyor.',
+            'title' => 'Amatör spor unutulmaktan daha iyisini hak ediyor.',
+            'desc' => 'Her hafta sonu binlerce maç oynanır ve unutulur. Oyuncular sahada her şeyini verir. Ve sadece bir hatırayla ayrılır. Replash bunu değiştirmek için yaratıldı. Her maçın anlatılmaya değer bir hikayesi olduğuna ve her oyuncunun onu tekrar görmeyi. Ve paylaşmayı. Hak ettiğine inanıyoruz.',
             'bullets' => [
                 '1' => 'Bir sunumdan değil, amatör sporun içinden doğdu',
                 '2' => 'Gerçek bir oyuncu ihtiyacı üzerine inşa edildi',
                 '3' => 'Avrupa genelindeki tesisler ve oyuncular için üretildi'
-            ]
+            ],
+            'eyebrow' => 'Fikir'
         ],
         'stats' => [
             '1' => [
@@ -862,7 +863,95 @@ return [
                 ]
             ]
         ],
-        'cta' => 'Bizimle İletişime Geçin'
+        'cta' => [
+            'title' => 'Replash\'i sahanıza getirmek ister misiniz?',
+            'button' => 'İletişime Geçin'
+        ],
+        'unimi' => [
+            'eyebrow' => 'Università degli Studi di Milano',
+            'title' => 'Üniversitemiz arkamızda duruyor.',
+            'desc' => 'Replash, Università degli Studi di Milano\'daki Economics, Behaviour Data and Policy programı içinde doğdu. Projenin temeli akademik: davranışsal ekonomi, alışkanlık oluşumu ve piyasaların yeni tüketim kalıplarına nasıl tepki verdiği. Üniversitenin desteği, GDPR duruşundan veri etiğine kadar sorumlu bir şekilde inşa etmemiz için kurumsal zemin sağlıyor.',
+            'badge' => 'Università degli Studi di Milano',
+            'items' => [
+                '1' => [
+                    'title' => 'Akademik Temel',
+                    'desc' => 'Gözlemlenen davranışsal kalıplara dayanır: dokümantasyon yoluyla kimlik inşası (Goffman, 1959), spor paylaşımı ölçeği (Strava) ve Z kuşağı sosyal motivasyonu.'
+                ],
+                '2' => [
+                    'title' => 'Kurumsal Destek',
+                    'desc' => 'UniMi\'den akademik rehberlikle geliştirildi. IP çerçevesi, GDPR duruşu ve etik veri uygulamaları üniversite seviyesinde bir ortamda şekillendi.'
+                ],
+                '3' => [
+                    'title' => 'Gerçek Dünya Laboratuvarı',
+                    'desc' => 'Replash gerçek müşteriler ve gerçek verilerle bir ortam yaratıyor. Araştırma, staj ve uygulamalı öğrenim için UniMi ile bağlantılı, GDPR uyumlu bir üretim ortamı içinde.'
+                ]
+            ]
+        ],
+        'founders' => [
+            'eyebrow' => 'Arkasındaki ekip',
+            'title' => 'Oynamayı sevenlerden, oynamayı sevenlere.',
+            'desc' => 'Replash\'i her hafta gördüğümüz basit bir şeyden yola çıkarak kurduk: güzel bir maç oynuyorsun ve geriye tekrar izleyecek hiçbir şey kalmıyor. Amatör futbol ve padel de, en güzel anlarını yeniden yaşama şansını profesyonel spor kadar hak ediyor.',
+            'values' => [
+                '1' => 'Bir sunumdan değil, amatör spordan doğdu',
+                '2' => 'Gerçek bir oyuncu ihtiyacı üzerine kuruldu',
+                '3' => 'Avrupa\'daki tesisler ve oyuncular için tasarlandı'
+            ]
+        ],
+        'mission' => [
+            'eyebrow' => 'Misyonumuz',
+            'text' => 'Her amatör maçı daha unutulmaz, daha paylaşılabilir ve daha değerli hale getirmek.'
+        ],
+        'vision' => [
+            'eyebrow' => 'Vizyonumuz',
+            'text' => 'Her spor tesisinin maç kaydını ışıklar, soyunma odaları veya online rezervasyon kadar doğal bir şekilde sunabildiği bir gelecek.'
+        ],
+        'whoWeServe' => [
+            'eyebrow' => 'Kime Hizmet Veriyoruz',
+            'title' => 'Günlük spor için inşa edildi.',
+            'items' => [
+                '1' => [
+                    'title' => 'Futbol Sahaları',
+                    'desc' => 'Premium deneyim sunmak isteyen 5\'lik, 7\'lik ve futsal sahaları.'
+                ],
+                '2' => [
+                    'title' => 'Padel Kulüpleri',
+                    'desc' => 'Hızla büyüyen bir pazarda öne çıkmak isteyen modern padel tesisleri.'
+                ],
+                '3' => [
+                    'title' => 'Amatör Spor Tesisleri',
+                    'desc' => 'Düzenli, tekrarlayan maçlar düzenleyen ve unutulmaz bir şey sunmak isteyen her tesis.'
+                ],
+                '4' => [
+                    'title' => 'Oyuncular',
+                    'desc' => 'Maçlarını izlemek, kesmek ve paylaşmak isteyen. Kendi kimlikleri altında. Amatör oyuncular.'
+                ]
+            ]
+        ],
+        'values' => [
+            'eyebrow' => 'Değerlerimiz',
+            'items' => [
+                '1' => [
+                    'title' => 'Basitlik',
+                    'desc' => 'Teknoloji arka plana saklanmalı. Deneyim çaba gerektirmemeli.'
+                ],
+                '2' => [
+                    'title' => 'Gizlilik',
+                    'desc' => 'Oyuncular verilerini bize emanet eder. Bunu ciddiye alırız. Yüz tanıma yok, gözetim yok, tam GDPR duruşu.'
+                ],
+                '3' => [
+                    'title' => 'Güvenilirlik',
+                    'desc' => 'Her maç kaydedilir, her zaman. Sahalar ve oyuncular Replash\'in çalışmasına güvenebilir.'
+                ],
+                '4' => [
+                    'title' => 'Oyuncu Deneyimi',
+                    'desc' => 'İnşa ettiğimiz her şey şu soruyla başlar: bu, oyuncunun deneyimini daha iyi hale getiriyor mu?'
+                ],
+                '5' => [
+                    'title' => 'Saha Büyümesi',
+                    'desc' => 'Replash yalnızca birlikte çalıştığımız sahalar başarılı olduğunda başarılıdır. Bu modelin içinde kuruludur.'
+                ]
+            ]
+        ]
     ],
     'forPlayers' => [
         'hero' => [
@@ -1027,10 +1116,7 @@ return [
             'title' => 'Tesisinizi Geleceğe Taşıyın',
             'subtitle' => 'Aşağıdaki formu doldurarak pilot saha başvurusunda bulunabilir veya aklınıza takılan soruları sorabilirsiniz.'
         ],
-        'success' => [
-            'title' => 'Başvurunuz Alındı!',
-            'desc' => 'Ekibimiz en kısa sürede sizinle iletişime geçecektir. İlginiz için teşekkür ederiz.'
-        ],
+        'success' => 'Mesajınız alındı! 24 saat içinde size ulaşacağız.',
         'errors' => [
             'required' => 'Lütfen adınızı ve e-posta adresinizi giriniz.',
             'general' => 'Kayıt sırasında bir hata oluştu: '
@@ -1053,7 +1139,34 @@ return [
             'message' => 'Mesajınız veya Sorularınız',
             'messagePlaceholder' => 'Tesisiniz hakkında detaylar veya sorularınızı yazabilirsiniz...',
             'submit' => 'Başvuruyu Gönder'
-        ]
+        ],
+        'eyebrow' => 'İletişime Geçin',
+        'title' => 'Sahanız hakkında konuşalım.',
+        'subtitle' => 'Demo istemek, sorularınız olmak veya başlamaya hazır olmak. Biz buradayız.',
+        'fields' => [
+            'name' => 'Adınız',
+            'facilityName' => 'Saha Adı',
+            'email' => 'E-posta Adresi',
+            'phone' => 'Telefon Numarası (isteğe bağlı)',
+            'sport' => 'Spor',
+            'message' => 'Sahanızdan bahsedin (isteğe bağlı)',
+            'sportOptions' => [
+                'football' => 'Futbol / Futsal',
+                'padel' => 'Padel',
+                'other' => 'Diğer'
+            ],
+            'sportOtherPlaceholder' => 'Sporu belirtin...'
+        ],
+        'submit' => 'Mesaj Gönder',
+        'submitting' => 'Gönderiliyor...',
+        'error' => 'Bir şeyler yanlış gitti. Lütfen birazdan tekrar deneyin.',
+        'trust' => 'Taahhüt gerekmez. Ücretsiz danışmanlık. 24 saat içinde yanıt.',
+        'whatsapp' => [
+            'aria' => 'WhatsApp\'tan yaz',
+            'prefill' => 'Merhaba! Tesisim için Replash hakkında bilgi almak istiyorum.'
+        ],
+        'whatsappIntro' => 'Merhaba! Replash pilot programı için başvurmak istiyorum:',
+        'whatsappSubmit' => 'WhatsApp\'tan gönder'
     ],
     'searchSettings' => [
         'codeOnly' => [

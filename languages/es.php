@@ -804,9 +804,9 @@ return [
     ],
     'about' => [
         'hero' => [
-            'eyebrow' => 'Sobre Nosotros',
-            'title' => 'Tecnología que Digitaliza el Deporte Amateur',
-            'subtitle' => 'Replash nació para evitar que millones de partidos amateur queden en el olvido y para dotar a las instalaciones deportivas modernas de un superpoder digital.'
+            'eyebrow' => 'Sobre Replash',
+            'title' => 'Llevamos la repetición al deporte amateur de cada día.',
+            'subtitle' => 'Replash lleva vídeo de nivel profesional a los partidos amateur de fútbol y pádel de cada día.'
         ],
         'missionVision' => [
             'mission' => [
@@ -819,13 +819,14 @@ return [
             ]
         ],
         'story' => [
-            'title' => 'De personas que aman jugar, para personas que aman jugar.',
-            'desc' => 'Creamos Replash a partir de una necesidad real que vemos cada semana: juegas un partidazo y no queda nada para volver a ver. El fútbol y el pádel amateur merecen la misma oportunidad de revivir sus mejores momentos que el deporte profesional.',
+            'title' => 'El deporte amateur merece algo mejor que ser olvidado.',
+            'desc' => 'Cada fin de semana, miles de partidos se juegan y se olvidan. Los jugadores lo dan todo en el campo. Y se van solo con un recuerdo. Replash fue creado para cambiar eso. Creemos que cada partido tiene una historia que vale la pena contar, y cada jugador merece verla de nuevo. Y compartirla.',
             'bullets' => [
                 '1' => 'Nacido del deporte amateur, no de una presentación corporativa',
                 '2' => 'Construido sobre una necesidad real de los jugadores',
                 '3' => 'Diseñado para instalaciones y jugadores de toda Europa'
-            ]
+            ],
+            'eyebrow' => 'La Idea'
         ],
         'stats' => [
             '1' => [
@@ -862,7 +863,95 @@ return [
                 ]
             ]
         ],
-        'cta' => 'Contáctanos'
+        'cta' => [
+            'title' => '¿Quieres traer Replash a tu centro?',
+            'button' => 'Contáctanos'
+        ],
+        'unimi' => [
+            'eyebrow' => 'Università degli Studi di Milano',
+            'title' => 'Nuestra universidad está detrás de nosotros.',
+            'desc' => 'Replash nació dentro del programa Economics, Behaviour Data and Policy en la Università degli Studi di Milano. La base del proyecto es académica: economía conductual, formación de hábitos y cómo los mercados responden a nuevos patrones de consumo. El apoyo de la universidad nos da la base institucional para construir de forma responsable. Desde la postura RGPD hasta la ética de datos.',
+            'badge' => 'Università degli Studi di Milano',
+            'items' => [
+                '1' => [
+                    'title' => 'Base Académica',
+                    'desc' => 'Fundado en patrones de comportamiento observados: construcción de identidad mediante documentación (Goffman, 1959), escala de compartir deportivo (Strava) y motivación social de la Gen Z.'
+                ],
+                '2' => [
+                    'title' => 'Respaldo Institucional',
+                    'desc' => 'Desarrollado con guía académica de UniMi. Marco IP, postura RGPD y prácticas éticas de datos formadas dentro de un entorno de nivel universitario.'
+                ],
+                '3' => [
+                    'title' => 'Laboratorio del Mundo Real',
+                    'desc' => 'Replash crea un entorno con clientes reales y datos reales. Conectado con UniMi para investigación, prácticas y aprendizaje aplicado dentro de un entorno de producción conforme al RGPD.'
+                ]
+            ]
+        ],
+        'founders' => [
+            'eyebrow' => 'Quién está detrás',
+            'title' => 'De quienes aman jugar, para quienes aman jugar.',
+            'desc' => 'Creamos Replash a partir de algo simple que vemos cada semana: juegas un gran partido y no queda nada que volver a ver. El fútbol y el pádel amateur merecen la misma oportunidad de revivir sus mejores momentos que el deporte profesional.',
+            'values' => [
+                '1' => 'Nacido del deporte amateur, no de una diapositiva',
+                '2' => 'Construido sobre una necesidad real de los jugadores',
+                '3' => 'Pensado para centros y jugadores de toda Europa'
+            ]
+        ],
+        'mission' => [
+            'eyebrow' => 'Nuestra Misión',
+            'text' => 'Hacer cada partido amateur más memorable, más compartible y más valioso.'
+        ],
+        'vision' => [
+            'eyebrow' => 'Nuestra Visión',
+            'text' => 'Un futuro donde cada centro deportivo pueda ofrecer grabación de partidos con la misma naturalidad que ofrece luces, vestuarios o reservas online.'
+        ],
+        'whoWeServe' => [
+            'eyebrow' => 'A Quién Servimos',
+            'title' => 'Construido para el deporte cotidiano.',
+            'items' => [
+                '1' => [
+                    'title' => 'Centros de Fútbol',
+                    'desc' => 'Centros de fútbol 5, fútbol 7 y futsal que buscan ofrecer una experiencia premium.'
+                ],
+                '2' => [
+                    'title' => 'Clubes de Pádel',
+                    'desc' => 'Centros de pádel modernos que quieren destacar en un mercado en rápido crecimiento.'
+                ],
+                '3' => [
+                    'title' => 'Centros Deportivos Amateur',
+                    'desc' => 'Cualquier centro que organice partidos regulares y recurrentes y quiera ofrecer algo memorable.'
+                ],
+                '4' => [
+                    'title' => 'Jugadores',
+                    'desc' => 'Jugadores amateur que quieren ver, recortar y compartir su partido. Bajo su propia identidad.'
+                ]
+            ]
+        ],
+        'values' => [
+            'eyebrow' => 'Nuestros Valores',
+            'items' => [
+                '1' => [
+                    'title' => 'Simplicidad',
+                    'desc' => 'La tecnología debe desaparecer en el fondo. La experiencia debe sentirse sin esfuerzo.'
+                ],
+                '2' => [
+                    'title' => 'Privacidad',
+                    'desc' => 'Los jugadores nos confían sus datos. Nos lo tomamos en serio. Sin reconocimiento facial, sin vigilancia, postura RGPD completa.'
+                ],
+                '3' => [
+                    'title' => 'Fiabilidad',
+                    'desc' => 'Cada partido grabado, cada vez. Los centros y jugadores pueden contar con que Replash funcione.'
+                ],
+                '4' => [
+                    'title' => 'Experiencia del Jugador',
+                    'desc' => 'Todo lo que construimos empieza con la pregunta: ¿hace esto que la experiencia del jugador sea mejor?'
+                ],
+                '5' => [
+                    'title' => 'Crecimiento del Centro',
+                    'desc' => 'Replash solo tiene éxito cuando los centros con los que trabajamos tienen éxito. Eso está incorporado en el modelo.'
+                ]
+            ]
+        ]
     ],
     'forPlayers' => [
         'hero' => [
@@ -1026,10 +1115,7 @@ return [
             'title' => 'Lleva tus Instalaciones al Futuro',
             'subtitle' => 'Completa el siguiente formulario para solicitar una sede piloto o hacer cualquier consulta que tengas.'
         ],
-        'success' => [
-            'title' => '¡Solicitud Recibida!',
-            'desc' => 'Nuestro equipo se pondrá en contacto contigo lo antes posible. Gracias por tu interés.'
-        ],
+        'success' => '¡Mensaje recibido! Te contactaremos en 24 horas.',
         'errors' => [
             'required' => 'Por favor, introduce tu nombre y correo electrónico.',
             'general' => 'Ocurrió un error al enviar el formulario: '
@@ -1052,7 +1138,34 @@ return [
             'message' => 'Tu Mensaje o Preguntas',
             'messagePlaceholder' => 'Escribe detalles sobre tu centro o las dudas que tengas...',
             'submit' => 'Enviar Solicitud'
-        ]
+        ],
+        'eyebrow' => 'Ponte en Contacto',
+        'title' => 'Hablemos de tu centro.',
+        'subtitle' => 'Tanto si quieres una demo, tienes preguntas o estás listo para empezar. Estamos aquí.',
+        'fields' => [
+            'name' => 'Tu Nombre',
+            'facilityName' => 'Nombre del Centro',
+            'email' => 'Dirección de Email',
+            'phone' => 'Número de Teléfono (opcional)',
+            'sport' => 'Deporte',
+            'message' => 'Cuéntanos sobre tu centro (opcional)',
+            'sportOptions' => [
+                'football' => 'Fútbol / Futsal',
+                'padel' => 'Pádel',
+                'other' => 'Otro'
+            ],
+            'sportOtherPlaceholder' => 'Especifica tu deporte...'
+        ],
+        'submit' => 'Enviar Mensaje',
+        'submitting' => 'Enviando...',
+        'error' => 'Algo salió mal. Por favor inténtalo de nuevo en un momento.',
+        'trust' => 'Sin compromiso. Consulta gratuita. Respuesta en 24 horas.',
+        'whatsapp' => [
+            'aria' => 'Escríbenos por WhatsApp',
+            'prefill' => '¡Hola! Me gustaría saber más sobre Replash para mi centro.'
+        ],
+        'whatsappIntro' => '¡Hola! Me gustaría postularme al programa piloto de Replash:',
+        'whatsappSubmit' => 'Enviar por WhatsApp'
     ],
     'searchSettings' => [
         'codeOnly' => [
