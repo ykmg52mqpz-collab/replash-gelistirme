@@ -22,8 +22,10 @@ $expectedSignature = hash_hmac('sha256', $rawBody, REPLASH_WEBHOOK_SECRET);
 
 $providedSig = str_replace('sha256=', '', $signatureHeader);
 
-// In development or if explicitly disabled, allow testing; otherwise verify
-if (!empty($signatureHeader) && !hash_equals($expectedSignature, $providedSig)) {
+// INTEGRATION.md: every request must be signed. Unsigned requests are rejected unless the
+// admin setting webhook_allow_unsigned = 1 (temporary, only if the provider cannot sign yet).
+$allowUnsigned = (string)get_setting('webhook_allow_unsigned', '0') === '1';
+if (($signatureHeader === '' && !$allowUnsigned) || ($signatureHeader !== '' && !hash_equals($expectedSignature, $providedSig))) {
     http_response_code(401);
     echo json_encode(['ok' => false, 'error' => 'Invalid signature']);
     exit;

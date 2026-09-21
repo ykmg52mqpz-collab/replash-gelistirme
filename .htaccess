@@ -1,6 +1,16 @@
 # Replash Apache Configuration & Security
 Options -Indexes
 
+# İç klasörler ve dosyalar web'den erişilemez (sadece PHP içinden kullanılır)
+<IfModule mod_alias.c>
+    RedirectMatch 404 /(config|includes|languages|cron|replash-info|\.git)(/|$)
+</IfModule>
+<FilesMatch "(\.(sql|md|log|env|example|sh)|^\.gitignore|^install\.php|^player\.html)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
