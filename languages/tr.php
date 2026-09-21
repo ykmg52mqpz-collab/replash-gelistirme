@@ -461,7 +461,75 @@ return [
             'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
             'code_mismatch' => 'Girdiğiniz erişim kodu bu maça/saat dilimine ait değildir! Lütfen doğru kodu giriniz.',
             'invalid_code' => 'Girdiğiniz erişim koduna ait maç bulunamadı. Lütfen kodu kontrol edin.',
-            'too_short' => 'Kayıt çok kısa (en az 2 saniye olmalıdır).'
+            'too_short' => 'Kayıt çok kısa (en az 2 saniye olmalıdır).',
+            'notFound' => [
+                'title' => 'Maçınızı bulamadık',
+                'desc' => 'Ya kod yanlış ya da tesis videoyu henüz etkinleştirmedi. Resepsiyondan teyit iste, sonra tekrar dene.',
+                'report' => 'Sorun Bildir'
+            ],
+            'locked' => [
+                'title' => 'Video henüz açılmadı',
+                'desc' => 'Tesisin videoyu henüz etkinleştirmedi. Resepsiyon etkinleştirir etkinleştirmez hazır olacak.'
+            ]
+        ],
+        'hero' => [
+            'eyebrow' => 'Maçını Bul',
+            'title' => 'Maçınızı izleyin.',
+            'subtitle' => 'Maç kodun var mı? Gir ve maçı saniyeler içinde izle.'
+        ],
+        'form' => [
+            'facility' => 'Saha',
+            'date' => 'Tarih',
+            'time' => 'Saat Slotu',
+            'facilityPlaceholder' => 'Sahanızı seçin',
+            'datePlaceholder' => 'Oynadığınız tarihi seçin',
+            'timePlaceholder' => 'Saat slotunuzu seçin',
+            'button' => 'Maçımı Bul',
+            'buttonLoading' => 'Aranıyor...',
+            'facilityHelp' => 'Oynadığınız sahayı seçin.',
+            'dateHelp' => 'Maçınızın günü.',
+            'timeHelp' => 'Rezervasyon saat slotunuz (örn: 19:00–20:00).'
+        ],
+        'explainer' => [
+            'title' => 'Erişim nasıl çalışır',
+            'desc' => 'Video yalnızca tesisin takıma verdiği maç koduyla açılır. Herkese açık liste yok, tahmin edilebilir bağlantı yok, arama motorlarında video yok. Maçın sadece senin.',
+            'noShare' => 'Videolar arama motorlarında asla görünmez. Bağlantılar herkese açık değildir.'
+        ],
+        'watch' => [
+            'title' => 'Maçını bul',
+            'subtitle' => 'Maçtan sonra tesisin sana verdiği kodu gir.',
+            'codeLabel' => 'Maç kodu',
+            'button' => 'Maçı izle',
+            'buttonLoading' => 'Aranıyor…',
+            'fallbackToggle' => 'Kodun yok mu? Saha ve saatle ara',
+            'court' => 'Saha / Kort',
+            'courtPlaceholder' => 'Önce tesisi seç',
+            'rateLimited' => 'Çok fazla deneme. Bir dakika sonra tekrar dene.',
+            'playerLabel' => 'Maç kaydı',
+            'processing' => [
+                'title' => 'Video hazırlanıyor',
+                'desc' => 'Videon yaklaşık {minutes} dakika içinde hazır olacak. Az sonra tekrar dene.'
+            ],
+            'notFound' => [
+                'title' => 'Geçersiz kod veya maç mevcut değil',
+                'desc' => 'Kodu kontrol et veya tesis personeline sor. Ödeme yaptıysan ve videoyu göremiyorsan aşağıdan talep aç.'
+            ],
+            'refund' => [
+                'open' => 'Video sorunu / İade',
+                'title' => 'Video sorunu / İade talebi',
+                'desc' => 'Ödedin ama izleyemiyor musun? Detayları gönder — inceleyip ücretsiz maç onayını e-postayla ileteceğiz.',
+                'email' => 'E-posta adresin',
+                'message' => 'Sorunu açıkla (isteğe bağlı)',
+                'send' => 'Talep gönder',
+                'sent' => 'Talep gönderildi. Referans:'
+            ],
+            'clip' => [
+                'label' => 'Klip kes',
+                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, sonra indir.',
+                'download' => 'Klibi indir',
+                'range' => '15 ile 40 saniye arasında seç.'
+            ],
+            'expires' => 'Bu video {date} tarihinde otomatik silinir.'
         ]
     ],
     'panel' => [

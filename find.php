@@ -2,6 +2,8 @@
 require_once __DIR__ . '/includes/init.php';
 
 $pageTitle = __('find.title');
+$metaTitle = __('meta.find.title');
+$metaDescription = __('meta.find.description');
 
 $code = strtoupper(trim($_GET['code'] ?? ''));
 $facilityId = $_GET['facility_id'] ?? '';
@@ -273,6 +275,93 @@ require_once __DIR__ . '/includes/header.php';
 
     <?php if (!$match): ?>
       <?php $renderSearchSection(false); ?>
+
+      <!-- ERİŞİM NASIL ÇALIŞIR (replash.info) -->
+      <section class="section-y border-t border-white/5 bg-section-gradient">
+      <div class="container-x">
+      <div class="mx-auto max-w-3xl"  data-reveal="up">
+      <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-6 md:p-8">
+      <div class="flex items-start gap-4">
+      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
+      <svg class="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
+      </rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4">
+      </path>
+      </svg>
+      </div>
+      <div class="flex-1">
+      <h3 class="mb-2 text-base font-semibold text-white">
+      <?= e(__('find.explainer.title')) ?>
+      </h3>
+      <p class="text-sm leading-relaxed text-white/55">
+      <?= e(__('find.explainer.desc')) ?>
+      </p>
+      </div>
+      </div>
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z">
+      </path>
+      <circle cx="12" cy="10" r="3">
+      </circle>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Facility</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <rect x="3" y="4" width="18" height="18" rx="2">
+      </rect>
+      <line x1="16" y1="2" x2="16" y2="6">
+      </line>
+      <line x1="8" y1="2" x2="8" y2="6">
+      </line>
+      <line x1="3" y1="10" x2="21" y2="10">
+      </line>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Date</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <polyline points="12 6 12 12 16 14">
+      </polyline>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Time slot</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <rect x="3" y="11" width="18" height="11" rx="2">
+      </rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0">
+      </path>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">UNLOCKABLE status</span>
+      </div>
+      </div>
+      <div class="mt-6 flex items-center gap-2 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3">
+      <svg class="h-4 w-4 flex-shrink-0 text-accent" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7zM12 15a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd">
+      </path>
+      </svg>
+      <span class="text-xs text-white/60">
+      <?= e(__('find.explainer.noShare')) ?>
+      </span>
+      </div>
+      </div>
+      </div>
+      </div>
+      </section>
     <?php endif; ?>
 
     <?php if ($error): ?>
@@ -414,7 +503,7 @@ require_once __DIR__ . '/includes/header.php';
                     id="btn-cam-<?= $cIdx ?>"
                     class="cam-angle-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm <?= $cIdx === 0 ? 'bg-accent text-ink-900 shadow-glow' : 'bg-ink-800 border border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white' ?>"
                   >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2v8a2 2 0 002 2z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <span><?= e($cItem['name']) ?></span>
                   </button>
                 <?php endforeach; ?>

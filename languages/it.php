@@ -461,7 +461,75 @@ return [
             'expired' => 'Questo video è stato eliminato poiché il periodo di conservazione di 7 giorni è scaduto.',
             'code_mismatch' => 'Il codice di accesso inserito non corrisponde a questa partita. Inserisci il codice corretto.',
             'invalid_code' => 'Nessuna partita trovata con questo codice. Controlla il codice.',
-            'too_short' => 'La clip è troppo breve (almeno 2 secondi).'
+            'too_short' => 'La clip è troppo breve (almeno 2 secondi).',
+            'notFound' => [
+                'title' => 'Non abbiamo trovato la tua partita',
+                'desc' => 'O il codice non è corretto, o il centro non ha ancora abilitato il video. Chiedi alla reception di confermare, poi riprova.',
+                'report' => 'Segnala un Problema'
+            ],
+            'locked' => [
+                'title' => 'Video non ancora sbloccato',
+                'desc' => 'Il tuo centro non ha ancora abilitato il video. Sarà disponibile appena la reception lo attiva.'
+            ]
+        ],
+        'hero' => [
+            'eyebrow' => 'Trova la Tua Partita',
+            'title' => 'Guarda la tua partita.',
+            'subtitle' => 'Hai il codice della partita? Inseriscilo e guardi la partita in pochi secondi.'
+        ],
+        'form' => [
+            'facility' => 'Centro',
+            'date' => 'Data',
+            'time' => 'Slot Orario',
+            'facilityPlaceholder' => 'Scegli il tuo centro',
+            'datePlaceholder' => 'Seleziona la data in cui hai giocato',
+            'timePlaceholder' => 'Scegli il tuo slot orario',
+            'button' => 'Trova la Mia Partita',
+            'buttonLoading' => 'Cercando...',
+            'facilityHelp' => 'Scegli il centro dove hai giocato.',
+            'dateHelp' => 'Il giorno della tua partita.',
+            'timeHelp' => 'Il tuo slot di prenotazione (es. 19:00–20:00).'
+        ],
+        'explainer' => [
+            'title' => 'Come funziona l\'accesso',
+            'desc' => 'Il video si apre solo con il codice della partita che il centro consegna alla squadra. Nessuna lista pubblica, nessun link indovinabile, nessun video nei motori di ricerca. La tua partita è solo tua.',
+            'noShare' => 'I video non appaiono mai nei motori di ricerca. I link non sono pubblici.'
+        ],
+        'watch' => [
+            'title' => 'Trova la tua partita',
+            'subtitle' => 'Inserisci il codice che il centro ti ha dato dopo la partita.',
+            'codeLabel' => 'Codice partita',
+            'button' => 'Guarda la partita',
+            'buttonLoading' => 'Ricerca in corso…',
+            'fallbackToggle' => 'Non hai un codice? Cerca per campo e orario',
+            'court' => 'Campo / Pista',
+            'courtPlaceholder' => 'Prima scegli il centro',
+            'rateLimited' => 'Troppi tentativi. Riprova tra un minuto.',
+            'playerLabel' => 'Registrazione partita',
+            'processing' => [
+                'title' => 'Video in elaborazione',
+                'desc' => 'Il tuo video sarà pronto tra circa {minutes} minuti. Riprova più tardi.'
+            ],
+            'notFound' => [
+                'title' => 'Codice non valido o partita non disponibile',
+                'desc' => 'Controlla il codice o chiedi allo staff del centro. Se hai pagato ma non vedi il video, apri una richiesta qui sotto.'
+            ],
+            'refund' => [
+                'open' => 'Problema video / Rimborso',
+                'title' => 'Problema video / Richiesta rimborso',
+                'desc' => 'Hai pagato ma non riesci a guardare? Inviaci i dettagli: verificheremo e ti invieremo una conferma per una partita gratuita.',
+                'email' => 'La tua email',
+                'message' => 'Descrivi il problema (facoltativo)',
+                'send' => 'Invia richiesta',
+                'sent' => 'Richiesta inviata. Riferimento:'
+            ],
+            'clip' => [
+                'label' => 'Taglia un momento',
+                'hint' => 'Trascina sulla timeline per selezionare 15–40s, poi scarica.',
+                'download' => 'Scarica clip',
+                'range' => 'Seleziona tra 15 e 40 secondi.'
+            ],
+            'expires' => 'Questo video si cancella automaticamente il {date}.'
         ]
     ],
     'panel' => [

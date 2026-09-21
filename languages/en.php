@@ -461,7 +461,75 @@ return [
             'expired' => 'This match video has been deleted as its 7-day retention period has expired.',
             'code_mismatch' => 'The entered access code does not belong to this match slot! Please check and enter the correct code.',
             'invalid_code' => 'No match found matching this access code. Please check your code.',
-            'too_short' => 'Clip is too short (must be at least 2 seconds).'
+            'too_short' => 'Clip is too short (must be at least 2 seconds).',
+            'notFound' => [
+                'title' => 'We couldn\'t find your match',
+                'desc' => 'Either the code is wrong, or the facility hasn\'t enabled the video yet. Ask the front desk to confirm, then try again.',
+                'report' => 'Report an Issue'
+            ],
+            'locked' => [
+                'title' => 'Video not yet unlocked',
+                'desc' => 'Your facility hasn\'t enabled the video yet. It\'ll be available as soon as the front desk activates it.'
+            ]
+        ],
+        'hero' => [
+            'eyebrow' => 'Find Your Match',
+            'title' => 'Watch your match.',
+            'subtitle' => 'Got your match code? Enter it and watch the match in seconds.'
+        ],
+        'form' => [
+            'facility' => 'Facility',
+            'date' => 'Date',
+            'time' => 'Time Slot',
+            'facilityPlaceholder' => 'Choose your venue',
+            'datePlaceholder' => 'Select the date you played',
+            'timePlaceholder' => 'Pick your time slot',
+            'button' => 'Find My Match',
+            'buttonLoading' => 'Searching...',
+            'facilityHelp' => 'Pick the facility where you played.',
+            'dateHelp' => 'The day of your match.',
+            'timeHelp' => 'Your booking time slot (e.g., 19:00–20:00).'
+        ],
+        'explainer' => [
+            'title' => 'How access works',
+            'desc' => 'The video only opens with the match code the facility hands to the team. No public listing, no guessable link, no video in search engines. Your match is yours alone.',
+            'noShare' => 'Videos never appear in search engines. Links are not public.'
+        ],
+        'watch' => [
+            'title' => 'Find your match',
+            'subtitle' => 'Enter the code the facility gave you after the match.',
+            'codeLabel' => 'Match code',
+            'button' => 'Watch the match',
+            'buttonLoading' => 'Searching…',
+            'fallbackToggle' => 'No code? Search by court and time',
+            'court' => 'Court / Pitch',
+            'courtPlaceholder' => 'Choose facility first',
+            'rateLimited' => 'Too many attempts. Please try again in a minute.',
+            'playerLabel' => 'Match recording',
+            'processing' => [
+                'title' => 'Video processing',
+                'desc' => 'Your video will be ready in about {minutes} minutes. Please try again shortly.'
+            ],
+            'notFound' => [
+                'title' => 'Invalid code or match not available',
+                'desc' => 'Check the code or ask the facility staff. If you paid but can\'t see your video, open a request below.'
+            ],
+            'refund' => [
+                'open' => 'Video problem / Refund',
+                'title' => 'Video problem / Refund request',
+                'desc' => 'Paid but can\'t watch? Send us the details — we\'ll review and email you a free-match confirmation.',
+                'email' => 'Your email',
+                'message' => 'Describe the problem (optional)',
+                'send' => 'Send request',
+                'sent' => 'Request sent. Reference:'
+            ],
+            'clip' => [
+                'label' => 'Cut a clip',
+                'hint' => 'Drag on the timeline to select 15–40s, then download.',
+                'download' => 'Download clip',
+                'range' => 'Select between 15 and 40 seconds.'
+            ],
+            'expires' => 'This video auto-deletes on {date}.'
         ]
     ],
     'panel' => [
