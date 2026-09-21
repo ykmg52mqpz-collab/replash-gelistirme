@@ -1018,36 +1018,47 @@ function clipSetStatus(text) {
   el.textContent = text || '';
   el.classList.toggle('hidden', !text);
 }
-// Filigran: sağ üstte "replash.it" + Replash logosu (logo aynı kaynaktan yüklenir, tuval kirlenmesin)
+// Filigran: sağ üstte "replash.it" + küçük logo, sağ altta tesis · saha (ince dijital yazı)
 var clipLogo = new Image();
 clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.png'), PHP_URL_PATH)) ?>;
+var clipCourtLabel = <?= json_encode(mb_strtoupper(trim(($match['facility_name'] ?? '') . ' · ' . ($match['court'] ?? ''), ' ·'), 'UTF-8')) ?>;
+var CLIP_FONT = '"Share Tech Mono", "SFMono-Regular", Menlo, Consolas, monospace';
+(function () {
+  var l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap';
+  l.onload = function () { if (document.fonts) document.fonts.load('20px "Share Tech Mono"').catch(function () {}); };
+  document.head.appendChild(l);
+})();
 var clipDrawTimer = null;
-function clipDrawWatermark(ctx, w, h) {
-  var logoH = Math.round(h * 0.075);
-  var margin = Math.round(h * 0.035);
-  var fontPx = Math.round(logoH * 0.5);
-  var text = 'replash.it';
-  ctx.font = '600 ' + fontPx + 'px "neue-haas-grotesk-display", "Helvetica Neue", Arial, sans-serif';
-  var textW = ctx.measureText(text).width;
-  var logoW = clipLogo.complete && clipLogo.naturalWidth ? Math.round(logoH * clipLogo.naturalWidth / clipLogo.naturalHeight) : 0;
-  var gap = Math.round(logoH * 0.25);
-  var padX = Math.round(logoH * 0.3), padY = Math.round(logoH * 0.18);
-  var boxW = padX + textW + (logoW ? gap + logoW : 0) + padX;
-  var boxH = logoH + padY * 2;
-  var x = w - margin - boxW, y = margin;
-  ctx.save();
-  ctx.fillStyle = 'rgba(0,0,0,0.38)';
-  var r = boxH / 2;
-  ctx.beginPath();
-  ctx.moveTo(x + r, y); ctx.lineTo(x + boxW - r, y); ctx.arc(x + boxW - r, y + r, r, -Math.PI / 2, Math.PI / 2);
-  ctx.lineTo(x + r, y + boxH); ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5); ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#ffffff';
+function clipWatermarkText(ctx, text, x, y, px, align, alpha) {
+  ctx.font = '400 ' + px + 'px ' + CLIP_FONT;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = Math.round(px * 0.08) + 'px';
+  ctx.textAlign = align;
   ctx.textBaseline = 'middle';
-  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = Math.round(fontPx * 0.2);
-  ctx.fillText(text, x + padX, y + boxH / 2);
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = Math.max(2, Math.round(px * 0.25));
+  ctx.fillStyle = 'rgba(255,255,255,' + alpha + ')';
+  ctx.fillText(text, x, y);
   ctx.shadowBlur = 0;
-  if (logoW) ctx.drawImage(clipLogo, x + padX + textW + gap, y + padY, logoW, logoH);
+  return ctx.measureText(text).width;
+}
+function clipDrawWatermark(ctx, w, h) {
+  var margin = Math.round(h * 0.03);
+  ctx.save();
+  // Sağ üst: replash.it + logo
+  var logoH = Math.round(h * 0.042);
+  var logoW = clipLogo.complete && clipLogo.naturalWidth ? Math.round(logoH * clipLogo.naturalWidth / clipLogo.naturalHeight) : 0;
+  var topY = margin + logoH / 2;
+  var textRight = w - margin - (logoW ? logoW + Math.round(logoH * 0.3) : 0);
+  clipWatermarkText(ctx, 'replash.it', textRight, topY, Math.round(h * 0.03), 'right', 0.9);
+  if (logoW) {
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(clipLogo, w - margin - logoW, margin, logoW, logoH);
+    ctx.globalAlpha = 1;
+  }
+  // Sağ alt: tesis · saha
+  if (clipCourtLabel) clipWatermarkText(ctx, clipCourtLabel, w - margin, h - margin - Math.round(h * 0.012), Math.round(h * 0.022), 'right', 0.8);
   ctx.restore();
 }
 // Videoyu her karede tuvale çizip filigranı ekleyen görüntü akışı
