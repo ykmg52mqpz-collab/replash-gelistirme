@@ -17,6 +17,15 @@ return [
         ]
     ],
     'home' => [
+        'flow' => [
+            'title' => 'Cómo funciona',
+            'link' => 'Ver cómo funciona',
+            'items' => [
+                '1' => ['title' => 'Juega', 'desc' => 'Las cámaras graban el partido automáticamente.'],
+                '2' => ['title' => 'Desbloquea', 'desc' => 'Recepción cobra y da un código de 4 cifras.'],
+                '3' => ['title' => 'Mira y comparte', 'desc' => 'El jugador introduce el código, ve el partido y corta su clip.'],
+            ],
+        ],
         'hero' => [
             'badge' => 'Para Centros Deportivos Amateur',
             'title' => 'Play. Record. Relive.',
@@ -201,6 +210,12 @@ return [
         ]
     ],
     'howItWorks' => [
+        'flow' => [
+            '1' => ['label' => 'Paso 1', 'title' => 'Se juega el partido, Replash lo graba', 'desc' => 'Las cámaras fijas de la pista graban el partido entero de principio a fin. Sin botones, sin iniciar/parar, el personal no tiene que hacer nada.'],
+            '2' => ['label' => 'Paso 2', 'title' => 'Recepción lo desbloquea y da el código', 'desc' => 'Cuando el equipo quiere el vídeo, el personal cobra y lo desbloquea en el panel con un toque. Aparece un código de partido de 4 cifras, uno para todo el equipo. También se puede vender antes del partido: el código funciona en cuanto el vídeo está listo.'],
+            '3' => ['label' => 'Paso 3', 'title' => 'El jugador introduce el código', 'desc' => 'Los jugadores entran en replash.it, escriben el código de 4 cifras y el partido se abre. Sin cuenta, sin app, sin lista pública.'],
+            '4' => ['label' => 'Paso 4', 'title' => 'Mira, corta, comparte', 'desc' => 'Los jugadores ven el partido completo, cortan momentos de 15–40 segundos, los guardan en el móvil y los comparten desde sus propias cuentas.'],
+        ],
         'hero' => [
             'eyebrow' => 'Cómo Funciona',
             'title' => 'Seis pasos simples. Cero complejidad para tu equipo.',

@@ -45,82 +45,6 @@ require_once __DIR__ . '/includes/header.php';
   <div class="relative flex-shrink-0">
   <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="3" y="4" width="18" height="18" rx="2">
-  </rect>
-  <line x1="16" y1="2" x2="16" y2="6">
-  </line>
-  <line x1="8" y1="2" x2="8" y2="6">
-  </line>
-  <line x1="3" y1="10" x2="21" y2="10">
-  </line>
-  <polygon points="10 14 15 17 10 20" fill="currentColor">
-  </polygon>
-  </svg>
-  </div>
-  </div>
-  <div class="flex-1 pb-2">
-  <div class="mb-3">
-  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.1.label')) ?>
-  </span>
-  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.1.title')) ?>
-  </h3>
-  </div>
-  <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.1.desc')) ?>
-  </p>
-  <div class="mt-5">
-  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
-  <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Facility · Book slot</span>
-  </div>
-  <div class="relative p-4">
-  <div class="mb-3 flex items-center justify-between text-xs">
-  <span class="text-white/50">Tuesday · Nov 12</span>
-  <span class="rounded-full bg-white/5 px-2 py-0.5 text-white/40">Football · 5v5</span>
-  </div>
-  <div class="flex flex-col gap-1.5">
-  <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
-  <span class="text-white/85">18:00 – 19:00</span>
-  </div>
-  <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm hw-slot" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
-  <span class="text-white/85">19:00 – 20:00</span>
-  </div>
-  <div class="flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm" style="border-color:rgba(255,255,255,0.08);background-color:rgba(255,255,255,0.02)">
-  <span class="text-white/85">20:00 – 21:00</span>
-  </div>
-  </div>
-  <div class="mt-4 flex items-center justify-between rounded-lg border border-accent/25 bg-accent/[0.05] px-3 py-2.5">
-  <div class="flex items-center gap-2">
-  <svg class="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M23 7l-7 5 7 5V7z">
-  </path>
-  <rect x="1" y="5" width="15" height="14" rx="2">
-  </rect>
-  </svg>
-  <span class="text-sm text-white/85">+ Match Video</span>
-  </div>
-  <div class="relative h-5 w-9 rounded-full hw-toggle">
-  <div class="absolute top-0.5 h-4 w-4 rounded-full bg-white shadow hw-knob">
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  <div class="relative flex gap-5"  data-reveal="up">
-  <div class="relative flex-shrink-0">
-  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
-  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
   <path d="M23 7l-7 5 7 5V7z">
   </path>
   <rect x="1" y="5" width="15" height="14" rx="2">
@@ -131,14 +55,14 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex-1 pb-2">
   <div class="mb-3">
   <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.2.label')) ?>
+  <?= e(__('howItWorks.flow.1.label')) ?>
   </span>
   <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.2.title')) ?>
+  <?= e(__('howItWorks.flow.1.title')) ?>
   </h3>
   </div>
   <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.2.desc')) ?>
+  <?= e(__('howItWorks.flow.1.desc')) ?>
   </p>
   <div class="mt-5">
   <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
@@ -203,14 +127,14 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex-1 pb-2">
   <div class="mb-3">
   <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.3.label')) ?>
+  <?= e(__('howItWorks.flow.2.label')) ?>
   </span>
   <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.3.title')) ?>
+  <?= e(__('howItWorks.flow.2.title')) ?>
   </h3>
   </div>
   <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.3.desc')) ?>
+  <?= e(__('howItWorks.flow.2.desc')) ?>
   </p>
   <div class="mt-5">
 <!-- Gerçek tesis paneli: gün tablosu, personel "Kilidi aç"a basar -->
@@ -249,56 +173,6 @@ require_once __DIR__ . '/includes/header.php';
   <div class="relative flex-shrink-0">
   <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14">
-  </path>
-  <polyline points="22 4 12 14.01 9 11.01">
-  </polyline>
-  </svg>
-  </div>
-  </div>
-  <div class="flex-1 pb-2">
-  <div class="mb-3">
-  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.4.label')) ?>
-  </span>
-  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.4.title')) ?>
-  </h3>
-  </div>
-  <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.4.desc')) ?>
-  </p>
-  <div class="mt-5">
-<!-- Gerçek tesis paneli: kilit açılınca kod kutusu, personel kodu oyuncuya verir -->
-<div class="overflow-hidden rounded-2xl border border-white/10 bg-white text-gray-900 shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
-  <div class="flex items-center gap-1.5 border-b border-gray-200 bg-gray-50 px-3 py-2">
-    <span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span>
-    <span lang="en" class="ml-3 font-mono text-[10px] uppercase tracking-widest text-gray-400">Replash · Panel</span>
-  </div>
-  <div class="p-4">
-    <div class="rounded-lg border border-gray-900 bg-white px-4 py-4">
-      <div class="text-xs text-gray-500"><?= e(__('panel.shell.sold_title')) ?> · Saha 1 · 19:00–20:00</div>
-      <div class="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.give_code')) ?></div>
-      <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <span class="font-mono text-2xl font-bold tracking-[0.15em] text-gray-900 sm:text-3xl"><span class="hwp-char" style="animation-delay:0.00s">4</span><span class="hwp-char" style="animation-delay:0.15s">8</span><span class="hwp-char" style="animation-delay:0.30s">2</span><span class="hwp-char" style="animation-delay:0.45s">1</span></span>
-        <span class="relative inline-grid rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700">
-          <span class="hwp-copy-a col-start-1 row-start-1"><?= e(__('panel.shell.copy')) ?></span>
-          <span class="hwp-copy-b col-start-1 row-start-1 font-medium text-emerald-700"><?= e(__('panel.shell.copied')) ?></span>
-        </span>
-      </div>
-    </div>
-    <div class="mt-3 flex items-center gap-2 text-[11px] text-gray-500">
-      <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span><span>Saha 1 · 19:00–20:00 · <?= e(__('panel.shell.sold_state')) ?></span>
-    </div>
-  </div>
-</div>
-</div>
-  </div>
-  </div>
-  <div class="relative flex gap-5"  data-reveal="up">
-  <div class="relative flex-shrink-0">
-  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
-  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
   <circle cx="11" cy="11" r="8">
   </circle>
   <line x1="21" y1="21" x2="16.65" y2="16.65">
@@ -309,14 +183,14 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex-1 pb-2">
   <div class="mb-3">
   <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.5.label')) ?>
+  <?= e(__('howItWorks.flow.3.label')) ?>
   </span>
   <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.5.title')) ?>
+  <?= e(__('howItWorks.flow.3.title')) ?>
   </h3>
   </div>
   <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.5.desc')) ?>
+  <?= e(__('howItWorks.flow.3.desc')) ?>
   </p>
   <div class="mt-5">
 <!-- Gerçek "Maçını bul" kartı: kod yazılır, Maçı izle -->
@@ -361,14 +235,14 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex-1 pb-2">
   <div class="mb-3">
   <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
-  <?= e(__('howItWorks.steps.6.label')) ?>
+  <?= e(__('howItWorks.flow.4.label')) ?>
   </span>
   <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
-  <?= e(__('howItWorks.steps.6.title')) ?>
+  <?= e(__('howItWorks.flow.4.title')) ?>
   </h3>
   </div>
   <p class="text-sm leading-relaxed text-white/55 md:text-base">
-  <?= e(__('howItWorks.steps.6.desc')) ?>
+  <?= e(__('howItWorks.flow.4.desc')) ?>
   </p>
   <div class="mt-5">
 <!-- Gerçek oynatıcı: UNLOCKED, filigranlı video, aralık seç, Klip kes, paylaş -->

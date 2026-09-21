@@ -17,6 +17,15 @@ return [
         ]
     ],
     'home' => [
+        'flow' => [
+            'title' => 'How it works',
+            'link' => 'See how it works',
+            'items' => [
+                '1' => ['title' => 'Play', 'desc' => 'Cameras record the match automatically.'],
+                '2' => ['title' => 'Unlock', 'desc' => 'The front desk takes payment and gives a 4-digit code.'],
+                '3' => ['title' => 'Watch & share', 'desc' => 'Players enter the code, watch the match and cut their clip.'],
+            ],
+        ],
         'hero' => [
             'badge' => 'For Amateur Sport Facilities',
             'title' => 'Play. Record. Relive.',
@@ -201,6 +210,12 @@ return [
         ]
     ],
     'howItWorks' => [
+        'flow' => [
+            '1' => ['label' => 'Step 1', 'title' => 'The match is played, Replash records it', 'desc' => 'Fixed cameras on the court record the whole match from start to finish. No buttons, no start/stop, nothing for staff to do.'],
+            '2' => ['label' => 'Step 2', 'title' => 'The front desk unlocks it and gives the code', 'desc' => 'When the team wants the video, staff take payment and unlock it in the panel with one tap. A 4-digit match code appears, one code for the whole team. You can also sell before the match; the code works as soon as the video is ready.'],
+            '3' => ['label' => 'Step 3', 'title' => 'Players enter the code', 'desc' => 'Players go to replash.it, type the 4-digit code and the match opens. No account, no app, no public list.'],
+            '4' => ['label' => 'Step 4', 'title' => 'Watch, cut, share', 'desc' => 'Players watch the full match, cut 15–40 second moments, save them to their phone and share them from their own accounts.'],
+        ],
         'hero' => [
             'eyebrow' => 'How It Works',
             'title' => 'Six simple steps. Zero complexity for your team.',

@@ -17,6 +17,15 @@ return [
         ]
     ],
     'home' => [
+        'flow' => [
+            'title' => 'Nasıl çalışır',
+            'link' => 'Nasıl çalıştığını gör',
+            'items' => [
+                '1' => ['title' => 'Oyna', 'desc' => 'Kameralar maçı kendiliğinden kaydeder.'],
+                '2' => ['title' => 'Kilidi aç', 'desc' => 'Resepsiyon ödemeyi alır, 4 haneli kodu verir.'],
+                '3' => ['title' => 'İzle ve paylaş', 'desc' => 'Oyuncu kodu girer, maçı izler, klibini keser.'],
+            ],
+        ],
         'hero' => [
             'badge' => 'Amatör Spor Sahaları İçin',
             'title' => 'Play. Record. Relive.',
@@ -201,6 +210,12 @@ return [
         ]
     ],
     'howItWorks' => [
+        'flow' => [
+            '1' => ['label' => 'Adım 1', 'title' => 'Maç oynanır, Replash kaydeder', 'desc' => 'Sahaya kurulan sabit kameralar maçın tamamını baştan sona kaydeder. Tuş yok, başlat/durdur yok, personel hiçbir şey yapmaz.'],
+            '2' => ['label' => 'Adım 2', 'title' => 'Resepsiyon kilidi açar, kodu verir', 'desc' => 'Takım videoyu istediğinde personel ödemeyi alır ve panelden tek dokunuşla kilidi açar. Ekranda 4 haneli maç kodu çıkar; tüm takım için tek kod. Satış maçtan önce de yapılabilir, video hazır olunca kod kendiliğinden çalışır.'],
+            '3' => ['label' => 'Adım 3', 'title' => 'Oyuncu kodu girer', 'desc' => 'Oyuncular replash.it’ye girer, 4 haneli kodu yazar ve maç açılır. Hesap yok, uygulama yok, herkese açık liste yok.'],
+            '4' => ['label' => 'Adım 4', 'title' => 'İzle, kes, paylaş', 'desc' => 'Oyuncular maçın tamamını izler, 15–40 saniyelik anları keser, telefonlarına kaydeder ve kendi hesaplarından paylaşır.'],
+        ],
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
             'title' => 'Altı basit adım. Ekibiniz için sıfır karmaşıklık.',

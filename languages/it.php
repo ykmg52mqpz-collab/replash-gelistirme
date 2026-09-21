@@ -17,6 +17,15 @@ return [
         ]
     ],
     'home' => [
+        'flow' => [
+            'title' => 'Come funziona',
+            'link' => 'Scopri come funziona',
+            'items' => [
+                '1' => ['title' => 'Gioca', 'desc' => 'Le telecamere registrano la partita in automatico.'],
+                '2' => ['title' => 'Sblocca', 'desc' => 'La reception incassa e dà un codice di 4 cifre.'],
+                '3' => ['title' => 'Guarda e condividi', 'desc' => 'Il giocatore inserisce il codice, guarda la partita e taglia la sua clip.'],
+            ],
+        ],
         'hero' => [
             'badge' => 'Per Centri Sportivi Amatoriali',
             'title' => 'Play. Record. Relive.',
@@ -201,6 +210,12 @@ return [
         ]
     ],
     'howItWorks' => [
+        'flow' => [
+            '1' => ['label' => 'Passo 1', 'title' => 'La partita si gioca, Replash la registra', 'desc' => 'Le telecamere fisse sul campo registrano tutta la partita dall’inizio alla fine. Nessun pulsante, nessun avvio/stop, niente da fare per lo staff.'],
+            '2' => ['label' => 'Passo 2', 'title' => 'La reception sblocca e dà il codice', 'desc' => 'Quando la squadra vuole il video, lo staff incassa e lo sblocca dal pannello con un tocco. Compare un codice partita di 4 cifre, uno per tutta la squadra. Si può vendere anche prima della partita: il codice funziona appena il video è pronto.'],
+            '3' => ['label' => 'Passo 3', 'title' => 'Il giocatore inserisce il codice', 'desc' => 'I giocatori vanno su replash.it, digitano il codice di 4 cifre e la partita si apre. Nessun account, nessuna app, nessuna lista pubblica.'],
+            '4' => ['label' => 'Passo 4', 'title' => 'Guarda, taglia, condividi', 'desc' => 'I giocatori guardano tutta la partita, tagliano momenti di 15–40 secondi, li salvano sul telefono e li condividono dai propri profili.'],
+        ],
         'hero' => [
             'eyebrow' => 'Come Funziona',
             'title' => 'Sei semplici passi. Zero complessità per il tuo team.',

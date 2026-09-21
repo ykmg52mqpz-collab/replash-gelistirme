@@ -154,6 +154,29 @@ require_once __DIR__ . '/includes/header.php';
     </section>
   <?php endif; ?>
 
+  <!-- NASIL ÇALIŞIR ÖZETİ: 3 adım, ayrıntı Nasıl Çalışır sayfasında -->
+  <section class="bg-ink-900 pb-16 md:pb-20">
+    <div class="container-x">
+      <div class="mx-auto max-w-5xl">
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-3" data-reveal="up">
+          <h2 class="font-display text-2xl font-bold text-white md:text-3xl"><?= e(__('home.flow.title')) ?></h2>
+          <a href="<?= base_url('how-it-works.php') ?>" class="group inline-flex items-center gap-1.5 text-sm font-semibold text-accent"><?= e(__('home.flow.link')) ?>
+            <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z"/></svg>
+          </a>
+        </div>
+        <ol class="grid gap-3 md:grid-cols-3">
+          <?php for ($i = 1; $i <= 3; $i++): ?>
+            <li class="rounded-2xl border border-white/10 bg-white/[0.02] p-5" data-reveal="up">
+              <span class="grid h-9 w-9 place-items-center rounded-full border border-accent/30 font-display text-sm font-bold text-accent"><?= $i ?></span>
+              <h3 class="mt-4 font-display text-lg font-bold text-white"><?= e(__("home.flow.items.{$i}.title")) ?></h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-white/55"><?= e(__("home.flow.items.{$i}.desc")) ?></p>
+            </li>
+          <?php endfor; ?>
+        </ol>
+      </div>
+    </div>
+  </section>
+
   <!-- INTRO (replash.info) -->
   <section class="relative overflow-hidden border-t border-white/5 bg-ink-900 py-20 md:py-28">
   <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,230,138,0.08), transparent 70%)" aria-hidden="true">
