@@ -556,6 +556,22 @@ return [
             'total_revenue' => 'Toplam Hasılat',
             'matches_unit' => 'maç'
         ],
+        'shell' => [
+            'title' => 'Maç kayıtları',
+            'sell' => 'Video satıldı',
+            'sold' => 'Satıldı',
+            'relock_confirm' => 'Bu maçı tekrar kilitlemek istediğinize emin misiniz? Oyuncu erişimi derhal durdurulacaktır.',
+            'login_title' => 'Tesis Paneli Girişi',
+            'login_sub' => 'Tesisinin 6 haneli PIN\'ini gir.',
+            'enter' => 'Giriş',
+            'logout' => 'Çıkış',
+            'code' => 'Kod',
+            'views' => 'İzlenme',
+            'action' => 'İşlem',
+            'court' => 'Saha',
+            'date' => 'Tarih',
+            'status' => 'Durum',
+        ],
         'billing' => [
             'title' => 'Bu Ayın Hesap Özeti',
             'subtitle' => 'Tüm sahalardaki geçerli video satışları toplanır; kademe ay sonunda kesinleşir.',

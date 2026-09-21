@@ -556,6 +556,22 @@ return [
             'total_revenue' => 'Ingresos Totales',
             'matches_unit' => 'partidos'
         ],
+        'shell' => [
+            'title' => 'Registro de partidos',
+            'sell' => 'Vídeo vendido',
+            'sold' => 'Vendido',
+            'relock_confirm' => '¿Volver a bloquear este partido? El acceso del jugador se detendrá de inmediato.',
+            'login_title' => 'Acceso Panel del Club',
+            'login_sub' => 'Introduce el PIN de 6 dígitos de tu club.',
+            'enter' => 'Entrar',
+            'logout' => 'Salir',
+            'code' => 'Código',
+            'views' => 'Vistas',
+            'action' => 'Acción',
+            'court' => 'Pista',
+            'date' => 'Fecha',
+            'status' => 'Estado',
+        ],
         'billing' => [
             'title' => 'Resumen del Mes',
             'subtitle' => 'Se suman las ventas de vídeo válidas de todas las pistas; el tramo se cierra a fin de mes.',

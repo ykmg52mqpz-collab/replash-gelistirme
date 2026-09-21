@@ -556,6 +556,22 @@ return [
             'total_revenue' => 'Total Revenue',
             'matches_unit' => 'matches'
         ],
+        'shell' => [
+            'title' => 'Match register',
+            'sell' => 'Video sold',
+            'sold' => 'Sold',
+            'relock_confirm' => 'Re-lock this match? Player access will stop immediately.',
+            'login_title' => 'Facility Panel Login',
+            'login_sub' => 'Enter your facility\'s 6-digit PIN.',
+            'enter' => 'Enter',
+            'logout' => 'Log out',
+            'code' => 'Code',
+            'views' => 'Views',
+            'action' => 'Action',
+            'court' => 'Court',
+            'date' => 'Date',
+            'status' => 'Status',
+        ],
         'billing' => [
             'title' => 'This Month’s Statement',
             'subtitle' => 'Valid video sales across all fields are added together; the tier is final at month-end.',

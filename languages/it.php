@@ -556,6 +556,22 @@ return [
             'total_revenue' => 'Incasso Totale',
             'matches_unit' => 'partite'
         ],
+        'shell' => [
+            'title' => 'Registro partite',
+            'sell' => 'Video venduto',
+            'sold' => 'Venduto',
+            'relock_confirm' => 'Bloccare di nuovo questa partita? L\'accesso del giocatore si interrompe subito.',
+            'login_title' => 'Accesso Area Centro',
+            'login_sub' => 'Inserisci il PIN a 6 cifre del tuo centro.',
+            'enter' => 'Entra',
+            'logout' => 'Esci',
+            'code' => 'Codice',
+            'views' => 'Visual.',
+            'action' => 'Azione',
+            'court' => 'Campo',
+            'date' => 'Data',
+            'status' => 'Stato',
+        ],
         'billing' => [
             'title' => 'Rendiconto del Mese',
             'subtitle' => 'Le vendite video valide di tutti i campi vengono sommate; lo scaglione è definitivo a fine mese.',

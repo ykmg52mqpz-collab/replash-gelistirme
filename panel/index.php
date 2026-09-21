@@ -407,55 +407,37 @@ if (isset($_SESSION['facility_id']) && $pdo) {
     }
 }
 
+$internalShell = __('nav.panel');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-20 relative">
-  <div class="hero-glow"></div>
+<main class="min-h-screen pb-10 relative">
 
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+  <div class="container-x py-10 relative z-10">
 
     <?php if (!$facility): ?>
-      <!-- PIN Login Card -->
-      <div class="max-w-md mx-auto card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 text-center">
-        <div class="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center mx-auto mb-4">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        </div>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2"><?= e(__('panel.login.title')) ?></h1>
-        <p class="text-neutral-400 text-xs sm:text-sm mb-6"><?= e(__('panel.login.subtitle')) ?></p>
-
-        <?php if ($error): ?>
-          <div class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-300 text-xs font-medium mb-4">
-            <?= e($error) ?>
-          </div>
-        <?php endif; ?>
-
-        <form action="index.php" method="POST" class="space-y-4">
+      <!-- PIN giriş kartı (replash.info PanelApp) -->
+      <div class="grid min-h-[60vh] place-items-center">
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
           <input type="hidden" name="login_pin" value="1">
-          <input 
-            type="password" 
-            name="pin" 
-            maxlength="6" 
-            placeholder="<?= e(__('panel.login.placeholder')) ?>" 
-            required 
-            autofocus
-            class="w-full text-center tracking-[1em] font-mono text-2xl py-3 rounded-xl border border-white/10 bg-ink-900 text-white focus:border-accent focus:outline-none"
-          >
-          <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-            <?= e(__('panel.login.submit')) ?> &rarr;
-          </button>
+          <h1 class="font-display text-xl font-bold"><?= e(__('panel.shell.login_title')) ?></h1>
+          <p class="mb-5 mt-1 text-sm text-white/50"><?= e(__('panel.shell.login_sub')) ?></p>
+          <input type="password" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" required autofocus placeholder="••••••"
+            class="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.5em] text-white outline-none focus:border-accent">
+          <?php if ($error): ?>
+            <div class="mt-3 rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200"><?= e($error) ?></div>
+          <?php endif; ?>
+          <button type="submit" class="mt-4 w-full rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink-900"><?= e(__('panel.shell.enter')) ?></button>
         </form>
-
-        <p class="text-[11px] text-neutral-500 mt-6"><?= e(__('panel.login.example_pin')) ?> <code class="text-accent">343434</code> (İstanbul) / <code class="text-accent">482913</code> (Milano)</p>
       </div>
 
     <?php else: ?>
       <!-- Logged in Facility Dashboard -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-accent"><?= e(__('panel.header.badge')) ?></span>
-          <h1 class="font-display text-3xl font-bold text-white"><?= e($facility['name']) ?></h1>
-          <p class="text-xs text-neutral-400 mt-1"><?= e($facility['city']) ?> · <?= strtoupper(e($facility['sport'])) ?> · <?= e(__('panel.header.price_info')) ?> <?php
+          <div class="text-xs font-bold uppercase tracking-widest text-accent"><?= e($facility['name']) ?></div>
+          <h1 class="font-display text-2xl font-bold"><?= e(__('panel.shell.title')) ?></h1>
+          <p class="text-xs text-white/40 mt-1"><?= e($facility['city']) ?> · <?= strtoupper(e($facility['sport'])) ?> · <?= e(__('panel.header.price_info')) ?> <?php
             $priceParts = [];
             foreach (get_facility_courts_data($facility) as $pc) { $priceParts[$pc['sport']] = __('panel.billing.sport_' . $pc['sport'], ucfirst($pc['sport'])) . ' ' . replash_money($pc['price'], 0); }
             echo e(implode(' · ', $priceParts));
@@ -466,8 +448,8 @@ require_once __DIR__ . '/../includes/header.php';
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <?= e(__('panel.header.add_slot_btn')) ?>
           </button>
-          <a href="?action=logout" class="inline-flex rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-medium text-neutral-300 hover:bg-white/10 transition">
-            <?= e(__('panel.header.logout')) ?>
+          <a href="?action=logout" class="rounded-xl border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-accent hover:text-accent">
+            <?= e(__('panel.shell.logout')) ?>
           </a>
         </div>
       </div>
@@ -538,69 +520,11 @@ require_once __DIR__ . '/../includes/header.php';
         </form>
       </div>
 
-      <!-- 2. Manual Custom Slot Form -->
-      <div id="manualSaleModal" class="hidden mb-8 p-6 rounded-3xl bg-ink-800 border border-accent/30 shadow-2xl">
-        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
-          <div>
-            <h3 class="font-display text-lg font-bold text-white"><?= e(__('panel.modals.single_title')) ?></h3>
-            <p class="text-xs text-neutral-400"><?= e(__('panel.table.subtitle')) ?></p>
-          </div>
-          <button type="button" onclick="document.getElementById('manualSaleModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
-        </div>
-
-        <form action="index.php" method="POST" class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-end text-xs">
-          <input type="hidden" name="action" value="create_and_sell">
-          
-          <div>
-            <label class="block text-neutral-400 mb-1 font-semibold"><?= e(__('panel.modals.court_label')) ?></label>
-            <select name="court" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-sm text-white focus:border-accent focus:outline-none">
-              <?php foreach ($uniqueCourts as $cName): ?>
-                <option value="<?= e($cName) ?>"><?= e($cName) ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-neutral-400 mb-1 font-semibold"><?= e(__('panel.modals.date_label')) ?></label>
-            <input type="date" name="date" value="<?= date('Y-m-d') ?>" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-sm text-white focus:border-accent focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block text-neutral-400 mb-1 font-semibold"><?= e(__('panel.modals.slot_label')) ?></label>
-            <select name="time_slot" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-sm text-white focus:border-accent focus:outline-none">
-              <option value="16:00–17:00">16:00 – 17:00</option>
-              <option value="17:00–18:00">17:00 – 18:00</option>
-              <option value="18:00–19:00">18:00 – 19:00</option>
-              <option value="19:00–20:00" selected>19:00 – 20:00</option>
-              <option value="20:00–21:00">20:00 – 21:00</option>
-              <option value="21:00–22:00">21:00 – 22:00</option>
-              <option value="22:00–23:00">22:00 – 23:00</option>
-              <option value="23:00–24:00">23:00 – 24:00</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-neutral-400 mb-1 font-semibold"><?= e(__('panel.modals.status_label')) ?></label>
-            <select name="status" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-sm text-white focus:border-accent focus:outline-none">
-              <option value="UNLOCKABLE">🟢 <?= e(__('panel.modals.status_unlocked_opt')) ?></option>
-              <option value="LOCKED">🟡 <?= e(__('panel.modals.status_locked_opt')) ?></option>
-            </select>
-          </div>
-
-          <div>
-            <button type="submit" class="w-full rounded-xl bg-accent py-2.5 text-xs font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-              <?= e(__('panel.modals.submit_save')) ?> &rarr;
-            </button>
-          </div>
-        </form>
-      </div>
-
       <!-- Revenue & Payment Overview Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-emerald-500/10 blur-xl group-hover:bg-emerald-500/20 transition"></div>
+        <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.metrics.today_sold')) ?></span>
+            <span class="text-[11px] uppercase tracking-wider text-white/40"><?= e(__('panel.metrics.today_sold')) ?></span>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span class="text-2xl sm:text-3xl font-bold font-display text-emerald-400"><?= number_format($todayRevenue, 0, ',', '.') ?></span>
               <span class="text-xs font-semibold text-neutral-300"><?= e($currency) ?></span>
@@ -612,10 +536,9 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-sky-500/10 blur-xl group-hover:bg-sky-500/20 transition"></div>
+        <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.metrics.this_week_sold')) ?></span>
+            <span class="text-[11px] uppercase tracking-wider text-white/40"><?= e(__('panel.metrics.this_week_sold')) ?></span>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span class="text-2xl sm:text-3xl font-bold font-display text-sky-400"><?= number_format($thisWeekRevenue, 0, ',', '.') ?></span>
               <span class="text-xs font-semibold text-neutral-300"><?= e($currency) ?></span>
@@ -627,10 +550,9 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-accent/10 blur-xl group-hover:bg-accent/20 transition"></div>
+        <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.metrics.this_month_sold')) ?></span>
+            <span class="text-[11px] uppercase tracking-wider text-white/40"><?= e(__('panel.metrics.this_month_sold')) ?></span>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span class="text-2xl sm:text-3xl font-bold font-display text-accent"><?= number_format($thisMonthRevenue, 0, ',', '.') ?></span>
               <span class="text-xs font-semibold text-neutral-300"><?= e($currency) ?></span>
@@ -642,10 +564,9 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-5 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl group-hover:bg-purple-500/20 transition"></div>
+        <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.metrics.total_revenue')) ?></span>
+            <span class="text-[11px] uppercase tracking-wider text-white/40"><?= e(__('panel.metrics.total_revenue')) ?></span>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span class="text-2xl sm:text-3xl font-bold font-display text-white"><?= number_format($totalRevenue, 0, ',', '.') ?></span>
               <span class="text-xs font-semibold text-accent"><?= e($currency) ?></span>
@@ -664,7 +585,7 @@ require_once __DIR__ . '/../includes/header.php';
         $nextTier = null;
         foreach (replash_share_tiers() as $t) { if ($t['min'] > $ms['valid_sales']) { $nextTier = $t; break; } }
       ?>
-      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-8">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 mb-8">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-5 pb-4 border-b border-white/10">
           <div>
             <h2 class="font-display text-xl font-bold text-white"><?= e(__('panel.billing.title')) ?> · <?= e(($activeMonthNames[substr($ms['month'], 5, 2)] ?? '') . ' ' . substr($ms['month'], 0, 4)) ?></h2>
@@ -727,7 +648,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <!-- Interactive Revenue & Payment Analytics Chart Card -->
-      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-8">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
           <div>
             <div class="flex items-center gap-2">
@@ -773,7 +694,7 @@ require_once __DIR__ . '/../includes/header.php';
       <div class="space-y-8">
         
         <!-- 1. Weekly Interactive Calendar (Unrestricted Navigation) -->
-        <div class="card-elevated rounded-3xl p-5 sm:p-6 border border-white/10 bg-ink-800/90 shadow-2xl">
+        <div class="rounded-2xl border-white/10 bg-white/[0.02] p-5 sm:p-6 border border-white/10 bg-ink-800/90 shadow-2xl">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-white/10">
             <div>
               <div class="flex items-center gap-2">
@@ -874,7 +795,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <!-- 2. Recent Matches List Table -->
-        <div class="card-elevated rounded-3xl overflow-hidden border border-white/10">
+        <div class="rounded-2xl border-white/10 bg-white/[0.02] overflow-hidden border border-white/10">
           <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 class="font-display text-xl font-bold text-white"><?= e(__('panel.table.title')) ?></h2>
@@ -911,15 +832,9 @@ require_once __DIR__ . '/../includes/header.php';
                       <td class="p-4 text-xs font-mono"><?= formatDateLocalized($m['date'], $current_lang) ?></td>
                       <td class="p-4">
                         <?php if ($m['status'] === 'UNLOCKABLE'): ?>
-                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <?= e(__('panel.table.badge_sold')) ?>
-                          </span>
+                          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-bold text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>UNLOCKABLE</span>
                         <?php else: ?>
-                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                            <?= e(__('panel.table.badge_locked')) ?>
-                          </span>
+                          <span class="inline-flex items-center gap-1.5 rounded-full bg-red-400/15 px-2.5 py-0.5 text-[11px] font-bold text-red-300"><span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>LOCKED</span>
                         <?php endif; ?>
                       </td>
                       <td class="p-4">
@@ -928,7 +843,7 @@ require_once __DIR__ . '/../includes/header.php';
                             type="button" 
                             onclick="navigator.clipboard.writeText('<?= e($m['access_code']) ?>'); alert('<?= e(__('find.status.verified_code')) ?> <?= e($m['access_code']) ?>');"
                             title="<?= e(__('common.copy_link')) ?>"
-                            class="inline-flex items-center gap-1.5 font-mono text-sm font-bold text-accent bg-accent/10 hover:bg-accent/20 px-2.5 py-1 rounded-lg border border-accent/30 transition cursor-pointer"
+                            class="inline-flex items-center gap-1.5 font-mono text-xs font-bold tracking-wider text-accent hover:underline cursor-pointer"
                           >
                             <?= e($m['access_code']) ?>
                             <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -948,15 +863,13 @@ require_once __DIR__ . '/../includes/header.php';
                             <form action="index.php" method="POST" class="inline-block">
                               <input type="hidden" name="action" value="mark_sold">
                               <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
-                              <button type="submit" class="rounded-xl bg-accent px-3 py-1.5 text-xs font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-                                <?= e(__('panel.table.action_unlock_btn', '⚡ Kilidi Aç & Sat')) ?>
-                              </button>
+                              <button type="submit" class="rounded-lg bg-accent px-3 py-1.5 text-xs font-bold text-ink-900"><?= e(__('panel.shell.sell')) ?></button>
                             </form>
                           <?php else: ?>
                             <a href="<?= base_url('find.php?code=' . urlencode($m['access_code'])) ?>" target="_blank" class="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-accent hover:bg-white/10 font-semibold transition">
                               <?= e(__('panel.table.action_watch')) ?> &rarr;
                             </a>
-                            <form action="index.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar kilitlemek istediğinize emin misiniz? Oyuncu erişimi derhal durdurulacaktır.');">
+                            <form action="index.php" method="POST" class="inline-block" onsubmit="return confirm(<?= e(json_encode(__('panel.shell.relock_confirm'))) ?>);">
                               <input type="hidden" name="action" value="mark_locked">
                               <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                               <button type="submit" class="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-300 hover:bg-amber-500/20 font-semibold transition">
@@ -1046,6 +959,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 <?php if ($facility): ?>
 <!-- Chart.js Library for Graphical Analytics -->
+<script>var RELOCK_CONFIRM = <?= json_encode(__('panel.shell.relock_confirm')) ?>;</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 function escapeHtml(text) {
@@ -1222,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           html += '<div class="flex items-center gap-2">';
           if (isUnlocked) {
-            html += '<form action="index.php" method="POST" onsubmit="return confirm(\'Bu maçı tekrar kilitlemek istediğinize emin misiniz?\');"><input type="hidden" name="action" value="mark_locked"><input type="hidden" name="match_id" value="' + escapeHtml(m.id) + '"><button type="submit" class="px-3 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-semibold hover:bg-amber-500/25 transition">🔒 Kilitle</button></form>';
+            html += '<form action="index.php" method="POST" onsubmit="return confirm(RELOCK_CONFIRM);"><input type="hidden" name="action" value="mark_locked"><input type="hidden" name="match_id" value="' + escapeHtml(m.id) + '"><button type="submit" class="px-3 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-semibold hover:bg-amber-500/25 transition">🔒 Kilitle</button></form>';
           } else {
             html += '<form action="index.php" method="POST"><input type="hidden" name="action" value="mark_sold"><input type="hidden" name="match_id" value="' + escapeHtml(m.id) + '"><button type="submit" class="px-3 py-1.5 rounded-xl bg-accent text-ink-900 text-xs font-bold shadow-glow hover:bg-accent-neon transition">⚡ Kilidi Aç & Sat</button></form>';
           }

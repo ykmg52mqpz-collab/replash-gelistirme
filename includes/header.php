@@ -52,6 +52,23 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 </head>
 <body class="font-body bg-ink-900 text-white antialiased min-h-screen flex flex-col selection:bg-accent selection:text-ink-900">
 
+  <?php if (!empty($internalShell)): ?>
+  <!-- İç araç üst çubuğu (replash.info InternalShell) -->
+  <header class="sticky top-0 z-40 border-b border-white/5 bg-ink-900/85 backdrop-blur">
+    <div class="container-x flex h-16 items-center gap-3">
+      <a href="<?= base_url() ?>" class="flex items-center gap-2.5 font-display text-lg font-bold">
+        <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
+        Replash<span class="text-accent">.</span>
+      </a>
+      <span class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/50"><?= e($internalShell) ?></span>
+      <div role="group" aria-label="Language" class="ml-auto inline-flex items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium">
+        <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
+          <a href="<?= e(lang_url($lng)) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white' ?>"><?= strtoupper(e($lng)) ?></a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </header>
+  <?php else: ?>
   <!-- Floating Pill Header (Centered Container) -->
   <header class="pointer-events-none fixed inset-x-0 top-0 z-50 pt-3">
     <div class="container-x">
@@ -135,3 +152,4 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 
     </div>
   </header>
+  <?php endif; ?>
