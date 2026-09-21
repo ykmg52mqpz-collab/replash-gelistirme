@@ -17,6 +17,10 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <link rel="preload" as="image" href="<?= asset('images/gen_hero_friends.jpg') ?>">
   <link rel="preload" as="image" href="<?= asset('images/gen_padel_club_empty.jpg') ?>">
 
+  <!-- Marka yazı tipi: Neue Haas Grotesk Display (Adobe Fonts kit qqj8ayc) -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/qqj8ayc.css">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -35,6 +39,10 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
               neon: "#FEF3C7",
               glow: "rgba(253, 230, 138, 0.35)",
             }
+          },
+          fontFamily: {
+            display: ["neue-haas-grotesk-display", "system-ui", "sans-serif"],
+            body: ["neue-haas-grotesk-display", "system-ui", "sans-serif"],
           }
         }
       }
