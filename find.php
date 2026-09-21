@@ -98,7 +98,8 @@ if ($pdo) {
         $stmtFac = $pdo->query("SELECT id, name, city, courts, sport FROM facilities ORDER BY name ASC");
         $facilities = $stmtFac->fetchAll();
     } catch (Exception $e) {
-        $error = "Hata / Error: " . $e->getMessage();
+        error_log('find.php: ' . $e->getMessage());
+        $error = __('find.errors.not_found');
         $facilities = [];
         $matchCameras = [];
     }
@@ -107,14 +108,13 @@ if ($pdo) {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="min-h-screen pb-20 relative">
-  <div class="hero-glow"></div>
+<main class="min-h-screen pb-20 relative overflow-x-hidden">
 
   <?php
   $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
   $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
   $codeOnlySearch = (!$searchFacilityEnabled && $searchCodeEnabled); ?>
-  <?php if (!$match && $codeOnlySearch): ?>
+  <?php if ($match || $codeOnlySearch): ?>
     <!-- HERO + KOD KARTI (replash.info) -->
     <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
     <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
@@ -131,6 +131,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
     </section>
 
+    <?php if (true): ?>
     <section class="border-t border-white/5 bg-ink-900 py-16 md:py-20">
     <div class="container-x">
     <div class="mx-auto max-w-2xl"  data-reveal="up">
@@ -170,9 +171,10 @@ require_once __DIR__ . '/includes/header.php';
     </div>
     </div>
     </section>
+    <?php endif; ?>
   <?php endif; ?>
 
-  <div class="pt-10">
+  <div class="<?= ($match || $codeOnlySearch) ? 'pt-2' : 'pt-28' ?>">
   
   <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
@@ -335,145 +337,49 @@ require_once __DIR__ . '/includes/header.php';
 
     <?php if (!$match): ?>
 
-      <!-- ERİŞİM NASIL ÇALIŞIR (replash.info) -->
-      <section class="section-y border-t border-white/5 bg-section-gradient">
-      <div class="container-x">
-      <div class="mx-auto max-w-3xl"  data-reveal="up">
-      <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-6 md:p-8">
-      <div class="flex items-start gap-4">
-      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
-      <svg class="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
-      </rect>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4">
-      </path>
-      </svg>
-      </div>
-      <div class="flex-1">
-      <h3 class="mb-2 text-base font-semibold text-white">
-      <?= e(__('find.explainer.title')) ?>
-      </h3>
-      <p class="text-sm leading-relaxed text-white/55">
-      <?= e(__('find.explainer.desc')) ?>
-      </p>
-      </div>
-      </div>
-      <div class="mt-6 grid gap-3 sm:grid-cols-2">
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z">
-      </path>
-      <circle cx="12" cy="10" r="3">
-      </circle>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65">Facility</span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <rect x="3" y="4" width="18" height="18" rx="2">
-      </rect>
-      <line x1="16" y1="2" x2="16" y2="6">
-      </line>
-      <line x1="8" y1="2" x2="8" y2="6">
-      </line>
-      <line x1="3" y1="10" x2="21" y2="10">
-      </line>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65">Date</span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <circle cx="12" cy="12" r="10">
-      </circle>
-      <polyline points="12 6 12 12 16 14">
-      </polyline>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65">Time slot</span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <rect x="3" y="11" width="18" height="11" rx="2">
-      </rect>
-      <path d="M7 11V7a5 5 0 0 1 10 0">
-      </path>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65">UNLOCKABLE status</span>
-      </div>
-      </div>
-      <div class="mt-6 flex items-center gap-2 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3">
-      <svg class="h-4 w-4 flex-shrink-0 text-accent" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7zM12 15a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd">
-      </path>
-      </svg>
-      <span class="text-xs text-white/60">
-      <?= e(__('find.explainer.noShare')) ?>
-      </span>
-      </div>
-      </div>
-      </div>
-      </div>
-      </section>
+
     <?php endif; ?>
 
     <?php if ($error): ?>
-      <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-5 text-center text-rose-300 text-sm font-medium mb-8">
-        <p><?= e($error) ?></p>
+      <?php $isExpiredError = ($error === __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.')); ?>
+      <!-- Uyarı kutusu (replash.info FindForm) -->
+      <div class="mx-auto mb-8 max-w-2xl rounded-2xl border border-red-400/30 bg-red-400/10 p-5">
+        <?php if ($isExpiredError): ?>
+          <p class="font-semibold text-red-200"><?= e($error) ?></p>
+        <?php else: ?>
+          <div class="font-semibold text-red-200"><?= e(__('find.watch.notFound.title')) ?></div>
+          <p class="mt-1 text-sm text-white/60"><?= e(__('find.watch.notFound.desc')) ?></p>
+        <?php endif; ?>
       </div>
+      <?php if (!$isExpiredError): ?>
+        <div class="mx-auto -mt-5 mb-8 max-w-2xl">
+          <a href="<?= base_url('contact.php') ?>" class="inline-block rounded-xl border border-white/15 px-5 py-2.5 text-sm text-white/80 transition hover:border-accent hover:text-accent"><?= e(__('find.watch.refund.open')) ?></a>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
 
     <!-- MATCH RESULT & PLAYER CONTAINER -->
     <?php if ($match): ?>
-      <div class="card-elevated rounded-3xl overflow-hidden border border-white/10 bg-ink-800/90 shadow-2xl">
-        
-        <!-- Match Header Info Bar -->
-        <div class="p-6 sm:p-8 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2.5 mb-1.5">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-accent/10 text-accent border border-accent/20">
-                <?= e(strtoupper($match['facility_sport'] ?? $match['sport'])) ?>
-              </span>
-              <?php if ($codeValidated): ?>
-                <span class="text-xs text-neutral-400"><?= e(__('find.status.verified_code')) ?> <strong class="text-accent font-mono tracking-wider"><?= e($match['access_code']) ?></strong></span>
-              <?php endif; ?>
-            </div>
-            <h2 class="font-display text-2xl sm:text-3xl font-bold text-white">
-              <?= e($match['facility_name'] ?? 'Replash Facility') ?> · <?= e($match['court']) ?>
-            </h2>
-            <p class="text-xs sm:text-sm text-neutral-400 mt-1">
-              <?= formatDateLocalized($match['date'], $current_lang) ?> · <?= e($match['time_slot']) ?>
-            </p>
-          </div>
+      <div class="mx-auto max-w-5xl pb-10">
 
-          <div class="flex items-center gap-3">
-            <?php if ($match['status'] === 'UNLOCKABLE'): ?>
-              <?php if ($codeValidated): ?>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <?= e(__('find.status.unlocked')) ?>
-                </span>
-              <?php else: ?>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent/10 text-accent border border-accent/20">
-                  <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
-                  <?= e(__('find.status.pending_code')) ?>
-                </span>
-              <?php endif; ?>
-            <?php else: ?>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                <?= e(__('find.status.locked')) ?>
-              </span>
-            <?php endif; ?>
-            <span class="text-xs text-neutral-400"><?= e($match['views']) ?> <?= e(__('common.views')) ?></span>
+        <!-- Durum çubuğu (replash.info FindForm) -->
+        <?php $matchMeta = ($match['facility_name'] ?? 'Replash') . ' · ' . $match['court'] . ' · ' . formatDateLocalized($match['date'], $current_lang) . ' · ' . $match['time_slot']; ?>
+        <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
+          <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 px-4 py-2.5">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-emerald-300">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> UNLOCKABLE
+            </span>
+            <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
+            <span class="ml-auto text-xs text-white/40"><?= e($match['views']) ?> <?= e(__('common.views')) ?></span>
           </div>
-        </div>
+        <?php else: ?>
+          <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-accent/25 bg-accent/10 px-4 py-2.5">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-accent">
+              <span class="h-1.5 w-1.5 rounded-full bg-accent"></span> <?= e(__('find.status.pending_code')) ?>
+            </span>
+            <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
+          </div>
+        <?php endif; ?>
 
         <!-- Video Screen or Gate Lock Screen -->
         <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
@@ -537,19 +443,51 @@ require_once __DIR__ . '/includes/header.php';
           $directVideoSrc = $cameraList[0]['url'];
           ?>
 
-          <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden w-full group">
+          <div id="rp-frame" class="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black group">
             <div id="clappr-player" class="w-full h-full relative"></div>
+            <div class="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] text-white/80">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
+              <?= e(__('find.watch.playerLabel')) ?>
+            </div>
 
             <!-- Floating Recording Indicator Overlay -->
-            <div id="recording-overlay" class="hidden absolute top-4 left-4 z-20 flex items-center gap-2 bg-rose-600/90 border border-rose-400/60 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md animate-pulse">
+            <div id="recording-overlay" class="hidden absolute top-3 right-3 z-20 flex items-center gap-2 bg-rose-600/90 border border-rose-400/60 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md animate-pulse">
               <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
               <span><?= e(__('find.tools.recording_active')) ?> — <span id="record-timer" class="font-mono text-accent">00:00</span></span>
             </div>
           </div>
 
+          <!-- Kontrol çubuğu (replash.info MatchPlayer): sürükleyerek klip seç -->
+          <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 sm:px-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="button" id="rp-play" aria-label="Play/Pause" class="grid h-10 w-10 flex-none place-items-center rounded-full bg-accent text-ink-900 transition hover:scale-105 active:scale-95">
+                <svg id="rp-icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="rp-icon-pause" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+              </button>
+              <div id="rp-scrub" class="relative h-1.5 min-w-[120px] flex-1 cursor-pointer touch-none rounded-full bg-white/20">
+                <div id="rp-clip" class="absolute -bottom-1 -top-1 hidden rounded border border-accent bg-accent/20"></div>
+                <div id="rp-progress" class="absolute inset-y-0 left-0 rounded-full bg-accent" style="width:0%"></div>
+              </div>
+              <div id="rp-time" class="min-w-[84px] text-right font-mono text-xs tabular-nums text-white/90">00:00 / 00:00</div>
+              <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
+              <select id="rp-speed" aria-label="Speed" class="rounded-lg border border-white/10 bg-ink-900 px-1.5 py-1 font-mono text-xs text-white/80 focus:border-accent focus:outline-none">
+                <option value="1">1x</option><option value="1.25">1.25x</option><option value="1.5">1.5x</option><option value="2">2x</option>
+              </select>
+              <button type="button" id="rp-full" aria-label="Fullscreen" class="grid h-8 w-8 flex-none place-items-center rounded-lg border border-white/10 text-white/70 transition hover:border-accent hover:text-accent">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+              </button>
+              </div>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/50">
+              <span class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">✂︎ <?= e(__('find.watch.clip.label')) ?></span>
+              <span><?= e(__('find.watch.clip.hint')) ?></span>
+              <span id="rp-clip-info" class="ml-auto font-mono"></span>
+            </div>
+          </div>
+
           <!-- Multiple Camera Angles Selection Bar -->
           <?php if (count($cameraList) >= 1): ?>
-            <div class="px-6 py-3.5 bg-ink-950/95 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+            <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
                 <span class="text-xs font-bold text-white uppercase tracking-wider"><?= e($camSectionLabel) ?></span>
@@ -571,7 +509,7 @@ require_once __DIR__ . '/includes/header.php';
           <?php endif; ?>
 
           <!-- Video Tools Bar: Precision Clip Trimming, Live Recording & Sharing -->
-          <div class="p-6 bg-ink-900/80 border-t border-white/10 space-y-4">
+          <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6 space-y-4">
             
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               
@@ -623,7 +561,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- Precision Trimmer Controls Bar -->
-            <div class="p-3.5 rounded-2xl bg-ink-950/70 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-3">
               <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
                 <!-- Start Time Range Group -->
                 <div class="flex items-center gap-1.5">
@@ -674,7 +612,7 @@ require_once __DIR__ . '/includes/header.php';
                 <button 
                   type="button" 
                   onclick="createClipFromRangeInputs()"
-                  class="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-accent to-accent-neon px-4 py-2 text-xs font-bold text-ink-900 shadow-glow hover:brightness-110 transition"
+                  class="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-ink-900 transition hover:bg-accent-neon disabled:opacity-50"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/>
@@ -696,6 +634,12 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
           </div>
+
+          <?php
+            $expiresTs = strtotime($match['date'] . ' +' . RETENTION_DAYS . ' days');
+            $expiresText = str_replace('{date}', formatDateLocalized(date('Y-m-d', $expiresTs), $current_lang), __('find.watch.expires'));
+          ?>
+          <p class="mt-4 text-xs text-white/35"><?= e($expiresText) ?></p>
 
           <!-- Clip Output Ready Modal -->
           <div id="clip-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
@@ -885,12 +829,99 @@ require_once __DIR__ . '/includes/header.php';
 
       <!-- SEARCH AREA UNDER THE PLAYER -->
       <div class="mt-14 pt-10 border-t border-white/10">
-        <?php $renderSearchSection(true); ?>
+        <?php if (!$codeOnlySearch) { $renderSearchSection(true); } ?>
       </div>
     <?php endif; ?>
 
   </div>
   </div>
+
+  <!-- ERİŞİM NASIL ÇALIŞIR (replash.info) -->
+      <section class="section-y border-t border-white/5 bg-section-gradient">
+      <div class="container-x">
+      <div class="mx-auto max-w-3xl"  data-reveal="up">
+      <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-6 md:p-8">
+      <div class="flex items-start gap-4">
+      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
+      <svg class="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
+      </rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4">
+      </path>
+      </svg>
+      </div>
+      <div class="flex-1">
+      <h3 class="mb-2 text-base font-semibold text-white">
+      <?= e(__('find.explainer.title')) ?>
+      </h3>
+      <p class="text-sm leading-relaxed text-white/55">
+      <?= e(__('find.explainer.desc')) ?>
+      </p>
+      </div>
+      </div>
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z">
+      </path>
+      <circle cx="12" cy="10" r="3">
+      </circle>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Facility</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <rect x="3" y="4" width="18" height="18" rx="2">
+      </rect>
+      <line x1="16" y1="2" x2="16" y2="6">
+      </line>
+      <line x1="8" y1="2" x2="8" y2="6">
+      </line>
+      <line x1="3" y1="10" x2="21" y2="10">
+      </line>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Date</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <polyline points="12 6 12 12 16 14">
+      </polyline>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">Time slot</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
+      <span class="text-accent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+      <rect x="3" y="11" width="18" height="11" rx="2">
+      </rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0">
+      </path>
+      </svg>
+      </span>
+      <span class="text-sm text-white/65">UNLOCKABLE status</span>
+      </div>
+      </div>
+      <div class="mt-6 flex items-center gap-2 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3">
+      <svg class="h-4 w-4 flex-shrink-0 text-accent" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7zM12 15a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd">
+      </path>
+      </svg>
+      <span class="text-xs text-white/60">
+      <?= e(__('find.explainer.noShare')) ?>
+      </span>
+      </div>
+      </div>
+      </div>
+      </div>
+      </section>
 </main>
 
 <?php if ($match && $match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
@@ -904,8 +935,10 @@ var I18N = {
   secondsUnit: <?= json_encode(__('find.modal.seconds')) ?>,
   copied: <?= json_encode(__('find.tools.copied')) ?>,
   preparingFile: <?= json_encode(__('find.modal.preparing_file')) ?>,
-  fileShareNotSupported: <?= json_encode(__('find.modal.file_share_not_supported')) ?>
+  fileShareNotSupported: <?= json_encode(__('find.modal.file_share_not_supported')) ?>,
+  clipRange: <?= json_encode(__('find.watch.clip.range')) ?>
 };
+var CLIP_MIN = 15, CLIP_MAX = 40; // Platform Brief v3.4: klip 15–40 sn
 
 var cameraList = <?= json_encode($cameraList) ?>;
 var activeCameraIndex = 0;
@@ -965,8 +998,8 @@ function createClipFromRangeInputs() {
   }
 
   var duration = endSec - startSec;
-  if (duration < 2) {
-    alert(I18N.tooShort);
+  if (duration < CLIP_MIN || duration > CLIP_MAX) {
+    alert(I18N.clipRange);
     return;
   }
 
@@ -1312,7 +1345,8 @@ document.addEventListener('DOMContentLoaded', function() {
       poster: posterImg,
       width: '100%',
       height: '100%',
-      autoPlay: true,
+      autoPlay: false,
+      chromeless: true,
       playback: {
         playInline: true,
         recycleVideo: true,
@@ -1324,6 +1358,82 @@ document.addEventListener('DOMContentLoaded', function() {
         buttons: "#FFFFFF"
       }
     });
+
+
+    // --- Kontrol çubuğu (replash.info MatchPlayer) ---
+    var $ = function (id) { return document.getElementById(id); };
+    var scrub = $('rp-scrub'), clipEl = $('rp-clip'), prog = $('rp-progress');
+    var getDur = function () { try { return clapprPlayer.getDuration() || 0; } catch (e) { return 0; } };
+    var getCur = function () { try { return clapprPlayer.getCurrentTime() || 0; } catch (e) { return 0; } };
+    var videoEl = function () { return container.querySelector('video'); };
+    var setIcons = function (playing) {
+      $('rp-icon-play').classList.toggle('hidden', playing);
+      $('rp-icon-pause').classList.toggle('hidden', !playing);
+    };
+    var render = function () {
+      var d = getDur(), c = getCur();
+      prog.style.width = (d ? (c / d) * 100 : 0) + '%';
+      $('rp-time').textContent = formatTime(c) + ' / ' + formatTime(d);
+    };
+    $('rp-play').addEventListener('click', function () {
+      if (clapprPlayer.isPlaying()) clapprPlayer.pause(); else clapprPlayer.play();
+    });
+    // Videoya tıklayınca da oynat/durdur
+    container.addEventListener('click', function () { $('rp-play').click(); });
+    clapprPlayer.on(Clappr.Events.PLAYER_PLAY, function () { setIcons(true); });
+    clapprPlayer.on(Clappr.Events.PLAYER_PAUSE, function () { setIcons(false); });
+    clapprPlayer.on(Clappr.Events.PLAYER_ENDED, function () { setIcons(false); });
+    clapprPlayer.on(Clappr.Events.PLAYER_TIMEUPDATE, render);
+    setInterval(render, 500);
+
+    $('rp-speed').addEventListener('change', function () {
+      var v = videoEl(); if (v) v.playbackRate = parseFloat(this.value) || 1;
+    });
+    $('rp-full').addEventListener('click', function () {
+      var f = $('rp-frame');
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (f.requestFullscreen) f.requestFullscreen();
+      else { var v = videoEl(); if (v && v.webkitEnterFullscreen) v.webkitEnterFullscreen(); }
+    });
+
+    // Sürükleyerek klip seç: seçim başlangıç/bitiş alanlarını doldurur
+    var dragging = false, dragStart = 0;
+    var posFrom = function (e) {
+      var r = scrub.getBoundingClientRect(), d = getDur();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      return Math.min(1, Math.max(0, x / r.width)) * d;
+    };
+    var showClip = function (a, b) {
+      var d = getDur(); if (!d) return;
+      var len = b - a, valid = len >= CLIP_MIN && len <= CLIP_MAX;
+      clipEl.classList.remove('hidden');
+      clipEl.style.left = (a / d * 100) + '%';
+      clipEl.style.width = ((b - a) / d * 100) + '%';
+      var info = $('rp-clip-info');
+      info.textContent = formatTime(a) + ' → ' + formatTime(b) + ' · ' + Math.round(len) + 's';
+      info.className = 'ml-auto font-mono ' + (valid ? 'text-white/60' : 'text-red-300');
+      document.getElementById('clip-start-input').value = formatTime(a);
+      document.getElementById('clip-end-input').value = formatTime(b);
+    };
+    var onDown = function (e) {
+      if (!getDur()) return;
+      dragging = true; dragStart = posFrom(e);
+      try { clapprPlayer.seek(dragStart); } catch (err) {}
+      e.preventDefault();
+    };
+    var onMove = function (e) {
+      if (!dragging) return;
+      var t = posFrom(e), a = Math.min(dragStart, t), b = Math.max(dragStart, t);
+      if (b - a >= 1) showClip(a, b);
+      try { clapprPlayer.seek(t); } catch (err) {}
+    };
+    var onUp = function () { dragging = false; };
+    scrub.addEventListener('mousedown', onDown);
+    scrub.addEventListener('touchstart', onDown, { passive: false });
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove, { passive: true });
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('touchend', onUp);
 
     // Auto-seek if timestamp parameter 't' is present
     var urlParams = new URLSearchParams(window.location.search);
