@@ -382,6 +382,7 @@ return [
         ]
     ],
     'common' => [
+        'csrf_failed' => 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.',
         'loading' => 'Yükleniyor...',
         'all_rights_reserved' => 'Tüm hakları saklıdır.',
         'privacy_policy' => 'Gizlilik Politikası',

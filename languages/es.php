@@ -382,6 +382,7 @@ return [
         ]
     ],
     'common' => [
+        'csrf_failed' => 'La verificación de seguridad ha fallado. Actualiza la página e inténtalo de nuevo.',
         'loading' => 'Cargando...',
         'all_rights_reserved' => 'Todos los derechos reservados.',
         'privacy_policy' => 'Política de Privacidad',

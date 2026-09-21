@@ -345,7 +345,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
     <?php if (!$facility): ?>
       <!-- Giriş -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm"><?= csrf_field() ?>
           <input type="hidden" name="login_pin" value="1">
           <h1 class="text-lg font-semibold text-gray-900"><?= e(__('panel.shell.login_title')) ?></h1>
           <p class="mb-5 mt-1 text-sm text-gray-500"><?= e(__('panel.shell.login_sub')) ?></p>

@@ -381,7 +381,7 @@ require_once __DIR__ . '/../includes/header.php';
         <button type="button" onclick="document.getElementById('addMatchModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
       </div>
 
-      <form action="matches.php" method="POST" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs items-end">
+      <form action="matches.php" method="POST" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs items-end"><?= csrf_field() ?>
         <input type="hidden" name="action" value="add_match">
 
         <div>
@@ -532,7 +532,7 @@ require_once __DIR__ . '/../includes/header.php';
                   <div class="inline-flex items-center gap-1.5">
                     <!-- Status Toggle Button -->
                     <?php if ($m['status'] === 'LOCKED'): ?>
-                      <form action="matches.php" method="POST" class="inline-block">
+                      <form action="matches.php" method="POST" class="inline-block"><?= csrf_field() ?>
                         <input type="hidden" name="action" value="unlock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="Satışa Aç & Kodu Aktifleştir" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold">
@@ -540,7 +540,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </button>
                       </form>
                     <?php else: ?>
-                      <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar Kilitli/Bekliyor durumuna almak istediğinize emin misiniz?');">
+                      <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar Kilitli/Bekliyor durumuna almak istediğinize emin misiniz?');"><?= csrf_field() ?>
                         <input type="hidden" name="action" value="lock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="Kilitle / Satış Bekliyor Yap" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
@@ -551,7 +551,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <?php if (!empty($m['sold_at']) && (int)$m['billable'] === 1): ?>
                       <!-- İade: para geri verildi, satış hesaptan çıkar -->
-                      <form action="matches.php" method="POST" class="inline-block" onsubmit="var r = prompt('İade sebebi:'); if (r === null) return false; this.reason.value = r; return true;">
+                      <form action="matches.php" method="POST" class="inline-block" onsubmit="var r = prompt('İade sebebi:'); if (r === null) return false; this.reason.value = r; return true;"><?= csrf_field() ?>
                         <input type="hidden" name="action" value="refund_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <input type="hidden" name="reason" value="">
@@ -581,7 +581,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </button>
 
                     <!-- Delete Form -->
-                    <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maç kaydını silmek istediğinize emin misiniz?');">
+                    <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maç kaydını silmek istediğinize emin misiniz?');"><?= csrf_field() ?>
                       <input type="hidden" name="action" value="delete_match">
                       <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                       <button type="submit" title="Maçı Sil" class="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30">
@@ -610,7 +610,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
       <button type="button" onclick="closeEditMatch()" class="text-xl font-bold text-white/50 hover:text-white" aria-label="Kapat">&times;</button>
     </div>
-    <form action="matches.php" method="POST" class="space-y-3.5 text-xs">
+    <form action="matches.php" method="POST" class="space-y-3.5 text-xs"><?= csrf_field() ?>
       <input type="hidden" name="action" value="edit_match">
       <input type="hidden" name="match_id" id="em_id">
       <input type="hidden" name="duration_sec" id="em_duration_sec">

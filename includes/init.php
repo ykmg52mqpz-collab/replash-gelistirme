@@ -17,6 +17,20 @@ if (session_status() === PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli' && !headers_se
     setcookie(session_name(), session_id(), ['path' => '/', 'secure' => $isHttps, 'httponly' => true, 'samesite' => 'Lax']);
 }
 
+// CSRF (T16): panel, yönetim ve iletişim formları oturuma özel bir anahtar taşır; başka siteden gönderilen form reddedilir
+if (session_status() === PHP_SESSION_ACTIVE && empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+function csrf_field(): string {
+    return '<input type="hidden" name="_csrf" value="' . htmlspecialchars($_SESSION['csrf'] ?? '', ENT_QUOTES) . '">';
+}
+function replash_csrf_required(): bool {
+    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    return (bool)preg_match('#/(panel|admin)/[^/]+\.php$|/contact\.php$#', $script);
+}
+$csrfFailed = PHP_SAPI !== 'cli' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && replash_csrf_required()
+    && !hash_equals((string)($_SESSION['csrf'] ?? ''), (string)($_POST['_csrf'] ?? ''));
+
 // Ensure DB is initialized
 $dbError = null;
 try {
@@ -398,3 +412,8 @@ function get_facility_court_names($facility) {
     return array_column($courtsData, 'name');
 }
 
+if (!empty($csrfFailed)) {
+    http_response_code(400);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit(__('common.csrf_failed'));
+}

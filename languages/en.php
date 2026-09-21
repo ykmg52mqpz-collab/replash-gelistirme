@@ -382,6 +382,7 @@ return [
         ]
     ],
     'common' => [
+        'csrf_failed' => 'Security check failed. Please refresh the page and try again.',
         'loading' => 'Loading...',
         'all_rights_reserved' => 'All rights reserved.',
         'privacy_policy' => 'Privacy Policy',

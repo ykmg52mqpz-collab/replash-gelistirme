@@ -629,7 +629,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if (!$isAdmin): ?>
       <!-- Yönetim girişi (replash.info AdminApp) -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8"><?= csrf_field() ?>
           <input type="hidden" name="admin_login" value="1">
           <h1 class="font-display text-xl font-bold">Platform Admin</h1>
           <p class="mb-5 mt-1 text-sm text-white/50">Replash sistem yöneticisi hesabınızla giriş yapın.</p>
@@ -912,7 +912,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <span class="text-[11px] text-neutral-400">Her sahaya özel canlı RTSP/HLS linki bağlayın</span>
               </div>
 
-              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs">
+              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs"><?= csrf_field() ?>
                 <input type="hidden" name="action" value="add_facility">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1028,7 +1028,7 @@ require_once __DIR__ . '/../includes/header.php';
                       </button>
 
                       <!-- Delete Facility Form -->
-                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
+                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?><?= csrf_field() ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
                         <input type="hidden" name="action" value="delete_facility">
                         <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                         <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="Tesisi Sil">
@@ -1045,7 +1045,7 @@ require_once __DIR__ . '/../includes/header.php';
                       <span class="text-[11px] text-neutral-400">Her sahaya birden fazla kamera URL'si atayabilirsiniz</span>
                     </div>
 
-                    <form action="index.php?tab=facilities" method="POST" class="space-y-3">
+                    <form action="index.php?tab=facilities" method="POST" class="space-y-3"><?= csrf_field() ?>
                       <input type="hidden" name="action" value="update_facility">
                       <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                       
@@ -1243,7 +1243,7 @@ require_once __DIR__ . '/../includes/header.php';
           </span>
         </div>
 
-        <form action="index.php?tab=settings" method="POST" class="space-y-6">
+        <form action="index.php?tab=settings" method="POST" class="space-y-6"><?= csrf_field() ?>
           <input type="hidden" name="action" value="update_search_form_settings">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
