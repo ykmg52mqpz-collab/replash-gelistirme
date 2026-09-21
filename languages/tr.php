@@ -581,6 +581,15 @@ return [
             'expires' => 'Bu video {date} tarihinde otomatik silinir.'
         ]
     ],
+    'api' => [
+        'video' => [
+            'server' => 'Şu anda videoya ulaşılamıyor. Lütfen biraz sonra tekrar deneyin.',
+            'too_many' => 'Çok fazla hatalı deneme. Lütfen 15 dakika sonra tekrar deneyin.',
+            'code_required' => 'Bu videoyu açmak için maç kodu gerekiyor.',
+            'not_found' => 'Video bulunamadı.',
+            'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silindi.',
+        ],
+    ],
     'panel' => [
         'cameras' => [
             'title' => 'Kameralar',

@@ -581,6 +581,15 @@ return [
             'expires' => 'This video auto-deletes on {date}.'
         ]
     ],
+    'api' => [
+        'video' => [
+            'server' => 'The video is not available right now. Please try again shortly.',
+            'too_many' => 'Too many wrong attempts. Please try again in 15 minutes.',
+            'code_required' => 'A match code is needed to open this video.',
+            'not_found' => 'Video not found.',
+            'expired' => 'The 7-day storage period for this match has ended, so the video was deleted.',
+        ],
+    ],
     'panel' => [
         'cameras' => [
             'title' => 'Cameras',

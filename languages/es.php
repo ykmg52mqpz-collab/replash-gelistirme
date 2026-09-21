@@ -581,6 +581,15 @@ return [
             'expires' => 'Este vídeo se elimina automáticamente el {date}.'
         ]
     ],
+    'api' => [
+        'video' => [
+            'server' => 'El vídeo no está disponible ahora. Inténtalo de nuevo en breve.',
+            'too_many' => 'Demasiados intentos incorrectos. Inténtalo de nuevo en 15 minutos.',
+            'code_required' => 'Se necesita el código del partido para abrir este vídeo.',
+            'not_found' => 'Vídeo no encontrado.',
+            'expired' => 'El periodo de conservación de 7 días ha terminado y el vídeo se ha eliminado.',
+        ],
+    ],
     'panel' => [
         'cameras' => [
             'title' => 'Cámaras',

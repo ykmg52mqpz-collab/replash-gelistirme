@@ -581,6 +581,15 @@ return [
             'expires' => 'Questo video si cancella automaticamente il {date}.'
         ]
     ],
+    'api' => [
+        'video' => [
+            'server' => 'Il video non è disponibile al momento. Riprova tra poco.',
+            'too_many' => 'Troppi tentativi errati. Riprova tra 15 minuti.',
+            'code_required' => 'Serve il codice partita per aprire questo video.',
+            'not_found' => 'Video non trovato.',
+            'expired' => 'Il periodo di conservazione di 7 giorni è terminato, il video è stato eliminato.',
+        ],
+    ],
     'panel' => [
         'cameras' => [
             'title' => 'Telecamere',

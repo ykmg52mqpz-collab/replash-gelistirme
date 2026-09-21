@@ -7,19 +7,26 @@
 
 require_once __DIR__ . '/../includes/init.php';
 
+// Oyuncuya düz metin hata (4 dil); iç hata ayrıntısı gösterilmez
+function replash_video_error(int $status, string $key): void {
+    http_response_code($status);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit(__('api.video.' . $key));
+}
+
 $matchId = $_GET['id'] ?? '';
 $accessCode = trim($_GET['code'] ?? '');
 
 try {
     if (!$pdo) {
-        die("Veritabanı bağlantısı yok.");
+        replash_video_error(503, 'server');
     }
 
     $match = null;
     $accessCode = replash_normalize_code($accessCode);
     if ($accessCode !== '' && replash_code_blocked($pdo)) {
         http_response_code(429);
-        die("Çok fazla hatalı deneme. Lütfen daha sonra tekrar deneyin.");
+        replash_video_error(429, 'too_many');
     }
     if (!empty($accessCode)) {
         $match = replash_match_by_code($pdo, $accessCode);
@@ -28,19 +35,19 @@ try {
         if (!$match || !was_match_sold($match)) replash_code_failed($pdo);
     } elseif (!empty($matchId)) {
         http_response_code(403);
-        die("Bu videoya erişmek için erişim kodu gereklidir.");
+        replash_video_error(403, 'code_required');
     }
 
     // Stealth mode: unsold matches look exactly like non-existent ones
     if (!$match || !was_match_sold($match)) {
         http_response_code(404);
-        die("Maç kaydı bulunamadı.");
+        replash_video_error(404, 'not_found');
     }
 
     // Retention Check: 7-day expiry rule (only reached for sold matches)
     if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
         http_response_code(410);
-        die("Bu maçın 7 günlük saklama süresi dolduğu için video kaydı silinmiştir.");
+        replash_video_error(410, 'expired');
     }
 
     // Increment Views
@@ -78,7 +85,7 @@ try {
     $finalPlaybackUrl = buildMatchPlaybackUrl($rawPlayback, $match['date'], $match['time_slot'], $duration, $isDownload, $filename, $startOffset);
     if ($finalPlaybackUrl === '') {
         http_response_code(404);
-        die("Maç kaydı bulunamadı.");
+        replash_video_error(404, 'not_found');
     }
 
     if ($isDownload) {
@@ -122,5 +129,6 @@ try {
     exit;
 } catch (Exception $e) {
     http_response_code(500);
-    die("Sunucu Hatası: " . $e->getMessage());
+    error_log('api/video.php: ' . $e->getMessage());
+    replash_video_error(500, 'server');
 }
