@@ -106,6 +106,22 @@ if ($pdo && !$codeBlocked) {
             $matchCameras = $camStmt->fetchAll();
         }
 
+        // Video kaynağı yoksa (kamera adresi ve kayıt adresi boş) örnek video açma: bulunamadı göster
+        if ($match && $codeValidated) {
+            $hasSource = !empty($match['playback_url']) || count(array_filter(array_column($matchCameras, 'stream_url'))) > 0;
+            if (!$hasSource && !empty($match['camera_id'])) {
+                $cs = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? LIMIT 1");
+                $cs->execute([$match['camera_id']]);
+                $hasSource = (bool)$cs->fetchColumn();
+            }
+            if (!$hasSource) {
+                $match = null;
+                $codeValidated = false;
+                $matchCameras = [];
+                $error = __('find.errors.not_found');
+            }
+        }
+
         // Fetch facilities for dropdown
         $stmtFac = $pdo->query("SELECT id, name, city, courts, sport FROM facilities ORDER BY name ASC");
         $facilities = $stmtFac->fetchAll();
@@ -407,7 +423,7 @@ require_once __DIR__ . '/includes/header.php';
                   $cStream = $camItem['stream_url'] ?: '';
                   $pUrl = buildMatchPlaybackUrl($cStream, $match['date'], $match['time_slot'], (int)($match['duration_sec'] ?? 3600));
                   if (empty($pUrl)) {
-                      $pUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+                      continue; // bu kameranın adresi yok
                   }
 
                   $camDisplayName = str_replace('{n}', (string)$camIdx, $camTemplate);
@@ -436,9 +452,6 @@ require_once __DIR__ . '/includes/header.php';
                   }
               }
               $fallbackUrl = buildMatchPlaybackUrl($rawPlayback, $match['date'], $match['time_slot'], (int)($match['duration_sec'] ?? 3600));
-              if (empty($fallbackUrl)) {
-                  $fallbackUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-              }
 
               $defaultCamName = str_replace('{n}', '1', $camTemplate);
               if (str_contains($defaultCamName, '%d')) {

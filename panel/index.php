@@ -79,7 +79,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 $playbackUrl = buildMatchPlaybackUrl($camStream, $mRow['date'], $mRow['time_slot'], (int)($mRow['duration_sec'] ?? 3600));
 
                 $newCode = replash_new_access_code($pdo);
-                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
+                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
                 $upd->execute([$newCode, $playbackUrl, $matchId]);
                 replash_log_sale_event($pdo, $mRow, 'sold', 'panel');
                 $soldNotice = ['code' => $newCode, 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];

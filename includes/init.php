@@ -245,7 +245,7 @@ function formatDateLocalized($dateStr, $lang = null) {
  */
 function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600, $download = false, $filename = 'replash.mp4', $startOffsetSec = 0) {
     if (empty($streamUrl)) {
-        return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        return ''; // kaynak yok: çağıran taraf "video bulunamadı" gösterir
     }
 
     // Extract slot start and end time

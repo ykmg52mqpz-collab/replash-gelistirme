@@ -76,6 +76,10 @@ try {
     }
 
     $finalPlaybackUrl = buildMatchPlaybackUrl($rawPlayback, $match['date'], $match['time_slot'], $duration, $isDownload, $filename, $startOffset);
+    if ($finalPlaybackUrl === '') {
+        http_response_code(404);
+        die("Maç kaydı bulunamadı.");
+    }
 
     if ($isDownload) {
         // Enforce attachment header to make the browser save the file rather than play it
