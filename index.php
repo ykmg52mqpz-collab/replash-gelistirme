@@ -21,50 +21,43 @@ require_once __DIR__ . '/includes/header.php';
 
 <main class="relative min-h-screen bg-ink-900">
 
-  <!-- HERO SECTION (Full-Screen Immersive Banner with Parallax Zoom) -->
-  <section id="hero-section" class="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-ink-900 pt-28 pb-20 md:pt-32 md:pb-24">
-    <!-- Hero Background Image & Multi-layered Gradients -->
-    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      <img 
-        id="hero-bg-img"
-        src="<?= asset('images/gen_hero_friends.jpg') ?>" 
-        alt="Replash Hero" 
-        class="w-full h-full object-cover object-[center_35%] scale-110 will-change-transform transition-transform duration-75 ease-out" 
-        style="opacity: 0.75;"
-      />
-      <!-- replash.info ile aynı karartma: üstten alta ve yanlardan -->
-      <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/55 to-ink-900/95"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-ink-900/40 via-transparent to-ink-900/40"></div>
-    </div>
-
-    <!-- Radial Glow and Grid Noise -->
-    <div class="pointer-events-none absolute -top-60 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full" style="background: radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%);" aria-hidden="true"></div>
-    <div class="absolute inset-0 grid-noise opacity-10 pointer-events-none" aria-hidden="true"></div>
-
-    <div id="hero-content" class="w-full max-w-6xl mx-auto px-4 sm:px-6 text-center relative z-10 flex flex-col items-center">
-      <!-- Main Heading (Centered) -->
-      <h1 data-reveal="up" class="font-display text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-center leading-[1.05] text-balance mb-6" style="background: linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.45)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-        <?= e(__('home.hero.title')) ?>
-      </h1>
-
-      <!-- Subtitle (Centered) -->
-      <p data-reveal="up" class="text-lg md:text-xl text-white/55 max-w-3xl mx-auto text-center leading-relaxed mb-10">
-        <?= e(__('home.hero.subtitle')) ?>
-      </p>
-
-      <!-- CTA Buttons (Centered) -->
-      <div data-reveal="up" class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
-        <a class="group inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-300 hover:bg-accent-neon hover:shadow-[0_0_60px_rgba(254,243,199,0.5)]" href="<?= base_url('contact.php') ?>">
-          <?= e(__('home.hero.cta')) ?>
-          <svg class="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z"></path>
-          </svg>
-        </a>
-        <a class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-8 py-3.5 text-base font-medium text-white/70 backdrop-blur transition-colors active:scale-[0.98] duration-200 hover:border-white/20 hover:bg-white/[0.08] hover:text-white" href="<?= base_url('how-it-works.php') ?>">
-          <?= e(__('home.hero.ctaSecondary')) ?>
-        </a>
-      </div>
-    </div>
+  <!-- HERO (replash.info) -->
+  <section id="hero-section" class="relative flex min-h-[100svh] items-center overflow-hidden bg-ink-900 pt-28 pb-20 md:pt-32 md:pb-24">
+  <div id="hero-parallax" class="absolute -inset-y-[25%] inset-x-0 scale-110 will-change-transform" aria-hidden="true">
+  <img src="<?= asset('images/gen_hero_friends.jpg') ?>" alt="" fetchpriority="high" class="h-full w-full object-cover" style="opacity:0.75;object-position:center 35%"/>
+  <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/55 to-ink-900/95">
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-r from-ink-900/40 via-transparent to-ink-900/40">
+  </div>
+  </div>
+  <div class="pointer-events-none absolute -top-60 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
+  </div>
+  <div class="container-x relative z-10">
+  <div class="mx-auto max-w-4xl text-center will-change-transform" style="opacity:1">
+  <div  data-reveal="up">
+  <h1 class="font-display text-6xl font-bold leading-[1.05] tracking-tight text-balance md:text-7xl lg:text-8xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.45));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
+  <?= e(__('home.hero.title')) ?>
+  </h1>
+  <p class="mt-6 text-lg text-white/55 md:text-xl"  data-reveal="up">
+  <?= e(__('home.hero.subtitle')) ?>
+  </p>
+  <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"  data-reveal="up">
+  <a class="group inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-300 hover:bg-accent-neon hover:shadow-[0_0_60px_rgba(254,243,199,0.5)]" href="<?= base_url('contact.php') ?>">
+  <?= e(__('home.hero.cta')) ?>
+  <svg class="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+  <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z">
+  </path>
+  </svg>
+  </a>
+  <a class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-8 py-3.5 text-base font-medium text-white/70 backdrop-blur transition-colors active:scale-[0.98] duration-200 hover:border-white/20 hover:bg-white/[0.08] hover:text-white" href="<?= base_url('how-it-works.php') ?>">
+  <?= e(__('home.hero.ctaSecondary')) ?>
+  </a>
+  </div>
+  </div>
+  </div>
+  </div>
   </section>
 
   <?php 
@@ -188,31 +181,36 @@ require_once __DIR__ . '/includes/header.php';
     </section>
   <?php endif; ?>
 
-  <!-- INTRO / SLOGAN BANNER ("Bizimle Konuşun") -->
+  <!-- INTRO (replash.info) -->
   <section class="relative overflow-hidden border-t border-white/5 bg-ink-900 py-20 md:py-28">
-    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,230,138,0.08), transparent 70%);" aria-hidden="true"></div>
-    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" aria-hidden="true"></div>
-    <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" aria-hidden="true"></div>
-    
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative text-center" data-reveal="up">
-      <h2 class="font-display text-4xl font-bold leading-[1.08] tracking-tight text-balance md:text-5xl lg:text-6xl text-center" style="background: linear-gradient(to bottom, #ffffff 30%, rgba(255,255,255,0.55)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-        <?= e(__('home.intro.slogan')) ?>
-      </h2>
-      <p class="mt-6 font-display text-xl uppercase tracking-wider text-accent md:text-2xl text-center">
-        <?= e(__('home.intro.tagline')) ?>
-      </p>
-      <p class="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/45 text-center">
-        <?= e(__('home.intro.sports')) ?>
-      </p>
-      <div class="mt-9 flex justify-center">
-        <a class="group inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-7 py-3 text-sm font-semibold tracking-wide text-accent transition-colors active:scale-[0.98] hover:bg-accent hover:text-ink-900 hover:shadow-glow" href="<?= base_url('contact.php') ?>">
-          <?= e(__('home.intro.cta')) ?>
-          <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,230,138,0.08), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" aria-hidden="true">
+  </div>
+  <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" aria-hidden="true">
+  </div>
+  <div class="container-x relative">
+  <div class="mx-auto max-w-4xl text-center"  data-reveal="up">
+  <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 30%, rgba(255,255,255,0.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
+  <?= e(__('home.intro.slogan')) ?>
+  </h2>
+  <p class="mt-6 font-display text-xl uppercase tracking-wider text-accent md:text-2xl"  data-reveal="up">
+  <?= e(__('home.intro.tagline')) ?>
+  </p>
+  <p class="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/45"  data-reveal="up">
+  <?= e(__('home.intro.sports')) ?>
+  </p>
+  <div class="mt-9"  data-reveal="up">
+  <a class="group inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-7 py-3 text-sm font-semibold tracking-wide text-accent transition-colors active:scale-[0.98] hover:bg-accent hover:text-ink-900 hover:shadow-glow" href="<?= base_url('contact.php') ?>">
+  <?= e(__('home.intro.cta')) ?>
+  <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+  <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z">
+  </path>
+  </svg>
+  </a>
+  </div>
+  </div>
+  </div>
   </section>
 
   <!-- TWO-LAYER VALUE SECTION (replash.info ile aynı: yapışkan başlık + zaman çizelgesi) -->
@@ -435,117 +433,93 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </section>
 
-  <!-- FAQ SECTION (Contained & Centered) -->
-  <section class="py-20 md:py-28 border-t border-white/5 bg-ink-900">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6">
-      
-      <div class="max-w-3xl mx-auto text-center mb-12" data-reveal="up">
-        <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl text-white">
-          <?= e(__('home.faq.title')) ?>
-        </h2>
-        <p class="mt-4 text-base sm:text-lg text-white/60">
-          <?= e(__('home.faq.subtitle')) ?>
-        </p>
+  <!-- FAQ (replash.info) -->
+  <section class="section-y border-t border-white/5 bg-ink-900">
+    <div class="container-x">
+      <div class="max-w-3xl mx-auto text-center" data-reveal="up">
+        <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl"><?= e(__('home.faq.title')) ?></h2>
+        <p class="mt-4 text-lg text-white/70 md:text-xl"><?= e(__('home.faq.subtitle')) ?></p>
       </div>
-
-      <div class="mx-auto max-w-3xl divide-y divide-white/[0.06]">
-        <?php for ($i = 1; $i <= 9; $i++): 
+      <div class="mx-auto mt-12 max-w-3xl divide-y divide-white/[0.06]">
+        <?php for ($i = 1; $i <= 9; $i++):
           $q = __("home.faq.items.{$i}.q");
           $a = __("home.faq.items.{$i}.a");
-          if (!$q || $q === "home.faq.items.{$i}.q") continue;
-          $isOpen = ($i === 1);
+          if ($q === "home.faq.items.{$i}.q") continue;
+          $open = ($i === 1);
         ?>
-          <div class="faq-item">
-            <button type="button" class="faq-accordion-btn flex w-full items-start justify-between gap-4 py-5 text-left transition-colors" aria-expanded="<?= $isOpen ? 'true' : 'false' ?>">
-              <span class="text-base font-semibold leading-snug transition-colors duration-200 <?= $isOpen ? 'text-white' : 'text-white/75 hover:text-white' ?>">
-                <?= e($q) ?>
-              </span>
-              <span class="faq-icon-wrapper mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 <?= $isOpen ? 'border-accent/40 bg-accent/15 text-accent' : 'border-white/15 bg-white/5 text-white/40' ?>">
-                <svg class="h-3 w-3 transition-transform duration-300 <?= $isOpen ? 'rotate-45' : 'rotate-0' ?>" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <path d="M6 1v10M1 6h10"></path>
-                </svg>
+          <div class="faq-item" data-reveal="up">
+            <button type="button" class="faq-btn flex w-full items-start justify-between gap-4 py-5 text-left" aria-expanded="<?= $open ? 'true' : 'false' ?>" aria-controls="faq-panel-<?= $i ?>">
+              <span class="faq-q text-base font-semibold leading-snug transition-colors duration-200 <?= $open ? 'text-white' : 'text-white/75' ?>"><?= e($q) ?></span>
+              <span class="faq-icon mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border transition-colors duration-300 <?= $open ? 'border-accent/40 bg-accent/15 text-accent' : 'border-white/15 bg-white/5 text-white/40' ?>">
+                <svg class="h-3 w-3 transition-transform duration-300 <?= $open ? 'rotate-45' : 'rotate-0' ?>" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
               </span>
             </button>
-            <div class="faq-panel overflow-hidden transition-all duration-300 <?= $isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' ?>">
-              <p class="pb-5 pr-8 text-sm leading-relaxed text-white/60">
-                <?= e($a) ?>
-              </p>
+            <div id="faq-panel-<?= $i ?>" class="faq-panel overflow-hidden transition-[max-height,opacity] duration-300" style="max-height:<?= $open ? '600px' : '0' ?>;opacity:<?= $open ? '1' : '0' ?>">
+              <p class="pb-5 pr-10 text-sm leading-relaxed text-white/60"><?= e($a) ?></p>
             </div>
           </div>
         <?php endfor; ?>
       </div>
-
     </div>
   </section>
 
-  <!-- BOTTOM CALL TO ACTION -->
-  <section class="py-20 md:py-28 border-t border-white/5 bg-ink-900 relative overflow-hidden">
-    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.12), transparent 70%);" aria-hidden="true"></div>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative text-center" data-reveal="up">
-      <h2 class="mx-auto max-w-2xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl" style="background: linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-        <?= e(__('home.cta.title')) ?>
-      </h2>
-      <div class="mt-8">
-        <a class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] hover:bg-accent-neon hover:shadow-[0_0_60px_rgba(254,243,199,0.5)]" href="<?= base_url('for-facilities.php') ?>">
-          <?= e(__('home.cta.button')) ?>
-        </a>
-      </div>
-    </div>
+  <!-- CTA (replash.info) -->
+  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.12), transparent 70%)" aria-hidden="true">
+  </div>
+  <div class="container-x relative text-center">
+  <div  data-reveal="up">
+  <h2 class="mx-auto max-w-2xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+  <?= e(__('home.cta.title')) ?>
+  </h2>
+  <div class="mt-8">
+  <a class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-base font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] hover:bg-accent-neon hover:shadow-[0_0_60px_rgba(254,243,199,0.5)]" href="<?= base_url('for-facilities.php') ?>">
+  <?= e(__('home.cta.button')) ?>
+  </a>
+  </div>
+  </div>
+  </div>
   </section>
 
 </main>
 
-<!-- Interactive Hero Background Zoom on Scroll & FAQ Scripts -->
+<!-- Hero paralaks ve SSS akordeonu (replash.info davranışı) -->
 <script>
   (function () {
-    // 1. Direct Hero Image Zoom On Scroll (Runs immediately, no caching issues)
-    var heroBg = document.getElementById('hero-bg-img');
-    var heroSec = document.getElementById('hero-section');
-    if (heroBg && heroSec) {
-      function applyHeroZoom() {
-        var top = window.pageYOffset || document.documentElement.scrollTop || 0;
-        var h = heroSec.offsetHeight || 650;
-        if (top <= h * 1.5) {
-          var ratio = Math.min(1.5, Math.max(0, top / (h * 0.75)));
-          // Scales image up dynamically from 1.05 to 1.45
-          var s = 1.05 + (ratio * 0.35);
-          heroBg.style.transform = 'scale(' + s.toFixed(3) + ')';
-        }
-      }
-      window.addEventListener('scroll', applyHeroZoom, { passive: true });
-      window.addEventListener('resize', applyHeroZoom, { passive: true });
-      applyHeroZoom();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Hero görseli metinden yavaş kayar (ParallaxImage karşılığı)
+    var layer = document.getElementById('hero-parallax');
+    var hero = document.getElementById('hero-section');
+    if (layer && hero && !reduce) {
+      var ticking = false;
+      var update = function () {
+        var y = window.pageYOffset || 0;
+        if (y <= hero.offsetHeight) layer.style.transform = 'translate3d(0,' + (y * 0.25).toFixed(1) + 'px,0) scale(1.1)';
+        ticking = false;
+      };
+      window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      update();
     }
 
-    // 2. Accordion Script for FAQs
-    var faqButtons = document.querySelectorAll('.faq-accordion-btn');
-    faqButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var isExpanded = this.getAttribute('aria-expanded') === 'true';
-        var panel = this.nextElementSibling;
-        var iconWrapper = this.querySelector('.faq-icon-wrapper');
-        var icon = this.querySelector('svg');
-        var titleSpan = this.querySelector('span:first-child');
-
-        if (isExpanded) {
-          this.setAttribute('aria-expanded', 'false');
-          panel.classList.remove('max-h-96', 'opacity-100');
-          panel.classList.add('max-h-0', 'opacity-0');
-          iconWrapper.className = 'faq-icon-wrapper mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 border-white/15 bg-white/5 text-white/40';
-          icon.classList.remove('rotate-45');
-          icon.classList.add('rotate-0');
-          titleSpan.classList.remove('text-white');
-          titleSpan.classList.add('text-white/75');
-        } else {
-          this.setAttribute('aria-expanded', 'true');
-          panel.classList.remove('max-h-0', 'opacity-0');
-          panel.classList.add('max-h-96', 'opacity-100');
-          iconWrapper.className = 'faq-icon-wrapper mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 border-accent/40 bg-accent/15 text-accent';
-          icon.classList.remove('rotate-0');
-          icon.classList.add('rotate-45');
-          titleSpan.classList.remove('text-white/75');
-          titleSpan.classList.add('text-white');
-        }
+    // SSS: aynı anda tek soru açık
+    var items = document.querySelectorAll('.faq-item');
+    var setOpen = function (item, open) {
+      var btn = item.querySelector('.faq-btn'), panel = item.querySelector('.faq-panel');
+      var q = item.querySelector('.faq-q'), icon = item.querySelector('.faq-icon'), svg = icon.querySelector('svg');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '0';
+      panel.style.opacity = open ? '1' : '0';
+      q.classList.toggle('text-white', open); q.classList.toggle('text-white/75', !open);
+      ['border-accent/40', 'bg-accent/15', 'text-accent'].forEach(function (c) { icon.classList.toggle(c, open); });
+      ['border-white/15', 'bg-white/5', 'text-white/40'].forEach(function (c) { icon.classList.toggle(c, !open); });
+      svg.classList.toggle('rotate-45', open); svg.classList.toggle('rotate-0', !open);
+    };
+    items.forEach(function (item) {
+      item.querySelector('.faq-btn').addEventListener('click', function () {
+        var willOpen = this.getAttribute('aria-expanded') !== 'true';
+        items.forEach(function (other) { setOpen(other, false); });
+        if (willOpen) setOpen(item, true);
       });
     });
   })();

@@ -53,9 +53,9 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <body class="font-body bg-ink-900 text-white antialiased min-h-screen flex flex-col selection:bg-accent selection:text-ink-900">
 
   <!-- Floating Pill Header (Centered Container) -->
-  <header class="pointer-events-none fixed inset-x-0 top-0 z-50 pt-3 sm:pt-4">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="pointer-events-auto mx-auto flex h-14 items-center justify-between gap-3 sm:gap-4 rounded-full border px-3 pl-4 pr-2 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 md:px-4 md:pl-5 md:pr-2.5 border-white/[0.08] bg-ink-900/80 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl">
+  <header class="pointer-events-none fixed inset-x-0 top-0 z-50 pt-3">
+    <div class="container-x">
+      <div class="pointer-events-auto mx-auto flex h-14 items-center justify-between gap-4 rounded-full border px-3 pl-4 pr-2 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 md:px-4 md:pl-5 md:pr-2.5 border-white/[0.06] bg-ink-900/50 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl">
         
         <!-- Logo -->
         <a class="flex items-center gap-2" href="<?= base_url() ?>">
@@ -94,38 +94,15 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
             <?= e(__('nav.find')) ?>
           </a>
 
-          <!-- Language Selector Dropdown -->
-          <div class="relative">
-            <button type="button" id="lang-btn" class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/90 transition hover:border-white/20 hover:bg-white/10 backdrop-blur-md" aria-expanded="false" aria-haspopup="true">
-              <span class="tracking-wide uppercase font-bold text-accent"><?= strtoupper(e($current_lang)) ?></span>
-              <svg class="h-3.5 w-3.5 text-white/60 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-              </svg>
-            </button>
-
-            <!-- Dropdown Menu -->
-            <div id="lang-dropdown" class="hidden absolute right-0 top-full mt-2 w-32 origin-top-right rounded-2xl border border-white/10 bg-ink-900/95 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-2xl z-50">
-              <a href="<?= lang_url('it') ?>" class="flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs transition <?= $current_lang === 'it' ? 'bg-accent/15 text-accent font-bold' : 'text-neutral-300 hover:bg-white/5 hover:text-white' ?>">
-                <span>Italiano</span>
-                <span class="font-mono text-[10px] text-neutral-400">IT</span>
-              </a>
-              <a href="<?= lang_url('en') ?>" class="flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs transition <?= $current_lang === 'en' ? 'bg-accent/15 text-accent font-bold' : 'text-neutral-300 hover:bg-white/5 hover:text-white' ?>">
-                <span>English</span>
-                <span class="font-mono text-[10px] text-neutral-400">EN</span>
-              </a>
-              <a href="<?= lang_url('tr') ?>" class="flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs transition <?= $current_lang === 'tr' ? 'bg-accent/15 text-accent font-bold' : 'text-neutral-300 hover:bg-white/5 hover:text-white' ?>">
-                <span>Türkçe</span>
-                <span class="font-mono text-[10px] text-neutral-400">TR</span>
-              </a>
-              <a href="<?= lang_url('es') ?>" class="flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs transition <?= $current_lang === 'es' ? 'bg-accent/15 text-accent font-bold' : 'text-neutral-300 hover:bg-white/5 hover:text-white' ?>">
-                <span>Español</span>
-                <span class="font-mono text-[10px] text-neutral-400">ES</span>
-              </a>
-            </div>
+          <!-- Language Toggle (replash.info stili; 4 dil) -->
+          <div role="group" aria-label="Language" class="inline-flex items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium backdrop-blur">
+            <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
+              <a href="<?= e(lang_url($lng)) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" hreflang="<?= e($lng) ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white' ?>"><?= strtoupper(e($lng)) ?></a>
+            <?php endforeach; ?>
           </div>
 
           <!-- CTA Demo Button -->
-          <a class="hidden rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-200 hover:bg-accent-neon hover:shadow-[0_0_30px_rgba(253,230,138,0.4)] md:inline-flex" href="<?= base_url('contact.php') ?>">
+          <a class="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-200 hover:bg-accent-neon hover:shadow-[0_0_30px_rgba(253,230,138,0.4)] md:inline-flex" href="<?= base_url('contact.php') ?>">
             <?= e(__('nav.bookDemo')) ?>
           </a>
 
@@ -141,12 +118,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
       <!-- Mobile Dropdown Menu -->
       <div id="mobile-menu" class="hidden pointer-events-auto mx-auto mt-2 overflow-hidden rounded-2xl border border-white/[0.08] bg-ink-900/95 backdrop-blur-2xl transition-[max-height,opacity] duration-300 md:hidden">
         <nav class="flex flex-col gap-1 p-3">
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'index' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url() ?>"><?= e(__('nav.home')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'how-it-works' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>"><?= e(__('nav.howItWorks')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-facilities' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-facilities.php') ?>"><?= e(__('nav.forFacilities')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-players' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-players.php') ?>"><?= e(__('nav.forPlayers')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'about' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('about.php') ?>"><?= e(__('nav.about')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'contact' ? 'bg-accent/10 text-accent font-semibold' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('contact.php') ?>"><?= e(__('nav.contact')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'index' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url() ?>"><?= e(__('nav.home')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'how-it-works' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>"><?= e(__('nav.howItWorks')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-facilities' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-facilities.php') ?>"><?= e(__('nav.forFacilities')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-players' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-players.php') ?>"><?= e(__('nav.forPlayers')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'about' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('about.php') ?>"><?= e(__('nav.about')) ?></a>
 
           <a class="mt-2 rounded-full border border-accent/40 px-5 py-2.5 text-center text-sm font-semibold text-accent transition hover:border-accent hover:bg-accent/10" href="<?= base_url('find.php') ?>">
             <?= e(__('nav.find')) ?>
@@ -154,14 +130,6 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
           <a class="rounded-full bg-accent px-5 py-2.5 text-center text-sm font-semibold text-ink-900 shadow-glow transition hover:bg-accent-neon" href="<?= base_url('contact.php') ?>">
             <?= e(__('nav.bookDemo')) ?>
           </a>
-
-          <!-- Language Selector in Mobile Menu -->
-          <div class="mt-2 flex items-center justify-around border-t border-white/10 pt-3">
-            <a href="<?= lang_url('it') ?>" class="rounded-lg px-3 py-1 text-xs font-semibold <?= $current_lang === 'it' ? 'bg-accent text-ink-900 font-bold' : 'text-white/70 hover:bg-white/5' ?>">IT</a>
-            <a href="<?= lang_url('en') ?>" class="rounded-lg px-3 py-1 text-xs font-semibold <?= $current_lang === 'en' ? 'bg-accent text-ink-900 font-bold' : 'text-white/70 hover:bg-white/5' ?>">EN</a>
-            <a href="<?= lang_url('tr') ?>" class="rounded-lg px-3 py-1 text-xs font-semibold <?= $current_lang === 'tr' ? 'bg-accent text-ink-900 font-bold' : 'text-white/70 hover:bg-white/5' ?>">TR</a>
-            <a href="<?= lang_url('es') ?>" class="rounded-lg px-3 py-1 text-xs font-semibold <?= $current_lang === 'es' ? 'bg-accent text-ink-900 font-bold' : 'text-white/70 hover:bg-white/5' ?>">ES</a>
-          </div>
         </nav>
       </div>
 
