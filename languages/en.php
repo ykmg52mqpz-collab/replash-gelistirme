@@ -431,6 +431,7 @@ return [
             'copied' => 'Match link copied!'
         ],
         'modal' => [
+                'clip_wait' => 'The clip is being prepared, you can share it when it is ready.',
                 'preparing_clip' => 'Preparing clip… {s}/{t} s',
                 'clip_ready' => 'Clip ready.',
                 'clip_server' => 'The clip will be downloaded from the server.',

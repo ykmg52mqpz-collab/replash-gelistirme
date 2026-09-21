@@ -941,6 +941,7 @@ var I18N = {
   clipPreparing: <?= json_encode(__('find.modal.preparing_clip')) ?>,
   clipReady: <?= json_encode(__('find.modal.clip_ready')) ?>,
   clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
+  clipWait: <?= json_encode(__('find.modal.clip_wait')) ?>,
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
@@ -956,7 +957,7 @@ var currentClip = null;
 
 
 // ===== Klip: seçilen aralığı tarayıcıda kaydet (kamera bulutunun kesim servisinden bağımsız) =====
-var clipRecorder = null, clipChunks = [], clipBlobUrl = null, liveClipMime = '';
+var clipRecorder = null, clipChunks = [], clipBlobUrl = null, liveClipMime = '', clipBusy = false;
 function clipVideoEl() { return document.querySelector('#clappr-player video'); }
 function clipMimeType() {
   if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
@@ -1047,6 +1048,7 @@ function clipFinishRecorder(mime) {
   });
 }
 function clipOfferBlob(clip, blob) {
+  clipBusy = false;
   if (!blob || !blob.size) return false;
   if (clipBlobUrl) URL.revokeObjectURL(clipBlobUrl);
   clipBlobUrl = URL.createObjectURL(blob);
@@ -1062,6 +1064,7 @@ function clipOfferBlob(clip, blob) {
 }
 // Seçilen aralığı baştan sona oynatıp kaydeder (15–40 sn, gerçek zamanlı)
 async function cutClipInBrowser(clip) {
+  clipBusy = true;
   var dl = document.getElementById('modal-download-btn');
   if (dl) dl.classList.add('pointer-events-none', 'opacity-50');
   clipSetStatus(I18N.clipPreparing.replace('{s}', '0').replace('{t}', clip.duration));
@@ -1098,6 +1101,7 @@ async function cutClipInBrowser(clip) {
 }
 // Tarayıcı kaydı mümkün değilse: kamera bulutunun kesim servisi (sunucu indirmesi)
 function clipFallbackToServer() {
+  clipBusy = false;
   var dl = document.getElementById('modal-download-btn');
   if (dl) dl.classList.remove('pointer-events-none', 'opacity-50');
   clipSetStatus(I18N.clipServer);
@@ -1387,6 +1391,7 @@ async function getClipVideoFile() {
 // Share clip as actual video file via Web Share API level 2
 async function shareClipFileOrLink() {
   if (!currentClip) return;
+  if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
   var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
   var clipUrl = window.location.origin + window.location.pathname + "?code=" + encodeURIComponent(accessCode) + "&t=" + currentClip.start;
   var title = "Replash Clip (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
@@ -1423,81 +1428,39 @@ async function shareClipFileOrLink() {
 }
 
 // Direct Social Sharing (WhatsApp, Instagram, TikTok, YouTube, X, Facebook)
-async function shareToSocial(platform) {
+// Platform sekmesi tıklamayla aynı anda (beklemeden) açılır; yoksa tarayıcı açılır pencereyi engeller.
+function shareToSocial(platform) {
   if (!currentClip) return;
+  if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
   var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
   var clipUrl = window.location.origin + window.location.pathname + "?code=" + encodeURIComponent(accessCode) + "&t=" + currentClip.start;
   var shareText = "Replash Maç Klibim (" + formatTime(currentClip.start) + " - " + formatTime(currentClip.end) + ")";
   var fullText = shareText + "\n" + clipUrl;
 
-  // 1. If Web Share API supports file sharing, invoke it directly
-  if (navigator.canShare) {
-    try {
-      var file = await getClipVideoFile();
-      if (file && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: shareText,
-          text: fullText,
-          files: [file]
-        });
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      console.log("Social share file fallback:", e);
-    }
-  }
+  var targets = {
+    whatsapp: "https://api.whatsapp.com/send?text=" + encodeURIComponent(fullText),
+    x: "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(clipUrl),
+    facebook: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(clipUrl),
+    instagram: "https://www.instagram.com/",
+    tiktok: "https://www.tiktok.com/upload",
+    youtube: "https://studio.youtube.com/"
+  };
+  if (!targets[platform]) return;
 
-  // 2. Platform-specific fallbacks: Trigger file download so user has the MP4, then open target platform
-  var matchId = <?= json_encode($match['id'] ?? '') ?>;
-  var camId = currentClip.cameraId || ((cameraList[activeCameraIndex] && cameraList[activeCameraIndex].id) ? cameraList[activeCameraIndex].id : '');
-  var filename = "replash_klip_" + formatTime(currentClip.start).replace(':', '') + "_" + currentClip.duration + "s.mp4";
-  var dlUrl = "<?= base_url('api/video.php') ?>?id=" + encodeURIComponent(matchId) + "&code=" + encodeURIComponent(accessCode) + (camId ? "&camera_id=" + encodeURIComponent(camId) : "") + "&start_offset=" + currentClip.start + "&duration=" + currentClip.duration + "&download=1&filename=" + encodeURIComponent(filename);
-
-  // Auto-download file for platforms requiring file upload (Instagram, TikTok, YouTube)
-  var triggerDownload = function() {
+  // Video yüklemesi isteyen platformlar için klip dosyası da aynı anda indirilir
+  if (platform === 'instagram' || platform === 'tiktok' || platform === 'youtube') {
+    var dl = document.getElementById('modal-download-btn');
     var a = document.createElement('a');
-    a.href = dlUrl;
-    a.download = filename;
+    a.href = dl ? dl.href : '#';
+    a.download = (dl && dl.getAttribute('download')) || 'replash_klip.mp4';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  };
-
-  switch (platform) {
-    case 'whatsapp':
-      var waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(fullText);
-      window.open(waUrl, '_blank');
-      break;
-
-    case 'x':
-      var xUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(clipUrl);
-      window.open(xUrl, '_blank');
-      break;
-
-    case 'facebook':
-      var fbUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(clipUrl);
-      window.open(fbUrl, '_blank');
-      break;
-
-    case 'instagram':
-      triggerDownload();
-      alert(I18N.fileShareNotSupported);
-      window.open("https://www.instagram.com/", '_blank');
-      break;
-
-    case 'tiktok':
-      triggerDownload();
-      alert(I18N.fileShareNotSupported);
-      window.open("https://www.tiktok.com/upload", '_blank');
-      break;
-
-    case 'youtube':
-      triggerDownload();
-      alert(I18N.fileShareNotSupported);
-      window.open("https://studio.youtube.com/", '_blank');
-      break;
+    clipSetStatus(I18N.fileShareNotSupported);
   }
+
+  var win = window.open(targets[platform], '_blank');
+  if (!win) window.location.href = targets[platform]; // açılır pencere engellendiyse aynı sekmede aç
 }
 
 document.addEventListener('DOMContentLoaded', function() {

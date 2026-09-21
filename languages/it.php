@@ -431,6 +431,7 @@ return [
             'copied' => 'Link della partita copiato!'
         ],
         'modal' => [
+                'clip_wait' => 'La clip è in preparazione, potrai condividerla appena è pronta.',
                 'preparing_clip' => 'Preparazione clip… {s}/{t} s',
                 'clip_ready' => 'Clip pronta.',
                 'clip_server' => 'La clip verrà scaricata dal server.',

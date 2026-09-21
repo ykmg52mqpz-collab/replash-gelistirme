@@ -431,6 +431,7 @@ return [
             'copied' => 'Maç linki kopyalandı!'
         ],
         'modal' => [
+                'clip_wait' => 'Klip hazırlanıyor, bitince paylaşabilirsin.',
                 'preparing_clip' => 'Klip hazırlanıyor… {s}/{t} sn',
                 'clip_ready' => 'Klip hazır.',
                 'clip_server' => 'Klip sunucudan indirilecek.',
