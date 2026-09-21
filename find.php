@@ -118,8 +118,10 @@ require_once __DIR__ . '/includes/header.php';
   <?php
   $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
   $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
-  $codeOnlySearch = (!$searchFacilityEnabled && $searchCodeEnabled); ?>
-  <?php if ($match || $codeOnlySearch): ?>
+  $codeOnlySearch = (!$searchFacilityEnabled && $searchCodeEnabled);
+  // Kod doğrulandıysa oyuncu doğrudan videoyu görür; kod formu tekrar gösterilmez
+  $watching = $match && $match['status'] === 'UNLOCKABLE' && $codeValidated; ?>
+  <?php if (!$watching && ($match || $codeOnlySearch)): ?>
     <!-- HERO + KOD KARTI (replash.info) -->
     <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
     <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
@@ -179,7 +181,7 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
   <?php endif; ?>
 
-  <div class="<?= ($match || $codeOnlySearch) ? 'pt-2' : 'pt-28' ?>">
+  <div class="<?= $watching ? 'pt-28 md:pt-32' : (($match || $codeOnlySearch) ? 'pt-2' : 'pt-28') ?>">
   
   <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
@@ -371,6 +373,7 @@ require_once __DIR__ . '/includes/header.php';
             </span>
             <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
             <span class="ml-auto text-xs text-white/40"><?= e($match['views']) ?> <?= e(__('common.views')) ?></span>
+            <a href="<?= base_url('find.php') ?>" class="text-xs font-semibold text-white/60 underline-offset-4 transition hover:text-accent hover:underline"><?= e(__('find.watch.other_code')) ?></a>
           </div>
         <?php else: ?>
           <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-accent/25 bg-accent/10 px-4 py-2.5">
@@ -479,7 +482,7 @@ require_once __DIR__ . '/includes/header.php';
               </div>
             </div>
             <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/50">
-              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-semibold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">✂︎ <?= e(__('find.watch.clip.label')) ?></button>
+              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-semibold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed"><?= e(__('find.watch.clip.label')) ?></button>
               <span><?= e(__('find.watch.clip.hint')) ?></span>
               <span id="rp-clip-info" class="ml-auto font-mono"></span>
             </div>
@@ -545,7 +548,17 @@ require_once __DIR__ . '/includes/header.php';
                   <?= e(__('find.tools.full_match')) ?>
                 </a>
 
-                <!-- Share Link Button -->
+                <!-- Maç linkini paylaş: oyuncular birbirine hızlıca iletir -->
+                <button
+                  type="button"
+                  onclick="shareMatchLink()"
+                  class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white/10 px-3.5 py-2 text-xs font-semibold text-white hover:bg-white/15 transition shadow-sm"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5m5.656-1.5a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"/></svg>
+                  <?= e(__('find.tools.share_link')) ?>
+                </button>
+
+                <!-- Klibi paylaş -->
                 <button 
                   type="button" 
                   onclick="openClipShare()"
@@ -554,7 +567,7 @@ require_once __DIR__ . '/includes/header.php';
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
                   </svg>
-                  <?= e(__('find.tools.share')) ?>
+                  <?= e(__('find.tools.share_clip')) ?>
                 </button>
               </div>
 
@@ -845,7 +858,7 @@ require_once __DIR__ . '/includes/header.php';
 
       <!-- SEARCH AREA UNDER THE PLAYER -->
       <div class="mt-14 pt-10 border-t border-white/10">
-        <?php if (!$codeOnlySearch) { $renderSearchSection(true); } ?>
+        <?php if (!$codeOnlySearch && !$watching) { $renderSearchSection(true); } ?>
       </div>
     <?php endif; ?>
 
@@ -945,7 +958,7 @@ require_once __DIR__ . '/includes/header.php';
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 <script>
 var I18N = {
-  btnStart: <?= json_encode(__('find.tools.live_record_btn', '🔴 Canlı Kayıt')) ?>,
+  btnStart: <?= json_encode(__('find.tools.live_record_btn', 'Canlı Kayıt')) ?>,
   btnStop: <?= json_encode(__('find.tools.btn_stop')) ?>,
   tooShort: <?= json_encode(__('find.errors.too_short')) ?>,
   secondsUnit: <?= json_encode(__('find.modal.seconds')) ?>,
@@ -1583,6 +1596,32 @@ async function shareClipFileOrLink() {
     if (clipNativeShare(file, fallback)) return;
   }
   fallback();
+}
+
+// Maç linkini paylaş: telefonda paylaşım menüsü, diğerlerinde panoya kopyala
+function shareMatchLink() {
+  var url = <?= json_encode(base_url('find.php?code=' . rawurlencode($match['access_code'] ?? ''))) ?>;
+  var text = <?= json_encode(__('find.tools.share_link_text')) ?>;
+  var copy = function () {
+    var done = function () { showToast(<?= json_encode(__('find.tools.link_copied')) ?>); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(done, function () { window.prompt(text, url); });
+    } else {
+      window.prompt(text, url);
+    }
+  };
+  if (navigator.share) {
+    navigator.share({ title: 'Replash', text: text, url: url }).catch(function (e) { if (e && e.name !== 'AbortError') copy(); });
+  } else {
+    copy();
+  }
+}
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.className = 'fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-white/10 bg-ink-800 px-5 py-3 text-sm text-white shadow-2xl';
+  document.body.appendChild(t);
+  setTimeout(function () { t.remove(); }, 3000);
 }
 
 // Araç kartındaki Paylaş: kesilmiş klip varsa paylaşım penceresini açar, yoksa seçili aralıktan klip keser

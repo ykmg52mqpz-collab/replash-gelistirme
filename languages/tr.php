@@ -285,7 +285,7 @@ return [
             'step4' => [
                 'uniqueCode' => 'Tüm Takım İçin Benzersiz Kod',
                 'copyShare' => 'Kopyala / Paylaş',
-                'tip' => '💡 WhatsApp grubuna atın, tüm arkadaşlarınız aynı anda kendi cihazından izlesin.'
+                'tip' => 'WhatsApp grubuna atın, tüm arkadaşlarınız aynı anda kendi cihazından izlesin.'
             ],
             'step5' => [
                 'button' => 'Maçımı Bul & İzle',
@@ -296,7 +296,7 @@ return [
             'step6' => [
                 'playerTitle' => 'VIDEO PLAYER · CLIP & SHARE',
                 'quality' => '1080p HD · 60 FPS',
-                'clipSelection' => '✂ 00:28 Klip Kesimi',
+                'clipSelection' => '00:28 Klip Kesimi',
                 'createClip' => 'Klip Oluştur (MP4)',
                 'share' => 'Paylaş:'
             ]
@@ -419,14 +419,18 @@ return [
             'clip_desc' => 'Zaman aralığını belirleyin veya anlık kaydı başlatın, MP4 olarak indirin.',
             'start_time' => 'Başlangıç',
             'end_time' => 'Bitiş',
-            'set_start_btn' => '⏱ Başlangıç Al',
-            'set_end_btn' => '⏱ Bitiş Al',
-            'cut_clip_btn' => '✂️ Klip Kes & İndir',
-            'live_record_btn' => '🔴 Canlı Kayıt',
+            'set_start_btn' => 'Başlangıç Al',
+            'set_end_btn' => 'Bitiş Al',
+            'cut_clip_btn' => 'Klip Kes & İndir',
+            'live_record_btn' => 'Canlı Kayıt',
             'btn_start' => 'Klip Oluştur',
             'btn_stop' => 'Kaydı Durdur',
             'recording_active' => 'KAYIT ALINIYOR',
             'full_match' => 'Tüm Maç (Full)',
+            'share_clip' => 'Klibi paylaş',
+            'share_link' => 'Maç linkini paylaş',
+            'share_link_text' => 'Maçımızı Replash’te izle',
+            'link_copied' => 'Maç linki kopyalandı. Arkadaşlarına gönderebilirsin.',
             'share' => 'Paylaş',
             'copied' => 'Maç linki kopyalandı!'
         ],
@@ -511,7 +515,8 @@ return [
         ],
         'watch' => [
             'title' => 'Maçını bul',
-            'subtitle' => 'Maçtan sonra tesisin sana verdiği kodu gir.',
+            'subtitle' => 'Lütfen tesisin maçınıza özel verdiği kodu giriniz.',
+            'other_code' => 'Başka kod gir',
             'codeLabel' => 'Maç kodu',
             'button' => 'Maçı izle',
             'buttonLoading' => 'Aranıyor…',
@@ -558,9 +563,9 @@ return [
         'header' => [
             'badge' => 'Tesis Masası',
             'price_info' => 'Video Ücreti:',
-            'bulk_btn' => '⚡ Günün Slotlarını Aç (Kilitli)',
+            'bulk_btn' => 'Günün Slotlarını Aç (Kilitli)',
             'add_slot_btn' => '+ Tek Slot Ekle / Sat',
-            'calendar_btn' => '📅 Takvim Üzerinden Seç',
+            'calendar_btn' => 'Takvim Üzerinden Seç',
             'logout' => 'Çıkış Yap'
         ],
         'metrics' => [
@@ -669,8 +674,8 @@ return [
             'badge_sold' => 'Satış Onaylandı',
             'badge_locked' => 'Kilitli (Bekliyor)',
             'action_unlock' => 'Satışı Onayla (Kodu Aç)',
-            'action_unlock_btn' => '⚡ Kilidi Aç & Sat',
-            'action_relock' => '🔒 Tekrar Kilitle',
+            'action_unlock_btn' => 'Kilidi Aç & Sat',
+            'action_relock' => 'Tekrar Kilitle',
             'action_lock' => 'Kilitle (Beklemeye Al)',
             'action_download' => 'İndir',
             'action_watch' => 'İzle',

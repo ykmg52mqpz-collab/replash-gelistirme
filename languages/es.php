@@ -285,7 +285,7 @@ return [
             'step4' => [
                 'uniqueCode' => 'Código Único para Todo el Equipo',
                 'copyShare' => 'Copiar / Compartir',
-                'tip' => '💡 Envíalo al grupo de WhatsApp para que todos tus amigos lo vean en su propio dispositivo.'
+                'tip' => 'Envíalo al grupo de WhatsApp para que todos tus amigos lo vean en su propio dispositivo.'
             ],
             'step5' => [
                 'button' => 'Buscar y Ver Partido',
@@ -296,7 +296,7 @@ return [
             'step6' => [
                 'playerTitle' => 'REPRODUCTOR DE VÍDEO · RECORTAR Y COMPARTIR',
                 'quality' => '1080p HD · 60 FPS',
-                'clipSelection' => '✂ 00:28 Selección de Clip',
+                'clipSelection' => '00:28 Selección de Clip',
                 'createClip' => 'Crear Clip (MP4)',
                 'share' => 'Compartir:'
             ]
@@ -419,14 +419,18 @@ return [
             'clip_desc' => 'Establece el rango de tiempo o graba al instante, descarga directamente en MP4.',
             'start_time' => 'Inicio',
             'end_time' => 'Fin',
-            'set_start_btn' => '⏱ Fijar Inicio',
-            'set_end_btn' => '⏱ Fijar Fin',
-            'cut_clip_btn' => '✂️ Recortar y Descargar Clip',
-            'live_record_btn' => '🔴 Grabar en Vivo',
+            'set_start_btn' => 'Fijar Inicio',
+            'set_end_btn' => 'Fijar Fin',
+            'cut_clip_btn' => 'Recortar y Descargar Clip',
+            'live_record_btn' => 'Grabar en Vivo',
             'btn_start' => 'Crear Clip',
             'btn_stop' => 'Detener Grabación',
             'recording_active' => 'GRABANDO EN DIRECTO',
             'full_match' => 'Partido Completo',
+            'share_clip' => 'Compartir clip',
+            'share_link' => 'Compartir enlace del partido',
+            'share_link_text' => 'Mira nuestro partido en Replash',
+            'link_copied' => 'Enlace del partido copiado. Puedes enviarlo a tus amigos.',
             'share' => 'Compartir',
             'copied' => '¡Enlace del partido copiado!'
         ],
@@ -511,7 +515,8 @@ return [
         ],
         'watch' => [
             'title' => 'Encuentra tu partido',
-            'subtitle' => 'Introduce el código que el club te dio después del partido.',
+            'subtitle' => 'Introduce el código que el centro te dio para tu partido.',
+            'other_code' => 'Introducir otro código',
             'codeLabel' => 'Código del partido',
             'button' => 'Ver el partido',
             'buttonLoading' => 'Buscando…',
@@ -558,9 +563,9 @@ return [
         'header' => [
             'badge' => 'Recepción Club',
             'price_info' => 'Precio Vídeo:',
-            'bulk_btn' => '⚡ Generar Franjas del Día (Bloqueadas)',
+            'bulk_btn' => 'Generar Franjas del Día (Bloqueadas)',
             'add_slot_btn' => '+ Añadir Franja / Vender',
-            'calendar_btn' => '📅 Seleccionar en Calendario',
+            'calendar_btn' => 'Seleccionar en Calendario',
             'logout' => 'Cerrar Sesión'
         ],
         'metrics' => [
@@ -669,8 +674,8 @@ return [
             'badge_sold' => 'Venta Confirmada',
             'badge_locked' => 'Bloqueado (Pendiente)',
             'action_unlock' => 'Confirmar Venta (Desbloquear)',
-            'action_unlock_btn' => '⚡ Desbloquear y Vender',
-            'action_relock' => '🔒 Volver a Bloquear',
+            'action_unlock_btn' => 'Desbloquear y Vender',
+            'action_relock' => 'Volver a Bloquear',
             'action_lock' => 'Bloquear (Poner en Espera)',
             'action_download' => 'Descargar',
             'action_watch' => 'Ver',

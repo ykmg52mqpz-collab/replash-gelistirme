@@ -43,6 +43,30 @@
   update();
 })();
 
+// Sayaç (replash.info CountUp): görünür olunca 0'dan hedefe 1,4 sn'de, yavaşlayarak çıkar.
+// JS yoksa HTML'deki son değer görünür kalır.
+(function () {
+  var els = document.querySelectorAll('[data-countup]');
+  if (!els.length || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var fmt = function (el, v) { el.textContent = (el.getAttribute('data-prefix') || '') + v.toLocaleString() + (el.getAttribute('data-suffix') || ''); };
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target, to = parseFloat(el.getAttribute('data-countup')) || 0;
+      var dur = (parseFloat(el.getAttribute('data-duration')) || 1.4) * 1000, start = performance.now();
+      var tick = function (now) {
+        var t = Math.min(1, (now - start) / dur);
+        fmt(el, Math.round(to * (1 - Math.pow(1 - t, 3))));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      io.unobserve(el);
+    });
+  }, { rootMargin: '-40px' });
+  els.forEach(function (el) { fmt(el, 0); io.observe(el); });
+})();
+
 // Hareket azaltma tercihi: maketlerdeki SVG (SMIL) animasyonlarını durdur
 if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('svg').forEach(function (svg) { if (svg.pauseAnimations) svg.pauseAnimations(); });
@@ -61,33 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-  }
-
-  // 1.1 Hero Parallax & Zoom effect on scroll
-  const heroSection = document.getElementById('hero-section');
-  const heroBg = document.getElementById('hero-bg-img');
-
-  if (heroSection && heroBg) {
-    let ticking = false;
-    const handleHeroScroll = () => {
-      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-      const heroHeight = heroSection.offsetHeight || window.innerHeight || 600;
-      if (scrollY <= heroHeight * 1.5) {
-        const progress = Math.min(1.5, Math.max(0, scrollY / (heroHeight * 0.75)));
-        const scale = 1.0 + (progress * 0.35);
-        heroBg.style.transform = `scale(${scale.toFixed(3)})`;
-      }
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(handleHeroScroll);
-        ticking = true;
-      }
-    }, { passive: true });
-
-    handleHeroScroll();
   }
 
   // 2. Mobile menu toggle

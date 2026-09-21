@@ -285,7 +285,7 @@ return [
             'step4' => [
                 'uniqueCode' => 'Codice Univoco per Tutta la Squadra',
                 'copyShare' => 'Copia / Condividi',
-                'tip' => '💡 Invialo al gruppo WhatsApp: tutti i tuoi amici possono guardarlo sui propri dispositivi.'
+                'tip' => 'Invialo al gruppo WhatsApp: tutti i tuoi amici possono guardarlo sui propri dispositivi.'
             ],
             'step5' => [
                 'button' => 'Trova e Guarda Partita',
@@ -296,7 +296,7 @@ return [
             'step6' => [
                 'playerTitle' => 'LETTORE VIDEO · RITAGLIA E CONDIVIDI',
                 'quality' => '1080p HD · 60 FPS',
-                'clipSelection' => '✂ 00:28 Selezione Clip',
+                'clipSelection' => '00:28 Selezione Clip',
                 'createClip' => 'Crea Clip (MP4)',
                 'share' => 'Condividi:'
             ]
@@ -419,14 +419,18 @@ return [
             'clip_desc' => 'Imposta l\'intervallo temporale o registra al volo, scarica direttamente in MP4.',
             'start_time' => 'Inizio',
             'end_time' => 'Fine',
-            'set_start_btn' => '⏱ Imposta Inizio',
-            'set_end_btn' => '⏱ Imposta Fine',
-            'cut_clip_btn' => '✂️ Taglia & Scarica Clip',
-            'live_record_btn' => '🔴 Registra dal Vivo',
+            'set_start_btn' => 'Imposta Inizio',
+            'set_end_btn' => 'Imposta Fine',
+            'cut_clip_btn' => 'Taglia & Scarica Clip',
+            'live_record_btn' => 'Registra dal Vivo',
             'btn_start' => 'Crea Clip',
             'btn_stop' => 'Ferma Registrazione',
             'recording_active' => 'REGISTRAZIONE IN CORSO',
             'full_match' => 'Partita Completa',
+            'share_clip' => 'Condividi clip',
+            'share_link' => 'Condividi link partita',
+            'share_link_text' => 'Guarda la nostra partita su Replash',
+            'link_copied' => 'Link della partita copiato. Puoi inviarlo ai tuoi amici.',
             'share' => 'Condividi',
             'copied' => 'Link della partita copiato!'
         ],
@@ -511,7 +515,8 @@ return [
         ],
         'watch' => [
             'title' => 'Trova la tua partita',
-            'subtitle' => 'Inserisci il codice che il centro ti ha dato dopo la partita.',
+            'subtitle' => 'Inserisci il codice che il centro ti ha dato per la tua partita.',
+            'other_code' => 'Inserisci un altro codice',
             'codeLabel' => 'Codice partita',
             'button' => 'Guarda la partita',
             'buttonLoading' => 'Ricerca in corso…',
@@ -558,9 +563,9 @@ return [
         'header' => [
             'badge' => 'Desk Struttura',
             'price_info' => 'Prezzo Video:',
-            'bulk_btn' => '⚡ Genera Slot del Giorno (Bloccati)',
+            'bulk_btn' => 'Genera Slot del Giorno (Bloccati)',
             'add_slot_btn' => '+ Aggiungi Slot / Vendi',
-            'calendar_btn' => '📅 Seleziona da Calendario',
+            'calendar_btn' => 'Seleziona da Calendario',
             'logout' => 'Esci'
         ],
         'metrics' => [
@@ -669,8 +674,8 @@ return [
             'badge_sold' => 'Vendita Confermata',
             'badge_locked' => 'Bloccato (In Attesa)',
             'action_unlock' => 'Conferma Vendita (Sblocca)',
-            'action_unlock_btn' => '⚡ Sblocca e Vendi',
-            'action_relock' => '🔒 Riblocca',
+            'action_unlock_btn' => 'Sblocca e Vendi',
+            'action_relock' => 'Riblocca',
             'action_lock' => 'Blocca (Metti in Attesa)',
             'action_download' => 'Scarica',
             'action_watch' => 'Guarda',

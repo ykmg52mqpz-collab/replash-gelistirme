@@ -285,7 +285,7 @@ return [
             'step4' => [
                 'uniqueCode' => 'Unique Code for Entire Team',
                 'copyShare' => 'Copy / Share',
-                'tip' => '💡 Share to your WhatsApp group, every player can watch simultaneously on their own device.'
+                'tip' => 'Share to your WhatsApp group, every player can watch simultaneously on their own device.'
             ],
             'step5' => [
                 'button' => 'Find & Watch Match',
@@ -296,7 +296,7 @@ return [
             'step6' => [
                 'playerTitle' => 'VIDEO PLAYER · CLIP & SHARE',
                 'quality' => '1080p HD · 60 FPS',
-                'clipSelection' => '✂ 00:28 Clip Selection',
+                'clipSelection' => '00:28 Clip Selection',
                 'createClip' => 'Create Clip (MP4)',
                 'share' => 'Share:'
             ]
@@ -419,14 +419,18 @@ return [
             'clip_desc' => 'Select time range or start instant recording, download directly as MP4.',
             'start_time' => 'Start',
             'end_time' => 'End',
-            'set_start_btn' => '⏱ Set Start',
-            'set_end_btn' => '⏱ Set End',
-            'cut_clip_btn' => '✂️ Cut & Download Clip',
-            'live_record_btn' => '🔴 Live Record',
+            'set_start_btn' => 'Set Start',
+            'set_end_btn' => 'Set End',
+            'cut_clip_btn' => 'Cut & Download Clip',
+            'live_record_btn' => 'Live Record',
             'btn_start' => 'Create Clip',
             'btn_stop' => 'Stop Recording',
             'recording_active' => 'RECORDING IN PROGRESS',
             'full_match' => 'Full Match',
+            'share_clip' => 'Share clip',
+            'share_link' => 'Share match link',
+            'share_link_text' => 'Watch our match on Replash',
+            'link_copied' => 'Match link copied. You can send it to your friends.',
             'share' => 'Share',
             'copied' => 'Match link copied!'
         ],
@@ -511,7 +515,8 @@ return [
         ],
         'watch' => [
             'title' => 'Find your match',
-            'subtitle' => 'Enter the code the facility gave you after the match.',
+            'subtitle' => 'Please enter the code the facility gave you for your match.',
+            'other_code' => 'Enter another code',
             'codeLabel' => 'Match code',
             'button' => 'Watch the match',
             'buttonLoading' => 'Searching…',
@@ -558,9 +563,9 @@ return [
         'header' => [
             'badge' => 'Venue Desk',
             'price_info' => 'Video Price:',
-            'bulk_btn' => '⚡ Generate Today\'s Slots (Locked)',
+            'bulk_btn' => 'Generate Today\'s Slots (Locked)',
             'add_slot_btn' => '+ Add / Sell Single Slot',
-            'calendar_btn' => '📅 Select on Calendar',
+            'calendar_btn' => 'Select on Calendar',
             'logout' => 'Logout'
         ],
         'metrics' => [
@@ -669,8 +674,8 @@ return [
             'badge_sold' => 'Sale Confirmed',
             'badge_locked' => 'Locked (Pending)',
             'action_unlock' => 'Confirm Sale (Unlock)',
-            'action_unlock_btn' => '⚡ Unlock & Sell',
-            'action_relock' => '🔒 Re-lock',
+            'action_unlock_btn' => 'Unlock & Sell',
+            'action_relock' => 'Re-lock',
             'action_lock' => 'Lock (Hold Pending)',
             'action_download' => 'Download',
             'action_watch' => 'Watch',

@@ -23,7 +23,7 @@ require_once __DIR__ . '/includes/header.php';
 
   <!-- HERO (replash.info) -->
   <section id="hero-section" class="relative flex min-h-[100svh] items-center overflow-hidden bg-ink-900 pt-28 pb-20 md:pt-32 md:pb-24">
-  <div id="hero-parallax" class="absolute -inset-y-[25%] inset-x-0 scale-110 will-change-transform" aria-hidden="true">
+  <div id="hero-parallax" class="absolute -inset-y-[25%] inset-x-0 will-change-transform" style="transform:scale(1.1)" aria-hidden="true">
   <img src="<?= asset('images/gen_hero_friends.jpg') ?>" alt="" fetchpriority="high" class="h-full w-full object-cover" style="opacity:0.75;object-position:center 35%"/>
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/55 to-ink-900/95">
   </div>
@@ -35,7 +35,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
   </div>
   <div class="container-x relative z-10">
-  <div class="mx-auto max-w-4xl text-center will-change-transform" style="opacity:1">
+  <div id="hero-text" class="mx-auto max-w-4xl text-center will-change-transform">
   <div  data-reveal="up">
   <h1 class="font-display text-6xl font-bold leading-[1.05] tracking-tight text-balance md:text-7xl lg:text-8xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.45));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
   <?= e(__('home.hero.title')) ?>
@@ -67,47 +67,20 @@ require_once __DIR__ . '/includes/header.php';
 
   <!-- QUICK MATCH FINDER CARD (Contained & Centered) -->
   <?php if (!$searchFacilityEnabled && $searchCodeEnabled): ?>
-    <!-- STANDALONE HORIZONTAL CODE SEARCH (Prominent & Wide) -->
-    <section class="relative -mt-10 z-20 max-w-4xl mx-auto px-4 sm:px-6 mb-20">
-      <div class="card-elevated rounded-3xl border border-white/10 bg-ink-900/95 p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-white/[0.06]">
-          <div>
-            <span class="text-xs font-semibold uppercase tracking-widest text-accent"><?= e(__('searchSettings.codeOnly.eyebrow')) ?></span>
-            <h3 class="font-display text-2xl font-bold text-white mt-1"><?= e(__('searchSettings.codeOnly.title')) ?></h3>
-          </div>
-          <p class="text-xs sm:text-sm text-neutral-400 max-w-sm">
-            <?= e(__('searchSettings.codeOnly.desc')) ?>
-          </p>
+    <!-- KOD KARTI: "Maçını Bul" sayfasındaki kartla aynı -->
+    <section class="relative -mt-10 z-20 mx-auto mb-20 max-w-2xl px-4 sm:px-6" data-reveal="up">
+      <form action="<?= base_url('find.php') ?>" method="GET" class="card-elevated rounded-3xl border border-white/10 bg-ink-900/95 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">
+        <div class="mb-5 flex items-center gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
+          <h3 class="font-display text-lg font-bold text-white"><?= e(__('find.watch.title')) ?></h3>
         </div>
-
-        <form action="<?= base_url('find.php') ?>" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
-          <div class="relative flex-1 w-full">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </div>
-            <input 
-              type="text" 
-              name="code" 
-              required 
-              placeholder="<?= e(__('searchSettings.codeOnly.placeholder')) ?>" 
-              class="w-full rounded-2xl border border-white/15 bg-ink-950/90 pl-12 pr-4 py-4 text-base sm:text-lg font-mono font-bold tracking-wider text-white uppercase placeholder:normal-case placeholder:font-sans placeholder:text-neutral-500 placeholder:text-sm focus:border-accent focus:outline-none transition shadow-inner"
-            >
-          </div>
-
-          <button type="submit" class="w-full sm:w-auto rounded-2xl bg-accent px-8 py-4 text-base font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition whitespace-nowrap flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <span><?= e(__('searchSettings.codeOnly.button')) ?></span>
-            <span>&rarr;</span>
-          </button>
-        </form>
-
-        <div class="mt-4 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-neutral-400">
-          <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-            <?= e(__('searchSettings.codeOnly.hint')) ?>
-          </span>
+        <p class="mb-5 text-sm text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
+        <div class="flex flex-col gap-2">
+          <label for="home-code" class="text-xs font-semibold uppercase tracking-wider text-white/60"><?= e(__('find.watch.codeLabel')) ?></label>
+          <input id="home-code" type="text" name="code" required placeholder="XXXX-XXXX" maxlength="10" autocomplete="off" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.3em] text-white outline-none transition placeholder:tracking-[0.3em] placeholder:text-white/25 focus:border-accent" />
         </div>
-      </div>
+        <button type="submit" class="mt-5 w-full rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-ink-900 shadow-glow-sm transition hover:shadow-glow"><?= e(__('find.watch.button')) ?></button>
+      </form>
     </section>
   <?php else: ?>
     <!-- FACILITY & DATE FILTER FORM (With Optional Code Shortcut) -->
@@ -238,7 +211,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border-white/10 bg-white/5 text-white/50">
   <?= e(__('home.twoLayer.layer1.label')) ?>
   </div>
-  <span class="block font-display text-5xl font-bold leading-none text-accent md:text-6xl">0%</span>
+  <span class="block font-display text-5xl font-bold leading-none text-accent md:text-6xl" data-countup="95" data-suffix="%">95%</span>
   <h3 class="font-display font-bold leading-tight text-white mt-2 text-xl md:text-2xl">
   <?= e(__('home.twoLayer.layer1.title')) ?>
   </h3>
@@ -488,17 +461,26 @@ require_once __DIR__ . '/includes/header.php';
   (function () {
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Hero görseli metinden yavaş kayar (ParallaxImage karşılığı)
+    // Hero (replash.info HomeHero): kaydırdıkça görsel %0→%28 aşağı kayar ve 1.1→1.3 büyür;
+    // başlık %0→-%85 yukarı kayar ve 1 → 0.5 (yarıda) → 0 solar.
     var layer = document.getElementById('hero-parallax');
+    var text = document.getElementById('hero-text');
     var hero = document.getElementById('hero-section');
     if (layer && hero && !reduce) {
       var ticking = false;
       var update = function () {
-        var y = window.pageYOffset || 0;
-        if (y <= hero.offsetHeight) layer.style.transform = 'translate3d(0,' + (y * 0.25).toFixed(1) + 'px,0) scale(1.1)';
+        var r = hero.getBoundingClientRect();
+        var p = Math.min(1, Math.max(0, -r.top / (r.height || 1)));
+        layer.style.transform = 'translate3d(0,' + (p * 28).toFixed(2) + '%,0) scale(' + (1.1 + p * 0.2).toFixed(4) + ')';
+        if (text) {
+          var o = p < 0.45 ? 1 - (p / 0.45) * 0.5 : 0.5 - ((p - 0.45) / 0.55) * 0.5;
+          text.style.transform = 'translate3d(0,' + (-p * 85).toFixed(2) + '%,0)';
+          text.style.opacity = o.toFixed(3);
+        }
         ticking = false;
       };
       window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
       update();
     }
 
