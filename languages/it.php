@@ -432,6 +432,9 @@ return [
         ],
         'modal' => [
                 'clip_downloaded' => 'La clip è stata salvata sul tuo dispositivo. Carica il video nella pagina che si è aperta per condividerlo.',
+                'clip_saved' => 'La clip è stata salvata sul tuo dispositivo.',
+                'preparing_title' => 'Preparazione della clip',
+                'preparing_desc' => 'Stiamo tagliando l’intervallo scelto e aggiungendo il logo. Dura quanto la clip.',
                 'clip_wait' => 'La clip è in preparazione, potrai condividerla appena è pronta.',
                 'preparing_clip' => 'Preparazione clip… {s}/{t} s',
                 'clip_ready' => 'Clip pronta.',
@@ -532,7 +535,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Taglia un momento',
-                'hint' => 'Trascina sulla timeline per selezionare 15–40s, poi scarica.',
+                'hint' => 'Trascina sulla timeline per selezionare 15–40s, poi premi Taglia un momento.',
                 'download' => 'Scarica clip',
                 'range' => 'Seleziona tra 15 e 40 secondi.'
             ],

@@ -479,7 +479,7 @@ require_once __DIR__ . '/includes/header.php';
               </div>
             </div>
             <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/50">
-              <span class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">✂︎ <?= e(__('find.watch.clip.label')) ?></span>
+              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-semibold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">✂︎ <?= e(__('find.watch.clip.label')) ?></button>
               <span><?= e(__('find.watch.clip.hint')) ?></span>
               <span id="rp-clip-info" class="ml-auto font-mono"></span>
             </div>
@@ -548,7 +548,7 @@ require_once __DIR__ . '/includes/header.php';
                 <!-- Share Link Button -->
                 <button 
                   type="button" 
-                  onclick="navigator.clipboard.writeText(window.location.href); alert(<?= json_encode(__('find.tools.copied')) ?>);"
+                  onclick="openClipShare()"
                   class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -651,8 +651,8 @@ require_once __DIR__ . '/includes/header.php';
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                   </div>
                   <div>
-                    <h3 class="font-display text-lg font-bold text-white"><?= e(__('find.modal.title')) ?></h3>
-                    <p class="text-xs text-neutral-400"><?= e(__('find.modal.desc')) ?></p>
+                    <h3 id="modal-clip-title" class="font-display text-lg font-bold text-white"><?= e(__('find.modal.title')) ?></h3>
+                    <p id="modal-clip-desc" class="text-xs text-neutral-400"><?= e(__('find.modal.desc')) ?></p>
                   </div>
                 </div>
                 <button type="button" onclick="closeClipModal()" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white flex items-center justify-center transition">&times;</button>
@@ -671,16 +671,21 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="flex justify-between items-center text-neutral-300">
                   <span class="text-neutral-400"><?= e(__('find.modal.duration')) ?></span>
                   <span class="font-bold text-emerald-400" id="modal-clip-duration">0 <?= e(__('find.modal.seconds')) ?></span>
-                  <div id="modal-clip-status" class="mt-2 hidden text-xs text-white/60" aria-live="polite"></div>
                 </div>
                 <div class="flex justify-between items-center text-neutral-300">
                   <span class="text-neutral-400"><?= e(__('find.modal.format')) ?></span>
-                  <span class="font-mono text-neutral-300">MP4 Video</span>
+                  <span class="font-mono text-neutral-300" id="modal-clip-format">MP4 Video</span>
                 </div>
               </div>
 
+              <!-- Klip hazırlanma durumu -->
+              <div id="modal-clip-progress" class="mb-5 hidden">
+                <div class="h-1.5 overflow-hidden rounded-full bg-white/10"><div id="modal-clip-bar" class="h-full rounded-full bg-accent transition-[width] duration-200" style="width:0%"></div></div>
+              </div>
+              <p id="modal-clip-status" class="-mt-2 mb-5 hidden text-center text-xs text-white/70" aria-live="polite"></p>
+
               <!-- Modal Action Buttons (Side by Side: Download MP4 & Share) -->
-              <div class="space-y-4">
+              <div id="modal-actions" class="space-y-4 transition-opacity">
                 <div class="grid grid-cols-2 gap-3">
                   <a 
                     id="modal-download-btn"
@@ -942,6 +947,11 @@ var I18N = {
   clipReady: <?= json_encode(__('find.modal.clip_ready')) ?>,
   clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
   clipWait: <?= json_encode(__('find.modal.clip_wait')) ?>,
+  clipSaved: <?= json_encode(__('find.modal.clip_saved')) ?>,
+  clipPreparingTitle: <?= json_encode(__('find.modal.preparing_title')) ?>,
+  clipPreparingDesc: <?= json_encode(__('find.modal.preparing_desc')) ?>,
+  clipReadyTitle: <?= json_encode(__('find.modal.title')) ?>,
+  clipReadyDesc: <?= json_encode(__('find.modal.desc')) ?>,
   clipDownloaded: <?= json_encode(__('find.modal.clip_downloaded')) ?>,
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
@@ -966,18 +976,32 @@ function clipMimeType() {
   for (var i = 0; i < types.length; i++) { if (MediaRecorder.isTypeSupported(types[i])) return types[i]; }
   return '';
 }
+// Kayıt tuvalden yapılır (Safari/iPhone video.captureStream desteklemez). Video başka kaynaktan
+// geliyor ve CORS izni yoksa tuval "kirlenir" ve okunamaz: o zaman sunucu yoluna düşülür.
 function clipCanCapture(el) {
-  if (!el || !(el.captureStream || el.mozCaptureStream) || !clipMimeType()) return false;
+  if (!el || !clipMimeType() || !HTMLCanvasElement.prototype.captureStream) return false;
+  if (el.readyState < 2) return false;
   try {
-    var s = el.captureStream ? el.captureStream() : el.mozCaptureStream();
-    s.getTracks().forEach(function (t) { t.stop(); });
+    var c = document.createElement('canvas');
+    c.width = 2; c.height = 2;
+    var g = c.getContext('2d');
+    g.drawImage(el, 0, 0, 2, 2);
+    g.getImageData(0, 0, 1, 1);
     return true;
-  } catch (e) { return false; } // başka kaynaktan gelen (CORS izni olmayan) video kaydedilemez
+  } catch (e) { return false; }
+}
+function clipWaitReady(el) {
+  if (el.readyState >= 2) return Promise.resolve();
+  return new Promise(function (resolve) {
+    el.addEventListener('loadeddata', resolve, { once: true });
+    setTimeout(resolve, 8000);
+  });
 }
 // Kaydedilecek oynatıcı: önce ana oynatıcı; olmazsa CORS izni varsa sessiz gizli bir kopya
 async function clipPrepareSource() {
   var v = clipVideoEl();
   if (!v || !clipMimeType()) return null;
+  await clipWaitReady(v);
   if (clipCanCapture(v)) return { el: v, hidden: false };
   var src = v.currentSrc || v.src || '';
   if (!/^https?:/i.test(src)) return null;
@@ -989,6 +1013,7 @@ async function clipPrepareSource() {
     var hv = document.createElement('video');
     hv.crossOrigin = 'anonymous';
     hv.playsInline = true;
+    hv.setAttribute('playsinline', '');
     hv.preload = 'auto';
     hv.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
     hv.src = url;
@@ -1002,7 +1027,7 @@ async function clipPrepareSource() {
         if (!ok) hv.remove();
         resolve(ok ? hv : null);
       };
-      hv.addEventListener('loadedmetadata', function () { finish(true); }, { once: true });
+      hv.addEventListener('loadeddata', function () { finish(true); }, { once: true });
       hv.addEventListener('error', function () { finish(false); }, { once: true });
       setTimeout(function () { finish(false); }, 15000);
     });
@@ -1012,11 +1037,44 @@ async function clipPrepareSource() {
   if (!hv) return null;
   return { el: hv, hidden: true };
 }
+// Ses: Chrome/Firefox'ta oynatıcıdan doğrudan; Safari'de Web Audio ile (oynatıcı sesi duyulmaya devam eder)
+function clipAudioTracks(el, silent) {
+  if (!silent && (el.captureStream || el.mozCaptureStream)) {
+    try { return (el.captureStream ? el.captureStream() : el.mozCaptureStream()).getAudioTracks(); } catch (e) {}
+  }
+  try {
+    if (!el._clipAudio) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      var actx = new AC();
+      var src = actx.createMediaElementSource(el);
+      var dest = actx.createMediaStreamDestination();
+      src.connect(dest);
+      if (!silent) src.connect(actx.destination);
+      el._clipAudio = { ctx: actx, dest: dest };
+    }
+    if (el._clipAudio.ctx.state === 'suspended') el._clipAudio.ctx.resume();
+    return el._clipAudio.dest.stream.getAudioTracks();
+  } catch (e) { return []; }
+}
 function clipSetStatus(text) {
   var el = document.getElementById('modal-clip-status');
   if (!el) return;
   el.textContent = text || '';
   el.classList.toggle('hidden', !text);
+}
+// Klip hazırlanırken başlık, ilerleme çubuğu ve düğmeler buna göre gösterilir
+function clipSetBusyUI(busy, pct) {
+  var title = document.getElementById('modal-clip-title');
+  var desc = document.getElementById('modal-clip-desc');
+  var prog = document.getElementById('modal-clip-progress');
+  var bar = document.getElementById('modal-clip-bar');
+  var actions = document.getElementById('modal-actions');
+  if (title) title.textContent = busy ? I18N.clipPreparingTitle : I18N.clipReadyTitle;
+  if (desc) desc.textContent = busy ? I18N.clipPreparingDesc : I18N.clipReadyDesc;
+  if (prog) prog.classList.toggle('hidden', !busy);
+  if (bar) bar.style.width = Math.round((pct || 0) * 100) + '%';
+  if (actions) actions.classList.toggle('opacity-40', busy);
+  if (actions) actions.classList.toggle('pointer-events-none', busy);
 }
 // Filigran: sağ üstte "replash.it" + küçük logo, sağ altta tesis · saha (ince dijital yazı)
 var clipLogo = new Image();
@@ -1079,24 +1137,8 @@ function clipWatermarkedVideoTrack(el) {
 }
 function clipStartRecorder(el, silent) {
   var mime = clipMimeType();
-  var cap = el.captureStream ? el.captureStream() : el.mozCaptureStream();
-  var audio = cap.getAudioTracks();
-  if (silent) {
-    // Gizli kopyanın sesi hoparlöre gitmeden kayda alınır
-    try {
-      var actx = new (window.AudioContext || window.webkitAudioContext)();
-      var dest = actx.createMediaStreamDestination();
-      actx.createMediaElementSource(el).connect(dest);
-      audio = dest.stream.getAudioTracks();
-      el._clipAudioCtx = actx;
-    } catch (e) {
-      el.muted = true;
-      audio = [];
-    }
-  }
-  var video;
-  try { video = clipWatermarkedVideoTrack(el); } catch (e) { video = null; }
-  var stream = new MediaStream((video ? [video] : cap.getVideoTracks()).concat(audio));
+  var video = clipWatermarkedVideoTrack(el); // hata verirse çağıran sunucu yoluna düşer
+  var stream = new MediaStream([video].concat(clipAudioTracks(el, silent)));
   clipChunks = [];
   clipRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 });
   clipRecorder.ondataavailable = function (e) { if (e.data && e.data.size) clipChunks.push(e.data); };
@@ -1116,6 +1158,7 @@ function clipFinishRecorder(mime) {
 }
 function clipOfferBlob(clip, blob) {
   clipBusy = false;
+  clipSetBusyUI(false);
   if (!blob || !blob.size) return false;
   if (clipBlobUrl) URL.revokeObjectURL(clipBlobUrl);
   clipBlobUrl = URL.createObjectURL(blob);
@@ -1126,21 +1169,22 @@ function clipOfferBlob(clip, blob) {
   if (dl) { dl.href = clipBlobUrl; dl.setAttribute('download', clip.filename); dl.classList.remove('pointer-events-none', 'opacity-50'); }
   var lbl = document.getElementById('modal-download-label');
   if (lbl) lbl.textContent = I18N.downloadVideo + ' (' + ext.toUpperCase() + ')';
-  clipSetStatus(I18N.clipReady);
+  var fmt = document.getElementById('modal-clip-format');
+  if (fmt) fmt.textContent = ext.toUpperCase() + ' Video';
+  clipSetStatus('');
   return true;
 }
 // Seçilen aralığı baştan sona oynatıp kaydeder (15–40 sn, gerçek zamanlı)
 async function cutClipInBrowser(clip) {
   clipBusy = true;
-  var dl = document.getElementById('modal-download-btn');
-  if (dl) dl.classList.add('pointer-events-none', 'opacity-50');
+  clipSetBusyUI(true, 0);
   clipSetStatus(I18N.clipPreparing.replace('{s}', '0').replace('{t}', clip.duration));
   var source = await clipPrepareSource();
   if (!source) { clipFallbackToServer(); return; }
   var v = source.el;
   var cleanup = function () {
     if (!source.hidden) return;
-    try { if (v._clipAudioCtx) v._clipAudioCtx.close(); } catch (e) {}
+    try { if (v._clipAudio) v._clipAudio.ctx.close(); } catch (e) {}
     v.pause(); v.removeAttribute('src'); v.load(); v.remove();
   };
   var onSeeked = function () {
@@ -1152,6 +1196,7 @@ async function cutClipInBrowser(clip) {
     var tick = setInterval(function () {
       var done = Math.max(0, Math.min(clip.duration, v.currentTime - clip.start));
       clipSetStatus(I18N.clipPreparing.replace('{s}', Math.round(done)).replace('{t}', clip.duration));
+      clipSetBusyUI(true, done / clip.duration);
       if (v.currentTime >= clip.end || v.ended) {
         clearInterval(tick);
         v.pause();
@@ -1169,8 +1214,7 @@ async function cutClipInBrowser(clip) {
 // Tarayıcı kaydı mümkün değilse: kamera bulutunun kesim servisi (sunucu indirmesi)
 function clipFallbackToServer() {
   clipBusy = false;
-  var dl = document.getElementById('modal-download-btn');
-  if (dl) dl.classList.remove('pointer-events-none', 'opacity-50');
+  clipSetBusyUI(false);
   clipSetStatus(I18N.clipServer);
 }
 
@@ -1223,6 +1267,7 @@ function createClipFromRangeInputs() {
     return;
   }
 
+  if (clipBusy) { document.getElementById('clip-modal').classList.remove('hidden'); return; }
   var duration = endSec - startSec;
   if (duration < CLIP_MIN || duration > CLIP_MAX) {
     alert(I18N.clipRange);
@@ -1424,7 +1469,10 @@ function openClipModal(clip) {
   }
   var dlLabel = document.getElementById('modal-download-label');
   if (dlLabel) dlLabel.textContent = I18N.downloadMp4;
+  var fmtEl = document.getElementById('modal-clip-format');
+  if (fmtEl) fmtEl.textContent = 'MP4 Video';
   clipSetStatus('');
+  clipSetBusyUI(false);
 
   if (modal) modal.classList.remove('hidden');
 }
@@ -1493,7 +1541,7 @@ function clipNativeShare(file, onFail) {
 async function shareClipFileOrLink() {
   if (!currentClip) return;
   if (clipBusy) { clipSetStatus(I18N.clipWait); return; }
-  var fallback = function () { clipDownloadNow(); clipSetStatus(I18N.clipDownloaded); };
+  var fallback = function () { clipDownloadNow(); clipSetStatus(I18N.clipSaved); };
   if (clipNativeShare(clipFileNow(), fallback)) return;
   if (!currentClip.blob && navigator.canShare) {
     // Sunucudan kesilen klip: önce dosya alınır, sonra paylaşılır
@@ -1501,6 +1549,15 @@ async function shareClipFileOrLink() {
     if (clipNativeShare(file, fallback)) return;
   }
   fallback();
+}
+
+// Araç kartındaki Paylaş: kesilmiş klip varsa paylaşım penceresini açar, yoksa seçili aralıktan klip keser
+function openClipShare() {
+  if (currentClip && (currentClip.blob || clipBusy)) {
+    document.getElementById('clip-modal').classList.remove('hidden');
+    return;
+  }
+  createClipFromRangeInputs();
 }
 
 // Platform düğmeleri (WhatsApp, Instagram, TikTok, YouTube, X, Facebook)
@@ -1612,6 +1669,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var info = $('rp-clip-info');
       info.textContent = formatTime(a) + ' → ' + formatTime(b) + ' · ' + Math.round(len) + 's';
       info.className = 'ml-auto font-mono ' + (valid ? 'text-white/60' : 'text-red-300');
+      $('rp-cut').disabled = !valid;
       document.getElementById('clip-start-input').value = formatTime(a);
       document.getElementById('clip-end-input').value = formatTime(b);
     };

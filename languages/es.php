@@ -432,6 +432,9 @@ return [
         ],
         'modal' => [
                 'clip_downloaded' => 'El clip se guardó en tu dispositivo. Sube el vídeo en la página que se abrió para compartirlo.',
+                'clip_saved' => 'El clip se guardó en tu dispositivo.',
+                'preparing_title' => 'Preparando tu clip',
+                'preparing_desc' => 'Cortando el rango elegido y añadiendo el logo. Tarda lo mismo que el clip.',
                 'clip_wait' => 'El clip se está preparando, podrás compartirlo cuando esté listo.',
                 'preparing_clip' => 'Preparando clip… {s}/{t} s',
                 'clip_ready' => 'Clip listo.',
@@ -532,7 +535,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Corta un momento',
-                'hint' => 'Arrastra en la línea de tiempo para seleccionar 15–40s y descarga.',
+                'hint' => 'Arrastra en la línea de tiempo para seleccionar 15–40s y pulsa Corta un momento.',
                 'download' => 'Descargar clip',
                 'range' => 'Selecciona entre 15 y 40 segundos.'
             ],

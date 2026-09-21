@@ -432,6 +432,9 @@ return [
         ],
         'modal' => [
                 'clip_downloaded' => 'Klip cihazına indirildi. Açılan sayfada videoyu yükleyip paylaşabilirsin.',
+                'clip_saved' => 'Klip cihazına indirildi.',
+                'preparing_title' => 'Klip hazırlanıyor',
+                'preparing_desc' => 'Seçtiğin aralık kesiliyor, logo ekleniyor. Klip süresi kadar sürer.',
                 'clip_wait' => 'Klip hazırlanıyor, bitince paylaşabilirsin.',
                 'preparing_clip' => 'Klip hazırlanıyor… {s}/{t} sn',
                 'clip_ready' => 'Klip hazır.',
@@ -532,7 +535,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Klip kes',
-                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, sonra indir.',
+                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, sonra Klip kes’e bas.',
                 'download' => 'Klibi indir',
                 'range' => '15 ile 40 saniye arasında seç.'
             ],
