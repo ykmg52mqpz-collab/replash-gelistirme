@@ -477,6 +477,30 @@ if ($isAdmin && $pdo) {
     $totals = $stmtTotals->fetch(PDO::FETCH_ASSOC) ?: [];
 }
 
+// Sekme + satış denetimi verisi (includes/sales.php)
+$adminTab = in_array($_GET['tab'] ?? '', ['overview', 'facilities', 'audit', 'leads', 'settings'], true) ? $_GET['tab'] : 'overview';
+$auditEvents = [];
+$undoByFacility = [];
+if ($isAdmin && $pdo) {
+    try {
+        $auditFacility = $_GET['audit_facility'] ?? '';
+        $sqlAudit = "SELECT se.*, f.name AS facility_name, m.court, m.date, m.time_slot, m.access_code, m.first_opened_at
+            FROM sale_events se
+            LEFT JOIN facilities f ON f.id = se.facility_id
+            LEFT JOIN matches m ON m.id = se.match_id";
+        $auditParams = [];
+        if ($auditFacility !== '') { $sqlAudit .= " WHERE se.facility_id = ?"; $auditParams[] = $auditFacility; }
+        $sqlAudit .= " ORDER BY se.id DESC LIMIT 200";
+        $stA = $pdo->prepare($sqlAudit); $stA->execute($auditParams);
+        $auditEvents = $stA->fetchAll();
+        $stU = $pdo->query("SELECT facility_id, SUM(action = 'undone') AS undone, SUM(action = 'sold') AS sold
+            FROM sale_events WHERE DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') GROUP BY facility_id");
+        foreach ($stU->fetchAll() as $u) { $undoByFacility[$u['facility_id']] = $u; }
+    } catch (Exception $e) {
+        error_log('admin audit: ' . $e->getMessage());
+    }
+}
+
 $internalShell = __('nav.admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
@@ -507,25 +531,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
     <?php else: ?>
-      <!-- Admin Dashboard Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
-        <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-accent">Yönetim Konsolu</span>
-          <h1 class="font-display text-3xl font-bold text-white">Platform Dashboard</h1>
-          <p class="text-xs text-neutral-400 mt-1">Hoş geldiniz, <?= e($_SESSION['admin_name'] ?? 'Admin') ?></p>
-        </div>
-        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-          <a href="<?= base_url('admin/calculator.php') ?>" class="rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            Gelir Hesaplayıcı
-          </a>
-          <a href="<?= base_url('admin/matches.php') ?>" class="rounded-xl border border-accent/40 bg-accent/15 px-3.5 py-2 text-xs font-semibold text-accent hover:bg-accent/25 transition flex items-center gap-1.5 shadow-glow">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-            Satılan Maçlar
-          </a>
-          <a href="?action=logout" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-neutral-300 hover:bg-white/10 transition">Çıkış</a>
-        </div>
-      </div>
+      <?php include __DIR__ . '/../includes/admin_nav.php'; ?>
 
       <?php if ($success): ?>
         <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-300 text-sm font-medium mb-6">
@@ -533,6 +539,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       <?php endif; ?>
 
+      <?php if ($adminTab === 'overview'): ?>
       <!-- Facility Filter Toolbar for Analytics -->
       <div class="rounded-2xl bg-white/[0.02] p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -761,6 +768,9 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       </div>
 
+      <?php endif; ?>
+
+      <?php if ($adminTab === 'facilities'): ?>
       <!-- Facilities & Cameras Section -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
         
@@ -785,7 +795,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <span class="text-[11px] text-neutral-400">Her sahaya özel canlı RTSP/HLS linki bağlayın</span>
               </div>
 
-              <form action="index.php" method="POST" class="space-y-4 text-xs">
+              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs">
                 <input type="hidden" name="action" value="add_facility">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -925,7 +935,7 @@ require_once __DIR__ . '/../includes/header.php';
                       </button>
 
                       <!-- Delete Facility Form -->
-                      <form action="index.php" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
+                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
                         <input type="hidden" name="action" value="delete_facility">
                         <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                         <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="Tesisi Sil">
@@ -942,7 +952,7 @@ require_once __DIR__ . '/../includes/header.php';
                       <span class="text-[11px] text-neutral-400">Her sahaya birden fazla kamera URL'si atayabilirsiniz</span>
                     </div>
 
-                    <form action="index.php" method="POST" class="space-y-3">
+                    <form action="index.php?tab=facilities" method="POST" class="space-y-3">
                       <input type="hidden" name="action" value="update_facility">
                       <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                       
@@ -1139,6 +1149,16 @@ require_once __DIR__ . '/../includes/header.php';
 
       </div>
 
+      <?php endif; ?>
+
+      <?php if ($adminTab === 'settings'): ?>
+      <a href="<?= base_url('admin/calculator.php') ?>" class="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-5 transition hover:border-accent/40">
+        <div>
+          <div class="font-semibold text-white">Gelir Hesaplayıcı</div>
+          <div class="text-xs text-white/50">Sahalar İçin sayfasındaki hesaplayıcının varsayılanları ve metinleri</div>
+        </div>
+        <span class="text-accent">→</span>
+      </a>
       <!-- Search Form Display Settings -->
       <div class="rounded-2xl bg-white/[0.02] p-6 sm:p-8 border border-white/10 mb-8 bg-ink-800/80">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
@@ -1151,7 +1171,7 @@ require_once __DIR__ . '/../includes/header.php';
           </span>
         </div>
 
-        <form action="index.php" method="POST" class="space-y-6">
+        <form action="index.php?tab=settings" method="POST" class="space-y-6">
           <input type="hidden" name="action" value="update_search_form_settings">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1190,6 +1210,9 @@ require_once __DIR__ . '/../includes/header.php';
         </form>
       </div>
 
+      <?php endif; ?>
+
+      <?php if ($adminTab === 'leads'): ?>
       <!-- Leads / Contact Requests -->
       <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 mb-10">
         <h2 class="font-display text-xl font-bold text-white mb-4">Gelen Pilot Başvuruları & Talepler</h2>
@@ -1228,6 +1251,64 @@ require_once __DIR__ . '/../includes/header.php';
           </div>
         <?php endif; ?>
       </div>
+      <?php endif; ?>
+
+      <?php if ($adminTab === 'audit'): ?>
+      <!-- SATIŞ DENETİMİ: satış / geri alma kayıtları (silinmez) -->
+      <p class="mb-5 inline-block rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/50">
+        ⓘ Tesisler satışı yalnızca ilk <?= REPLASH_UNDO_WINDOW_MIN ?> dakikada, video açılmadıysa ve neden yazarak geri alabilir. Daha sonraki düzeltmeler yalnızca buradan (Maçlar sekmesi) yapılır.
+      </p>
+
+      <div class="mb-6 overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full min-w-[640px] text-sm">
+          <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
+            <tr><th class="px-4 py-3">Tesis</th><th class="px-4 py-3 text-right">Bu ay satış</th><th class="px-4 py-3 text-right">Bu ay geri alma</th><th class="px-4 py-3 text-right">Oran</th></tr>
+          </thead>
+          <tbody>
+            <?php foreach ($facilities as $fac): $u = $undoByFacility[$fac['id']] ?? ['sold' => 0, 'undone' => 0]; $rate = ((int)$u['sold'] > 0) ? round(100 * (int)$u['undone'] / (int)$u['sold']) : 0; ?>
+              <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+                <td class="px-4 py-2.5"><a class="hover:text-accent" href="?tab=audit&audit_facility=<?= urlencode($fac['id']) ?>"><?= e($fac['name']) ?></a></td>
+                <td class="px-4 py-2.5 text-right font-mono"><?= (int)$u['sold'] ?></td>
+                <td class="px-4 py-2.5 text-right font-mono <?= (int)$u['undone'] > 0 ? 'text-red-300' : 'text-white/40' ?>"><?= (int)$u['undone'] ?></td>
+                <td class="px-4 py-2.5 text-right font-mono <?= $rate >= 10 ? 'text-red-300 font-bold' : 'text-white/60' ?>">%<?= $rate ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full min-w-[860px] text-sm">
+          <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
+            <tr><th class="px-4 py-3">Zaman</th><th class="px-4 py-3">Tesis</th><th class="px-4 py-3">Maç</th><th class="px-4 py-3">İşlem</th><th class="px-4 py-3">Kim</th><th class="px-4 py-3">Neden</th></tr>
+          </thead>
+          <tbody>
+            <?php if (empty($auditEvents)): ?>
+              <tr><td colspan="6" class="px-4 py-8 text-center text-white/40">Kayıt yok.</td></tr>
+            <?php endif; ?>
+            <?php
+              $actionLabels = [
+                'sold' => ['Satıldı', 'bg-emerald-400/15 text-emerald-300'],
+                'undone' => ['Tesis geri aldı', 'bg-red-400/15 text-red-300'],
+                'admin_sold' => ['Yönetim açtı', 'bg-emerald-400/15 text-emerald-300'],
+                'admin_undone' => ['Yönetim geri aldı', 'bg-white/10 text-white/70'],
+                'admin_deleted' => ['Yönetim sildi', 'bg-white/10 text-white/70'],
+              ];
+            ?>
+            <?php foreach ($auditEvents as $ev): [$al, $ac] = $actionLabels[$ev['action']] ?? [$ev['action'], 'bg-white/10 text-white/70']; ?>
+              <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+                <td class="px-4 py-2.5 font-mono text-xs text-white/60"><?= e(date('d.m.Y H:i', strtotime($ev['created_at']))) ?></td>
+                <td class="px-4 py-2.5"><?= e($ev['facility_name'] ?? $ev['facility_id']) ?></td>
+                <td class="px-4 py-2.5 text-xs"><?= e(($ev['court'] ?? '—') . ' · ' . ($ev['date'] ?? '') . ' · ' . ($ev['time_slot'] ?? '')) ?></td>
+                <td class="px-4 py-2.5"><span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold <?= $ac ?>"><?= e($al) ?></span></td>
+                <td class="px-4 py-2.5 font-mono text-xs text-white/50"><?= e($ev['actor']) ?></td>
+                <td class="px-4 py-2.5 text-xs text-white/70"><?= e($ev['reason'] ?? '') ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <?php endif; ?>
 
     <?php endif; ?>
 

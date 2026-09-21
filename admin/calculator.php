@@ -135,36 +135,7 @@ require_once __DIR__ . '/../includes/header.php';
 
   <div class="container-x py-10 relative z-10">
 
-    <!-- Top Breadcrumb & Header Navigation -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
-      <div>
-        <div class="flex items-center gap-2 mb-1">
-          <a href="<?= base_url('admin/index.php') ?>" class="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
-            &larr; Admin Dashboard
-          </a>
-          <span class="text-neutral-500">/</span>
-          <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Gelir Hesaplayıcı</span>
-        </div>
-        <h1 class="font-display text-3xl font-bold text-white">Gelir Hesaplayıcı (ROI) Yönetimi</h1>
-        <p class="text-xs text-neutral-400 mt-1">Tesisler için web sitesinde gösterilen kazanç simülatörünün spor türleri, birim fiyatları, pay yüzdeleri ve varsayılan değerleri</p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <a href="<?= base_url('for-facilities.php#calculator') ?>" target="_blank" class="px-3.5 py-2 rounded-xl border border-accent/40 bg-accent/15 text-accent font-semibold text-xs shadow-glow hover:bg-accent/25 transition flex items-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          Sitede Görüntüle
-        </a>
-        <a href="<?= base_url('admin/matches.php') ?>" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-neutral-300 hover:text-white transition">
-          Satılan Maçlar
-        </a>
-        <a href="<?= base_url('admin/index.php') ?>" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-neutral-300 hover:text-white transition">
-          Dashboard
-        </a>
-        <a href="<?= base_url('admin/index.php?action=logout') ?>" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-rose-300 hover:bg-rose-500/10 transition">
-          Çıkış
-        </a>
-      </div>
-    </div>
+    <?php $adminTab = 'settings'; include __DIR__ . '/../includes/admin_nav.php'; ?>
 
     <?php if ($success): ?>
       <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-300 text-sm font-medium mb-8 shadow-lg flex items-center gap-3">
