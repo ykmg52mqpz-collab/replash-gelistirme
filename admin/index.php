@@ -624,7 +624,7 @@ require_once __DIR__ . '/../includes/header.php';
             onchange="window.location.href = 'index.php?facility_id=' + encodeURIComponent(this.value);" 
             class="rounded-xl border border-white/10 bg-ink-900 px-3.5 py-2 text-xs font-medium text-white focus:border-accent focus:outline-none"
           >
-            <option value="all" <?= $selectedFacilityId === 'all' ? 'selected' : '' ?>>⚡ Tüm Tesisler (Platform Geneli)</option>
+            <option value="all" <?= $selectedFacilityId === 'all' ? 'selected' : '' ?>>Tüm Tesisler (Platform Geneli)</option>
             <?php foreach ($facilities as $fac): ?>
               <option value="<?= e($fac['id']) ?>" <?= $selectedFacilityId === $fac['id'] ? 'selected' : '' ?>>
                 <?= e($fac['name']) ?> (<?= e($fac['city']) ?>)
@@ -1481,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
           data: chartData.daily.count,
           type: 'line',
           borderColor: '#10B981',
-          backgroundColor: 'rgba(16, 185, 129, 0.12)',
+          backgroundColor: ''#111827'',
           fill: true,
           tension: 0.35,
           pointRadius: 4,
@@ -1531,13 +1531,13 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       scales: {
         x: {
-          grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
+          grid: { color: '#eef0f3', drawBorder: false },
           ticks: { color: '#9CA3AF', font: { size: 10 } }
         },
         y: {
           type: 'linear',
           position: 'left',
-          grid: { color: 'rgba(255, 255, 255, 0.06)', drawBorder: false },
+          grid: { color: '#eef0f3', drawBorder: false },
           ticks: {
             color: '#FACC15',
             font: { size: 10 },

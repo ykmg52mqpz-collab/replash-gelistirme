@@ -258,7 +258,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div>
           <label class="block text-neutral-400 font-semibold mb-1">Tesis Filtresi</label>
           <select name="facility_id" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
-            <option value="all">⚡ Tüm Tesisler</option>
+            <option value="all">Tüm Tesisler</option>
             <?php foreach ($facilities as $fac): ?>
               <option value="<?= e($fac['id']) ?>" <?= $filterFacility === $fac['id'] ? 'selected' : '' ?>>
                 <?= e($fac['name']) ?> (<?= e($fac['city']) ?>)
@@ -272,9 +272,9 @@ require_once __DIR__ . '/../includes/header.php';
           <label class="block text-neutral-400 font-semibold mb-1">Satış Durumu</label>
           <select name="status" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
             <option value="all">Tüm Durumlar</option>
-            <option value="UNLOCKABLE" <?= $filterStatus === 'UNLOCKABLE' ? 'selected' : '' ?>>🟢 Satıldı (İzlemeye Açık)</option>
-            <option value="LOCKED" <?= $filterStatus === 'LOCKED' ? 'selected' : '' ?>>🟡 Kilitli (Satış Bekliyor)</option>
-            <option value="EXPIRED" <?= $filterStatus === 'EXPIRED' ? 'selected' : '' ?>>⚪ Süresi Dolanlar</option>
+            <option value="UNLOCKABLE" <?= $filterStatus === 'UNLOCKABLE' ? 'selected' : '' ?>>Satıldı (İzlemeye Açık)</option>
+            <option value="LOCKED" <?= $filterStatus === 'LOCKED' ? 'selected' : '' ?>>Kilitli (Satış Bekliyor)</option>
+            <option value="EXPIRED" <?= $filterStatus === 'EXPIRED' ? 'selected' : '' ?>>Süresi Dolanlar</option>
           </select>
         </div>
 
@@ -362,8 +362,8 @@ require_once __DIR__ . '/../includes/header.php';
         <div>
           <label class="block text-neutral-400 font-semibold mb-1">Başlangıç Durumu</label>
           <select name="status" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
-            <option value="UNLOCKABLE">🟢 Satıldı (İzlemeye Açık)</option>
-            <option value="LOCKED">🟡 Kilitli (Satış Bekliyor)</option>
+            <option value="UNLOCKABLE">Satıldı (İzlemeye Açık)</option>
+            <option value="LOCKED">Kilitli (Satış Bekliyor)</option>
           </select>
         </div>
 
@@ -478,7 +478,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <input type="hidden" name="action" value="unlock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="Satışa Aç & Kodu Aktifleştir" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold">
-                          ⚡ Satışa Aç
+                          Satışa Aç
                         </button>
                       </form>
                     <?php else: ?>
@@ -486,7 +486,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <input type="hidden" name="action" value="lock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="Kilitle / Satış Bekliyor Yap" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
-                          🔒 Kilitle
+                          Kilitle
                         </button>
                       </form>
                     <?php endif; ?>

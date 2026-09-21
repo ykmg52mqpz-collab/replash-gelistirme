@@ -370,3 +370,9 @@ body.theme-desk { background:#f5f6f8 !important; color:#111827; }
 .theme-desk [role="group"][aria-label="Language"] { background:#ffffff !important; border-color:#e5e7eb !important; }
 .theme-desk [role="group"][aria-label="Language"] a:not([aria-pressed="true"]) { color:#6b7280 !important; }
 .theme-desk dialog { color:#111827; }
+/* Masa başı teması: eski işaretlemedeki renkli rakam/rozetler nötr */
+.theme-desk .text-emerald-200, .theme-desk .text-emerald-300, .theme-desk .text-emerald-400,
+.theme-desk .text-sky-400, .theme-desk .text-amber-300, .theme-desk .text-amber-400 { color:#111827 !important; }
+.theme-desk .bg-emerald-400\/10, .theme-desk .bg-emerald-400\/15, .theme-desk .bg-emerald-500\/10, .theme-desk .bg-emerald-500\/20 { background-color:#f3f4f6 !important; }
+.theme-desk .border-emerald-400\/20, .theme-desk .border-emerald-400\/25, .theme-desk .border-emerald-400\/30, .theme-desk .border-emerald-500\/20, .theme-desk .border-emerald-500\/30 { border-color:#e5e7eb !important; }
+.theme-desk .bg-emerald-400, .theme-desk .bg-red-400, .theme-desk .bg-rose-500, .theme-desk .bg-amber-400 { background-color:#9ca3af !important; }
