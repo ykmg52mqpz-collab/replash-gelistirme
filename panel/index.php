@@ -238,24 +238,32 @@ if (isset($_SESSION['facility_id']) && $pdo) {
         }
 
         // Fetch statistics for this facility
+        // Billing rules (includes/billing.php): valid sales only, standard price per sport
+        $validSql = replash_valid_sale_sql('m');
+        $priceSql = replash_sale_price_sql('m', number_format((float)($facility['unit_price'] ?? 0), 2, '.', ''));
+        $saleDateSql = replash_sale_date_sql('m');
+
         $stmtStats = $pdo->prepare("SELECT 
             COUNT(*) as total_records,
-            SUM(CASE WHEN status = 'UNLOCKABLE' THEN 1 ELSE 0 END) as sold_count,
-            SUM(CASE WHEN status = 'UNLOCKABLE' AND DATE(sold_at) = CURDATE() THEN 1 ELSE 0 END) as today_sold_count,
-            SUM(CASE WHEN status = 'LOCKED' THEN 1 ELSE 0 END) as locked_count,
-            SUM(views) as total_views
-        FROM matches WHERE facility_id = ?");
+            SUM(CASE WHEN {$validSql} THEN 1 ELSE 0 END) as sold_count,
+            SUM(CASE WHEN {$validSql} AND {$saleDateSql} = CURDATE() THEN 1 ELSE 0 END) as today_sold_count,
+            COALESCE(SUM(CASE WHEN {$validSql} THEN {$priceSql} ELSE 0 END), 0) as total_revenue,
+            COALESCE(SUM(CASE WHEN {$validSql} AND {$saleDateSql} = CURDATE() THEN {$priceSql} ELSE 0 END), 0) as today_revenue,
+            SUM(CASE WHEN m.status = 'LOCKED' THEN 1 ELSE 0 END) as locked_count,
+            SUM(m.views) as total_views
+        FROM matches m WHERE m.facility_id = ?");
         $stmtStats->execute([$facility['id']]);
         $stats = $stmtStats->fetch() ?: [
             'total_records' => 0,
             'sold_count' => 0,
             'today_sold_count' => 0,
+            'total_revenue' => 0,
+            'today_revenue' => 0,
             'locked_count' => 0,
             'total_views' => 0
         ];
 
-        $unitPrice = (float)($facility['unit_price'] ?? 0);
-        $currency = $facility['currency'] ?? 'TL';
+        $currency = REPLASH_BILLING_CURRENCY;
 
         // 1. Daily Data (Last 14 Days)
         $dailyLabels = [];
@@ -269,19 +277,21 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $dailyMap[$d] = 0;
         }
 
-        $stmtDaily = $pdo->prepare("SELECT DATE(COALESCE(sold_at, date)) as s_date, COUNT(*) as cnt 
-            FROM matches 
-            WHERE facility_id = ? AND status = 'UNLOCKABLE' AND DATE(COALESCE(sold_at, date)) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)
+        $dailyRevMap = $dailyMap;
+        $stmtDaily = $pdo->prepare("SELECT {$saleDateSql} as s_date, COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev
+            FROM matches m
+            WHERE m.facility_id = ? AND {$validSql} AND {$saleDateSql} >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)
             GROUP BY s_date");
         $stmtDaily->execute([$facility['id']]);
         while ($row = $stmtDaily->fetch(PDO::FETCH_ASSOC)) {
             if (isset($dailyMap[$row['s_date']])) {
                 $dailyMap[$row['s_date']] = (int)$row['cnt'];
+                $dailyRevMap[$row['s_date']] = (float)$row['rev'];
             }
         }
         foreach ($dailyMap as $d => $cnt) {
             $dailyCount[] = $cnt;
-            $dailyRevenue[] = round($cnt * $unitPrice, 2);
+            $dailyRevenue[] = round($dailyRevMap[$d], 2);
         }
 
         // 2. Weekly Data (Last 8 Weeks)
@@ -294,13 +304,13 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $endOfWeek = date('Y-m-d', strtotime("-{$w} weeks sunday this week"));
             $weeklyLabels[] = date('d/m', strtotime($startOfWeek)) . '-' . date('d/m', strtotime($endOfWeek));
 
-            $stmtW = $pdo->prepare("SELECT COUNT(*) as cnt FROM matches 
-                WHERE facility_id = ? AND status = 'UNLOCKABLE' 
-                AND DATE(COALESCE(sold_at, date)) BETWEEN ? AND ?");
+            $stmtW = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev FROM matches m
+                WHERE m.facility_id = ? AND {$validSql}
+                AND {$saleDateSql} BETWEEN ? AND ?");
             $stmtW->execute([$facility['id'], $startOfWeek, $endOfWeek]);
-            $cnt = (int)$stmtW->fetchColumn();
-            $weeklyCount[] = $cnt;
-            $weeklyRevenue[] = round($cnt * $unitPrice, 2);
+            $wRow = $stmtW->fetch(PDO::FETCH_ASSOC);
+            $weeklyCount[] = (int)$wRow['cnt'];
+            $weeklyRevenue[] = round((float)$wRow['rev'], 2);
         }
 
         // 3. Monthly Data (Last 6 Months)
@@ -321,33 +331,32 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $mNum = date('m', strtotime($yearMonth . '-01'));
             $monthlyLabels[] = ($activeMonthNames[$mNum] ?? $mNum) . ' ' . date('y', strtotime($yearMonth . '-01'));
 
-            $stmtMth = $pdo->prepare("SELECT COUNT(*) as cnt FROM matches 
-                WHERE facility_id = ? AND status = 'UNLOCKABLE' 
-                AND DATE_FORMAT(COALESCE(sold_at, date), '%Y-%m') = ?");
+            $stmtMth = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev FROM matches m
+                WHERE m.facility_id = ? AND {$validSql}
+                AND DATE_FORMAT({$saleDateSql}, '%Y-%m') = ?");
             $stmtMth->execute([$facility['id'], $yearMonth]);
-            $cnt = (int)$stmtMth->fetchColumn();
-            $monthlyCount[] = $cnt;
-            $monthlyRevenue[] = round($cnt * $unitPrice, 2);
+            $mRow = $stmtMth->fetch(PDO::FETCH_ASSOC);
+            $monthlyCount[] = (int)$mRow['cnt'];
+            $monthlyRevenue[] = round((float)$mRow['rev'], 2);
         }
 
         // 4. Period Totals
-        $todayRevenue = (int)$stats['today_sold_count'] * $unitPrice;
+        $todayRevenue = (float)$stats['today_revenue'];
 
-        $stmtThisWeek = $pdo->prepare("SELECT COUNT(*) FROM matches 
-            WHERE facility_id = ? AND status = 'UNLOCKABLE' 
-            AND YEARWEEK(COALESCE(sold_at, date), 1) = YEARWEEK(CURDATE(), 1)");
+        $stmtThisWeek = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev FROM matches m
+            WHERE m.facility_id = ? AND {$validSql}
+            AND YEARWEEK({$saleDateSql}, 1) = YEARWEEK(CURDATE(), 1)");
         $stmtThisWeek->execute([$facility['id']]);
-        $thisWeekCount = (int)$stmtThisWeek->fetchColumn();
-        $thisWeekRevenue = $thisWeekCount * $unitPrice;
+        $weekRow = $stmtThisWeek->fetch(PDO::FETCH_ASSOC);
+        $thisWeekCount = (int)$weekRow['cnt'];
+        $thisWeekRevenue = (float)$weekRow['rev'];
 
-        $stmtThisMonth = $pdo->prepare("SELECT COUNT(*) FROM matches 
-            WHERE facility_id = ? AND status = 'UNLOCKABLE' 
-            AND DATE_FORMAT(COALESCE(sold_at, date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')");
-        $stmtThisMonth->execute([$facility['id']]);
-        $thisMonthCount = (int)$stmtThisMonth->fetchColumn();
-        $thisMonthRevenue = $thisMonthCount * $unitPrice;
+        // Current month statement (tier, shares, Replash invoice) — billing guide
+        $monthStatement = replash_monthly_statement($pdo, $facility['id'], date('Y-m'));
+        $thisMonthCount = $monthStatement['valid_sales'];
+        $thisMonthRevenue = $monthStatement['gross'];
 
-        $totalRevenue = (int)$stats['sold_count'] * $unitPrice;
+        $totalRevenue = (float)$stats['total_revenue'];
 
         // Fetch recent matches
         $stmtM = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? ORDER BY date DESC, time_slot DESC LIMIT 50");
@@ -446,7 +455,11 @@ require_once __DIR__ . '/../includes/header.php';
         <div>
           <span class="text-xs font-semibold uppercase tracking-wider text-accent"><?= e(__('panel.header.badge')) ?></span>
           <h1 class="font-display text-3xl font-bold text-white"><?= e($facility['name']) ?></h1>
-          <p class="text-xs text-neutral-400 mt-1"><?= e($facility['city']) ?> · <?= strtoupper(e($facility['sport'])) ?> · <?= e(__('panel.header.price_info')) ?> <?= e($facility['unit_price']) ?> <?= e($facility['currency']) ?></p>
+          <p class="text-xs text-neutral-400 mt-1"><?= e($facility['city']) ?> · <?= strtoupper(e($facility['sport'])) ?> · <?= e(__('panel.header.price_info')) ?> <?php
+            $priceParts = [];
+            foreach (get_facility_courts_data($facility) as $pc) { $priceParts[$pc['sport']] = __('panel.billing.sport_' . $pc['sport'], ucfirst($pc['sport'])) . ' ' . replash_money($pc['price'], 0); }
+            echo e(implode(' · ', $priceParts));
+          ?></p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="document.getElementById('manualSaleModal').classList.toggle('hidden')" class="px-3.5 py-2 rounded-xl bg-accent text-ink-900 font-bold text-xs shadow-glow hover:bg-accent-neon transition flex items-center gap-1.5">
@@ -642,6 +655,74 @@ require_once __DIR__ . '/../includes/header.php';
             <span><?= e(__('common.sold')) ?>:</span>
             <span class="font-bold text-white"><?= (int)$stats['sold_count'] ?> <?= e(__('panel.metrics.matches_unit')) ?></span>
           </div>
+        </div>
+      </div>
+
+      <!-- Monthly Billing Statement (includes/billing.php — Billing Guide rules) -->
+      <?php
+        $ms = $monthStatement;
+        $nextTier = null;
+        foreach (replash_share_tiers() as $t) { if ($t['min'] > $ms['valid_sales']) { $nextTier = $t; break; } }
+      ?>
+      <div class="card-elevated rounded-3xl p-6 border border-white/10 mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-5 pb-4 border-b border-white/10">
+          <div>
+            <h2 class="font-display text-xl font-bold text-white"><?= e(__('panel.billing.title')) ?> · <?= e(($activeMonthNames[substr($ms['month'], 5, 2)] ?? '') . ' ' . substr($ms['month'], 0, 4)) ?></h2>
+            <p class="text-xs text-neutral-400 mt-0.5"><?= e(__('panel.billing.subtitle')) ?></p>
+          </div>
+          <span class="text-[11px] text-neutral-400">
+            <?php if ($nextTier): ?>
+              <?= e(str_replace(['{n}', '{pct}'], [$nextTier['min'] - $ms['valid_sales'], $nextTier['facility_pct']], __('panel.billing.next_tier'))) ?>
+            <?php else: ?>
+              <?= e(__('panel.billing.top_tier')) ?>
+            <?php endif; ?>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.valid_sales')) ?></span>
+            <div class="mt-1 text-2xl font-bold font-display text-white"><?= (int)$ms['valid_sales'] ?></div>
+            <div class="text-[11px] text-neutral-500 mt-0.5">
+              <?php foreach ($ms['by_sport'] as $sp => $row): ?>
+                <span class="mr-2"><?= e(__('panel.billing.sport_' . $sp, ucfirst($sp))) ?> <?= (int)$row['sales'] ?></span>
+              <?php endforeach; ?>
+            </div>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.gross')) ?></span>
+            <div class="mt-1 text-2xl font-bold font-display text-white"><?= e(replash_money($ms['gross'])) ?></div>
+            <div class="text-[11px] text-neutral-500 mt-0.5">
+              <?php foreach ($ms['by_sport'] as $sp => $row): ?>
+                <span class="mr-2"><?= e(__('panel.billing.sport_' . $sp, ucfirst($sp))) ?> <?= e(replash_money($row['gross'], 0)) ?></span>
+              <?php endforeach; ?>
+            </div>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.tier')) ?></span>
+            <div class="mt-1 text-2xl font-bold font-display text-accent">%<?= (int)$ms['facility_pct'] ?> / %<?= (int)$ms['replash_pct'] ?></div>
+            <div class="text-[11px] text-neutral-500 mt-0.5"><?= e(__('panel.billing.tier_hint')) ?></div>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.facility_share')) ?></span>
+            <div class="mt-1 text-2xl font-bold font-display text-emerald-400"><?= e(replash_money($ms['facility_share'])) ?></div>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.replash_share')) ?></span>
+            <div class="mt-1 text-2xl font-bold font-display text-white"><?= e(replash_money($ms['replash_share'])) ?></div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="flex flex-wrap gap-2 text-[11px]">
+            <span class="text-neutral-400 self-center mr-1"><?= e(__('panel.billing.tiers_title')) ?>:</span>
+            <?php foreach (replash_share_tiers() as $t): $active = $t['facility_pct'] === $ms['facility_pct']; ?>
+              <span class="px-2.5 py-1 rounded-lg border <?= $active ? 'border-accent/50 bg-accent/15 text-accent font-bold' : 'border-white/10 text-neutral-400' ?>">
+                <?= (int)$t['min'] ?><?= $t['max'] !== null ? '–' . (int)$t['max'] : '+' ?> → %<?= (int)$t['facility_pct'] ?>
+              </span>
+            <?php endforeach; ?>
+          </div>
+          <p class="text-[11px] text-neutral-500 lg:max-w-md"><?= e(__('panel.billing.note')) ?></p>
         </div>
       </div>
 
@@ -936,7 +1017,7 @@ require_once __DIR__ . '/../includes/header.php';
                           <span class="text-[10px] text-neutral-400 block uppercase"><?= e($cItem['sport']) ?></span>
                         </div>
                       </div>
-                      <span class="text-xs font-semibold text-accent"><?= e($cPrice) ?> <?= e($facility['currency']) ?></span>
+                      <span class="text-xs font-semibold text-accent"><?= e(replash_money((float)$cPrice, 0)) ?></span>
                     </label>
                   <?php endforeach; ?>
                 <?php else: ?>

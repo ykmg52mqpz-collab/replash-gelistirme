@@ -208,7 +208,7 @@ require_once __DIR__ . '/includes/header.php';
 
           <div class="rounded-2xl border border-accent/40 bg-accent/[0.08] p-5 text-center shadow-glow-sm">
             <div id="label-monthly-share" class="text-[10px] font-semibold uppercase tracking-widest text-accent">
-              <?= htmlspecialchars(__('forFacilities.roi.results.share') ?: 'Payınız (%' . (float)$defaultSport['share_pct'] . ')') ?>
+              <?= htmlspecialchars(str_replace('{pct}', '20', __('forFacilities.roi.results.share'))) ?>
             </div>
             <div id="res-monthly-share" class="mt-2 font-display text-2xl sm:text-3xl font-bold text-accent">€500</div>
             <div class="mt-1 text-[11px] text-neutral-300">
@@ -483,6 +483,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
   const ROI_CONFIG = <?= json_encode($roiConfig, JSON_UNESCAPED_UNICODE) ?>;
+  const SHARE_LABEL = <?= json_encode(__('forFacilities.roi.results.share'), JSON_UNESCAPED_UNICODE) ?>;
   let currentSportKey = '<?= e($defaultSportKey) ?>';
 
   const sportButtons = document.querySelectorAll('.roi-sport-btn');
@@ -532,7 +533,6 @@ require_once __DIR__ . '/includes/header.php';
     maxDays.textContent = sliderDays.max;
 
     if (labelMonthlyShare) {
-      labelMonthlyShare.textContent = `Payınız (%${sp.share_pct || 15})`;
     }
   }
 
@@ -546,14 +546,18 @@ require_once __DIR__ . '/includes/header.php';
     valVideos.textContent = videos;
     valDays.textContent = days;
 
+    // Billing Guide: monthly facility-wide sales pick the tier; it applies to all sales of the month
     const totalVideos = courts * videos * days;
-    const price = parseFloat(sp.price || 8);
-    const sharePct = parseFloat(sp.share_pct || 15) / 100;
+    const price = parseFloat(sp.price || 0);
+    const tier = (ROI_CONFIG.share_tiers || []).filter(t => totalVideos >= t.min).pop() || { facility_pct: 20 };
     const symbol = sp.currency_symbol || '€';
 
-    const unitRevenue = price * sharePct;
-    const monthlyTotal = Math.round(totalVideos * unitRevenue);
+    const monthlyTotal = Math.round(totalVideos * price * tier.facility_pct / 100);
     const yearlyTotal = Math.round(monthlyTotal * 12);
+
+    if (labelMonthlyShare) {
+      labelMonthlyShare.textContent = SHARE_LABEL.replace('{pct}', tier.facility_pct);
+    }
 
     resMonthlyVideos.textContent = totalVideos.toLocaleString('tr-TR');
     resMonthlyShare.textContent = symbol + monthlyTotal.toLocaleString('tr-TR');

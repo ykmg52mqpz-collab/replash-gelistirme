@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/billing.php';
 
 // Ensure DB is initialized
 $dbError = null;
@@ -188,10 +189,18 @@ function get_default_roi_calculator_config() {
 function get_roi_calculator_config() {
     $defaults = get_default_roi_calculator_config();
     $saved = get_setting('roi_calculator_config', null);
-    if (!is_array($saved) || empty($saved['sports'])) {
-        return $defaults;
+    $config = (!is_array($saved) || empty($saved['sports'])) ? $defaults : array_replace_recursive($defaults, $saved);
+
+    // Billing Guide: fixed video prices (EUR) and tiered facility share (includes/billing.php)
+    foreach ($config['sports'] as $key => $sp) {
+        $config['sports'][$key]['price'] = replash_video_price($sp['id'] ?? $key, (float)($sp['price'] ?? 0));
+        if (isset(REPLASH_VIDEO_PRICES[strtolower($sp['id'] ?? $key)])) {
+            $config['sports'][$key]['currency'] = REPLASH_BILLING_CURRENCY;
+            $config['sports'][$key]['currency_symbol'] = '€';
+        }
     }
-    return array_replace_recursive($defaults, $saved);
+    $config['share_tiers'] = replash_share_tiers();
+    return $config;
 }
 
 /**
@@ -346,16 +355,19 @@ function get_facility_courts_data($facility) {
     $result = [];
     foreach ($raw as $c) {
         if (is_array($c)) {
+            $sport = $c['sport'] ?? ($facility['sport'] ?? 'padel');
+            $courtPrice = isset($c['price']) ? (float)$c['price'] : (float)($facility['unit_price'] ?? 6.00);
             $result[] = [
                 'name' => $c['name'] ?? 'Saha',
-                'sport' => $c['sport'] ?? ($facility['sport'] ?? 'padel'),
-                'price' => isset($c['price']) ? (float)$c['price'] : (float)($facility['unit_price'] ?? 6.00)
+                'sport' => $sport,
+                'price' => replash_video_price($sport, $courtPrice) // standard price for football/padel (billing.php)
             ];
         } else {
+            $sport = $facility['sport'] ?? 'padel';
             $result[] = [
                 'name' => (string)$c,
-                'sport' => $facility['sport'] ?? 'padel',
-                'price' => (float)($facility['unit_price'] ?? 6.00)
+                'sport' => $sport,
+                'price' => replash_video_price($sport, (float)($facility['unit_price'] ?? 6.00))
             ];
         }
     }

@@ -216,7 +216,11 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- List of Sports Cards -->
             <div class="space-y-5">
               <?php foreach ($config['sports'] as $key => $sport): 
-                $unitRevenue = (float)$sport['price'] * ((float)$sport['share_pct'] / 100);
+                // Billing Guide: facility earns 20–30% of the price depending on the monthly tier
+                $tiersAll = replash_share_tiers();
+                $unitRevenueMin = (float)$sport['price'] * $tiersAll[0]['facility_pct'] / 100;
+                $unitRevenueMax = (float)$sport['price'] * end($tiersAll)['facility_pct'] / 100;
+                $isStandardPrice = isset(REPLASH_VIDEO_PRICES[strtolower($sport['id'] ?? $key)]);
               ?>
                 <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-accent/30 transition-all space-y-4">
                   <!-- Sport Header -->
@@ -256,15 +260,14 @@ require_once __DIR__ . '/../includes/header.php';
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-ink-900/60 p-3.5 rounded-xl border border-white/5 text-xs">
                     <div>
                       <label class="block text-neutral-400 mb-1 font-medium">Birim Video Fiyatı</label>
-                      <input type="number" step="0.5" min="0" name="sports[<?= e($key) ?>][price]" value="<?= e($sport['price']) ?>" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white font-mono focus:border-accent focus:outline-none">
+                      <input type="number" step="0.5" min="0" name="sports[<?= e($key) ?>][price]" value="<?= e($sport['price']) ?>" <?= $isStandardPrice ? 'readonly title="Billing Guide sabit fiyatı"' : '' ?> class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white font-mono focus:border-accent focus:outline-none <?= $isStandardPrice ? 'opacity-60 cursor-not-allowed' : '' ?>">
+                      <?php if ($isStandardPrice): ?><span class="text-[10px] text-neutral-500">Sabit fiyat (Billing Guide)</span><?php endif; ?>
                     </div>
 
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı (%)</label>
-                      <div class="relative">
-                        <input type="number" step="0.5" min="0" max="100" name="sports[<?= e($key) ?>][share_pct]" value="<?= e($sport['share_pct']) ?>" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 pr-7 text-white font-mono focus:border-accent focus:outline-none">
-                        <span class="absolute right-2.5 top-2 text-neutral-400 font-bold">%</span>
-                      </div>
+                      <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı (aylık kademe)</label>
+                      <input type="hidden" name="sports[<?= e($key) ?>][share_pct]" value="<?= e($sport['share_pct']) ?>">
+                      <div class="p-2 rounded-lg border border-white/10 bg-ink-800 text-neutral-300 font-mono text-[11px] leading-tight">0–49 %20 · 50–99 %25 · 100+ %30</div>
                     </div>
 
                     <div>
@@ -273,9 +276,9 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
 
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Video Başı Kazanç</label>
+                      <label class="block text-neutral-400 mb-1 font-medium">Video Başı Tesis Kazancı</label>
                       <div class="p-2 rounded-lg bg-accent/10 border border-accent/20 text-accent font-bold font-mono text-center">
-                        ≈ <?= e($sport['currency_symbol'] ?? '€') ?><?= number_format($unitRevenue, 2) ?>
+                        <?= e($sport['currency_symbol'] ?? '€') ?><?= number_format($unitRevenueMin, 2) ?>–<?= number_format($unitRevenueMax, 2) ?>
                       </div>
                     </div>
                   </div>
@@ -510,7 +513,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
 
                 <div class="rounded-xl border border-accent/40 bg-accent/[0.08] p-3.5 text-center shadow-glow-sm">
-                  <div id="prevShareLabel" class="text-[9px] font-semibold uppercase tracking-widest text-accent">Payınız (%15)</div>
+                  <div id="prevShareLabel" class="text-[9px] font-semibold uppercase tracking-widest text-accent">Payınız (%20)</div>
                   <div id="prevResMonthly" class="mt-1 font-display text-xl font-bold text-accent">€500</div>
                   <div class="text-[10px] text-neutral-300">aylık kazanç</div>
                 </div>
@@ -565,8 +568,9 @@ require_once __DIR__ . '/../includes/header.php';
           <input type="number" step="0.5" name="new_sport_price" value="10.00" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı (%)</label>
-          <input type="number" step="0.5" name="new_sport_share_pct" value="15.0" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
+          <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı</label>
+          <input type="hidden" name="new_sport_share_pct" value="20">
+          <div class="rounded-xl border border-white/10 bg-ink-900 p-2.5 text-neutral-300 text-[11px] leading-tight">Aylık kademe: 0–49 %20 · 50–99 %25 · 100+ %30</div>
         </div>
         <div>
           <label class="block text-neutral-400 mb-1 font-medium">Sembol</label>
@@ -692,7 +696,6 @@ document.addEventListener('DOMContentLoaded', function() {
     minDays.textContent = sliderDays.min;
     maxDays.textContent = sliderDays.max;
 
-    prevShareLabel.textContent = `Payınız (%${sp.share_pct || 15})`;
   }
 
   function calculatePreview() {
@@ -705,13 +708,14 @@ document.addEventListener('DOMContentLoaded', function() {
     valVideos.textContent = videos;
     valDays.textContent = days;
 
+    // Billing Guide: monthly facility-wide sales pick the tier; it applies to all sales of the month
     const totalVideos = courts * videos * days;
-    const price = parseFloat(sp.price || 8);
-    const sharePct = parseFloat(sp.share_pct || 15) / 100;
+    const price = parseFloat(sp.price || 0);
+    const tier = (roiConfig.share_tiers || []).filter(t => totalVideos >= t.min).pop() || { facility_pct: 20 };
     const symbol = sp.currency_symbol || '€';
 
-    const unitRevenue = price * sharePct;
-    const monthlyTotal = Math.round(totalVideos * unitRevenue);
+    prevShareLabel.textContent = `Payınız (%${tier.facility_pct})`;
+    const monthlyTotal = Math.round(totalVideos * price * tier.facility_pct / 100);
     const yearlyTotal = Math.round(monthlyTotal * 12);
 
     resVideos.textContent = totalVideos.toLocaleString('tr-TR');

@@ -330,29 +330,32 @@ if ($isAdmin && $pdo) {
     // Selected Facility Filter for Analytics
     $selectedFacilityId = $_GET['facility_id'] ?? 'all';
     $selectedFacilityName = 'Tüm Tesisler (Platform Geneli)';
-    $selectedFacilityCurrency = 'TL';
+    $selectedFacilityCurrency = REPLASH_BILLING_CURRENCY;
 
     if ($selectedFacilityId !== 'all') {
         foreach ($facilities as $fac) {
             if ($fac['id'] === $selectedFacilityId) {
                 $selectedFacilityName = $fac['name'] . ' (' . $fac['city'] . ')';
-                $selectedFacilityCurrency = $fac['currency'];
                 break;
             }
         }
     }
 
+    // Billing rules (includes/billing.php): valid sales only, standard price per sport
+    $validSql = replash_valid_sale_sql('m');
+    $priceSql = replash_sale_price_sql('m', 'f.unit_price');
+
     // Facility-by-Facility Breakdown
     $facilityBreakdownStmt = $pdo->query("
         SELECT 
-            f.id, f.name, f.city, f.sport, f.unit_price, f.currency,
+            f.id, f.name, f.city, f.sport, f.unit_price, f.currency, f.courts,
             COUNT(m.id) as total_matches,
-            SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN 1 ELSE 0 END) as sold_matches,
-            SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold,
-            SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as month_sold,
-            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN f.unit_price ELSE 0 END), 0) as total_revenue,
-            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN f.unit_price ELSE 0 END), 0) as today_revenue,
-            COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN f.unit_price ELSE 0 END), 0) as month_revenue
+            SUM(CASE WHEN {$validSql} THEN 1 ELSE 0 END) as sold_matches,
+            SUM(CASE WHEN {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold,
+            SUM(CASE WHEN {$validSql} AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as month_sold,
+            COALESCE(SUM(CASE WHEN {$validSql} THEN {$priceSql} ELSE 0 END), 0) as total_revenue,
+            COALESCE(SUM(CASE WHEN {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN {$priceSql} ELSE 0 END), 0) as today_revenue,
+            COALESCE(SUM(CASE WHEN {$validSql} AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN {$priceSql} ELSE 0 END), 0) as month_revenue
         FROM facilities f
         LEFT JOIN matches m ON f.id = m.facility_id
         GROUP BY f.id
@@ -375,10 +378,10 @@ if ($isAdmin && $pdo) {
         $dailyMapCnt[$d] = 0;
     }
 
-    $sqlDaily = "SELECT DATE(COALESCE(m.sold_at, m.date)) as s_date, COUNT(*) as cnt, SUM(f.unit_price) as rev 
+    $sqlDaily = "SELECT DATE(COALESCE(m.sold_at, m.date)) as s_date, COUNT(*) as cnt, SUM({$priceSql}) as rev 
         FROM matches m 
         JOIN facilities f ON m.facility_id = f.id
-        WHERE m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)";
+        WHERE {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)";
     $paramsDaily = [];
     if ($selectedFacilityId !== 'all') {
         $sqlDaily .= " AND m.facility_id = ?";
@@ -408,10 +411,10 @@ if ($isAdmin && $pdo) {
         $endOfWeek = date('Y-m-d', strtotime("-{$w} weeks sunday this week"));
         $weeklyLabels[] = date('d/m', strtotime($startOfWeek)) . '-' . date('d/m', strtotime($endOfWeek));
 
-        $sqlW = "SELECT COUNT(*) as cnt, COALESCE(SUM(f.unit_price), 0) as rev 
+        $sqlW = "SELECT COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev 
             FROM matches m 
             JOIN facilities f ON m.facility_id = f.id
-            WHERE m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) BETWEEN ? AND ?";
+            WHERE {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) BETWEEN ? AND ?";
         $paramsW = [$startOfWeek, $endOfWeek];
         if ($selectedFacilityId !== 'all') {
             $sqlW .= " AND m.facility_id = ?";
@@ -435,10 +438,10 @@ if ($isAdmin && $pdo) {
         $mNum = date('m', strtotime($yearMonth . '-01'));
         $monthlyLabels[] = ($monthNamesTr[$mNum] ?? $mNum) . ' ' . date('y', strtotime($yearMonth . '-01'));
 
-        $sqlM = "SELECT COUNT(*) as cnt, COALESCE(SUM(f.unit_price), 0) as rev 
+        $sqlM = "SELECT COUNT(*) as cnt, COALESCE(SUM({$priceSql}), 0) as rev 
             FROM matches m 
             JOIN facilities f ON m.facility_id = f.id
-            WHERE m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = ?";
+            WHERE {$validSql} AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = ?";
         $paramsM = [$yearMonth];
         if ($selectedFacilityId !== 'all') {
             $sqlM .= " AND m.facility_id = ?";
@@ -454,14 +457,14 @@ if ($isAdmin && $pdo) {
     // 4. Totals for selected scope
     $sqlTotals = "SELECT 
         COUNT(*) as total_matches,
-        SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN 1 ELSE 0 END) as sold_matches,
-        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold_count,
-        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as this_week_sold_count,
-        SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as this_month_sold_count,
-        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' THEN f.unit_price ELSE 0 END), 0) as total_revenue,
-        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN f.unit_price ELSE 0 END), 0) as today_revenue,
-        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN f.unit_price ELSE 0 END), 0) as this_week_revenue,
-        COALESCE(SUM(CASE WHEN m.status = 'UNLOCKABLE' AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN f.unit_price ELSE 0 END), 0) as this_month_revenue
+        SUM(CASE WHEN {$validSql} THEN 1 ELSE 0 END) as sold_matches,
+        SUM(CASE WHEN {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN 1 ELSE 0 END) as today_sold_count,
+        SUM(CASE WHEN {$validSql} AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as this_week_sold_count,
+        SUM(CASE WHEN {$validSql} AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN 1 ELSE 0 END) as this_month_sold_count,
+        COALESCE(SUM(CASE WHEN {$validSql} THEN {$priceSql} ELSE 0 END), 0) as total_revenue,
+        COALESCE(SUM(CASE WHEN {$validSql} AND DATE(COALESCE(m.sold_at, m.date)) = CURDATE() THEN {$priceSql} ELSE 0 END), 0) as today_revenue,
+        COALESCE(SUM(CASE WHEN {$validSql} AND YEARWEEK(COALESCE(m.sold_at, m.date), 1) = YEARWEEK(CURDATE(), 1) THEN {$priceSql} ELSE 0 END), 0) as this_week_revenue,
+        COALESCE(SUM(CASE WHEN {$validSql} AND DATE_FORMAT(COALESCE(m.sold_at, m.date), '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN {$priceSql} ELSE 0 END), 0) as this_month_revenue
     FROM matches m
     JOIN facilities f ON m.facility_id = f.id";
     $paramsTotals = [];
@@ -571,7 +574,7 @@ require_once __DIR__ . '/../includes/header.php';
             <option value="all" <?= $selectedFacilityId === 'all' ? 'selected' : '' ?>>⚡ Tüm Tesisler (Platform Geneli)</option>
             <?php foreach ($facilities as $fac): ?>
               <option value="<?= e($fac['id']) ?>" <?= $selectedFacilityId === $fac['id'] ? 'selected' : '' ?>>
-                <?= e($fac['name']) ?> (<?= e($fac['city']) ?>) · <?= e($fac['unit_price']) ?> <?= e($fac['currency']) ?>
+                <?= e($fac['name']) ?> (<?= e($fac['city']) ?>)
               </option>
             <?php endforeach; ?>
           </select>
@@ -689,7 +692,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 class="font-display text-xl font-bold text-white">Tesis Bazlı Gelir & Performans Tablosu</h2>
-            <p class="text-xs text-neutral-400">Tüm tesislerin anlık satış adetleri, birim fiyatları ve toplam ciroları</p>
+            <p class="text-xs text-neutral-400">Geçerli video satışları · aylık kademe tesis toplamına göre (0–49 %20 · 50–99 %25 · 100+ %30) · KDV düşülmeden brüt</p>
           </div>
           <span class="text-xs font-semibold px-3 py-1 rounded-full bg-accent/10 text-accent"><?= count($facilityBreakdown) ?> Tesis Listeleniyor</span>
         </div>
@@ -699,16 +702,23 @@ require_once __DIR__ . '/../includes/header.php';
             <thead class="bg-ink-900/60 text-xs font-semibold uppercase tracking-wider text-neutral-400 border-b border-white/5">
               <tr>
                 <th class="p-4">Tesis Adı & Şehir</th>
-                <th class="p-4">Birim Fiyat</th>
+                <th class="p-4">Video Fiyatı</th>
                 <th class="p-4 text-center">Bugünkü Satış</th>
-                <th class="p-4 text-center">Bu Ayki Satış</th>
+                <th class="p-4 text-center">Bu Ay Satış & Kademe</th>
+                <th class="p-4 text-right">Bu Ay Tesis Payı</th>
+                <th class="p-4 text-right">Bu Ay Replash Faturası</th>
                 <th class="p-4 text-center">Toplam Satış</th>
                 <th class="p-4 text-right">Toplam Ciro</th>
                 <th class="p-4 text-right">İşlem</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5 text-neutral-300">
-              <?php foreach ($facilityBreakdown as $fb): ?>
+              <?php foreach ($facilityBreakdown as $fb):
+                // Monthly split with the facility-wide tier (includes/billing.php)
+                $fbSplit = replash_split_gross((float)$fb['month_revenue'], (int)$fb['month_sold']);
+                $fbPrices = [];
+                foreach (get_facility_courts_data($fb) as $pc) { $fbPrices[$pc['sport']] = ucfirst($pc['sport']) . ' ' . replash_money($pc['price'], 0); }
+              ?>
                 <tr class="hover:bg-white/[0.02] transition <?= $selectedFacilityId === $fb['id'] ? 'bg-accent/5' : '' ?>">
                   <td class="p-4">
                     <div class="font-bold text-white flex items-center gap-2">
@@ -720,23 +730,26 @@ require_once __DIR__ . '/../includes/header.php';
                     <div class="text-xs text-neutral-400"><?= e($fb['city']) ?> · <?= strtoupper(e($fb['sport'])) ?></div>
                   </td>
                   <td class="p-4 text-xs font-mono font-semibold text-neutral-200">
-                    <?= number_format((float)$fb['unit_price'], 2) ?> <?= e($fb['currency']) ?>
+                    <?= e(implode(' · ', $fbPrices)) ?>
                   </td>
                   <td class="p-4 text-center">
                     <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md">
-                      <?= (int)$fb['today_sold'] ?> ad (<?= number_format((float)$fb['today_revenue'], 0) ?> <?= e($fb['currency']) ?>)
+                      <?= (int)$fb['today_sold'] ?> ad (<?= e(replash_money((float)$fb['today_revenue'], 0)) ?>)
                     </span>
                   </td>
                   <td class="p-4 text-center">
                     <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-md">
-                      <?= (int)$fb['month_sold'] ?> ad
+                      <?= (int)$fb['month_sold'] ?> ad · %<?= (int)$fbSplit['facility_pct'] ?>
                     </span>
+                    <div class="text-[10px] text-neutral-500 mt-1">brüt <?= e(replash_money($fbSplit['gross'], 0)) ?></div>
                   </td>
+                  <td class="p-4 text-right font-mono text-xs font-semibold text-emerald-400"><?= e(replash_money($fbSplit['facility_share'])) ?></td>
+                  <td class="p-4 text-right font-mono text-xs font-bold text-white"><?= e(replash_money($fbSplit['replash_share'])) ?></td>
                   <td class="p-4 text-center font-mono text-xs text-neutral-300">
                     <?= (int)$fb['sold_matches'] ?> / <?= (int)$fb['total_matches'] ?>
                   </td>
                   <td class="p-4 text-right font-mono text-sm font-bold text-accent">
-                    <?= number_format((float)$fb['total_revenue'], 0, ',', '.') ?> <?= e($fb['currency']) ?>
+                    <?= e(replash_money((float)$fb['total_revenue'], 0)) ?>
                   </td>
                   <td class="p-4 text-right">
                     <?php if ($selectedFacilityId === $fb['id']): ?>

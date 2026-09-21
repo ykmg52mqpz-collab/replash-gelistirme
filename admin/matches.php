@@ -167,10 +167,11 @@ if ($pdo) {
 
     // Stats for Matches View
     $statsTotal = (int)$pdo->query("SELECT COUNT(*) FROM matches")->fetchColumn();
-    $statsSold = (int)$pdo->query("SELECT COUNT(*) FROM matches WHERE status = 'UNLOCKABLE'")->fetchColumn();
+    $statsSold = (int)$pdo->query("SELECT COUNT(*) FROM matches m WHERE " . replash_valid_sale_sql('m'))->fetchColumn();
     $statsLocked = (int)$pdo->query("SELECT COUNT(*) FROM matches WHERE status = 'LOCKED'")->fetchColumn();
     
-    $revenueStmt = $pdo->query("SELECT COALESCE(SUM(f.unit_price), 0) FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE m.status = 'UNLOCKABLE'");
+    // Billing rules (includes/billing.php): valid sales, standard price per sport
+    $revenueStmt = $pdo->query("SELECT COALESCE(SUM(" . replash_sale_price_sql('m', 'f.unit_price') . "), 0) FROM matches m JOIN facilities f ON m.facility_id = f.id WHERE " . replash_valid_sale_sql('m'));
     $totalPlatformRevenue = (float)$revenueStmt->fetchColumn();
 
     // Fetch Filtered Matches List
@@ -272,7 +273,7 @@ require_once __DIR__ . '/../includes/header.php';
         <span class="text-xs font-semibold text-neutral-400">Toplam Platform Cirosu</span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-accent"><?= number_format($totalPlatformRevenue, 0, ',', '.') ?></span>
-          <span class="text-xs font-semibold text-neutral-300">TL/EUR</span>
+          <span class="text-xs font-semibold text-neutral-300">EUR</span>
         </div>
       </div>
     </div>
@@ -485,7 +486,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="p-4 text-xs">
                   <?php if (!empty($m['sold_at'])): ?>
                     <div class="text-neutral-300 font-mono"><?= date('d.m.Y H:i', strtotime($m['sold_at'])) ?></div>
-                    <div class="text-emerald-400 font-semibold"><?= e($m['unit_price']) ?> <?= e($m['currency']) ?></div>
+                    <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price']))) ?><?= empty($m['billable']) ? ' · ücretsiz' : '' ?></div>
                   <?php else: ?>
                     <span class="text-neutral-500 italic">Satış Yapılmadı</span>
                   <?php endif; ?>
