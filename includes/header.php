@@ -12,10 +12,45 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <link rel="icon" type="image/x-icon" href="<?= asset('images/icon-512.png') ?>">
   <link rel="apple-touch-icon" href="<?= asset('images/icon-512.png') ?>">
   
+<?php
+  // Arama ve paylaşım: her dilin kendi adresi (?lang=xx), paylaşım önizlemesi (Open Graph)
+  $seoLangs = ['it' => 'it_IT', 'en' => 'en_US', 'tr' => 'tr_TR', 'es' => 'es_ES'];
+  $seoPath = ltrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/', '/');
+  $appPath = trim((string)parse_url(APP_URL, PHP_URL_PATH), '/');
+  if ($appPath !== '' && str_starts_with($seoPath, $appPath)) $seoPath = ltrim(substr($seoPath, strlen($appPath)), '/');
+  if ($seoPath === 'index.php') $seoPath = '';
+  $seoUrl = function ($lang = null) use ($seoPath) { return base_url($seoPath) . ($lang ? '?lang=' . $lang : ''); };
+  // Kodlu maç sayfaları, paneller ve yönetim arama motorlarına kapalı
+  $seoNoindex = !empty($internalShell) || (($currentPage === 'find') && !empty($_GET['code']));
+  $seoTitle = $metaTitle ?? (isset($pageTitle) ? $pageTitle . ' | ' . APP_NAME : APP_NAME . ' | ' . __('home.hero.title'));
+  $seoDesc = $metaDescription ?? __('home.hero.subtitle');
+?>
+<?php if ($seoNoindex): ?>
+  <meta name="robots" content="noindex, nofollow">
+<?php else: ?>
+  <link rel="canonical" href="<?= e($seoUrl($current_lang)) ?>">
+<?php foreach ($seoLangs as $sl => $loc): ?>
+  <link rel="alternate" hreflang="<?= $sl ?>" href="<?= e($seoUrl($sl)) ?>">
+<?php endforeach; ?>
+  <link rel="alternate" hreflang="x-default" href="<?= e($seoUrl()) ?>">
+<?php endif; ?>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Replash">
+  <meta property="og:title" content="<?= e($seoTitle) ?>">
+  <meta property="og:description" content="<?= e($seoDesc) ?>">
+  <meta property="og:url" content="<?= e($seoUrl($seoNoindex ? null : $current_lang)) ?>">
+  <meta property="og:image" content="<?= asset('images/og-image.png') ?>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="<?= $seoLangs[$current_lang] ?? 'it_IT' ?>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#0a0a0a">
+
   <!-- Preloads -->
   <link rel="preload" as="image" href="<?= asset('images/replash-logo.webp') ?>">
+<?php if ($currentPage === 'index'): ?>
   <link rel="preload" as="image" href="<?= asset('images/gen_hero_friends.webp') ?>">
-  <link rel="preload" as="image" href="<?= asset('images/gen_padel_club_empty.webp') ?>">
+<?php endif; ?>
 
   <!-- Marka yazı tipi: Neue Haas Grotesk Display (Adobe Fonts kit qqj8ayc) -->
   <link rel="preconnect" href="https://use.typekit.net" crossorigin>
