@@ -342,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => '7-Day Retention',
-                    'desc' => 'All footage automatically deleted after 7 days. Storage clean, privacy intact.'
+                    'desc' => 'Unsold footage closes after 3 days, sold footage after 7. Storage clean, privacy intact.'
                 ],
                 '5' => [
                     'title' => 'Resilient Connectivity',
@@ -647,7 +647,7 @@ return [
             'deleted_state' => 'Expired',
             'time_col' => 'Time',
             'day_summary' => '{t} matches · {s} sold · {l} locked',
-            'auto_note' => 'Every match video received by the system appears here, locked, under its court and time. Unlock the match you were paid for and give the code to the player. Recordings are deleted 7 days after the match date.',
+            'auto_note' => 'Every match video received by the system appears here, locked, under its court and time. Unlock the match you were paid for and give the code to the player. Recordings close 3 days after the match ends if unsold, 7 days if sold.',
             'relock_title' => 'Lock match again',
             'relock_desc' => 'Once locked, the player\'s access by code and old link stops immediately.',
             'cancel' => 'Cancel',
@@ -822,10 +822,10 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'What about GDPR?',
-                    'answer' => 'Replash\'s privacy architecture complies with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and auto-deleted after 7 days. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
+                    'answer' => 'Replash\'s privacy architecture complies with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and closed after 3 days if unsold, 7 if sold. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
                     'items' => [
                         '1' => 'No audio. No facial recognition.',
-                        '2' => 'Auto-delete after 7 days.',
+                        '2' => 'Access closes after 3 days (unsold) / 7 days (sold).',
                         '3' => 'GDPR / ECHR Art. 8 / Garante compliant.',
                         '4' => 'Privacy & Legal Justification file delivered upfront.'
                     ]

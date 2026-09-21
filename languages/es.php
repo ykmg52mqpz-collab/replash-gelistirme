@@ -342,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Retención 7 Días',
-                    'desc' => 'Todas las grabaciones se eliminan automáticamente después de 7 días. Almacenamiento limpio, privacidad intacta.'
+                    'desc' => 'Las grabaciones no vendidas se cierran a los 3 días y las vendidas a los 7. Almacenamiento limpio, privacidad intacta.'
                 ],
                 '5' => [
                     'title' => 'Conectividad Resiliente',
@@ -647,7 +647,7 @@ return [
             'deleted_state' => 'Caducado',
             'time_col' => 'Hora',
             'day_summary' => '{t} partidos · {s} vendidos · {l} bloqueados',
-            'auto_note' => 'Cada vídeo recibido por el sistema aparece aquí, bloqueado, bajo su pista y hora. Desbloquea el partido cobrado y da el código al jugador. Las grabaciones se eliminan 7 días después de la fecha del partido.',
+            'auto_note' => 'Cada vídeo recibido por el sistema aparece aquí, bloqueado, bajo su pista y hora. Desbloquea el partido cobrado y da el código al jugador. Las grabaciones se cierran 3 días después del final del partido si no se venden, 7 días si se venden.',
             'relock_title' => 'Volver a bloquear el partido',
             'relock_desc' => 'Al bloquearlo, el acceso del jugador con el código y el enlace anterior se corta de inmediato.',
             'cancel' => 'Cancelar',
@@ -822,10 +822,10 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => '¿Y el RGPD?',
-                    'answer' => 'La arquitectura de privacidad de Replash cumple con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Los videos no son adivinables, están vinculados a la franja horaria y se eliminan automáticamente después de 7 días. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Modelo de notificación de tres niveles (señalización + QR + notificación de reserva) listo antes de la instalación.',
+                    'answer' => 'La arquitectura de privacidad de Replash cumple con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Los videos no son adivinables, están vinculados a la franja horaria y se cierran a los 3 días si no se venden, 7 si se venden. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Modelo de notificación de tres niveles (señalización + QR + notificación de reserva) listo antes de la instalación.',
                     'items' => [
                         '1' => 'Sin audio. Sin reconocimiento facial.',
-                        '2' => 'Auto-eliminación después de 7 días.',
+                        '2' => 'Acceso cerrado a los 3 días (no vendidas) / 7 días (vendidas).',
                         '3' => 'Conforme RGPD / CEDH Art. 8 / Garante.',
                         '4' => 'Archivo de Justificación de Privacidad y Legal entregado por adelantado.'
                     ]

@@ -342,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => '7 Gün Saklama',
-                    'desc' => 'Tüm kayıtlar 7 gün sonra otomatik silinir. Depolama temiz, gizlilik korunmuş.'
+                    'desc' => 'Satılmayan kayıtlar 3, satılanlar 7 gün sonra erişime kapanır. Depolama temiz, gizlilik korunmuş.'
                 ],
                 '5' => [
                     'title' => 'Esnek Bağlantı',
@@ -647,7 +647,7 @@ return [
             'deleted_state' => 'Süresi doldu',
             'time_col' => 'Saat',
             'day_summary' => '{t} maç · {s} satıldı · {l} kilitli',
-            'auto_note' => 'Sisteme gelen her maç videosu ilgili saha ve saatte kilitli olarak görünür. Ödemeyi aldığınız maçın kilidini açın ve kodu oyuncuya verin. Kayıtlar maç tarihinden 7 gün sonra silinir.',
+            'auto_note' => 'Sisteme gelen her maç videosu ilgili saha ve saatte kilitli olarak görünür. Ödemeyi aldığınız maçın kilidini açın ve kodu oyuncuya verin. Kayıtlar maç bitişinden sonra satılmadıysa 3, satıldıysa 7 gün içinde erişime kapanır.',
             'relock_title' => 'Maçı tekrar kilitle',
             'relock_desc' => 'Kilitlenince oyuncunun kodla ve eski bağlantıyla erişimi hemen kapanır.',
             'cancel' => 'Vazgeç',
@@ -822,10 +822,10 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'Ya GDPR?',
-                    'answer' => 'Replash\'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve 7 gün sonra otomatik silinir. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
+                    'answer' => 'Replash\'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
                     'items' => [
                         '1' => 'Ses yok. Yüz tanıma yok.',
-                        '2' => '7 gün sonra otomatik silme.',
+                        '2' => '3 gün (satılmayan) / 7 gün (satılan) sonra erişim kapanır.',
                         '3' => 'GDPR / AİHS Madde 8 / Garante uyumlu.',
                         '4' => 'Gizlilik & Yasal Gerekçe dosyası önceden teslim edilir.'
                     ]

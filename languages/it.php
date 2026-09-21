@@ -342,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Conservazione 7 Giorni',
-                    'desc' => 'Tutte le riprese eliminate automaticamente dopo 7 giorni. Archiviazione pulita, privacy intatta.'
+                    'desc' => 'Le riprese non vendute si chiudono dopo 3 giorni, quelle vendute dopo 7. Archiviazione pulita, privacy intatta.'
                 ],
                 '5' => [
                     'title' => 'Connettività Resiliente',
@@ -647,7 +647,7 @@ return [
             'deleted_state' => 'Scaduto',
             'time_col' => 'Ora',
             'day_summary' => '{t} partite · {s} vendute · {l} bloccate',
-            'auto_note' => 'Ogni video ricevuto dal sistema appare qui, bloccato, sotto il campo e l’orario. Sblocca la partita pagata e dai il codice al giocatore. Le registrazioni si eliminano 7 giorni dopo la data della partita.',
+            'auto_note' => 'Ogni video ricevuto dal sistema appare qui, bloccato, sotto il campo e l’orario. Sblocca la partita pagata e dai il codice al giocatore. Le registrazioni si chiudono 3 giorni dopo la fine della partita se non vendute, 7 giorni se vendute.',
             'relock_title' => 'Blocca di nuovo la partita',
             'relock_desc' => 'Una volta bloccata, l\'accesso del giocatore con codice e vecchio link si interrompe subito.',
             'cancel' => 'Annulla',
@@ -822,10 +822,10 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'E il GDPR?',
-                    'answer' => 'L\'architettura privacy di Replash è conforme a GDPR, CEDU Art. 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. I video sono inaccessibili pubblicamente, legati allo slot orario e auto-eliminati dopo 7 giorni. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). Modello di notifica a tre livelli (segnaletica + QR + notifica prenotazione) pronto prima dell\'installazione.',
+                    'answer' => 'L\'architettura privacy di Replash è conforme a GDPR, CEDU Art. 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. I video sono inaccessibili pubblicamente, legati allo slot orario e chiusi dopo 3 giorni se non venduti, 7 se venduti. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). Modello di notifica a tre livelli (segnaletica + QR + notifica prenotazione) pronto prima dell\'installazione.',
                     'items' => [
                         '1' => 'Niente audio. Niente riconoscimento facciale.',
-                        '2' => 'Auto-eliminazione dopo 7 giorni.',
+                        '2' => 'Accesso chiuso dopo 3 giorni (non venduti) / 7 giorni (venduti).',
                         '3' => 'Conforme a GDPR / CEDU Art. 8 / Garante.',
                         '4' => 'File Privacy & Legal Justification consegnato in anticipo.'
                     ]
