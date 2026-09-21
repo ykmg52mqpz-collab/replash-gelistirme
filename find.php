@@ -107,14 +107,76 @@ if ($pdo) {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="min-h-screen pt-28 pb-20 relative">
+<main class="min-h-screen pb-20 relative">
   <div class="hero-glow"></div>
+
+  <?php
+  $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
+  $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
+  $codeOnlySearch = (!$searchFacilityEnabled && $searchCodeEnabled); ?>
+  <?php if (!$match && $codeOnlySearch): ?>
+    <!-- HERO + KOD KARTI (replash.info) -->
+    <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+    </div>
+    <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
+    </div>
+    <div class="container-x relative text-center">
+    <h1 class="mx-auto max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
+    <?= e(__('find.hero.title')) ?>
+    </h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-white/55 md:text-xl"  data-reveal="up">
+    <?= e(__('find.hero.subtitle')) ?>
+    </p>
+    </div>
+    </section>
+
+    <section class="border-t border-white/5 bg-ink-900 py-16 md:py-20">
+    <div class="container-x">
+    <div class="mx-auto max-w-2xl"  data-reveal="up">
+    <form action="<?= base_url('find.php') ?>" method="GET" class="card-elevated rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
+    <div class="mb-5 flex items-center gap-2.5">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2">
+    <rect x="4" y="10" width="16" height="11" rx="2">
+    </rect>
+    <path d="M8 10V7a4 4 0 118 0v3">
+    </path>
+    </svg>
+    <h3 class="font-display text-lg font-bold text-white">
+    <?= e(__('find.watch.title')) ?>
+    </h3>
+    </div>
+    <p class="mb-5 text-sm text-white/50">
+    <?= e(__('find.watch.subtitle')) ?>
+    </p>
+    <div class="flex flex-col gap-2">
+    <label class="text-xs font-semibold uppercase tracking-wider text-white/60">
+    <?= e(__('find.watch.codeLabel')) ?>
+    </label>
+    <input type="text" name="code" required value="<?= e($code) ?>" placeholder="XXXX-XXXX" maxlength="10" autocomplete="off" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-accent text-center font-mono text-2xl font-bold tracking-[0.3em] placeholder:tracking-[0.3em] placeholder:text-white/25" />
+    </div>
+    <button type="submit" class="mt-5 w-full rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-ink-900 shadow-glow-sm transition hover:shadow-glow disabled:opacity-60">
+    <?= e(__('find.watch.button')) ?>
+    </button>
+    <?php if ($searchFacilityEnabled): ?>
+    <a href="#facility-search" class="mt-4 flex items-center gap-1.5 text-xs text-white/45 transition hover:text-accent">
+    <?= e(__('find.watch.fallbackToggle')) ?>
+    <span>▾</span>
+    </a>
+    <?php endif; ?>
+    </form>
+    <div aria-live="polite" class="mt-6">
+    </div>
+    </div>
+    </div>
+    </section>
+  <?php endif; ?>
+
+  <div class="pt-10">
   
   <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
     <?php 
-    $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
-    $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
 
     $renderSearchSection = function($isSubSection = false) use ($searchFacilityEnabled, $searchCodeEnabled, $code, $facilities, $facilityId, $date, $timeSlot) {
     ?>
@@ -273,8 +335,11 @@ require_once __DIR__ . '/includes/header.php';
     };
     ?>
 
-    <?php if (!$match): ?>
+    <?php if (!$match && !$codeOnlySearch): ?>
       <?php $renderSearchSection(false); ?>
+    <?php endif; ?>
+
+    <?php if (!$match): ?>
 
       <!-- ERİŞİM NASIL ÇALIŞIR (replash.info) -->
       <section class="section-y border-t border-white/5 bg-section-gradient">
@@ -830,6 +895,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
     <?php endif; ?>
 
+  </div>
   </div>
 </main>
 

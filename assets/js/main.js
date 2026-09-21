@@ -1,3 +1,24 @@
+// Scroll reveal (replash.info'daki whileInView karşılığı).
+// Diğer betikleri beklemeden hemen çalışır; JS yoksa içerik zaten görünür kalır.
+(function () {
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+  root.classList.add('reveal-ready');
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var siblings = el.parentElement ? Array.prototype.filter.call(el.parentElement.children, function (c) { return c.hasAttribute('data-reveal'); }) : [];
+      var order = Math.max(0, siblings.indexOf(el));
+      el.style.setProperty('--reveal-delay', Math.min(order * 60, 300) + 'ms');
+      el.classList.add('is-visible');
+      revealObserver.unobserve(el);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { revealObserver.observe(el); });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Header scroll effect
   const pillHeader = document.querySelector('.glass-pill');
@@ -96,29 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
-  // 4b. Scroll reveal (replash.info'daki whileInView karşılığı)
-  var revealTargets = document.querySelectorAll('[data-reveal]');
-  if (revealTargets.length) {
-    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      revealTargets.forEach(function (el) { el.classList.add('is-visible'); });
-    } else {
-      var revealObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var el = entry.target;
-          // aynı kapsayıcıdaki öğeler sırayla belirsin (30ms kademeli)
-          var siblings = el.parentElement ? Array.prototype.filter.call(el.parentElement.children, function (c) { return c.hasAttribute('data-reveal'); }) : [];
-          var order = Math.max(0, siblings.indexOf(el));
-          el.style.setProperty('--reveal-delay', Math.min(order * 60, 300) + 'ms');
-          el.classList.add('is-visible');
-          revealObserver.unobserve(el);
-        });
-      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-      revealTargets.forEach(function (el) { revealObserver.observe(el); });
-    }
-  }
 
   // 5. Dynamic Date/Slot lookup on Home Page
   const facilitySelect = document.getElementById('home-facility-select');
