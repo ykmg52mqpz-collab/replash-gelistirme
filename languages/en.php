@@ -561,9 +561,9 @@ return [
     ],
     'forFacilities' => [
         'hero' => [
-            'eyebrow' => 'For Facility Owners & Operators',
-            'title' => 'Your venue generates extra income every month.',
-            'subtitle' => 'Zero hardware cost, zero staff effort. Generate digital revenue from every match with Replash and increase player loyalty.'
+            'eyebrow' => 'For Facilities',
+            'title' => 'Turn your venue into a modern sports experience. By earning more revenue every month.',
+            'subtitle' => 'Replash gives your facility a new digital product. Without adding any operational burden to your team.'
         ],
         'engagement' => [
             'eyebrow' => 'Better Player Engagement',
@@ -596,13 +596,13 @@ return [
                 'eyebrow' => 'YOUR ESTIMATE',
                 'videos' => 'Videos sold',
                 'videosHint' => 'per month',
-                'share' => 'Your share ({pct}%)',
+                'share' => 'Your estimated share',
                 'shareHint' => 'monthly earning',
                 'yearlyEyebrow' => 'YEARLY POTENTIAL',
                 'yearlySuffix' => 'per year',
                 'yearlyNote' => 'With zero extra work for your staff.'
             ],
-            'disclaimer' => '* Estimate based on average video sale price per sport. The calculation is purely illustrative. Enter your own numbers to see your potential.',
+            'disclaimer' => '* Indicative estimate based on service usage. The calculation is illustrative only; final terms are defined during onboarding.',
             'hook' => [
                 'title' => 'Turn this estimate into your monthly income.',
                 'desc' => 'Book a short call. We\'ll map these numbers to your exact venue and walk you through setup, timelines, and terms.',
@@ -680,6 +680,126 @@ return [
             'title' => 'Bring Replash to your facility.',
             'subtitle' => 'Talk to us about installation, timelines, and how it works for your venue.',
             'button' => 'Become a Pilot Facility'
+        ],
+        'value' => [
+            'eyebrow' => 'Additional Value Without Operational Burden',
+            'title' => 'A new service. Zero new workload.',
+            'desc' => 'Replash gives facilities a complete video service without requiring them to manage cameras, edit videos, or handle complicated technology. Everything from installation to delivery is handled by Replash. Your team simply offers the experience.'
+        ],
+        'turkey' => [
+            'eyebrow' => 'Already Proven. Just Not Here Yet',
+            'title' => 'The behavior is already real. In Turkey.',
+            'desc' => 'Across Turkey, the astroturf football culture (5-a-side and 7-a-side) is so settled that offering a match video at booking time is now standard at almost every venue. The \'social astroturf\' system exists at virtually every facility. Cameras record, players watch and download, and the service is part of the booking flow.',
+            'lesson' => 'The Turkish version is basic and limited to football. Replash brings the same proven behavior to padel and football across Europe. With a premium product, full GDPR posture, social-media-ready clipping, and a transparent revenue-share model.',
+            'stats' => [
+                '1' => [
+                    'value' => '10,000+',
+                    'label' => 'Astroturf venues in Turkey using match-recording'
+                ],
+                '2' => [
+                    'value' => '2018',
+                    'label' => 'Year the model became mainstream'
+                ],
+                '3' => [
+                    'value' => 'Standard',
+                    'label' => 'Now the default. Not a feature'
+                ]
+            ]
+        ],
+        'differentiate' => [
+            'eyebrow' => 'Stand Out From Competitors',
+            'title' => 'Most venues offer a pitch. Replash helps you offer a memory.',
+            'desc' => 'In a competitive market, price alone isn\'t enough to create loyalty. A professional video experience. Automatically available after every match. Gives players a reason to choose your facility, return more often, and recommend it to others.',
+            'quote' => 'Facilities no longer sell only pitch time. They sell the experience around the match.'
+        ],
+        'competitors' => [
+            'eyebrow' => 'Where Replash Fits',
+            'title' => 'Existing sports-video companies serve the wrong market.',
+            'desc' => 'Existing professional video-analysis platforms focus on professional clubs and academies. Expensive cameras, tactical analysis tools, narrow market. They ignored amateur sport, which is the real mass of the market. Replash was built exactly for that gap.',
+            'comparison' => [
+                'header' => [
+                    'feature' => 'Feature',
+                    'pro' => 'Professional platforms',
+                    'replash' => 'Replash'
+                ],
+                'rows' => [
+                    'target' => [
+                        'feature' => 'Target',
+                        'pro' => 'Pro clubs, academies',
+                        'replash' => 'Amateur venues'
+                    ],
+                    'venues' => [
+                        'feature' => 'Venue count (Italy)',
+                        'pro' => '~1,000',
+                        'replash' => '~10,000+'
+                    ],
+                    'purpose' => [
+                        'feature' => 'Purpose',
+                        'pro' => 'Tactical analysis',
+                        'replash' => 'Watch + clip + share'
+                    ],
+                    'cost' => [
+                        'feature' => 'Cost to venue',
+                        'pro' => 'Tens of thousands €',
+                        'replash' => '€0 upfront'
+                    ],
+                    'ops' => [
+                        'feature' => 'Operational load',
+                        'pro' => 'Coaches, analysts',
+                        'replash' => 'One tap per sale'
+                    ],
+                    'audience' => [
+                        'feature' => 'End user',
+                        'pro' => 'Coaches',
+                        'replash' => 'Amateur players'
+                    ]
+                ]
+            ]
+        ],
+        'revenue' => [
+            'eyebrow' => 'Revenue Alignment',
+            'title' => 'A model built around shared success.',
+            'desc' => 'Replash is designed around a performance-based model. When the video service creates value for players, both the facility and Replash benefit. There are no upfront costs, no subscription fees, and no risk for the facility.',
+            'quote' => 'When players love it, everyone wins.'
+        ],
+        'revenueScenarios' => [
+            'eyebrow' => 'Earnings Examples',
+            'title' => 'Passive income. For a single tap per sale.',
+            'subtitle' => 'Below are illustrative monthly earnings based on real per-match dynamics in Milan. Your share scales linearly with court count.',
+            'disclaimer' => 'Examples only. Final terms agreed during onboarding.',
+            'headers' => [
+                'scenario' => 'Scenario',
+                'videos' => 'Videos Sold / Day',
+                'padel' => 'Padel Court',
+                'football' => 'Football Pitch'
+            ],
+            'rows' => [
+                '1' => [
+                    'name' => 'Quiet Month',
+                    'videos' => '2',
+                    'padel' => '€72 / mo',
+                    'football' => '€135 / mo'
+                ],
+                '2' => [
+                    'name' => 'Average Month',
+                    'videos' => '4',
+                    'padel' => '€144 / mo',
+                    'football' => '€270 / mo'
+                ],
+                '3' => [
+                    'name' => 'Busy Month',
+                    'videos' => '6',
+                    'padel' => '€216 / mo',
+                    'football' => '€405 / mo'
+                ],
+                '4' => [
+                    'name' => '3-Court Facility (Busy)',
+                    'videos' => '18',
+                    'padel' => '€648 / mo',
+                    'football' => '€1,215 / mo'
+                ]
+            ],
+            'footer' => 'Purely passive income. No cost. One action per match: enable the video from the panel.'
         ]
     ],
     'about' => [

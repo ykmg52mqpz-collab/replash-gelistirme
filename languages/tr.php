@@ -561,9 +561,9 @@ return [
     ],
     'forFacilities' => [
         'hero' => [
-            'eyebrow' => 'Tesis Sahipleri ve İşletmeciler İçin',
-            'title' => 'Sahanız her ay ek gelir üretsin.',
-            'subtitle' => 'Sıfır donanım yatırımı, sıfır personel eforu. Replash ile her maçtan dijital gelir elde edin, oyuncu bağlılığını artırın.'
+            'eyebrow' => 'Sahalar İçin',
+            'title' => 'Sahanızı modern bir spor deneyimine dönüştürün. Her ay daha fazla gelir elde ederek.',
+            'subtitle' => 'Replash, sahanıza yeni bir dijital ürün kazandırır. Ekibinize hiçbir operasyonel yük eklemeden.'
         ],
         'engagement' => [
             'eyebrow' => 'Daha İyi Oyuncu Bağlılığı',
@@ -593,16 +593,16 @@ return [
                 'daysSuffix' => 'gün'
             ],
             'results' => [
-                'eyebrow' => 'TAHMİNİ GELİRİNİZ',
+                'eyebrow' => 'TAHMINI GELIRINIZ',
                 'videos' => 'Satılan video',
                 'videosHint' => 'aylık',
-                'share' => 'Payınız (%{pct})',
+                'share' => 'Tahmini payın',
                 'shareHint' => 'aylık kazanç',
-                'yearlyEyebrow' => 'YILLIK POTANSİYEL',
+                'yearlyEyebrow' => 'YILLIK POTANSIYEL',
                 'yearlySuffix' => 'yıllık',
                 'yearlyNote' => 'Personelinize sıfır ek iş yükü ile.'
             ],
-            'disclaimer' => '* Tahmin spor başına ortalama video satış fiyatına dayanmaktadır. Hesaplama tamamen örnektir. Kendi rakamlarınızı girip potansiyelinizi görün.',
+            'disclaimer' => '* Hizmet kullanımına dayalı gösterge niteliğinde bir tahmindir. Hesaplama yalnızca örnektir; nihai koşullar onboarding sırasında belirlenir.',
             'hook' => [
                 'title' => 'Bu tahmini tesisinin aylık gelirine çevir.',
                 'desc' => 'Kısa bir görüşme ayarla. Bu rakamları senin tesisine göre çıkaralım; kurulum, süre ve şartları birlikte konuşalım.',
@@ -614,7 +614,7 @@ return [
             'title' => 'Her sahanın sorduğu iki soru. İki net cevap.',
             'items' => [
                 'gdpr' => [
-                    'question' => 'Ya GDPR & KVKK?',
+                    'question' => 'Ya GDPR?',
                     'answer' => 'Replash\'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve 7 gün sonra otomatik silinir. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
                     'items' => [
                         '1' => 'Ses yok. Yüz tanıma yok.',
@@ -638,7 +638,7 @@ return [
         'marketing' => [
             'eyebrow' => 'Pazarlama Katmanı Dahil',
             'title' => 'Sahanızı sadece müşterilere değil. Kitlelere taşırız.',
-            'desc' => 'Replash sadece bir altyapı sağlayıcısı değil. Partner sahalarını görünür kılan bir pazarlama katmanıdır. Web sitemizde logonuzu ve konumunuzu öne çıkarırız. Oyuncular highlight\'larını sosyal medyada paylaştıkça sahanız çevredeki topluluklara organik olarak ulaşır. Pazarlama, kullanıcı davranışı üzerinden gerçekleşir.',
+            'desc' => 'Replash yalnızca altyapı değil: partner tesisleri görünür kılar. Web sitemizde logonu ve konumunu öne çıkarırız. Oyuncular kliplerini sosyal medyada paylaştıkça, tesisin çevredeki topluluklara organik olarak ulaşır.',
             'items' => [
                 '1' => [
                     'title' => 'Replash\'te Öne Çıkar',
@@ -672,7 +672,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Satılan Maçları Aktive Edin',
-                    'desc' => 'Bir oyuncu video erişimi için ödediğinde, personeliniz tek bir butona basar: \'Video Satıldı\'. Tek tekrarlayan eylem budur.'
+                    'desc' => 'Takım videoyu istediğinde, personelin panelden tek dokunuşla etkinleştirir. Tek tekrarlı işlem budur.'
                 ]
             ]
         ],
@@ -680,6 +680,126 @@ return [
             'title' => 'Replash\'i sahanıza getirin.',
             'subtitle' => 'Bizimle kurulum, zamanlama ve sahanız için nasıl çalıştığını konuşun.',
             'button' => 'Pilot Saha Ol'
+        ],
+        'value' => [
+            'eyebrow' => 'Operasyonel Yük Olmadan Ek Değer',
+            'title' => 'Yeni bir hizmet. Sıfır yeni iş yükü.',
+            'desc' => 'Replash sahalara kamera yönetmek, video düzenlemek veya karmaşık teknolojiyle uğraşmak zorunda kalmadan eksiksiz bir video hizmeti sunar. Kurulumdan teslimata her şey Replash tarafından yönetilir. Ekibiniz sadece deneyimi sunar.'
+        ],
+        'turkey' => [
+            'eyebrow' => 'Zaten Kanıtlandı. Sadece Burada Değil Henüz',
+            'title' => 'Davranış zaten gerçek. Türkiye\'de.',
+            'desc' => 'Türkiye genelinde, halısaha futbol kültürü (5\'lik ve 7\'lik) o kadar yerleşmiş ki rezervasyon sırasında maç videosu sunmak artık neredeyse her tesiste standart. \'sosyal halısaha\' sistemi pratikte her tesiste var. Kameralar kaydeder, oyuncular izler ve indirir, hizmet rezervasyon akışının parçasıdır.',
+            'lesson' => 'Türk versiyonu temel ve sadece futbolla sınırlı. Replash aynı kanıtlanmış davranışı padel ve futbola, tüm Avrupa\'ya taşıyor. Premium ürün, tam GDPR duruşu, sosyal medyaya hazır klip kesme ve şeffaf gelir paylaşım modeli ile.',
+            'stats' => [
+                '1' => [
+                    'value' => '10.000+',
+                    'label' => 'Türkiye\'de maç kaydı kullanan halısahalar'
+                ],
+                '2' => [
+                    'value' => '2018',
+                    'label' => 'Modelin ana akım hale geldiği yıl'
+                ],
+                '3' => [
+                    'value' => 'Standart',
+                    'label' => 'Artık varsayılan. Özellik değil'
+                ]
+            ]
+        ],
+        'differentiate' => [
+            'eyebrow' => 'Rakiplerden Öne Çıkın',
+            'title' => 'Çoğu saha bir kort sunar. Replash bir anı sunmanıza yardım eder.',
+            'desc' => 'Rekabetçi bir pazarda, sadece fiyat sadakat yaratmaya yetmez. Her maçtan sonra otomatik olarak sunulan profesyonel video deneyimi, oyunculara sahanızı seçmek, daha sık geri gelmek ve başkalarına önermek için bir neden verir.',
+            'quote' => 'Sahalar artık sadece saha zamanı satmıyor. Maçın etrafındaki deneyimi satıyorlar.'
+        ],
+        'competitors' => [
+            'eyebrow' => 'Replash Nereye Oturur',
+            'title' => 'Mevcut spor-video şirketleri yanlış pazara hizmet ediyor.',
+            'desc' => 'Mevcut profesyonel video-analiz çözümleri profesyonel kulüplere ve akademilere odaklanır. Pahalı kameralar, taktik analiz araçları, dar pazar. Pazarın gerçek kitlesi olan amatör sporu görmezden geldiler. Replash tam o boşluk için inşa edildi.',
+            'comparison' => [
+                'header' => [
+                    'feature' => 'Özellik',
+                    'pro' => 'Profesyonel platformlar',
+                    'replash' => 'Replash'
+                ],
+                'rows' => [
+                    'target' => [
+                        'feature' => 'Hedef',
+                        'pro' => 'Pro kulüpler, akademiler',
+                        'replash' => 'Amatör sahalar'
+                    ],
+                    'venues' => [
+                        'feature' => 'Saha sayısı (İtalya)',
+                        'pro' => '~1.000',
+                        'replash' => '~10.000+'
+                    ],
+                    'purpose' => [
+                        'feature' => 'Amaç',
+                        'pro' => 'Taktik analiz',
+                        'replash' => 'İzle + kes + paylaş'
+                    ],
+                    'cost' => [
+                        'feature' => 'Saha maliyeti',
+                        'pro' => 'On binlerce €',
+                        'replash' => '€0 başlangıç'
+                    ],
+                    'ops' => [
+                        'feature' => 'Operasyonel yük',
+                        'pro' => 'Antrenörler, analistler',
+                        'replash' => 'Satış başına bir tıklama'
+                    ],
+                    'audience' => [
+                        'feature' => 'Son kullanıcı',
+                        'pro' => 'Antrenörler',
+                        'replash' => 'Amatör oyuncular'
+                    ]
+                ]
+            ]
+        ],
+        'revenue' => [
+            'eyebrow' => 'Gelir Hizalanması',
+            'title' => 'Paylaşılan başarı etrafında inşa edilmiş bir model.',
+            'desc' => 'Replash performans bazlı bir model üzerine tasarlandı. Video hizmeti oyuncular için değer ürettiğinde, hem saha hem de Replash kazanır. Başlangıç maliyeti yok, abonelik ücreti yok ve saha için risk yok.',
+            'quote' => 'Oyuncular sevince herkes kazanır.'
+        ],
+        'revenueScenarios' => [
+            'eyebrow' => 'Kazanç Örnekleri',
+            'title' => 'Pasif gelir. Satış başına tek tıklama karşılığında.',
+            'subtitle' => 'Aşağıda Milano\'daki gerçek maç başına dinamiklere dayalı aylık kazanç örnekleri var. Payınız kort sayısıyla doğrusal olarak ölçeklenir.',
+            'disclaimer' => 'Sadece örnek. Nihai koşullar onboarding sırasında kararlaştırılır.',
+            'headers' => [
+                'scenario' => 'Senaryo',
+                'videos' => 'Günlük Satılan Video',
+                'padel' => 'Padel Kortu',
+                'football' => 'Futbol Sahası'
+            ],
+            'rows' => [
+                '1' => [
+                    'name' => 'Sakin Ay',
+                    'videos' => '2',
+                    'padel' => '€72 / ay',
+                    'football' => '€135 / ay'
+                ],
+                '2' => [
+                    'name' => 'Ortalama Ay',
+                    'videos' => '4',
+                    'padel' => '€144 / ay',
+                    'football' => '€270 / ay'
+                ],
+                '3' => [
+                    'name' => 'Yoğun Ay',
+                    'videos' => '6',
+                    'padel' => '€216 / ay',
+                    'football' => '€405 / ay'
+                ],
+                '4' => [
+                    'name' => '3 Kortlu Saha (Yoğun)',
+                    'videos' => '18',
+                    'padel' => '€648 / ay',
+                    'football' => '€1.215 / ay'
+                ]
+            ],
+            'footer' => 'Tamamen pasif gelir. Maliyet yok. Maç başına tek işlem: videoyu panelden etkinleştir.'
         ]
     ],
     'about' => [

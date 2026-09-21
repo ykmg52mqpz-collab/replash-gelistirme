@@ -561,9 +561,9 @@ return [
     ],
     'forFacilities' => [
         'hero' => [
-            'eyebrow' => 'Per Proprietari e Gestori di Centri',
-            'title' => 'Il tuo centro genera entrate extra ogni mese.',
-            'subtitle' => 'Zero costi hardware, zero sforzo per lo staff. Genera ricavi digitali da ogni partita con Replash e aumenta la fidelizzazione dei giocatori.'
+            'eyebrow' => 'Per i Centri',
+            'title' => 'Trasforma il tuo centro in un\'esperienza sportiva moderna. Guadagnando di più ogni mese.',
+            'subtitle' => 'Replash dà al tuo centro un nuovo prodotto digitale. Senza aggiungere alcun onere operativo al tuo team.'
         ],
         'engagement' => [
             'eyebrow' => 'Maggiore Coinvolgimento',
@@ -596,13 +596,13 @@ return [
                 'eyebrow' => 'LA TUA STIMA',
                 'videos' => 'Video venduti',
                 'videosHint' => 'al mese',
-                'share' => 'La tua quota ({pct}%)',
+                'share' => 'La tua quota stimata',
                 'shareHint' => 'guadagno mensile',
                 'yearlyEyebrow' => 'POTENZIALE ANNUO',
                 'yearlySuffix' => 'all\'anno',
                 'yearlyNote' => 'Con zero lavoro aggiuntivo per il tuo staff.'
             ],
-            'disclaimer' => '* Stima basata sul prezzo medio di vendita del video per sport. Il calcolo è puramente illustrativo. Inserisci i tuoi numeri per vedere il tuo potenziale.',
+            'disclaimer' => '* Stima indicativa basata sull\'utilizzo del servizio. Il calcolo è puramente illustrativo; i termini finali vengono definiti in fase di onboarding.',
             'hook' => [
                 'title' => 'Trasforma questa stima nel reddito mensile del tuo centro.',
                 'desc' => 'Prenota una breve call. Adattiamo questi numeri al tuo centro e ti spieghiamo installazione, tempi e condizioni.',
@@ -638,7 +638,7 @@ return [
         'marketing' => [
             'eyebrow' => 'Layer Marketing Incluso',
             'title' => 'Portiamo il tuo centro a pubblici, non solo a clienti.',
-            'desc' => 'Replash non è solo un fornitore di infrastruttura. È anche un layer di marketing che rende visibili i centri partner. Sul nostro sito mettiamo in evidenza il tuo logo e la posizione. Mentre i giocatori condividono gli highlights sui social media, il tuo centro raggiunge le comunità circostanti in modo organico. Il marketing avviene attraverso il comportamento degli utenti.',
+            'desc' => 'Replash non è solo infrastruttura: rende visibili i centri partner. Sul nostro sito mettiamo in evidenza il tuo logo e la tua posizione. Quando i giocatori condividono i loro highlights sui social media, il tuo centro raggiunge in modo organico le comunità vicine.',
             'items' => [
                 '1' => [
                     'title' => 'In Evidenza su Replash',
@@ -672,7 +672,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Attivare le Partite Vendute',
-                    'desc' => 'Quando un giocatore paga per l\'accesso al video, il tuo staff clicca un solo pulsante: \'Video Venduto\'. Questa è l\'unica azione ricorrente.'
+                    'desc' => 'Quando la squadra vuole il video, il tuo staff lo abilita dal pannello con un tocco. Questa è l\'unica azione ricorrente.'
                 ]
             ]
         ],
@@ -680,6 +680,126 @@ return [
             'title' => 'Porta Replash nel tuo centro.',
             'subtitle' => 'Parlaci di installazione, tempi e di come funziona per il tuo centro.',
             'button' => 'Diventa Centro Pilota'
+        ],
+        'value' => [
+            'eyebrow' => 'Valore Aggiunto Senza Oneri Operativi',
+            'title' => 'Un nuovo servizio. Zero nuovo carico di lavoro.',
+            'desc' => 'Replash offre ai centri un servizio video completo senza richiedere loro di gestire telecamere, montare video o gestire tecnologie complesse. Dall\'installazione alla consegna, tutto è gestito da Replash. Il tuo team si limita a offrire l\'esperienza.'
+        ],
+        'turkey' => [
+            'eyebrow' => 'Già Provato. Solo Non Ancora Qui',
+            'title' => 'Il comportamento è già reale. In Turchia.',
+            'desc' => 'In tutta la Turchia, la cultura del campo in erba sintetica (calcio a 5 e a 7) è così consolidata che offrire un video della partita al momento della prenotazione è ormai standard in quasi ogni centro. Il sistema \'social astroturf\' esiste praticamente in ogni struttura. Le telecamere registrano, i giocatori guardano e scaricano, e il servizio è parte del flusso di prenotazione.',
+            'lesson' => 'La versione turca è basica e limitata al calcio. Replash porta lo stesso comportamento provato al padel e al calcio in tutta Europa. Con un prodotto premium, piena conformità GDPR, ritaglio clip pronto per i social e un modello di revenue-share trasparente.',
+            'stats' => [
+                '1' => [
+                    'value' => '10.000+',
+                    'label' => 'Centri turchi che usano il sistema'
+                ],
+                '2' => [
+                    'value' => '2018',
+                    'label' => 'Anno in cui il modello è diventato mainstream'
+                ],
+                '3' => [
+                    'value' => 'Standard',
+                    'label' => 'Oggi il default. Non più una feature'
+                ]
+            ]
+        ],
+        'differentiate' => [
+            'eyebrow' => 'Differenziati dai Concorrenti',
+            'title' => 'La maggior parte dei centri offre un campo. Replash ti aiuta a offrire un ricordo.',
+            'desc' => 'In un mercato competitivo, il prezzo da solo non basta a creare fidelizzazione. Un\'esperienza video professionale. Disponibile automaticamente dopo ogni partita. Dà ai giocatori un motivo per scegliere il tuo centro, tornare più spesso e consigliarlo ad altri.',
+            'quote' => 'I centri non vendono solo tempo sul campo. Vendono l\'esperienza intorno alla partita.'
+        ],
+        'competitors' => [
+            'eyebrow' => 'Dove si Colloca Replash',
+            'title' => 'Le aziende sports-video esistenti servono il mercato sbagliato.',
+            'desc' => 'Le soluzioni di videoanalisi professionali esistenti si concentrano su club professionistici e academy. Telecamere costose, strumenti di analisi tattica, mercato ristretto. Hanno ignorato lo sport amatoriale, che è la vera massa del mercato. Replash è stato costruito esattamente per quel vuoto.',
+            'comparison' => [
+                'header' => [
+                    'feature' => 'Caratteristica',
+                    'pro' => 'Soluzioni professionali',
+                    'replash' => 'Replash'
+                ],
+                'rows' => [
+                    'target' => [
+                        'feature' => 'Target',
+                        'pro' => 'Club pro, academy',
+                        'replash' => 'Centri amatoriali'
+                    ],
+                    'venues' => [
+                        'feature' => 'Numero centri (Italia)',
+                        'pro' => '~1.000',
+                        'replash' => '~10.000+'
+                    ],
+                    'purpose' => [
+                        'feature' => 'Scopo',
+                        'pro' => 'Analisi tattica',
+                        'replash' => 'Guarda + ritaglia + condividi'
+                    ],
+                    'cost' => [
+                        'feature' => 'Costo per il centro',
+                        'pro' => 'Decine di migliaia €',
+                        'replash' => '€0 anticipo'
+                    ],
+                    'ops' => [
+                        'feature' => 'Carico operativo',
+                        'pro' => 'Allenatori, analisti',
+                        'replash' => 'Un tocco per vendita'
+                    ],
+                    'audience' => [
+                        'feature' => 'Utente finale',
+                        'pro' => 'Allenatori',
+                        'replash' => 'Giocatori amatoriali'
+                    ]
+                ]
+            ]
+        ],
+        'revenue' => [
+            'eyebrow' => 'Allineamento dei Ricavi',
+            'title' => 'Un modello costruito attorno al successo condiviso.',
+            'desc' => 'Replash è progettato attorno a un modello basato sulle performance. Quando il servizio video crea valore per i giocatori, sia il centro che Replash ne beneficiano. Nessun costo iniziale, nessun abbonamento, nessun rischio per il centro.',
+            'quote' => 'Quando i giocatori lo amano, tutti vincono.'
+        ],
+        'revenueScenarios' => [
+            'eyebrow' => 'Esempi di Guadagno',
+            'title' => 'Reddito passivo. Per un solo tocco a vendita.',
+            'subtitle' => 'Sotto trovi esempi mensili illustrativi basati sulle dinamiche reali per-partita a Milano. La tua quota scala linearmente col numero di campi.',
+            'disclaimer' => 'Solo esempi. Termini finali concordati in onboarding.',
+            'headers' => [
+                'scenario' => 'Scenario',
+                'videos' => 'Video Venduti / Giorno',
+                'padel' => 'Campo Padel',
+                'football' => 'Campo Calcio'
+            ],
+            'rows' => [
+                '1' => [
+                    'name' => 'Mese Tranquillo',
+                    'videos' => '2',
+                    'padel' => '€72 / mese',
+                    'football' => '€135 / mese'
+                ],
+                '2' => [
+                    'name' => 'Mese Medio',
+                    'videos' => '4',
+                    'padel' => '€144 / mese',
+                    'football' => '€270 / mese'
+                ],
+                '3' => [
+                    'name' => 'Mese Intenso',
+                    'videos' => '6',
+                    'padel' => '€216 / mese',
+                    'football' => '€405 / mese'
+                ],
+                '4' => [
+                    'name' => 'Centro 3 Campi (Intenso)',
+                    'videos' => '18',
+                    'padel' => '€648 / mese',
+                    'football' => '€1.215 / mese'
+                ]
+            ],
+            'footer' => 'Reddito puramente passivo. Nessun costo. Una sola azione per partita: abilitare il video dal pannello.'
         ]
     ],
     'about' => [

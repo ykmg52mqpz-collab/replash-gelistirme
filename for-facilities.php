@@ -2,6 +2,8 @@
 require_once __DIR__ . '/includes/init.php';
 
 $pageTitle = __('forFacilities.hero.eyebrow') ?: __('nav.forFacilities');
+$metaTitle = __('meta.forFacilities.title');
+$metaDescription = __('meta.forFacilities.description');
 
 // Load dynamic ROI calculator configuration
 $roiConfig = get_roi_calculator_config();
@@ -51,50 +53,6 @@ require_once __DIR__ . '/includes/header.php';
         <?= htmlspecialchars(__('forFacilities.hero.subtitle') ?: 'Sıfır donanım yatırımı, sıfır personel eforu. Replash ile her maçtan dijital gelir elde edin, oyuncu bağlılığını artırın.') ?>
       </p>
 
-      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="<?= base_url('pilot-program.php') ?>" class="btn-primary w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold shadow-glow flex items-center justify-center gap-2">
-          <span><?= htmlspecialchars(__('forFacilities.cta.button') ?: 'Pilot Saha Ol') ?></span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-        </a>
-        <a href="#calculator" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold border border-white/15 hover:border-white/30 text-white bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center">
-          <?= htmlspecialchars(__('forFacilities.roi.eyebrow') ?: 'Gelir Hesaplayıcı') ?>
-        </a>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ==================== SECTION 1: ENGAGEMENT ==================== -->
-  <section class="section-y border-t border-white/5 relative">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
-        <div>
-          <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-            <?= htmlspecialchars(__('forFacilities.engagement.eyebrow') ?: 'Daha İyi Oyuncu Bağlılığı') ?>
-          </div>
-          <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-5">
-            <?= htmlspecialchars(__('forFacilities.engagement.title') ?: 'Oyuncular en güzel anlarının yaşandığı sahaları hatırlar.') ?>
-          </h2>
-          <p class="text-base sm:text-lg leading-relaxed text-neutral-300">
-            <?= htmlspecialchars(__('forFacilities.engagement.desc') ?: 'Bir oyuncu maçını izleyip paylaşabildiğinde, o anıları sahanızla özdeşleştirir. O duygusal bağ, tek seferlik rezervasyonları düzenli müşterilere, düzenli müşterileri ise sahanızı arkadaşlarına öneren savunuculara dönüştürür.') ?>
-          </p>
-        </div>
-
-        <div class="flex flex-col gap-3.5">
-          <?php for ($i = 1; $i <= 4; $i++): ?>
-            <div class="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-all duration-300 hover:border-accent/40 hover:bg-white/[0.05]">
-              <div class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent border border-accent/30">
-                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <span class="text-sm sm:text-base text-neutral-200 font-medium">
-                <?= htmlspecialchars(__('forFacilities.engagement.items.' . $i)) ?>
-              </span>
-            </div>
-          <?php endfor; ?>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -109,15 +67,9 @@ require_once __DIR__ . '/includes/header.php';
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
       <div class="text-center max-w-2xl mx-auto mb-12">
-        <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-          <?= htmlspecialchars(__('forFacilities.roi.eyebrow') ?: 'GELİR HESAPLAYICI') ?>
-        </div>
-        <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl text-white" data-reveal="up">
           <?= htmlspecialchars(__('forFacilities.roi.title') ?: 'Aylık pasif gelirinizi hesaplayın') ?>
         </h2>
-        <p class="mt-3 text-sm sm:text-base text-neutral-300">
-          <?= htmlspecialchars(__('forFacilities.roi.subtitle') ?: 'Kaç sahanız var? Saha başına günlük kaç video satmayı bekliyorsunuz? Rakamlarınızı girin, aylık payınızı görün.') ?>
-        </p>
       </div>
 
       <div class="card-elevated mx-auto max-w-3xl rounded-3xl border border-white/10 bg-ink-900/80 p-6 sm:p-10 backdrop-blur shadow-2xl">
@@ -232,7 +184,16 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <p class="mx-auto mt-6 max-w-2xl text-center text-[11px] leading-relaxed text-neutral-500">
-          <?= !empty($roiConfig['disclaimer_note']) ? htmlspecialchars($roiConfig['disclaimer_note']) : (htmlspecialchars(__('forFacilities.roi.disclaimer') ?: '* Tahmin spor başına ortalama video satış fiyatına dayanmaktadır. Hesaplama tamamen örnektir.')) ?>
+          <?php
+            // Varsayılan: dil dosyasındaki metin (replash.info ile aynı).
+            // Yönetim panelinden farklı bir metin girilmişse o kullanılır.
+            $roiDisclaimerDefault = get_default_roi_calculator_config()['disclaimer_note'] ?? '';
+            $roiDisclaimer = __('forFacilities.roi.disclaimer');
+            if (!empty($roiConfig['disclaimer_note']) && $roiConfig['disclaimer_note'] !== $roiDisclaimerDefault) {
+                $roiDisclaimer = $roiConfig['disclaimer_note'];
+            }
+          ?>
+          <?= htmlspecialchars($roiDisclaimer) ?>
         </p>
 
         <!-- Call Action Hook -->
@@ -254,14 +215,42 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </section>
 
+  <!-- ==================== SECTION 1: ENGAGEMENT ==================== -->
+  <section class="section-y border-t border-white/5 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div>
+          <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-5">
+            <?= htmlspecialchars(__('forFacilities.engagement.title') ?: 'Oyuncular en güzel anlarının yaşandığı sahaları hatırlar.') ?>
+          </h2>
+          <p class="text-base sm:text-lg leading-relaxed text-neutral-300">
+            <?= htmlspecialchars(__('forFacilities.engagement.desc') ?: 'Bir oyuncu maçını izleyip paylaşabildiğinde, o anıları sahanızla özdeşleştirir. O duygusal bağ, tek seferlik rezervasyonları düzenli müşterilere, düzenli müşterileri ise sahanızı arkadaşlarına öneren savunuculara dönüştürür.') ?>
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3.5">
+          <?php for ($i = 1; $i <= 4; $i++): ?>
+            <div class="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-all duration-300 hover:border-accent/40 hover:bg-white/[0.05]">
+              <div class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent border border-accent/30">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <span class="text-sm sm:text-base text-neutral-200 font-medium">
+                <?= htmlspecialchars(__('forFacilities.engagement.items.' . $i)) ?>
+              </span>
+            </div>
+          <?php endfor; ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <!-- ==================== SECTION 3: OBJECTIONS (GDPR & WIFI) ==================== -->
   <section class="section-y border-t border-white/5 bg-ink-900 relative">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="text-center max-w-2xl mx-auto mb-12">
-        <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-          <?= htmlspecialchars(__('forFacilities.objections.eyebrow') ?: 'Yaygın Endişeler. Cevaplandı') ?>
-        </div>
         <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
           <?= htmlspecialchars(__('forFacilities.objections.title') ?: 'Her sahanın sorduğu iki soru. İki net cevap.') ?>
         </h2>
@@ -349,9 +338,6 @@ require_once __DIR__ . '/includes/header.php';
 
     <div class="container-x relative z-10">
       <div class="max-w-3xl mx-auto text-center mb-12">
-        <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-          <?= htmlspecialchars(__('forFacilities.marketing.eyebrow') ?: 'Pazarlama Katmanı Dahil') ?>
-        </div>
         <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl text-white">
           <?= htmlspecialchars(__('forFacilities.marketing.title') ?: 'Sahanızı sadece müşterilere değil. Kitlelere taşırız.') ?>
         </h2>
@@ -423,9 +409,6 @@ require_once __DIR__ . '/includes/header.php';
   <section class="section-y border-t border-white/5 bg-ink-900 relative">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="text-center max-w-3xl mx-auto mb-14">
-        <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
-          <?= htmlspecialchars(__('forFacilities.whatYouDo.eyebrow') ?: 'Sahanın Yapması Gerekenler') ?>
-        </div>
         <h2 class="font-display text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
           <?= htmlspecialchars(__('forFacilities.whatYouDo.title') ?: 'Ekibiniz teknolojiyi yönetmez. Ekibiniz sadece deneyimi sunar.') ?>
         </h2>
@@ -467,7 +450,7 @@ require_once __DIR__ . '/includes/header.php';
         </p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="<?= base_url('pilot-program.php') ?>" class="btn-primary w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold shadow-glow flex items-center justify-center gap-2">
+          <a href="<?= base_url('contact.php') ?>" class="btn-primary w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold shadow-glow flex items-center justify-center gap-2">
             <span><?= htmlspecialchars(__('forFacilities.cta.button') ?: 'Pilot Saha Ol') ?></span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
