@@ -8,6 +8,15 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/billing.php';
 require_once __DIR__ . '/sales.php';
 
+// Oturum çerezi: JavaScript okuyamaz, HTTPS'te sadece şifreli bağlantıyla gider, başka sitelerden gelen
+// form isteklerinde gönderilmez (config/config.php sunucuda değişmediği için burada yeniden yazılır)
+if (session_status() === PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli' && !headers_sent()) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+        || str_contains((string)($_SERVER['HTTP_CF_VISITOR'] ?? ''), 'https');
+    setcookie(session_name(), session_id(), ['path' => '/', 'secure' => $isHttps, 'httponly' => true, 'samesite' => 'Lax']);
+}
+
 // Ensure DB is initialized
 $dbError = null;
 try {

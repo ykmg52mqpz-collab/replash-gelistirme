@@ -16,15 +16,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 // Handle PIN Login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_pin'])) {
     $pin = trim($_POST['pin'] ?? '');
-    if ($pdo) {
+    if ($pdo && replash_attempt_blocked($pdo, 'pin', REPLASH_LOGIN_MAX_FAILS, REPLASH_LOGIN_WINDOW_MIN)) {
+        $error = str_replace('{m}', (string)REPLASH_LOGIN_WINDOW_MIN, __('panel.login.too_many'));
+    } elseif ($pdo) {
         $stmt = $pdo->prepare("SELECT * FROM facilities WHERE pin = ? LIMIT 1");
         $stmt->execute([$pin]);
         $fac = $stmt->fetch();
         if ($fac) {
+            session_regenerate_id(true);
             $_SESSION['facility_id'] = $fac['id'];
             header('Location: index.php');
             exit;
         } else {
+            replash_attempt_failed($pdo, 'pin');
             $error = __('panel.login.invalid_pin');
         }
     } else {

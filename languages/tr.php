@@ -599,6 +599,7 @@ return [
             'placeholder' => '······',
             'submit' => 'Giriş Yap',
             'example_pin' => 'Örnek PIN:',
+            'too_many' => 'Çok fazla hatalı PIN denemesi. Lütfen {m} dakika sonra tekrar deneyin.',
             'invalid_pin' => 'Geçersiz PIN kodu. Lütfen tekrar deneyin.'
         ],
         'header' => [

@@ -157,31 +157,45 @@ function replash_match_by_code(PDO $pdo, string $code, bool $withFacility = fals
     return $row ?: null;
 }
 
-function replash_client_key(): string {
+/** Hashed client id for rate limiting; $scope keeps code, PIN and admin attempts apart. */
+function replash_client_key(string $scope = 'code'): string {
     // Behind Cloudflare the visitor IP is in CF-Connecting-IP
     $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? ($_SERVER['REMOTE_ADDR'] ?? '');
-    return hash('sha256', $ip . '|' . (defined('REPLASH_TOKEN_SECRET') ? REPLASH_TOKEN_SECRET : 'replash'));
+    return hash('sha256', $scope . '|' . $ip . '|' . (defined('REPLASH_TOKEN_SECRET') ? REPLASH_TOKEN_SECRET : 'replash'));
 }
 
-/** True when this client made too many wrong code attempts recently. */
-function replash_code_blocked(PDO $pdo): bool {
+/** Too many failed attempts of this kind from this client within the window? */
+function replash_attempt_blocked(PDO $pdo, string $scope, int $maxFails, int $windowMin): bool {
     try {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM code_attempts WHERE client_key = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)");
-        $stmt->execute([replash_client_key(), REPLASH_CODE_WINDOW_MIN]);
-        return (int)$stmt->fetchColumn() >= REPLASH_CODE_MAX_FAILS;
+        $stmt->execute([replash_client_key($scope), $windowMin]);
+        return (int)$stmt->fetchColumn() >= $maxFails;
     } catch (Exception $e) {
         return false;
     }
 }
 
-function replash_code_failed(PDO $pdo): void {
+function replash_attempt_failed(PDO $pdo, string $scope): void {
     try {
-        $pdo->prepare("INSERT INTO code_attempts (client_key) VALUES (?)")->execute([replash_client_key()]);
+        $pdo->prepare("INSERT INTO code_attempts (client_key) VALUES (?)")->execute([replash_client_key($scope)]);
         if (random_int(1, 50) === 1) $pdo->exec("DELETE FROM code_attempts WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
     } catch (Exception $e) {
-        error_log('replash_code_failed: ' . $e->getMessage());
+        error_log('replash_attempt_failed: ' . $e->getMessage());
     }
 }
+
+/** Access codes: 10 wrong codes per 15 minutes. */
+function replash_code_blocked(PDO $pdo): bool {
+    return replash_attempt_blocked($pdo, 'code', REPLASH_CODE_MAX_FAILS, REPLASH_CODE_WINDOW_MIN);
+}
+
+function replash_code_failed(PDO $pdo): void {
+    replash_attempt_failed($pdo, 'code');
+}
+
+/** Facility PIN and admin login: 5 wrong tries per 15 minutes. */
+const REPLASH_LOGIN_MAX_FAILS = 5;
+const REPLASH_LOGIN_WINDOW_MIN = 15;
 
 /*
  * Video readiness for a sold match (shown on the player page).

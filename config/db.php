@@ -55,7 +55,7 @@ class DB {
                 // Ensure admin exists
                 $adminCheck = (int)$pdo->query("SELECT COUNT(*) FROM `admins`")->fetchColumn();
                 if ($adminCheck === 0) {
-                    $adminPassHash = password_hash('replash2025', PASSWORD_BCRYPT);
+                    $adminPassHash = password_hash(bin2hex(random_bytes(24)), PASSWORD_BCRYPT) /* şifre: php cron/admin-password.php */;
                     $insAdmin = $pdo->prepare("INSERT INTO `admins` (`id`, `email`, `name`, `password_hash`, `role`) VALUES (?, ?, ?, ?, ?)");
                     $insAdmin->execute(['admin-root', 'admin@replash.info', 'Replash Super Admin', $adminPassHash, 'superadmin']);
                 }
@@ -225,7 +225,7 @@ class DB {
         }
 
         // 3. Admin Account
-        $adminPassHash = password_hash('replash2025', PASSWORD_BCRYPT);
+        $adminPassHash = password_hash(bin2hex(random_bytes(24)), PASSWORD_BCRYPT) /* şifre: php cron/admin-password.php */;
         $insAdmin = $pdo->prepare("INSERT INTO `admins` (`id`, `email`, `name`, `password_hash`, `role`) VALUES (?, ?, ?, ?, ?)");
         $insAdmin->execute(['admin-root', 'admin@replash.info', 'Replash Super Admin', $adminPassHash, 'superadmin']);
 

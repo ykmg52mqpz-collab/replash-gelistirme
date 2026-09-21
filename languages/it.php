@@ -599,6 +599,7 @@ return [
             'placeholder' => '······',
             'submit' => 'Accedi',
             'example_pin' => 'Esempio PIN:',
+            'too_many' => 'Troppi PIN errati. Riprova tra {m} minuti.',
             'invalid_pin' => 'Codice PIN non valido. Riprova.'
         ],
         'header' => [

@@ -17,21 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($pdo) {
+    if ($pdo && replash_attempt_blocked($pdo, 'admin', REPLASH_LOGIN_MAX_FAILS, REPLASH_LOGIN_WINDOW_MIN)) {
+        $error = "Çok fazla hatalı giriş denemesi. Lütfen " . REPLASH_LOGIN_WINDOW_MIN . " dakika sonra tekrar deneyin.";
+    } elseif ($pdo) {
         try {
             $stmt = $pdo->prepare("SELECT * FROM admins WHERE email = ? LIMIT 1");
             $stmt->execute([$email]);
             $admin = $stmt->fetch();
 
             if ($admin && password_verify($password, $admin['password_hash'])) {
+                session_regenerate_id(true);
                 $_SESSION['admin_logged_in'] = true;
                 $_SESSION['admin_name'] = $admin['name'];
                 header('Location: index.php');
                 exit;
-            } elseif (!$admin) {
-                $error = "Bu e-posta adresi ile kayıtlı yönetici bulunamadı ({$email}).";
             } else {
-                $error = "Girdiğiniz şifre hatalı.";
+                // Hangi e-postanın kayıtlı olduğu belli edilmez
+                replash_attempt_failed($pdo, 'admin');
+                $error = "E-posta veya şifre hatalı.";
             }
         } catch (PDOException $e) {
             $error = "Veritabanı Hatası: " . $e->getMessage();

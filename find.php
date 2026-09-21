@@ -1100,12 +1100,11 @@ var clipLogo = new Image();
 clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.webp'), PHP_URL_PATH)) ?>;
 var clipCourtLabel = <?= json_encode(mb_strtoupper(trim(($match['facility_name'] ?? '') . ' · ' . ($match['court'] ?? ''), ' ·'), 'UTF-8')) ?>;
 var CLIP_FONT = '"Share Tech Mono", "SFMono-Regular", Menlo, Consolas, monospace';
+// Yazı tipi kendi sunucumuzdan (Google'a ziyaretçi IP'si gitmez); Share Tech Mono, SIL Open Font License
 (function () {
-  var l = document.createElement('link');
-  l.rel = 'stylesheet';
-  l.href = 'https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap';
-  l.onload = function () { if (document.fonts) document.fonts.load('20px "Share Tech Mono"').catch(function () {}); };
-  document.head.appendChild(l);
+  if (!window.FontFace || !document.fonts) return;
+  var f = new FontFace('Share Tech Mono', 'url(<?= asset('fonts/share-tech-mono.woff2') ?>) format("woff2")');
+  f.load().then(function (loaded) { document.fonts.add(loaded); }).catch(function () {});
 })();
 var clipDrawTimer = null;
 function clipWatermarkText(ctx, text, x, y, px, align, alpha) {
