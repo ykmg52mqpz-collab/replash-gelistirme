@@ -559,7 +559,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Klip kes',
-                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, sonra Klip kes’e bas.',
+                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, gerekirse ±1 sn ile ayarla, sonra Klip kes’e bas.',
                 'download' => 'Klibi indir',
                 'range' => '15 ile 40 saniye arasında seç.'
             ],

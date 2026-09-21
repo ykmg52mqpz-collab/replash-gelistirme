@@ -559,7 +559,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Taglia un momento',
-                'hint' => 'Trascina sulla timeline per selezionare 15–40s, poi premi Taglia un momento.',
+                'hint' => 'Trascina sulla timeline per selezionare 15–40s, regola con ±1s se serve, poi premi Taglia un momento.',
                 'download' => 'Scarica clip',
                 'range' => 'Seleziona tra 15 e 40 secondi.'
             ],

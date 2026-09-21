@@ -559,7 +559,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Cut a clip',
-                'hint' => 'Drag on the timeline to select 15–40s, then press Cut a clip.',
+                'hint' => 'Drag on the timeline to select 15–40s, fine-tune with ±1s if needed, then press Cut a clip.',
                 'download' => 'Download clip',
                 'range' => 'Select between 15 and 40 seconds.'
             ],

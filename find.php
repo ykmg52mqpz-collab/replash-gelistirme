@@ -404,8 +404,7 @@ require_once __DIR__ . '/includes/header.php';
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> UNLOCKED
             </span>
             <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
-            <span class="ml-auto text-xs text-white/40"><?= e($match['views']) ?> <?= e(__('common.views')) ?></span>
-            <a href="<?= base_url('find.php') ?>" class="text-xs font-semibold text-white/60 underline-offset-4 transition hover:text-accent hover:underline"><?= e(__('find.watch.other_code')) ?></a>
+            <a href="<?= base_url('find.php') ?>" class="ml-auto text-xs font-semibold text-white/60 underline-offset-4 transition hover:text-accent hover:underline"><?= e(__('find.watch.other_code')) ?></a>
           </div>
         <?php else: ?>
           <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-accent/25 bg-accent/10 px-4 py-2.5">
@@ -544,9 +543,11 @@ require_once __DIR__ . '/includes/header.php';
                 <svg id="rp-icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 <svg id="rp-icon-pause" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
               </button>
-              <div id="rp-scrub" class="relative h-1.5 min-w-[120px] flex-1 cursor-pointer touch-none rounded-full bg-white/20">
-                <div id="rp-clip" class="absolute -bottom-1 -top-1 hidden rounded border border-accent bg-accent/20"></div>
-                <div id="rp-progress" class="absolute inset-y-0 left-0 rounded-full bg-accent" style="width:0%"></div>
+              <div id="rp-scrub" class="relative h-8 min-w-[120px] flex-1 cursor-pointer touch-none">
+                <div class="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-white/20">
+                  <div id="rp-progress" class="absolute inset-y-0 left-0 rounded-full bg-accent" style="width:0%"></div>
+                </div>
+                <div id="rp-clip" class="absolute top-1/2 hidden h-6 -translate-y-1/2 rounded-md border-2 border-accent bg-accent/25"></div>
               </div>
               <div id="rp-time" class="min-w-[84px] text-right font-mono text-xs tabular-nums text-white/90">00:00 / 00:00</div>
               <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
@@ -558,15 +559,27 @@ require_once __DIR__ . '/includes/header.php';
               </button>
               </div>
             </div>
-            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/50">
-              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-semibold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed"><?= e(__('find.watch.clip.label')) ?></button>
-              <span><?= e(__('find.watch.clip.hint')) ?></span>
-              <span id="rp-clip-info" class="ml-auto font-mono"></span>
+            <!-- Tek klip aracı: sürükleyerek seç, ±1 sn ile ayarla, Klip kes -->
+            <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-xs text-white/50">
+              <div class="flex items-center gap-1.5">
+                <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.start_time')) ?></span>
+                <button type="button" onclick="nudgeClip('start', -1)" aria-label="-1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-start-input" value="00:00" inputmode="numeric" onchange="syncClipFromInputs()" class="h-8 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('start', 1)" aria-label="+1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
+                <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:30" inputmode="numeric" onchange="syncClipFromInputs()" class="h-8 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+              </div>
+              <span id="rp-clip-info" class="font-mono"></span>
+              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
+                <?= e(__('find.watch.clip.label')) ?>
+              </button>
             </div>
+            <p class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.hint')) ?></p>
           </div>
 
           <!-- Multiple Camera Angles Selection Bar -->
-          <?php if (count($cameraList) >= 1): ?>
+          <?php if (count($cameraList) >= 2): ?>
             <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
@@ -588,30 +601,8 @@ require_once __DIR__ . '/includes/header.php';
             </div>
           <?php endif; ?>
 
-          <!-- Video Tools Bar: Precision Clip Trimming, Live Recording & Sharing -->
-          <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6 space-y-4">
-            
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              
-              <!-- Clip Tool Header Info -->
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent flex-shrink-0">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="text-sm font-semibold text-white flex items-center gap-2">
-                    <?= e(__('find.tools.clip_title')) ?>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">MP4</span>
-                  </h4>
-                  <p class="text-xs text-neutral-400"><?= e(__('find.tools.clip_desc')) ?></p>
-                </div>
-              </div>
-
-              <!-- Top Quick Action Buttons -->
-              <div class="flex flex-wrap items-center gap-2">
+          <!-- Paylaşım: tüm maç, maç linki, klip -->
+          <div class="mt-3 flex flex-wrap items-center justify-end gap-2">
                 <!-- Full Match Download Button -->
                 <a 
                   id="btn-full-match-download"
@@ -646,83 +637,6 @@ require_once __DIR__ . '/includes/header.php';
                   </svg>
                   <?= e(__('find.tools.share_clip')) ?>
                 </button>
-              </div>
-
-            </div>
-
-            <!-- Precision Trimmer Controls Bar -->
-            <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-3">
-              <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                <!-- Start Time Range Group -->
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-neutral-400 font-medium"><?= e(__('find.tools.start_time')) ?>:</span>
-                  <input 
-                    type="text" 
-                    id="clip-start-input" 
-                    value="00:00" 
-                    placeholder="00:00"
-                    class="w-16 rounded-lg border border-white/15 bg-ink-900 px-2 py-1.5 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none shadow-inner"
-                  >
-                  <button 
-                    type="button" 
-                    onclick="setClipStartFromPlayer()" 
-                    title="<?= e(__('find.tools.set_start_btn')) ?>"
-                    class="px-2.5 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-neutral-300 transition flex items-center gap-1"
-                  >
-                    <span><?= e(__('find.tools.set_start_btn')) ?></span>
-                  </button>
-                </div>
-
-                <span class="text-neutral-500 font-bold hidden sm:inline">→</span>
-
-                <!-- End Time Range Group -->
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-neutral-400 font-medium"><?= e(__('find.tools.end_time')) ?>:</span>
-                  <input 
-                    type="text" 
-                    id="clip-end-input" 
-                    value="00:30" 
-                    placeholder="00:30"
-                    class="w-16 rounded-lg border border-white/15 bg-ink-900 px-2 py-1.5 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none shadow-inner"
-                  >
-                  <button 
-                    type="button" 
-                    onclick="setClipEndFromPlayer()" 
-                    title="<?= e(__('find.tools.set_end_btn')) ?>"
-                    class="px-2.5 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-neutral-300 transition flex items-center gap-1"
-                  >
-                    <span><?= e(__('find.tools.set_end_btn')) ?></span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Trimmer Execution Buttons -->
-              <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                <!-- Precision Cut & Download Button -->
-                <button 
-                  type="button" 
-                  onclick="createClipFromRangeInputs()"
-                  class="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-ink-900 transition hover:bg-accent-neon disabled:opacity-50"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/>
-                  </svg>
-                  <span><?= e(__('find.tools.cut_clip_btn')) ?></span>
-                </button>
-
-                <!-- Live Record Toggle Button -->
-                <button 
-                  type="button" 
-                  id="btn-record-clip" 
-                  onclick="toggleClipRecording()"
-                  class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition shadow-glow"
-                >
-                  <span class="w-2 h-2 rounded-full bg-rose-500" id="btn-record-dot"></span>
-                  <span id="btn-record-text"><?= e(__('find.tools.live_record_btn')) ?></span>
-                </button>
-              </div>
-            </div>
-
           </div>
 
           <?php
@@ -1360,6 +1274,24 @@ function setClipEndFromPlayer() {
   if (input) input.value = formatTime(cur);
 }
 
+// Başlangıç/bitiş alanları değişince çubuktaki seçimi ve Klip kes düğmesini güncelle
+function syncClipFromInputs() {
+  var a = parseTimeToSec(document.getElementById('clip-start-input').value);
+  var b = parseTimeToSec(document.getElementById('clip-end-input').value);
+  if (window.rpShowClip && b > a) window.rpShowClip(a, b);
+}
+// ±1 sn ince ayar; oynatıcı o ana gider ki kullanıcı kareyi görsün
+function nudgeClip(which, delta) {
+  var el = document.getElementById(which === 'start' ? 'clip-start-input' : 'clip-end-input');
+  var dur = 0;
+  try { dur = clapprPlayer.getDuration() || 0; } catch (e) {}
+  var v = Math.max(0, parseTimeToSec(el.value) + delta);
+  if (dur) v = Math.min(Math.floor(dur), v);
+  el.value = formatTime(v);
+  try { clapprPlayer.seek(v); } catch (e) {}
+  syncClipFromInputs();
+}
+
 function createClipFromRangeInputs() {
   var sVal = document.getElementById('clip-start-input') ? document.getElementById('clip-start-input').value : '00:00';
   var eVal = document.getElementById('clip-end-input') ? document.getElementById('clip-end-input').value : '00:30';
@@ -1787,8 +1719,10 @@ document.addEventListener('DOMContentLoaded', function() {
       $('rp-icon-play').classList.toggle('hidden', playing);
       $('rp-icon-pause').classList.toggle('hidden', !playing);
     };
+    var clipInit = false;
     var render = function () {
       var d = getDur(), c = getCur();
+      if (!clipInit && d) { clipInit = true; syncClipFromInputs(); } // varsayılan seçimi çubukta göster
       prog.style.width = (d ? (c / d) * 100 : 0) + '%';
       $('rp-time').textContent = formatTime(c) + ' / ' + formatTime(d);
     };
@@ -1833,6 +1767,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('clip-start-input').value = formatTime(a);
       document.getElementById('clip-end-input').value = formatTime(b);
     };
+    window.rpShowClip = showClip;
     var onDown = function (e) {
       if (!getDur()) return;
       dragging = true; dragStart = posFrom(e);
@@ -1882,4 +1817,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <?php endif; ?>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php $hideWhatsApp = !empty($watching); require_once __DIR__ . '/includes/footer.php'; ?>

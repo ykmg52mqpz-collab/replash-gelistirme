@@ -559,7 +559,7 @@ return [
             ],
             'clip' => [
                 'label' => 'Corta un momento',
-                'hint' => 'Arrastra en la línea de tiempo para seleccionar 15–40s y pulsa Corta un momento.',
+                'hint' => 'Arrastra en la línea de tiempo para seleccionar 15–40s, ajusta con ±1s si hace falta y pulsa Corta un momento.',
                 'download' => 'Descargar clip',
                 'range' => 'Selecciona entre 15 y 40 segundos.'
             ],
