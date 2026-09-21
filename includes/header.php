@@ -50,11 +50,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   </script>
   <link rel="stylesheet" href="<?= asset('css/style.css') ?>?v=<?= @filemtime(REPLASH_ROOT . '/assets/css/style.css') ?>">
 </head>
-<body class="font-body bg-ink-900 text-white antialiased min-h-screen flex flex-col selection:bg-accent selection:text-ink-900">
+<body class="font-body bg-ink-900 text-white antialiased min-h-screen flex flex-col selection:bg-accent selection:text-ink-900<?= !empty($internalShell) ? ' theme-desk' : '' ?>">
 
   <?php if (!empty($internalShell)): ?>
   <!-- İç araç üst çubuğu (replash.info InternalShell) -->
-  <header class="sticky top-0 z-40 border-b border-white/5 bg-ink-900/85 backdrop-blur">
+  <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
     <div class="container-x flex h-16 items-center gap-3">
       <a href="<?= base_url() ?>" class="flex items-center gap-2.5 font-display text-lg font-bold">
         <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
