@@ -6,6 +6,7 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/billing.php';
+require_once __DIR__ . '/sales.php';
 
 // Ensure DB is initialized
 $dbError = null;

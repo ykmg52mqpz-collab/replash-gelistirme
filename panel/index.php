@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/init.php';
 $pageTitle = __('panel.header.badge');
 $error = null;
 $success = null;
+$soldNotice = null; // satıştan sonra büyük kod ekranı
 
 // Handle Logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -68,16 +69,17 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $stmtFind->execute([$matchId, $facility['id']]);
             $mRow = $stmtFind->fetch();
 
-            if ($mRow) {
+            if ($mRow && $mRow['status'] === 'LOCKED') {
                 // Ensure playback URL is current
                 $camStmt = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? OR (facility_id = ? AND court = ?) LIMIT 1");
                 $camStmt->execute([$mRow['camera_id'] ?? 0, $facility['id'], $mRow['court']]);
                 $camStream = $camStmt->fetchColumn() ?: '';
                 $playbackUrl = buildMatchPlaybackUrl($camStream, $mRow['date'], $mRow['time_slot'], (int)($mRow['duration_sec'] ?? 3600));
 
-                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ?");
+                $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
                 $upd->execute([$playbackUrl, $matchId]);
-                $success = "{$mRow['court']} ({$mRow['time_slot']}) " . __('panel.table.badge_sold') . "! " . __('find.status.verified_code') . " <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
+                replash_log_sale_event($pdo, $mRow, 'sold', 'panel');
+                $soldNotice = ['code' => $mRow['access_code'], 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];
             }
         }
 
@@ -89,9 +91,18 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $mRow = $stmtFind->fetch();
 
             if ($mRow) {
-                $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', sold_at = NULL, billable = 0 WHERE id = ?");
-                $upd->execute([$matchId]);
-                $success = "{$mRow['court']} ({$mRow['time_slot']}) " . __('panel.table.badge_locked') . "!";
+                $undo = replash_staff_undo_status($mRow);
+                $reason = trim(mb_substr((string)($_POST['reason'] ?? ''), 0, 300));
+                if (!$undo['allowed']) {
+                    $error = str_replace('{m}', (string)REPLASH_UNDO_WINDOW_MIN, __('panel.shell.undo_' . $undo['why']));
+                } elseif ($reason === '') {
+                    $error = __('panel.shell.undo_reason_required');
+                } else {
+                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', sold_at = NULL, billable = 0 WHERE id = ? AND first_opened_at IS NULL");
+                    $upd->execute([$matchId]);
+                    replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason);
+                    $success = e($mRow['court'] . ' · ' . $mRow['time_slot'] . ' — ' . __('panel.shell.undone_ok'));
+                }
             }
         }
 
@@ -189,14 +200,16 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 $existing = $checkStmt->fetch();
 
                 if ($existing) {
-                    $soldAt = ($initialStatus === 'UNLOCKABLE') ? 'NOW()' : 'NULL';
-                    $billable = ($initialStatus === 'UNLOCKABLE') ? 1 : 0;
-                    $upd = $pdo->prepare("UPDATE matches SET status = ?, playback_url = ?, sold_at = " . ($initialStatus === 'UNLOCKABLE' ? 'NOW()' : 'sold_at') . ", billable = ? WHERE id = ?");
-                    $upd->execute([$initialStatus, $playbackUrl, $billable, $existing['id']]);
-                    if ($initialStatus === 'UNLOCKABLE') {
-                        $success = "{$court} ({$date} · {$slot}): " . __('panel.table.badge_sold') . "! " . __('find.status.verified_code') . " <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$existing['access_code']}</strong>";
+                    if ($existing['status'] === 'UNLOCKABLE') {
+                        // Zaten satılmış: satış saati değişmez, buradan geri alınamaz (includes/sales.php)
+                        $soldNotice = ['code' => $existing['access_code'], 'court' => $court, 'slot' => $slot];
+                    } elseif ($initialStatus === 'UNLOCKABLE') {
+                        $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', playback_url = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
+                        $upd->execute([$playbackUrl, $existing['id']]);
+                        replash_log_sale_event($pdo, $existing, 'sold', 'panel');
+                        $soldNotice = ['code' => $existing['access_code'], 'court' => $court, 'slot' => $slot];
                     } else {
-                        $success = "{$court} ({$date} · {$slot}): " . __('panel.table.badge_locked') . "!";
+                        $success = e("{$court} ({$date} · {$slot}): ") . e(__('panel.table.badge_locked')) . '!';
                     }
                 } else {
                     $slotStart = explode('–', $slot)[0];
@@ -211,27 +224,16 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                     $insMatch = $pdo->prepare("INSERT INTO matches 
                         (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, playback_type, thumbnail_url, duration_sec, sold_at, views, billable, sport, recorded_at, available_at) 
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mp4', 'assets/images/gen_hero_main.jpg', 3600, ?, 0, ?, ?, NOW(), NOW())");
-                    
                     $insMatch->execute([
-                        $matchId,
-                        $matchCode,
-                        $accessCode,
-                        $camId,
-                        $facility['id'],
-                        $court,
-                        $date,
-                        $slot,
-                        $initialStatus,
-                        $playbackUrl,
-                        $soldAtVal,
-                        $billableVal,
-                        $facility['sport']
+                        $matchId, $matchCode, $accessCode, $camId, $facility['id'], $court, $date, $slot,
+                        $initialStatus, $playbackUrl, $soldAtVal, $billableVal, $facility['sport']
                     ]);
 
                     if ($initialStatus === 'UNLOCKABLE') {
-                        $success = "{$court} ({$date} · {$slot}): " . __('panel.table.badge_sold') . "! " . __('find.status.verified_code') . " <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$accessCode}</strong>";
+                        replash_log_sale_event($pdo, ['id' => $matchId, 'facility_id' => $facility['id']], 'sold', 'panel');
+                        $soldNotice = ['code' => $accessCode, 'court' => $court, 'slot' => $slot];
                     } else {
-                        $success = "{$court} ({$date} · {$slot}): " . __('panel.table.badge_locked') . "!";
+                        $success = e("{$court} ({$date} · {$slot}): ") . e(__('panel.table.badge_locked')) . '!';
                     }
                 }
             }
@@ -407,6 +409,21 @@ if (isset($_SESSION['facility_id']) && $pdo) {
     }
 }
 
+// Sekmeler ve günlük görünüm (Bugün odaklı panel)
+$tab = in_array($_GET['tab'] ?? '', ['today', 'calendar', 'account'], true) ? $_GET['tab'] : 'today';
+$viewDay = (isset($_GET['day']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['day'])) ? $_GET['day'] : date('Y-m-d');
+$dayMatches = [];
+$undoCountMonth = 0;
+if (!empty($facility) && $pdo) {
+    $stmtDay = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND date = ? ORDER BY time_slot ASC, court ASC");
+    $stmtDay->execute([$facility['id'], $viewDay]);
+    $dayMatches = $stmtDay->fetchAll();
+    $undoCountMonth = replash_undo_count($pdo, $facility['id'], date('Y-m'));
+}
+$panelUrl = function (array $params = []) use ($tab, $viewDay) {
+    return 'index.php?' . http_build_query(array_merge(['tab' => $tab, 'day' => $viewDay], $params));
+};
+
 $internalShell = __('nav.panel');
 require_once __DIR__ . '/../includes/header.php';
 ?>
@@ -432,34 +449,36 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
     <?php else: ?>
-      <!-- Logged in Facility Dashboard -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <!-- Başlık + sekmeler (Bugün odaklı panel) -->
+      <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <div class="text-xs font-bold uppercase tracking-widest text-accent"><?= e($facility['name']) ?></div>
           <h1 class="font-display text-2xl font-bold"><?= e(__('panel.shell.title')) ?></h1>
-          <p class="text-xs text-white/40 mt-1"><?= e($facility['city']) ?> · <?= strtoupper(e($facility['sport'])) ?> · <?= e(__('panel.header.price_info')) ?> <?php
-            $priceParts = [];
-            foreach (get_facility_courts_data($facility) as $pc) { $priceParts[$pc['sport']] = __('panel.billing.sport_' . $pc['sport'], ucfirst($pc['sport'])) . ' ' . replash_money($pc['price'], 0); }
-            echo e(implode(' · ', $priceParts));
-          ?></p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="document.getElementById('manualSaleModal').classList.toggle('hidden')" class="px-3.5 py-2 rounded-xl bg-accent text-ink-900 font-bold text-xs shadow-glow hover:bg-accent-neon transition flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <?= e(__('panel.header.add_slot_btn')) ?>
-          </button>
-          <a href="?action=logout" class="rounded-xl border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-accent hover:text-accent">
-            <?= e(__('panel.shell.logout')) ?>
-          </a>
-        </div>
+        <a href="?action=logout" class="rounded-xl border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-accent hover:text-accent"><?= e(__('panel.shell.logout')) ?></a>
       </div>
 
+      <nav class="mb-6 inline-flex overflow-hidden rounded-full border border-white/10" aria-label="Panel">
+        <?php foreach (['today' => __('panel.shell.tab_today'), 'calendar' => __('panel.shell.tab_calendar'), 'account' => __('panel.shell.tab_account')] as $tk => $tl): ?>
+          <a href="index.php?tab=<?= $tk ?>" class="px-5 py-2.5 text-sm font-semibold transition <?= $tab === $tk ? 'bg-accent text-ink-900' : 'text-white/60 hover:text-white' ?>" <?= $tab === $tk ? 'aria-current="page"' : '' ?>><?= e($tl) ?></a>
+        <?php endforeach; ?>
+      </nav>
+
+      <?php if ($error): ?>
+        <div class="mb-5 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200"><?= e($error) ?></div>
+      <?php endif; ?>
       <?php if ($success): ?>
-        <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-emerald-300 text-sm font-medium mb-8 shadow-lg flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          </div>
-          <div><?= $success ?></div>
+        <div class="mb-5 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200"><?= $success ?></div>
+      <?php endif; ?>
+
+      <?php if ($soldNotice): ?>
+        <!-- Satış sonrası: kod büyük ve tek bakışta -->
+        <div class="mb-6 rounded-3xl border border-accent/40 bg-accent/[0.07] p-6 text-center sm:p-8">
+          <div class="text-sm font-semibold text-emerald-300">✓ <?= e(__('panel.shell.sold_title')) ?> · <?= e($soldNotice['court']) ?> · <?= e($soldNotice['slot']) ?></div>
+          <div class="mt-3 text-xs font-semibold uppercase tracking-widest text-white/50"><?= e(__('panel.shell.give_code')) ?></div>
+          <div class="mt-2 select-all font-mono text-4xl font-bold tracking-[0.18em] text-accent sm:text-6xl"><?= e($soldNotice['code']) ?></div>
+          <button type="button" data-copy="<?= e($soldNotice['code']) ?>" class="mt-5 rounded-xl border border-accent/40 px-5 py-2.5 text-sm font-semibold text-accent transition hover:bg-accent/10"><?= e(__('panel.shell.copy')) ?></button>
+          <p class="mt-4 text-xs text-white/40"><?= e(__('panel.shell.final_note')) ?> <?= e(str_replace('{m}', (string)REPLASH_UNDO_WINDOW_MIN, __('panel.shell.undo_left'))) ?></p>
         </div>
       <?php endif; ?>
 
@@ -520,6 +539,92 @@ require_once __DIR__ . '/../includes/header.php';
         </form>
       </div>
 
+      <?php if ($tab === 'today'): ?>
+        <!-- BUGÜN: personelin tek işi — satışı onayla, kodu ver -->
+        <?php
+          $dayTs = strtotime($viewDay);
+          $prevDay = date('Y-m-d', strtotime('-1 day', $dayTs));
+          $nextDay = date('Y-m-d', strtotime('+1 day', $dayTs));
+          $dayLabel = $viewDay === date('Y-m-d') ? __('panel.shell.today') : ($viewDay === date('Y-m-d', strtotime('-1 day')) ? __('panel.shell.yesterday') : '');
+        ?>
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <a href="index.php?tab=today&day=<?= $prevDay ?>" class="grid h-11 w-11 place-items-center rounded-xl border border-white/10 text-white/70 transition hover:border-accent hover:text-accent" aria-label="←">‹</a>
+            <div class="min-w-[170px] text-center">
+              <div class="font-display text-lg font-bold"><?= e(formatDateLocalized($viewDay, $current_lang)) ?></div>
+              <?php if ($dayLabel): ?><div class="text-xs text-white/40"><?= e($dayLabel) ?></div><?php endif; ?>
+            </div>
+            <a href="index.php?tab=today&day=<?= $nextDay ?>" class="grid h-11 w-11 place-items-center rounded-xl border border-white/10 text-white/70 transition hover:border-accent hover:text-accent" aria-label="→">›</a>
+            <?php if ($viewDay !== date('Y-m-d')): ?>
+              <a href="index.php?tab=today" class="ml-1 rounded-xl border border-white/10 px-3 py-2 text-xs text-white/60 hover:text-white"><?= e(__('panel.shell.today')) ?></a>
+            <?php endif; ?>
+          </div>
+          <button type="button" onclick="document.getElementById('manualSaleModal').classList.toggle('hidden')" class="rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white/80 transition hover:border-accent hover:text-accent">+ <?= e(__('panel.shell.add_match')) ?></button>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <?php if (empty($dayMatches)): ?>
+            <div class="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-10 text-center text-sm text-white/40"><?= e(__('panel.shell.no_matches')) ?></div>
+          <?php endif; ?>
+          <?php foreach ($dayMatches as $dm):
+            $slotParts = preg_split('/[–-]/u', (string)$dm['time_slot']);
+            $isSold = ($dm['status'] === 'UNLOCKABLE');
+            $undoState = replash_staff_undo_status($dm);
+          ?>
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border p-4 sm:p-5 <?= $isSold ? 'border-emerald-400/20 bg-emerald-400/[0.04]' : 'border-white/10 bg-white/[0.02]' ?>">
+              <div class="w-24 flex-none">
+                <div class="font-display text-2xl font-bold leading-none"><?= e(trim($slotParts[0] ?? '')) ?></div>
+                <div class="mt-1 text-xs text-white/40">– <?= e(trim($slotParts[1] ?? '')) ?></div>
+              </div>
+              <div class="min-w-[120px] flex-1">
+                <div class="text-base font-semibold"><?= e($dm['court']) ?></div>
+                <?php if ($isSold): ?>
+                  <span class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-bold text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span><?= e(__('panel.shell.sold_state')) ?></span>
+                <?php else: ?>
+                  <span class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[11px] font-bold text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-white/40"></span><?= e(__('panel.shell.waiting')) ?></span>
+                <?php endif; ?>
+              </div>
+
+              <?php if (!$isSold): ?>
+                <form action="<?= e($panelUrl()) ?>" method="POST" class="w-full sm:w-auto">
+                  <input type="hidden" name="action" value="mark_sold">
+                  <input type="hidden" name="match_id" value="<?= e($dm['id']) ?>">
+                  <button type="submit" class="w-full rounded-xl bg-accent px-7 py-3.5 text-base font-bold text-ink-900 shadow-glow-sm transition hover:bg-accent-neon active:scale-[0.98] sm:w-auto"><?= e(__('panel.shell.sell')) ?></button>
+                </form>
+              <?php else: ?>
+                <div class="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+                  <div class="text-right">
+                    <div class="text-[10px] uppercase tracking-widest text-white/40"><?= e(__('panel.shell.code')) ?></div>
+                    <div class="select-all font-mono text-xl font-bold tracking-wider text-accent"><?= e($dm['access_code']) ?></div>
+                  </div>
+                  <button type="button" data-copy="<?= e($dm['access_code']) ?>" class="rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white/80 transition hover:border-accent hover:text-accent"><?= e(__('panel.shell.copy')) ?></button>
+                </div>
+                <?php if ($undoState['allowed']): ?>
+                  <details class="w-full">
+                    <summary class="cursor-pointer text-xs text-white/40 hover:text-white/70"><?= e(__('panel.shell.undo')) ?> · <?= e(str_replace('{m}', (string)max(1, (int)ceil($undoState['seconds_left'] / 60)), __('panel.shell.undo_left'))) ?></summary>
+                    <form action="<?= e($panelUrl()) ?>" method="POST" class="mt-3 flex flex-wrap items-center gap-2">
+                      <input type="hidden" name="action" value="mark_locked">
+                      <input type="hidden" name="match_id" value="<?= e($dm['id']) ?>">
+                      <label class="sr-only" for="reason-<?= e($dm['id']) ?>"><?= e(__('panel.shell.undo_reason_label')) ?></label>
+                      <input id="reason-<?= e($dm['id']) ?>" name="reason" required maxlength="300" placeholder="<?= e(__('panel.shell.undo_reason_placeholder')) ?>" class="min-w-[220px] flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
+                      <button type="submit" class="rounded-xl border border-red-400/40 px-4 py-2.5 text-sm font-semibold text-red-200 transition hover:bg-red-400/10"><?= e(__('panel.shell.undo_submit')) ?></button>
+                    </form>
+                  </details>
+                <?php endif; ?>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <?php $ms = $monthStatement; ?>
+        <p class="mt-6 text-xs text-white/40">
+          <?= e(str_replace(['{n}', '{pct}', '{share}'], [$ms['valid_sales'], $ms['facility_pct'], replash_money($ms['facility_share'])], __('panel.shell.month_line'))) ?>
+          · <a href="index.php?tab=account" class="text-white/60 underline-offset-2 hover:underline"><?= e(__('panel.shell.tab_account')) ?> →</a>
+        </p>
+      <?php endif; ?>
+
+      <?php if ($tab === 'account'): ?>
+      <p class="mb-4 text-xs text-white/40"><?= e(str_replace('{n}', (string)$undoCountMonth, __('panel.shell.undo_count'))) ?> · <?= e(__('panel.shell.final_note')) ?></p>
       <!-- Revenue & Payment Overview Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex flex-col justify-between relative overflow-hidden">
@@ -690,6 +795,9 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
       </div>
 
+      <?php endif; ?>
+
+      <?php if ($tab === 'calendar'): ?>
       <!-- Matches & Slots Main Section -->
       <div class="space-y-8">
         
@@ -866,16 +974,7 @@ require_once __DIR__ . '/../includes/header.php';
                               <button type="submit" class="rounded-lg bg-accent px-3 py-1.5 text-xs font-bold text-ink-900"><?= e(__('panel.shell.sell')) ?></button>
                             </form>
                           <?php else: ?>
-                            <a href="<?= base_url('find.php?code=' . urlencode($m['access_code'])) ?>" target="_blank" class="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-accent hover:bg-white/10 font-semibold transition">
-                              <?= e(__('panel.table.action_watch')) ?> &rarr;
-                            </a>
-                            <form action="index.php" method="POST" class="inline-block" onsubmit="return confirm(<?= e(json_encode(__('panel.shell.relock_confirm'))) ?>);">
-                              <input type="hidden" name="action" value="mark_locked">
-                              <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
-                              <button type="submit" class="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-300 hover:bg-amber-500/20 font-semibold transition">
-                                <?= e(__('panel.table.action_relock', '🔒 Tekrar Kilitle')) ?>
-                              </button>
-                            </form>
+                            <span class="text-xs text-white/40">✓ <?= e(__('panel.shell.sold')) ?></span>
                           <?php endif; ?>
                         </div>
                       </td>
@@ -888,6 +987,8 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
       </div>
+
+      <?php endif; ?>
 
       <!-- Calendar Slot Detail & Actions Popup Modal -->
       <div id="calendarCourtPickerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm hidden p-4">
@@ -958,8 +1059,18 @@ require_once __DIR__ . '/../includes/header.php';
 </main>
 
 <?php if ($facility): ?>
+<script>
+  // Kodu kopyala (Bugün sekmesi ve satış sonrası ekran)
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+    var label = btn.textContent;
+    var done = function () { btn.textContent = <?= json_encode(__('panel.shell.copied')) ?>; setTimeout(function () { btn.textContent = label; }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(done, done); else done();
+  });
+</script>
 <!-- Chart.js Library for Graphical Analytics -->
-<script>var RELOCK_CONFIRM = <?= json_encode(__('panel.shell.relock_confirm')) ?>;</script>
+<script>var RELOCK_CONFIRM = <?= json_encode(__('panel.shell.relock_confirm')) ?>; var SOLD_LABEL = <?= json_encode(__('panel.shell.sold')) ?>;</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 function escapeHtml(text) {
@@ -1136,7 +1247,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           html += '<div class="flex items-center gap-2">';
           if (isUnlocked) {
-            html += '<form action="index.php" method="POST" onsubmit="return confirm(RELOCK_CONFIRM);"><input type="hidden" name="action" value="mark_locked"><input type="hidden" name="match_id" value="' + escapeHtml(m.id) + '"><button type="submit" class="px-3 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-semibold hover:bg-amber-500/25 transition">🔒 Kilitle</button></form>';
+            html += '<span class="text-xs text-white/40">✓ ' + escapeHtml(SOLD_LABEL) + '</span>';
           } else {
             html += '<form action="index.php" method="POST"><input type="hidden" name="action" value="mark_sold"><input type="hidden" name="match_id" value="' + escapeHtml(m.id) + '"><button type="submit" class="px-3 py-1.5 rounded-xl bg-accent text-ink-900 text-xs font-bold shadow-glow hover:bg-accent-neon transition">⚡ Kilidi Aç & Sat</button></form>';
           }

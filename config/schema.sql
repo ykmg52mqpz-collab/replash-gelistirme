@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `matches` (
   `source` VARCHAR(32) NOT NULL DEFAULT 'camera',
   `recorded_at` DATETIME NULL,
   `available_at` DATETIME NULL,
+  `first_opened_at` DATETIME NULL DEFAULT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   INDEX (`access_code`),
   INDEX (`facility_id`, `date`),
@@ -108,4 +109,17 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `key_name` VARCHAR(64) NOT NULL PRIMARY KEY,
   `value` LONGTEXT NULL,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Satış denetim kaydı (includes/sales.php) — kayıtlar silinmez
+CREATE TABLE IF NOT EXISTS `sale_events` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `match_id` VARCHAR(64) NOT NULL,
+  `facility_id` VARCHAR(64) NOT NULL,
+  `action` VARCHAR(20) NOT NULL,
+  `actor` VARCHAR(64) NOT NULL,
+  `reason` TEXT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (`facility_id`, `created_at`),
+  INDEX (`match_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

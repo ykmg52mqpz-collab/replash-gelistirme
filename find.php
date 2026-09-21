@@ -87,6 +87,11 @@ if ($pdo) {
             }
         }
 
+        // Oyuncu maçı kodla açtı: izlenme sayılır, satış kesinleşir (includes/sales.php)
+        if ($match && $codeValidated && $match['status'] === 'UNLOCKABLE') {
+            replash_record_match_open($pdo, $match['id']);
+        }
+
         $matchCameras = [];
         if ($match) {
             $camStmt = $pdo->prepare("SELECT * FROM cameras WHERE facility_id = ? AND court = ? ORDER BY id ASC");

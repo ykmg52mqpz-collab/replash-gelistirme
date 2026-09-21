@@ -46,8 +46,7 @@ try {
     }
 
     // Increment Views
-    $upd = $pdo->prepare("UPDATE matches SET views = views + 1 WHERE id = ?");
-    $upd->execute([$match['id']]);
+    replash_record_match_open($pdo, $match['id']);
 
     // Build dynamic playback URL with exact time & duration
     $rawPlayback = !empty($match['playback_url']) ? $match['playback_url'] : '';

@@ -73,6 +73,24 @@ class DB {
                 $pdo->exec("ALTER TABLE `cameras` ADD COLUMN `stream_url` TEXT NULL AFTER `channel_id`");
             }
 
+            // Sales control (includes/sales.php): first open finalizes a sale; append-only audit trail
+            if (!$pdo->query("SHOW COLUMNS FROM `matches` LIKE 'first_opened_at'")->fetch()) {
+                $pdo->exec("ALTER TABLE `matches` ADD COLUMN `first_opened_at` DATETIME NULL DEFAULT NULL");
+                // Already watched/downloaded sales are final
+                $pdo->exec("UPDATE `matches` SET `first_opened_at` = COALESCE(`sold_at`, `created_at`) WHERE `views` > 0");
+            }
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `sale_events` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `match_id` VARCHAR(64) NOT NULL,
+                `facility_id` VARCHAR(64) NOT NULL,
+                `action` VARCHAR(20) NOT NULL,
+                `actor` VARCHAR(64) NOT NULL,
+                `reason` TEXT NULL,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                INDEX (`facility_id`, `created_at`),
+                INDEX (`match_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
             // Ensure settings table exists
             $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
                 `key_name` VARCHAR(64) NOT NULL PRIMARY KEY,
