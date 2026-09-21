@@ -211,7 +211,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border-white/10 bg-white/5 text-white/50">
   <?= e(__('home.twoLayer.layer1.label')) ?>
   </div>
-  <span class="block font-display text-5xl font-bold leading-none text-accent md:text-6xl" data-countup="95" data-suffix="%">95%</span>
+  <span class="block font-display text-5xl font-bold leading-none text-accent md:text-6xl" data-countup="95" data-suffix="%" data-duration="3.5" data-ease="smooth">95%</span>
   <h3 class="font-display font-bold leading-tight text-white mt-2 text-xl md:text-2xl">
   <?= e(__('home.twoLayer.layer1.title')) ?>
   </h3>

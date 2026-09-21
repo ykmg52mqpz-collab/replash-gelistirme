@@ -213,46 +213,36 @@ require_once __DIR__ . '/includes/header.php';
   <?= e(__('howItWorks.steps.3.desc')) ?>
   </p>
   <div class="mt-5">
-  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
-  <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Auto-tagging</span>
+<!-- Gerçek tesis paneli: gün tablosu, personel "Kilidi aç"a basar -->
+<div class="overflow-hidden rounded-2xl border border-white/10 bg-white text-gray-900 shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
+  <div class="flex items-center gap-1.5 border-b border-gray-200 bg-gray-50 px-3 py-2">
+    <span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span>
+    <span lang="en" class="ml-3 font-mono text-[10px] uppercase tracking-widest text-gray-400">Replash · Panel</span>
   </div>
-  <div class="relative p-4">
-  <div class="mb-3 flex items-center gap-2 text-xs text-white/50">
-  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z">
-  </path>
-  <line x1="7" y1="7" x2="7.01" y2="7">
-  </line>
-  </svg>Recording · 00:47:12</div>
-  <div class="flex flex-col gap-2">
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0s">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Facility</span>
-  <span class="text-sm text-white/85">Example FC</span>
+  <div class="p-4">
+    <div class="mb-3 flex items-center justify-between text-xs">
+      <span class="font-semibold text-gray-900"><?= e(formatDateLocalized(date('Y-m-d'), $current_lang)) ?></span>
+      <span class="text-gray-500"><?= e(str_replace(['{t}', '{s}', '{l}'], [4, 1, 3], __('panel.shell.day_summary'))) ?></span>
+    </div>
+    <div class="overflow-hidden rounded-lg border border-gray-200">
+      <table class="w-full border-collapse text-left text-xs">
+        <thead><tr class="border-b border-gray-200 bg-gray-50 text-[10px] font-medium uppercase tracking-wide text-gray-500"><th class="w-24 px-3 py-2"><?= e(__('panel.shell.time_col')) ?></th><th class="px-3 py-2">Saha 1</th><th class="px-3 py-2">Saha 2</th></tr></thead>
+        <tbody>
+          <tr class="border-b border-gray-100"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">18:00–19:00</td><td class="px-3 py-2.5"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">R4TK-2M9P</div></div></td><td class="px-3 py-2.5 text-gray-300">—</td></tr>
+          <tr class="border-b border-gray-100 hwp-rowflash"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">19:00–20:00</td>
+            <td class="px-3 py-2.5"><div class="relative h-9">
+              <div class="hwp-a absolute inset-0 flex items-center"><div class="flex items-center gap-2"><span class="text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span><span class="hwp-press rounded-md bg-gray-900 px-2 py-1 text-[11px] font-medium text-white"><?= e(__('panel.shell.unlock')) ?></span></div></div>
+              <div class="hwp-b absolute inset-0 flex items-center"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">K7Q2-9XMB</div></div></div>
+              <svg class="hwp-cursor pointer-events-none absolute h-5 w-5 drop-shadow" style="left:92px;top:14px" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2l15 9-6.5 1.5L16 20l-2.5 1.2-3.4-7.3L5 18z" fill="#111" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            </div></td>
+            <td class="px-3 py-2.5"><div class="flex items-center gap-2"><span class="text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span><span class="rounded-md bg-gray-900 px-2 py-1 text-[11px] font-medium text-white"><?= e(__('panel.shell.unlock')) ?></span></div></td></tr>
+          <tr><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">20:00–21:00</td><td class="px-3 py-2.5"><div class="flex items-center gap-2"><span class="text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span><span class="rounded-md bg-gray-900 px-2 py-1 text-[11px] font-medium text-white"><?= e(__('panel.shell.unlock')) ?></span></div></td><td class="px-3 py-2.5 text-gray-300">—</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0.4s">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Date</span>
-  <span class="text-sm text-white/85">Tue · Nov 12</span>
-  </div>
-  <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 hw-chip" style="animation-delay:0.8s">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/45">Slot</span>
-  <span class="text-sm text-white/85">19:00 – 20:00</span>
-  </div>
-  </div>
-  <div class="mt-3 flex items-center gap-2 text-xs text-accent hw-indexed">
-  <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
-  </path>
-  </svg>Match indexed</div>
-  </div>
-  </div>
-  </div>
+</div>
+</div>
   </div>
   </div>
   <div class="relative flex gap-5"  data-reveal="up">
@@ -279,45 +269,30 @@ require_once __DIR__ . '/includes/header.php';
   <?= e(__('howItWorks.steps.4.desc')) ?>
   </p>
   <div class="mt-5">
-  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
-  <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Admin panel · Today</span>
+<!-- Gerçek tesis paneli: kilit açılınca kod kutusu, personel kodu oyuncuya verir -->
+<div class="overflow-hidden rounded-2xl border border-white/10 bg-white text-gray-900 shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
+  <div class="flex items-center gap-1.5 border-b border-gray-200 bg-gray-50 px-3 py-2">
+    <span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span>
+    <span lang="en" class="ml-3 font-mono text-[10px] uppercase tracking-widest text-gray-400">Replash · Panel</span>
   </div>
-  <div class="relative p-4">
-  <div class="mb-2 grid grid-cols-[80px_1fr_100px] gap-2 border-b border-white/[0.06] pb-2 font-mono text-[10px] uppercase tracking-widest text-white/40">
-  <span>Slot</span>
-  <span>Players</span>
-  <span class="text-right">Status</span>
+  <div class="p-4">
+    <div class="rounded-lg border border-gray-900 bg-white px-4 py-4">
+      <div class="text-xs text-gray-500"><?= e(__('panel.shell.sold_title')) ?> · Saha 1 · 19:00–20:00</div>
+      <div class="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.give_code')) ?></div>
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <span class="font-mono text-2xl font-bold tracking-[0.15em] text-gray-900 sm:text-3xl"><span class="hwp-char" style="animation-delay:0.00s">K</span><span class="hwp-char" style="animation-delay:0.12s">7</span><span class="hwp-char" style="animation-delay:0.24s">Q</span><span class="hwp-char" style="animation-delay:0.36s">2</span><span class="hwp-char" style="animation-delay:0.48s">-</span><span class="hwp-char" style="animation-delay:0.60s">9</span><span class="hwp-char" style="animation-delay:0.72s">X</span><span class="hwp-char" style="animation-delay:0.84s">M</span><span class="hwp-char" style="animation-delay:0.96s">B</span></span>
+        <span class="relative inline-grid rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700">
+          <span class="hwp-copy-a col-start-1 row-start-1"><?= e(__('panel.shell.copy')) ?></span>
+          <span class="hwp-copy-b col-start-1 row-start-1 font-medium text-emerald-700"><?= e(__('panel.shell.copied')) ?></span>
+        </span>
+      </div>
+    </div>
+    <div class="mt-3 flex items-center gap-2 text-[11px] text-gray-500">
+      <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span><span>Saha 1 · 19:00–20:00 · <?= e(__('panel.shell.sold_state')) ?></span>
+    </div>
   </div>
-  <div class="flex flex-col gap-1">
-  <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm" style="opacity:0.55">
-  <span class="text-white/80">18:00</span>
-  <span class="text-white/60">4/4</span>
-  <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-white/8 text-white/40">SOLD</span>
-  </div>
-  <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm hw-row">
-  <span class="text-white/80">19:00</span>
-  <span class="text-white/60">4/4</span>
-  <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider hw-badge">
-  <span class="hw-out" style="position:absolute">Pending</span>
-  <span class="hw-in">Unlockable</span>
-  </span>
-  </div>
-  <div class="grid grid-cols-[80px_1fr_100px] items-center gap-2 rounded-md px-2 py-2 text-sm">
-  <span class="text-white/80">20:00</span>
-  <span class="text-white/60">3/4</span>
-  <span class="justify-self-end rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-white/5 text-white/55">OPEN</span>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
+</div>
+</div>
   </div>
   </div>
   <div class="relative flex gap-5"  data-reveal="up">
@@ -344,45 +319,26 @@ require_once __DIR__ . '/includes/header.php';
   <?= e(__('howItWorks.steps.5.desc')) ?>
   </p>
   <div class="mt-5">
-  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
+<!-- Gerçek "Maçını bul" kartı: kod yazılır, Maçı izle -->
+<div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
   <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Find your match</span>
+    <span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span>
+    <span lang="en" class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">replash.it</span>
   </div>
-  <div class="relative p-4">
-  <div class="flex flex-col gap-2">
-  <div class="flex flex-col gap-1">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Facility</span>
-  <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:0s">Example FC</span>
+  <div class="p-4">
+    <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+      <div class="mb-3 flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
+        <span class="font-display text-base font-bold text-white"><?= e(__('find.watch.title')) ?></span>
+      </div>
+      <p class="mb-4 text-xs text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-white/60"><?= e(__('find.watch.codeLabel')) ?></span>
+      <div class="hwp-input mt-1.5 flex h-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] font-mono text-lg font-bold tracking-[0.3em] text-white"><span class="hwp-type">K7Q2-9XMB</span><span class="hwp-caret ml-0.5 h-5 w-px bg-accent"></span></div>
+      <div class="hwp-go mt-4 w-full rounded-xl bg-accent px-4 py-2.5 text-center text-sm font-bold text-ink-900"><?= e(__('find.watch.button')) ?></div>
+    </div>
   </div>
-  </div>
-  <div class="flex flex-col gap-1">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Date</span>
-  <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:0.8s">Nov 12</span>
-  </div>
-  </div>
-  <div class="flex flex-col gap-1">
-  <span class="font-mono text-[10px] uppercase tracking-widest text-white/40">Time slot</span>
-  <div class="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-sm">
-  <span class="text-white/85 hw-field" style="opacity:0.25;animation-delay:1.6s">19:00 – 20:00</span>
-  </div>
-  </div>
-  </div>
-  <div class="mt-3 flex items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm font-semibold text-ink-900 hw-watch" style="opacity:0.3">
-  <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-  <path d="M8 5v10l7-5-7-5z">
-  </path>
-  </svg>Watch match</div>
-  </div>
-  </div>
-  </div>
+</div>
+</div>
   </div>
   </div>
   <div class="relative flex gap-5"  data-reveal="up">
@@ -415,59 +371,51 @@ require_once __DIR__ . '/includes/header.php';
   <?= e(__('howItWorks.steps.6.desc')) ?>
   </p>
   <div class="mt-5">
-  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
+<!-- Gerçek oynatıcı: UNLOCKED, filigranlı video, aralık seç, Klip kes, paylaş -->
+<div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
   <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="h-2 w-2 rounded-full bg-white/15">
-  </span>
-  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Video player · Clip &amp; share</span>
+    <span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span>
+    <span lang="en" class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">replash.it · <?= e(__('find.watch.title')) ?></span>
   </div>
-  <div class="relative p-4">
-  <div class="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-[#0f2a1c]">
-  <svg class="absolute inset-0 h-full w-full opacity-30" viewBox="0 0 320 180" preserveAspectRatio="none">
-  <g stroke="rgba(255,255,255,0.3)" stroke-width="0.8" fill="none">
-  <rect x="10" y="12" width="300" height="156" rx="2">
-  </rect>
-  <line x1="160" y1="12" x2="160" y2="168">
-  </line>
-  <circle cx="160" cy="90" r="18">
-  </circle>
-  </g>
-  </svg>
-  <div class="absolute inset-0 flex items-center justify-center">
-  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
-  <svg class="h-4 w-4 translate-x-[1px] text-white" viewBox="0 0 20 20" fill="currentColor">
-  <path d="M8 5v10l7-5-7-5z">
-  </path>
-  </svg>
+  <div class="p-4">
+    <div class="mb-2 flex items-center gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5">
+      <span class="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold tracking-wide text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>UNLOCKED</span>
+      <span class="truncate font-mono text-[10px] text-white/70">Replash Demo Arena · Saha 1 · 19:00–20:00</span>
+    </div>
+    <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+      <img src="<?= asset('images/gen_football_night.jpg') ?>" alt="" loading="lazy" class="h-full w-full object-cover opacity-90">
+      <div class="absolute right-2.5 top-2 flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-white/90" style="text-shadow:0 1px 3px rgba(0,0,0,.6)">replash.it<img src="<?= asset('images/replash-logo.png') ?>" alt="" class="h-3.5 w-auto"></div>
+      <div class="absolute bottom-2 right-2.5 font-mono text-[8px] tracking-wider text-white/80" style="text-shadow:0 1px 3px rgba(0,0,0,.6)">REPLASH DEMO ARENA · SAHA 1</div>
+      <div class="absolute inset-0 flex items-center justify-center"><div class="hwp-playicon flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm"><svg class="h-4 w-4 translate-x-[1px] text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M8 5v10l7-5-7-5z"></path></svg></div></div>
+    </div>
+    <div class="mt-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+      <div class="flex items-center gap-2.5">
+        <span class="grid h-7 w-7 flex-none place-items-center rounded-full bg-accent text-ink-900"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <div class="relative h-1.5 flex-1 rounded-full bg-white/20">
+          <div class="absolute inset-y-0 left-0 w-[30%] rounded-full bg-accent"></div>
+          <div class="hw-clip absolute -bottom-1 -top-1 rounded border border-accent bg-accent/20" style="left:18%;width:8%"></div>
+        </div>
+        <span class="font-mono text-[10px] text-white/80">17:04 / 58:00</span>
+      </div>
+      <div class="mt-2 flex items-center justify-between gap-2">
+        <span class="hwp-cut rounded-full border border-white/10 px-2.5 py-1 text-[10px] font-semibold text-white/40"><?= e(__('find.watch.clip.label')) ?></span>
+        <span class="font-mono text-[10px] text-white/50">17:04 → 17:32 · 28s</span>
+      </div>
+    </div>
+    <div class="hw-share mt-2 flex items-center justify-between gap-2">
+      <div class="flex gap-1.5">
+        <span class="rounded-lg bg-accent px-2.5 py-1 text-[10px] font-bold text-ink-900"><?= e(__('find.modal.save_to_gallery')) ?></span>
+        <span class="rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold text-emerald-300"><?= e(__('find.modal.share_clip')) ?></span>
+      </div>
+      <div class="flex gap-1">
+        <span class="grid h-6 w-6 place-items-center rounded-md border border-[#25D366]/40 bg-[#25D366]/15 font-mono text-[8px] font-bold text-[#25D366]">WA</span>
+        <span class="grid h-6 w-6 place-items-center rounded-md border border-[#E1306C]/40 bg-[#E1306C]/15 font-mono text-[8px] font-bold text-[#E1306C]">IG</span>
+        <span class="grid h-6 w-6 place-items-center rounded-md border border-white/15 bg-white/10 font-mono text-[8px] font-bold text-white">TT</span>
+      </div>
+    </div>
   </div>
-  </div>
-  <div class="absolute inset-x-3 bottom-3">
-  <div class="relative h-1 rounded-full bg-white/15">
-  <div class="absolute top-0 h-1 rounded-full bg-accent hw-clip" style="left:18%;width:8%">
-  </div>
-  </div>
-  <div class="mt-1.5 flex justify-between font-mono text-[9px] uppercase tracking-widest text-white/50">
-  <span>17:04</span>
-  <span>17:32</span>
-  </div>
-  </div>
-  </div>
-  <div class="mt-3 flex items-center justify-between">
-  <span class="text-xs text-white/50">Clip 00:28</span>
-  <div class="flex items-center gap-2 hw-share">
-  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">IG</span>
-  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">TT</span>
-  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 font-mono text-[9px] font-bold uppercase text-white/70">WA</span>
-  <span class="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold text-ink-900">Share</span>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
+</div>
+</div>
   </div>
   </div>
   </div>

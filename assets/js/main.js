@@ -57,7 +57,9 @@
       var dur = (parseFloat(el.getAttribute('data-duration')) || 1.4) * 1000, start = performance.now();
       var tick = function (now) {
         var t = Math.min(1, (now - start) / dur);
-        fmt(el, Math.round(to * (1 - Math.pow(1 - t, 3))));
+        // data-ease="smooth": baştan sona eşit hızda, yavaş yavaş yükselir
+        var k = el.getAttribute('data-ease') === 'smooth' ? -(Math.cos(Math.PI * t) - 1) / 2 : 1 - Math.pow(1 - t, 3);
+        fmt(el, Math.round(to * k));
         if (t < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);

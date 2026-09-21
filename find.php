@@ -369,7 +369,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
           <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 px-4 py-2.5">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-emerald-300">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> UNLOCKABLE
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> UNLOCKED
             </span>
             <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
             <span class="ml-auto text-xs text-white/40"><?= e($match['views']) ?> <?= e(__('common.views')) ?></span>

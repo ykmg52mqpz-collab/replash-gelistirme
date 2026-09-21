@@ -290,9 +290,69 @@ h3.font-display {
 }
 @keyframes hw-share { 0%, 50%, 100% { opacity: 0.4; } 65%, 85% { opacity: 1; } }
 
+/* Nasıl Çalışır: gerçek panel ve oyuncu ekranlarından maketler (6 sn / 8 sn döngü) */
+.hwp-a       { animation: hwp-a 6s linear infinite; }
+.hwp-b       { opacity: 0; animation: hwp-b 6s linear infinite; }
+.hwp-press   { display: inline-block; animation: hwp-press 6s ease-in-out infinite; }
+.hwp-cursor  { opacity: 0; animation: hwp-cursor 6s ease-in-out infinite; }
+.hwp-rowflash { animation: hwp-rowflash 6s ease-in-out infinite; }
+.hwp-char    { display: inline-block; opacity: 0; animation: hwp-char 6s ease-out infinite both; }
+.hwp-copy-a  { animation: hwp-copy-a 6s linear infinite; }
+.hwp-copy-b  { opacity: 0; animation: hwp-copy-b 6s linear infinite; }
+.hwp-type    { display: inline-block; clip-path: inset(0 100% 0 0); animation: hwp-type 8s linear infinite; }
+.hwp-caret   { display: inline-block; animation: hw-blink 1s steps(1, end) infinite; }
+.hwp-input   { animation: hwp-input 8s linear infinite; }
+.hwp-go      { animation: hwp-go 8s ease-in-out infinite; }
+.hwp-cut     { animation: hwp-cut 6s ease-in-out infinite; }
+.hwp-playicon { animation: hwp-playicon 6s ease-in-out infinite; }
+
+@keyframes hwp-a { 0%, 42% { opacity: 1; } 48%, 92% { opacity: 0; } 98%, 100% { opacity: 1; } }
+@keyframes hwp-b { 0%, 42% { opacity: 0; } 48%, 92% { opacity: 1; } 98%, 100% { opacity: 0; } }
+@keyframes hwp-press {
+  0%, 36%, 46%, 100% { transform: scale(1); box-shadow: none; }
+  40% { transform: scale(0.9); box-shadow: 0 0 0 3px rgba(17,17,17,0.15); }
+}
+@keyframes hwp-cursor {
+  0% { opacity: 0; transform: translate(46px, 34px); }
+  10% { opacity: 1; transform: translate(46px, 34px); }
+  34% { opacity: 1; transform: translate(0, 0) scale(1); }
+  40% { opacity: 1; transform: translate(0, 0) scale(0.82); }
+  46% { opacity: 1; transform: translate(0, 0) scale(1); }
+  58%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+@keyframes hwp-rowflash { 0%, 44%, 92%, 100% { background-color: transparent; } 52%, 80% { background-color: rgb(236, 253, 245); } }
+@keyframes hwp-char {
+  0% { opacity: 0; transform: translateY(6px); }
+  6%, 88% { opacity: 1; transform: none; }
+  94%, 100% { opacity: 0; transform: none; }
+}
+@keyframes hwp-copy-a { 0%, 50% { opacity: 1; } 54%, 88% { opacity: 0; } 92%, 100% { opacity: 1; } }
+@keyframes hwp-copy-b { 0%, 50% { opacity: 0; } 54%, 88% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes hwp-type {
+  0%, 8% { clip-path: inset(0 100% 0 0); animation-timing-function: steps(9, end); }
+  36%, 70% { clip-path: inset(0 0 0 0); }
+  72%, 100% { clip-path: inset(0 100% 0 0); }
+}
+@keyframes hwp-input { 0%, 5% { border-color: rgba(255,255,255,0.1); } 8%, 60% { border-color: rgb(253,230,138); } 64%, 100% { border-color: rgba(255,255,255,0.1); } }
+@keyframes hwp-go {
+  0%, 44%, 56%, 100% { transform: scale(1); box-shadow: none; }
+  48% { transform: scale(0.96); box-shadow: 0 0 24px rgba(253,230,138,0.55); }
+  52% { transform: scale(1); box-shadow: 0 0 30px rgba(253,230,138,0.45); }
+}
+@keyframes hwp-cut {
+  0%, 55%, 100% { background: transparent; color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.1); }
+  62%, 92% { background: rgb(253,230,138); color: rgb(10,10,10); border-color: rgb(253,230,138); }
+}
+@keyframes hwp-playicon { 0%, 20%, 100% { opacity: 1; } 30%, 90% { opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
   .hw-slot, .hw-toggle, .hw-knob, .hw-blink, .hw-chip, .hw-indexed, .hw-row, .hw-badge,
-  .hw-out, .hw-in, .hw-field, .hw-watch, .hw-clip, .hw-share { animation: none; }
+  .hw-out, .hw-in, .hw-field, .hw-watch, .hw-clip, .hw-share,
+  .hwp-a, .hwp-b, .hwp-press, .hwp-cursor, .hwp-rowflash, .hwp-char, .hwp-copy-a, .hwp-copy-b,
+  .hwp-type, .hwp-caret, .hwp-input, .hwp-go, .hwp-cut, .hwp-playicon { animation: none; }
+  .hwp-a, .hwp-copy-b, .hwp-cursor { opacity: 0; }
+  .hwp-b, .hwp-char, .hwp-copy-a { opacity: 1; }
+  .hwp-type { clip-path: none; }
   .hw-chip, .hw-indexed, .hw-field, .hw-watch, .hw-share { opacity: 1 !important; }
   .hw-in { opacity: 0; }
 }
