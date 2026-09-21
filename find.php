@@ -671,6 +671,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="flex justify-between items-center text-neutral-300">
                   <span class="text-neutral-400"><?= e(__('find.modal.duration')) ?></span>
                   <span class="font-bold text-emerald-400" id="modal-clip-duration">0 <?= e(__('find.modal.seconds')) ?></span>
+                  <div id="modal-clip-status" class="mt-2 hidden text-xs text-white/60" aria-live="polite"></div>
                 </div>
                 <div class="flex justify-between items-center text-neutral-300">
                   <span class="text-neutral-400"><?= e(__('find.modal.format')) ?></span>
@@ -688,7 +689,7 @@ require_once __DIR__ . '/includes/header.php';
                     class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent py-3 px-3 text-xs font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition text-center"
                   >
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    <span><?= e(__('find.modal.download_mp4')) ?></span>
+                    <span id="modal-download-label"><?= e(__('find.modal.download_mp4')) ?></span>
                   </a>
 
                   <button 
@@ -936,7 +937,12 @@ var I18N = {
   copied: <?= json_encode(__('find.tools.copied')) ?>,
   preparingFile: <?= json_encode(__('find.modal.preparing_file')) ?>,
   fileShareNotSupported: <?= json_encode(__('find.modal.file_share_not_supported')) ?>,
-  clipRange: <?= json_encode(__('find.watch.clip.range')) ?>
+  clipRange: <?= json_encode(__('find.watch.clip.range')) ?>,
+  clipPreparing: <?= json_encode(__('find.modal.preparing_clip')) ?>,
+  clipReady: <?= json_encode(__('find.modal.clip_ready')) ?>,
+  clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
+  downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
+  downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
 var CLIP_MIN = 15, CLIP_MAX = 40; // Platform Brief v3.4: klip 15–40 sn
 
@@ -947,6 +953,155 @@ var isRecording = false;
 var recordStartTime = 0;
 var recordTimerInterval = null;
 var currentClip = null;
+
+
+// ===== Klip: seçilen aralığı tarayıcıda kaydet (kamera bulutunun kesim servisinden bağımsız) =====
+var clipRecorder = null, clipChunks = [], clipBlobUrl = null, liveClipMime = '';
+function clipVideoEl() { return document.querySelector('#clappr-player video'); }
+function clipMimeType() {
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  var types = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  for (var i = 0; i < types.length; i++) { if (MediaRecorder.isTypeSupported(types[i])) return types[i]; }
+  return '';
+}
+function clipCanCapture(el) {
+  if (!el || !(el.captureStream || el.mozCaptureStream) || !clipMimeType()) return false;
+  try {
+    var s = el.captureStream ? el.captureStream() : el.mozCaptureStream();
+    s.getTracks().forEach(function (t) { t.stop(); });
+    return true;
+  } catch (e) { return false; } // başka kaynaktan gelen (CORS izni olmayan) video kaydedilemez
+}
+// Kaydedilecek oynatıcı: önce ana oynatıcı; olmazsa CORS izni varsa sessiz gizli bir kopya
+async function clipPrepareSource() {
+  var v = clipVideoEl();
+  if (!v || !clipMimeType()) return null;
+  if (clipCanCapture(v)) return { el: v, hidden: false };
+  var src = v.currentSrc || v.src || '';
+  if (!/^https?:/i.test(src)) return null;
+  try {
+    var res = await fetch(src, { method: 'HEAD', mode: 'cors', cache: 'no-store' });
+    if (!res.ok) return null;
+  } catch (e) { return null; }
+  var loadHidden = function (url) {
+    var hv = document.createElement('video');
+    hv.crossOrigin = 'anonymous';
+    hv.playsInline = true;
+    hv.preload = 'auto';
+    hv.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+    hv.src = url;
+    document.body.appendChild(hv);
+    return new Promise(function (resolve) {
+      var settled = false;
+      var finish = function (ok) {
+        if (settled) return;
+        settled = true;
+        ok = ok && clipCanCapture(hv);
+        if (!ok) hv.remove();
+        resolve(ok ? hv : null);
+      };
+      hv.addEventListener('loadedmetadata', function () { finish(true); }, { once: true });
+      hv.addEventListener('error', function () { finish(false); }, { once: true });
+      setTimeout(function () { finish(false); }, 15000);
+    });
+  };
+  // Tarayıcı aynı videoyu CORS izni olmadan önbelleğe almış olabilir: gerekirse önbelleği atlayarak tekrar dene
+  var hv = await loadHidden(src) || await loadHidden(src + (src.indexOf('?') === -1 ? '?' : '&') + '_clip=' + Date.now());
+  if (!hv) return null;
+  return { el: hv, hidden: true };
+}
+function clipSetStatus(text) {
+  var el = document.getElementById('modal-clip-status');
+  if (!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('hidden', !text);
+}
+function clipStartRecorder(el, silent) {
+  var mime = clipMimeType();
+  var cap = el.captureStream ? el.captureStream() : el.mozCaptureStream();
+  var stream = cap;
+  if (silent) {
+    // Gizli kopyanın sesi hoparlöre gitmeden kayda alınır
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var dest = ctx.createMediaStreamDestination();
+      ctx.createMediaElementSource(el).connect(dest);
+      stream = new MediaStream(cap.getVideoTracks().concat(dest.stream.getAudioTracks()));
+      el._clipAudioCtx = ctx;
+    } catch (e) {
+      el.muted = true;
+      stream = new MediaStream(cap.getVideoTracks());
+    }
+  }
+  clipChunks = [];
+  clipRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 5000000 });
+  clipRecorder.ondataavailable = function (e) { if (e.data && e.data.size) clipChunks.push(e.data); };
+  clipRecorder.start(250);
+  return mime;
+}
+function clipFinishRecorder(mime) {
+  return new Promise(function (resolve) {
+    if (!clipRecorder || clipRecorder.state === 'inactive') { resolve(null); return; }
+    clipRecorder.onstop = function () { resolve(new Blob(clipChunks, { type: mime.split(';')[0] })); };
+    clipRecorder.stop();
+  });
+}
+function clipOfferBlob(clip, blob) {
+  if (!blob || !blob.size) return false;
+  if (clipBlobUrl) URL.revokeObjectURL(clipBlobUrl);
+  clipBlobUrl = URL.createObjectURL(blob);
+  var ext = blob.type.indexOf('mp4') !== -1 ? 'mp4' : 'webm';
+  clip.blob = blob;
+  clip.filename = 'replash_klip_' + formatTime(clip.start).replace(':', '') + '_' + clip.duration + 's.' + ext;
+  var dl = document.getElementById('modal-download-btn');
+  if (dl) { dl.href = clipBlobUrl; dl.setAttribute('download', clip.filename); dl.classList.remove('pointer-events-none', 'opacity-50'); }
+  var lbl = document.getElementById('modal-download-label');
+  if (lbl) lbl.textContent = I18N.downloadVideo + ' (' + ext.toUpperCase() + ')';
+  clipSetStatus(I18N.clipReady);
+  return true;
+}
+// Seçilen aralığı baştan sona oynatıp kaydeder (15–40 sn, gerçek zamanlı)
+async function cutClipInBrowser(clip) {
+  var dl = document.getElementById('modal-download-btn');
+  if (dl) dl.classList.add('pointer-events-none', 'opacity-50');
+  clipSetStatus(I18N.clipPreparing.replace('{s}', '0').replace('{t}', clip.duration));
+  var source = await clipPrepareSource();
+  if (!source) { clipFallbackToServer(); return; }
+  var v = source.el;
+  var cleanup = function () {
+    if (!source.hidden) return;
+    try { if (v._clipAudioCtx) v._clipAudioCtx.close(); } catch (e) {}
+    v.pause(); v.removeAttribute('src'); v.load(); v.remove();
+  };
+  var onSeeked = function () {
+    v.removeEventListener('seeked', onSeeked);
+    var mime;
+    try { mime = clipStartRecorder(v, source.hidden); } catch (err) { cleanup(); clipFallbackToServer(); return; }
+    v.playbackRate = 1;
+    var p = v.play(); if (p && p.catch) p.catch(function () {});
+    var tick = setInterval(function () {
+      var done = Math.max(0, Math.min(clip.duration, v.currentTime - clip.start));
+      clipSetStatus(I18N.clipPreparing.replace('{s}', Math.round(done)).replace('{t}', clip.duration));
+      if (v.currentTime >= clip.end || v.ended) {
+        clearInterval(tick);
+        v.pause();
+        clipFinishRecorder(mime).then(function (blob) {
+          cleanup();
+          if (!clipOfferBlob(clip, blob)) clipFallbackToServer();
+        });
+      }
+    }, 100);
+  };
+  if (!source.hidden) v.pause();
+  v.addEventListener('seeked', onSeeked);
+  v.currentTime = clip.start;
+}
+// Tarayıcı kaydı mümkün değilse: kamera bulutunun kesim servisi (sunucu indirmesi)
+function clipFallbackToServer() {
+  var dl = document.getElementById('modal-download-btn');
+  if (dl) dl.classList.remove('pointer-events-none', 'opacity-50');
+  clipSetStatus(I18N.clipServer);
+}
 
 function formatTime(s) {
   s = Math.max(0, Math.floor(s));
@@ -1011,6 +1166,7 @@ function createClipFromRangeInputs() {
   };
 
   openClipModal(currentClip);
+  cutClipInBrowser(currentClip);
 }
 
 function updateFullMatchDownloadLink() {
@@ -1083,6 +1239,8 @@ function startClipRecording() {
   }
   recordStartTime = Math.max(0, Math.floor(cur));
   isRecording = true;
+  liveClipMime = '';
+  if (clipCanCapture(clipVideoEl())) { try { liveClipMime = clipStartRecorder(clipVideoEl(), false); } catch (err) { liveClipMime = ''; } }
 
   try {
     if (!clapprPlayer.isPlaying()) {
@@ -1165,6 +1323,13 @@ function stopClipRecording() {
   };
 
   openClipModal(currentClip);
+  if (liveClipMime) {
+    var liveClip = currentClip;
+    clipFinishRecorder(liveClipMime).then(function (blob) { if (!clipOfferBlob(liveClip, blob)) clipFallbackToServer(); });
+    liveClipMime = '';
+  } else {
+    clipFallbackToServer();
+  }
 }
 
 function openClipModal(clip) {
@@ -1186,6 +1351,9 @@ function openClipModal(clip) {
     dlBtn.href = dlUrl;
     dlBtn.setAttribute('download', filename);
   }
+  var dlLabel = document.getElementById('modal-download-label');
+  if (dlLabel) dlLabel.textContent = I18N.downloadMp4;
+  clipSetStatus('');
 
   if (modal) modal.classList.remove('hidden');
 }
@@ -1198,6 +1366,7 @@ function closeClipModal() {
 // Helper to fetch the clip video file as a Blob/File
 async function getClipVideoFile() {
   if (!currentClip) return null;
+  if (currentClip.blob) return new File([currentClip.blob], currentClip.filename, { type: currentClip.blob.type });
   var matchId = <?= json_encode($match['id'] ?? '') ?>;
   var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
   var camId = currentClip.cameraId || ((cameraList[activeCameraIndex] && cameraList[activeCameraIndex].id) ? cameraList[activeCameraIndex].id : '');

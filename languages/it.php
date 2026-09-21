@@ -431,6 +431,10 @@ return [
             'copied' => 'Link della partita copiato!'
         ],
         'modal' => [
+                'preparing_clip' => 'Preparazione clip… {s}/{t} s',
+                'clip_ready' => 'Clip pronta.',
+                'clip_server' => 'La clip verrà scaricata dal server.',
+                'download_video' => 'Scarica clip',
             'title' => 'Clip Azione Pronta!',
             'desc' => 'Il frammento video selezionato è stato esportato in MP4',
             'court' => 'Campo / Struttura:',

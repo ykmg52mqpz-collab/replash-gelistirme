@@ -431,6 +431,10 @@ return [
             'copied' => 'Maç linki kopyalandı!'
         ],
         'modal' => [
+                'preparing_clip' => 'Klip hazırlanıyor… {s}/{t} sn',
+                'clip_ready' => 'Klip hazır.',
+                'clip_server' => 'Klip sunucudan indirilecek.',
+                'download_video' => 'Klibi indir',
             'title' => 'Pozisyon Klibi Hazır!',
             'desc' => 'Belirlediğiniz aralık MP4 olarak kesildi',
             'court' => 'Saha / Kort:',

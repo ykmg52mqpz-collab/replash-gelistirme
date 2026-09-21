@@ -431,6 +431,10 @@ return [
             'copied' => 'Match link copied!'
         ],
         'modal' => [
+                'preparing_clip' => 'Preparing clip… {s}/{t} s',
+                'clip_ready' => 'Clip ready.',
+                'clip_server' => 'The clip will be downloaded from the server.',
+                'download_video' => 'Download clip',
             'title' => 'Action Clip Ready!',
             'desc' => 'Your trimmed clip has been exported as MP4',
             'court' => 'Pitch / Court:',
