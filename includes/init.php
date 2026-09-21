@@ -252,7 +252,7 @@ function formatDateLocalized($dateStr, $lang = null) {
  * Example output:
  * https://cloud.kamerabulutkayit.com/cameras/59/streaming/main.mp4?authorization=Basic%20YWRtaW46&time=2026-09-11T22:00:00&duration=01:00:00
  */
-function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600, $download = false, $filename = 'replash.mp4', $startOffsetSec = 0) {
+function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600, $download = false, $filename = 'replash.mp4', $startOffsetSec = 0, $exactDuration = false) {
     if (empty($streamUrl)) {
         return ''; // kaynak yok: çağıran taraf "video bulunamadı" gösterir
     }
@@ -280,8 +280,9 @@ function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600
         $date = date('Y-m-d', $slotStartTime);
     }
 
-    // Calculate duration in seconds if end time is given and not a custom clip
-    if ($startOffsetSec == 0 && !empty($endRaw) && preg_match('/^\d{1,2}:\d{2}/', $endRaw)) {
+    // Tam maç: süre slotun bitişinden hesaplanır. Klip ($exactDuration): istenen süre korunur
+    // (0. saniyeden başlayan 20 sn'lik klip tüm maça dönüşmesin)
+    if (!$exactDuration && $startOffsetSec == 0 && !empty($endRaw) && preg_match('/^\d{1,2}:\d{2}/', $endRaw)) {
         $endTime = strtotime("{$date} {$endRaw}:00");
         if ($endTime && $slotStartTime && $endTime > $slotStartTime) {
             $durationSec = $endTime - $slotStartTime;

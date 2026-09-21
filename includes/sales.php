@@ -204,7 +204,11 @@ const REPLASH_LOGIN_WINDOW_MIN = 15;
  * Ready = recording reported by the camera (available_at), or, for time-window cloud playback,
  * the slot ended PROCESSING_MINUTES ago and the court has a camera.
  */
-const REPLASH_DELAY_GRACE_MIN = 30; // after the estimate, show "taking longer than expected"
+const REPLASH_DELAY_GRACE_MIN = 30;
+
+/** Klip süresi sınırları (saniye) — oyuncu sayfası ve video API'si aynı değeri kullanır. */
+const REPLASH_CLIP_MIN = 15;
+const REPLASH_CLIP_MAX = 40; // after the estimate, show "taking longer than expected"
 
 /** [start, end] timestamps of a match slot like "21:00–22:00" (end may be 24:00). */
 function replash_slot_bounds(array $match): array {

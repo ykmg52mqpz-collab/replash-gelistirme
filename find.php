@@ -975,7 +975,7 @@ var I18N = {
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
-var CLIP_MIN = 15, CLIP_MAX = 40; // Platform Brief v3.4: klip 15–40 sn
+var CLIP_MIN = <?= REPLASH_CLIP_MIN ?>, CLIP_MAX = <?= REPLASH_CLIP_MAX ?>; // tek kaynak: includes/sales.php
 
 var cameraList = <?= json_encode($cameraList) ?>;
 var activeCameraIndex = 0;
