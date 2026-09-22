@@ -210,6 +210,30 @@ return [
         ]
     ],
     'howItWorks' => [
+        'guide' => [
+            'players' => 'Oyuncular için',
+            'facilities' => 'Tesisler için',
+            'demo' => 'Gerçek ekranlar',
+            'demo_sub' => 'Personel paneli, kod girişi ve oyuncu ekranı: sitede kullanılanların aynısı.',
+            'faq' => 'Sık sorulanlar',
+            'p' => [
+                '1' => ['t' => 'Kodunu tesisten al', 'd' => 'Maç videosunu resepsiyonda satın al; 4 haneli maç kodunu al.'],
+                '2' => ['t' => 'Maçını izle', 'd' => 'replash.it’de kodu gir; saha ve saati kontrol et, kaydı aç.'],
+                '3' => ['t' => 'Anını seç ve paylaş', 'd' => '15–40 saniyelik aralığı seç, klibi kaydet ya da paylaş.'],
+            ],
+            'f' => [
+                '1' => ['t' => 'Kurulum ve kayıt', 'd' => 'Replash kameraları kurar; her maç kendiliğinden kaydedilir.'],
+                '2' => ['t' => 'Satış ve erişim', 'd' => 'Personel ödemeyi alır, panelden tek dokunuşla açar ve kodu verir. Maçtan önce de satılabilir.'],
+                '3' => ['t' => 'Gelir takibi', 'd' => 'Satışlar ve sözleşmedeki pay panelde; ay sonunda döküm hazır.'],
+            ],
+            'q' => [
+                '1' => ['q' => 'Fiyatı nereden öğrenirim?', 'a' => 'Fiyatı tesis belirler ve resepsiyonda söyler; video kişi başına değil, maç başına satılır.'],
+                '2' => ['q' => 'Kodum çalışmıyorsa ne yaparım?', 'a' => 'Kodu 4 hane olarak tekrar gir. Yine açılmazsa resepsiyona sor: maçın kilidi açılmamış ya da süresi dolmuş olabilir. Video henüz hazırlanıyorsa sayfa bunu gösterir.'],
+                '3' => ['q' => 'Maçıma ne zamana kadar erişirim?', 'a' => 'Maç bitiminden 7 gün sonrasına kadar; kesin tarih ve saat video sayfasında yazar. İndirdiğin dosyalar cihazında kalır.'],
+                '4' => ['q' => 'Klibi nasıl indiririm?', 'a' => 'Zaman çizelgesinde 15–40 saniyelik aralığı seç ve Klip kes’e bas; klip hazır olunca Galeriye kaydet ya da Paylaş’ı kullan.'],
+                '5' => ['q' => 'Paylaşınca neye erişim vermiş olurum?', 'a' => 'Klip paylaşırsan yalnızca o video dosyasını gönderirsin. Maç linkini paylaşırsan linki alan herkes maçın tamamını izleyebilir.'],
+            ],
+        ],
         'flow' => [
             '1' => ['label' => 'Adım 1', 'title' => 'Maç oynanır, Replash kaydeder', 'desc' => 'Sahaya kurulan sabit kameralar maçın tamamını baştan sona kaydeder. Tuş yok, başlat/durdur yok, personel hiçbir şey yapmaz.'],
             '2' => ['label' => 'Adım 2', 'title' => 'Resepsiyon kilidi açar, kodu verir', 'desc' => 'Takım videoyu istediğinde personel ödemeyi alır ve panelden tek dokunuşla kilidi açar. Ekranda 4 haneli maç kodu çıkar; tüm takım için tek kod. Satış maçtan önce de yapılabilir, video hazır olunca kod kendiliğinden çalışır.'],

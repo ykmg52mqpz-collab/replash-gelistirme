@@ -210,6 +210,30 @@ return [
         ]
     ],
     'howItWorks' => [
+        'guide' => [
+            'players' => 'Para jugadores',
+            'facilities' => 'Para centros',
+            'demo' => 'Las pantallas reales',
+            'demo_sub' => 'Panel del personal, introducción del código y pantalla del jugador: exactamente lo que funciona en el sitio.',
+            'faq' => 'Preguntas frecuentes',
+            'p' => [
+                '1' => ['t' => 'Consigue tu código en recepción', 'd' => 'Compra el vídeo del partido en recepción y recibe tu código de 4 cifras.'],
+                '2' => ['t' => 'Mira tu partido', 'd' => 'Introduce el código en replash.it, comprueba pista y hora y abre la grabación.'],
+                '3' => ['t' => 'Elige tu momento y comparte', 'd' => 'Elige un tramo de 15–40 segundos, guarda el clip o compártelo.'],
+            ],
+            'f' => [
+                '1' => ['t' => 'Instalación y grabación', 'd' => 'Replash instala las cámaras; cada partido se graba automáticamente.'],
+                '2' => ['t' => 'Venta y acceso', 'd' => 'El personal cobra, lo desbloquea en el panel con un toque y da el código. También se puede vender antes del partido.'],
+                '3' => ['t' => 'Seguimiento de ingresos', 'd' => 'Las ventas y tu parte acordada están en el panel; el resumen está listo a fin de mes.'],
+            ],
+            'q' => [
+                '1' => ['q' => '¿Dónde veo el precio?', 'a' => 'El precio lo fija el centro y te lo dice en recepción; el vídeo se vende por partido, no por persona.'],
+                '2' => ['q' => '¿Y si mi código no funciona?', 'a' => 'Vuelve a escribir las 4 cifras. Si sigue sin abrir, pregunta en recepción: puede que el partido no esté desbloqueado o haya caducado. Si el vídeo aún se está preparando, la página te lo indica.'],
+                '3' => ['q' => '¿Hasta cuándo puedo ver mi partido?', 'a' => 'Hasta 7 días después del final del partido; la fecha y hora exactas aparecen en la página del vídeo. Los archivos que descargues se quedan en tu dispositivo.'],
+                '4' => ['q' => '¿Cómo descargo un clip?', 'a' => 'Selecciona un tramo de 15–40 segundos en la línea de tiempo y pulsa Cortar; cuando esté listo, usa Guardar en la galería o Compartir.'],
+                '5' => ['q' => '¿A qué doy acceso al compartir?', 'a' => 'Si compartes un clip, solo envías ese archivo de vídeo. Si compartes el enlace del partido, quien lo reciba puede ver el partido completo.'],
+            ],
+        ],
         'flow' => [
             '1' => ['label' => 'Paso 1', 'title' => 'Se juega el partido, Replash lo graba', 'desc' => 'Las cámaras fijas de la pista graban el partido entero de principio a fin. Sin botones, sin iniciar/parar, el personal no tiene que hacer nada.'],
             '2' => ['label' => 'Paso 2', 'title' => 'Recepción lo desbloquea y da el código', 'desc' => 'Cuando el equipo quiere el vídeo, el personal cobra y lo desbloquea en el panel con un toque. Aparece un código de partido de 4 cifras, uno para todo el equipo. También se puede vender antes del partido: el código funciona en cuanto el vídeo está listo.'],

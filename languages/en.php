@@ -210,6 +210,30 @@ return [
         ]
     ],
     'howItWorks' => [
+        'guide' => [
+            'players' => 'For players',
+            'facilities' => 'For facilities',
+            'demo' => 'The real screens',
+            'demo_sub' => 'Staff panel, code entry and player screen: exactly what runs on the site.',
+            'faq' => 'Common questions',
+            'p' => [
+                '1' => ['t' => 'Get your code at the desk', 'd' => 'Buy the match video at reception and get your 4-digit match code.'],
+                '2' => ['t' => 'Watch your match', 'd' => 'Enter the code on replash.it, check the court and time, and open the recording.'],
+                '3' => ['t' => 'Pick your moment and share', 'd' => 'Choose a 15–40 second range, save the clip or share it.'],
+            ],
+            'f' => [
+                '1' => ['t' => 'Setup and recording', 'd' => 'Replash installs the cameras; every match is recorded automatically.'],
+                '2' => ['t' => 'Sale and access', 'd' => 'Staff take payment, unlock it in the panel with one tap and give the code. It can also be sold before the match.'],
+                '3' => ['t' => 'Revenue tracking', 'd' => 'Sales and your agreed share are in the panel; the statement is ready at month-end.'],
+            ],
+            'q' => [
+                '1' => ['q' => 'Where do I find the price?', 'a' => 'The facility sets the price and tells you at reception; the video is sold per match, not per person.'],
+                '2' => ['q' => 'What if my code doesn\'t work?', 'a' => 'Re-enter the 4 digits. If it still won\'t open, ask at reception: the match may not be unlocked or may have expired. If the video is still being prepared, the page tells you.'],
+                '3' => ['q' => 'How long can I access my match?', 'a' => 'Up to 7 days after the match ends; the exact date and time are shown on the video page. Files you download stay on your device.'],
+                '4' => ['q' => 'How do I download a clip?', 'a' => 'Select a 15–40 second range on the timeline and press Cut a clip; when it is ready, use Save to gallery or Share.'],
+                '5' => ['q' => 'What do I give access to when I share?', 'a' => 'Sharing a clip sends only that video file. Sharing the match link lets anyone with the link watch the whole match.'],
+            ],
+        ],
         'flow' => [
             '1' => ['label' => 'Step 1', 'title' => 'The match is played, Replash records it', 'desc' => 'Fixed cameras on the court record the whole match from start to finish. No buttons, no start/stop, nothing for staff to do.'],
             '2' => ['label' => 'Step 2', 'title' => 'The front desk unlocks it and gives the code', 'desc' => 'When the team wants the video, staff take payment and unlock it in the panel with one tap. A 4-digit match code appears, one code for the whole team. You can also sell before the match; the code works as soon as the video is ready.'],
