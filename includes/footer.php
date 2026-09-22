@@ -56,6 +56,6 @@
   </a>
   <?php endif; ?>
   <?php endif; ?>
-  <script src="<?= asset('js/main.js') ?>?v=<?= time() ?>"></script>
+  <script src="<?= asset('js/main.js') ?>?v=<?= @filemtime(REPLASH_ROOT . '/assets/js/main.js') ?>"></script>
 </body>
 </html>

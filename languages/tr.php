@@ -1,6 +1,7 @@
 <?php
 return [
     'nav' => [
+        'menu' => 'Menü',
         'home' => 'Ana Sayfa',
         'howItWorks' => 'Nasıl Çalışır',
         'forFacilities' => 'Sahalar İçin',
@@ -406,6 +407,7 @@ return [
         ]
     ],
     'common' => [
+        'close' => 'Kapat',
         'csrf_failed' => 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.',
         'loading' => 'Yükleniyor...',
         'all_rights_reserved' => 'Tüm hakları saklıdır.',

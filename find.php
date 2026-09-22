@@ -649,7 +649,7 @@ require_once __DIR__ . '/includes/header.php';
           <p class="mt-4 text-xs text-white/35"><?= e($expiresText) ?></p>
 
           <!-- Clip Output Ready Modal -->
-          <div id="clip-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div id="clip-modal" role="dialog" aria-modal="true" aria-labelledby="modal-clip-title" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
             <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/15 bg-ink-800 max-w-md w-full shadow-2xl relative text-left">
               
               <div class="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
@@ -662,7 +662,7 @@ require_once __DIR__ . '/includes/header.php';
                     <p id="modal-clip-desc" class="text-xs text-neutral-400"><?= e(__('find.modal.desc')) ?></p>
                   </div>
                 </div>
-                <button type="button" onclick="closeClipModal()" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white flex items-center justify-center transition">&times;</button>
+                <button type="button" onclick="closeClipModal()" aria-label="<?= e(__('common.close', 'Close')) ?>" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white flex items-center justify-center transition">&times;</button>
               </div>
 
               <!-- Clip Details -->
@@ -953,7 +953,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <?php if ($match && $match['status'] === 'UNLOCKABLE' && $codeValidated && $videoReady): ?>
 <!-- Clappr Video Player Integration & Multi-Camera Switcher & Clip Recording -->
-<script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clappr@0.3.13/dist/clappr.min.js"></script>
 <script>
 var I18N = {
   btnStart: <?= json_encode(__('find.tools.live_record_btn', 'Canlı Kayıt')) ?>,
@@ -1522,12 +1522,23 @@ function openClipModal(clip) {
   var steps = document.getElementById('modal-social-steps');
   if (steps) steps.classList.add('hidden');
 
-  if (modal) modal.classList.remove('hidden');
+  if (modal) {
+    clipModalReturnFocus = document.activeElement;
+    modal.classList.remove('hidden');
+    var closeBtn = modal.querySelector('button[onclick="closeClipModal()"]');
+    if (closeBtn) closeBtn.focus();
+  }
 }
+var clipModalReturnFocus = null;
+document.addEventListener('keydown', function (e) {
+  var modal = document.getElementById('clip-modal');
+  if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeClipModal();
+});
 
 function closeClipModal() {
   var modal = document.getElementById('clip-modal');
   if (modal) modal.classList.add('hidden');
+  if (clipModalReturnFocus && clipModalReturnFocus.focus) clipModalReturnFocus.focus();
 }
 
 // Helper to fetch the clip video file as a Blob/File

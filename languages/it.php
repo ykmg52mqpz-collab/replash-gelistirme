@@ -1,6 +1,7 @@
 <?php
 return [
     'nav' => [
+        'menu' => 'Menu',
         'home' => 'Home',
         'howItWorks' => 'Come Funziona',
         'forFacilities' => 'Per i Centri',
@@ -406,6 +407,7 @@ return [
         ]
     ],
     'common' => [
+        'close' => 'Chiudi',
         'csrf_failed' => 'Verifica di sicurezza non riuscita. Aggiorna la pagina e riprova.',
         'loading' => 'Caricamento...',
         'all_rights_reserved' => 'Tutti i diritti riservati.',

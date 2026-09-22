@@ -64,6 +64,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         extend: {
           colors: {
             ink: {
+              950: "#050505",
               900: "#0A0A0A",
               800: "#131313",
               700: "#1a1709",
@@ -149,7 +150,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
           <?php endif; ?>
 
           <!-- Mobile Hamburger Toggle -->
-          <button type="button" id="mobile-menu-btn" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white md:hidden" aria-label="Toggle menu">
+          <button type="button" id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="<?= e(__('nav.menu', 'Menu')) ?>" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white md:hidden" aria-label="Toggle menu">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>

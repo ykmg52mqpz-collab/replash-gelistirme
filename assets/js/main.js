@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobile-menu');
   if (mobileToggleBtn && mobileMenu) {
     mobileToggleBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      mobileToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   }
 

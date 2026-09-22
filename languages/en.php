@@ -1,6 +1,7 @@
 <?php
 return [
     'nav' => [
+        'menu' => 'Menu',
         'home' => 'Home',
         'howItWorks' => 'How It Works',
         'forFacilities' => 'For Facilities',
@@ -406,6 +407,7 @@ return [
         ]
     ],
     'common' => [
+        'close' => 'Close',
         'csrf_failed' => 'Security check failed. Please refresh the page and try again.',
         'loading' => 'Loading...',
         'all_rights_reserved' => 'All rights reserved.',

@@ -64,34 +64,34 @@ require_once __DIR__ . '/includes/header.php';
   <div class="hidden" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
   <div class="grid gap-5 sm:grid-cols-2">
   <div class="flex flex-col gap-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-name" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.name')) ?>
   </label>
-  <input type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="name"/>
+  <input id="contact-name" type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="name"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-facility-name" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.facilityName')) ?>
   </label>
-  <input type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="facility_name"/>
+  <input id="contact-facility-name" type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="facility_name"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-email" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.email')) ?>
   </label>
-  <input type="email" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="email"/>
+  <input id="contact-email" type="email" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="email"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-phone" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.phone')) ?>
   </label>
-  <input type="tel" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="phone"/>
+  <input id="contact-phone" type="tel" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="phone"/>
   </div>
   <div class="flex flex-col gap-2 sm:col-span-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-sport" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.sport')) ?>
   </label>
-  <select name="sport" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
+  <select id="contact-sport" name="sport" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
   <option value="" disabled="" class="bg-ink-900" selected="">—</option>
   <option value="football" class="bg-ink-900">
   <?= e(__('contact.fields.sportOptions.football')) ?>
@@ -106,10 +106,10 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </div>
   <div class="mt-5 flex flex-col gap-2">
-  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label for="contact-message" class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.message')) ?>
   </label>
-  <textarea name="message" rows="4" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
+  <textarea id="contact-message" name="message" rows="4" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
   </textarea>
   </div>
   <button type="submit" class="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-ink-900 shadow-glow transition hover:bg-accent-neon active:scale-[0.98] sm:w-auto">
