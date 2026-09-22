@@ -3,6 +3,7 @@
  * Global Initialization File
  */
 
+require_once __DIR__ . '/compat.php'; // PHP 7.x uyumluluğu, her şeyden önce
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/billing.php';
