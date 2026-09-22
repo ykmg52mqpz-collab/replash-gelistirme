@@ -114,7 +114,7 @@ return [
                     'desc' => 'Ogni video acquistato genera valore sia per i giocatori che per il tuo centro.'
                 ],
                 '5' => [
-                    'title' => 'Zero Complessità',
+                    'title' => 'Semplice per lo Staff',
                     'desc' => 'Replash gestisce telecamere, archiviazione e consegna. Il tuo team compie una sola azione semplice per ogni vendita.'
                 ],
                 '6' => [
@@ -157,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => 'Ci sono costi anticipati o vincoli contrattuali?',
-                    'a' => 'No. Replash copre il 100% del costo. Telecamere, installazione, manutenzione, aggiornamenti software. Nessun canone mensile. L\'impegno minimo è di 6 mesi. Per tutta la durata del contratto, il tuo centro riceve la stessa quota di ricavi concordata ogni mese.'
+                    'a' => 'Nessun costo iniziale: Replash copre telecamere, installazione, manutenzione e aggiornamenti software, senza canone mensile. L’accordo ha una durata minima di 6 mesi; per tutta la durata il tuo centro riceve ogni mese la quota di ricavi concordata.'
                 ],
                 '3' => [
                     'q' => 'Come funziona la divisione dei ricavi con il centro?',
-                    'a' => 'Alla fine di ogni mese, tutti i video sbloccati vengono tracciati dal pannello di amministrazione. La quota definita nel tuo contratto resta al tuo centro; l\'importo rimanente viene pagato a Replash a fine mese. Più i tuoi campi sono attivi, più il tuo centro guadagna — ogni nuova partita è un ricavo aggiuntivo. Tutto viene riconciliato automaticamente dal pannello. Con zero costi operativi da parte tua.'
+                    'a' => 'Alla fine di ogni mese ogni video venduto compare nel pannello. La quota prevista dal tuo accordo resta al centro; il resto viene pagato a Replash a fine mese. Il rendiconto mensile viene dal pannello: vendite valide, la tua quota e quella di Replash. Più i campi sono usati, più il tuo centro guadagna.'
                 ],
                 '4' => [
                     'q' => 'Il mio staff deve fare qualcosa per ogni partita?',
@@ -169,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => 'Cosa succede se una telecamera si rompe o c\'è un problema tecnico?',
-                    'a' => 'Replash monitora tutte le telecamere 24/7. In rari casi di guasto, il nostro team di supporto viene notificato automaticamente e risolve il problema da remoto. Di solito in poche ore. Se una registrazione viene persa, quella vendita non appare nel tuo report e non viene addebitata.'
+                    'a' => 'Il pannello del centro mostra l’ultimo segnale di ogni telecamera e Replash controlla l’arrivo delle registrazioni. Se una telecamera si guasta, la ripariamo da remoto quando possibile o pianifichiamo un intervento. Una partita senza registrazione non si può vendere, quindi non compare nel tuo report.'
                 ],
                 '6' => [
                     'q' => 'Quanto velocemente possiamo iniziare?',
@@ -185,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => 'E se non abbiamo una connessione WiFi forte?',
-                    'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
+                    'a' => 'Le telecamere mantengono un breve buffer locale: le brevi interruzioni di solito vengono recuperate, quelle lunghe possono far perdere parte della registrazione. Per campi all’aperto senza Wi-Fi si può usare una connessione LTE/SIM dove la copertura lo consente. Verifichiamo la connessione durante il sopralluogo.'
                 ],
                 '10' => [
                     'q' => 'E il GDPR?',
-                    'a' => 'Replash è pienamente conforme a GDPR, CEDU Articolo 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). È in atto un modello di notifica a tre livelli (segnaletica all\'ingresso + QR + notifica prenotazione). Un file Privacy & Legal Justification viene fornito prima dell\'installazione.'
+                    'a' => 'Replash è progettato secondo il GDPR e le indicazioni del Garante sulla videosorveglianza: le telecamere inquadrano solo l’area di gioco, senza audio né riconoscimento facciale, e i video si chiudono dopo 3 giorni se non venduti o 7 se venduti. Base giuridica e informative (cartello all’ingresso, QR, avviso di prenotazione) vengono concordate con ogni centro prima dell’installazione.'
                 ],
                 '12' => [
                     'q' => 'E se non abbiamo una connessione WiFi forte?',
-                    'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
+                    'a' => 'Le telecamere mantengono un breve buffer locale: le brevi interruzioni di solito vengono recuperate, quelle lunghe possono far perdere parte della registrazione. Per campi all’aperto senza Wi-Fi si può usare una connessione LTE/SIM dove la copertura lo consente. Verifichiamo la connessione durante il sopralluogo.'
                 ]
             ],
             'categories' => [
@@ -218,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Come Funziona',
-            'title' => 'Sei semplici passi. Zero complessità per il tuo team.',
-            'subtitle' => 'Dal calcio d\'inizio al replay, Replash gestisce tutto nel mezzo. Sotto: ogni passo spiegato, con la partita di padel di Marco di martedì sera come esempio concreto.'
+            'title' => 'Tre passi per il giocatore. Un tocco per il tuo staff.',
+            'subtitle' => 'Il giocatore apre la partita con un codice di 4 cifre; la reception la sblocca dopo il pagamento. Qui sotto il lato giocatore, il lato centro e le schermate reali.'
         ],
         'steps' => [
             '1' => [
@@ -823,7 +823,7 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'E il GDPR?',
-                    'answer' => 'L\'architettura privacy di Replash è conforme a GDPR, CEDU Art. 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. I video sono inaccessibili pubblicamente, legati allo slot orario e chiusi dopo 3 giorni se non venduti, 7 se venduti. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). Modello di notifica a tre livelli (segnaletica + QR + notifica prenotazione) pronto prima dell\'installazione.',
+                    'answer' => 'L\'approccio privacy di Replash è progettato secondo GDPR, CEDU Art. 8 e le linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. I video sono inaccessibili pubblicamente, legati allo slot orario e chiusi dopo 3 giorni se non venduti, 7 se venduti. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). Modello di notifica a tre livelli (segnaletica + QR + notifica prenotazione) pronto prima dell\'installazione.',
                     'items' => [
                         '1' => 'Niente audio. Niente riconoscimento facciale.',
                         '2' => 'Accesso chiuso dopo 3 giorni (non venduti) / 7 giorni (venduti).',
@@ -833,12 +833,12 @@ return [
                 ],
                 'tech' => [
                     'question' => 'E se non abbiamo WiFi?',
-                    'answer' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Installazione, cablaggio e montaggio sono interamente gestiti da Replash. Il tuo staff tecnico non è coinvolto.',
+                    'answer' => 'Le telecamere mantengono un breve buffer locale: le brevi interruzioni di solito vengono recuperate, quelle lunghe possono far perdere parte della registrazione. Per campi all’aperto senza Wi-Fi si può usare una connessione LTE/SIM dove la copertura lo consente. Verifichiamo la connessione durante il sopralluogo. Installazione, cablaggio e montaggio delle telecamere li fa Replash; il tuo staff deve solo darci accesso.',
                     'items' => [
                         '1' => 'Buffer locale PoE gestisce le interruzioni.',
                         '2' => 'Fallback LTE/SIM per centri senza WiFi.',
                         '3' => 'Setup completo gestito da Replash.',
-                        '4' => 'Zero interferenza con le operazioni del centro.'
+                        '4' => 'Nessun cambiamento nella gestione di prenotazioni e campi.'
                     ]
                 ]
             ]
@@ -858,7 +858,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Tornei Pilota',
-                    'desc' => 'Al lancio, organizziamo tornei tematici nei centri partner. Nuovi clienti e maggiore visibilità, a carico nostro.'
+                    'desc' => 'Al lancio possiamo organizzare un torneo a tema con alcuni centri partner per attirare nuovi giocatori. Si concorda caso per caso.'
                 ]
             ]
         ],
@@ -1170,7 +1170,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Registrazione HD Grandangolare',
-                'desc' => 'Copertura video ad alta definizione che cattura l\'intero campo con zero punti ciechi.'
+                'desc' => 'Video ad alta definizione che inquadra tutto il campo da un’angolazione fissa.'
             ],
             '2' => [
                 'title' => 'Crea Clip in Pochi Secondi',
@@ -1406,7 +1406,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'Per i Centri. Replash',
-            'description' => 'Trasforma il tuo centro sportivo in un\'esperienza moderna. Zero complessità operativa, nuovo servizio digitale, modello provato.'
+            'description' => 'Offri i video delle partite nel tuo centro: installiamo e gestiamo le telecamere, la reception sblocca i video pagati con un tocco e tu tieni una quota di ogni vendita.'
         ],
         'forPlayers' => [
             'title' => 'Per i Giocatori. Replash',
@@ -1418,6 +1418,7 @@ return [
         ]
     ],
     'footer' => [
+        'get_started' => 'Inizia',
         'tagline' => 'Più di una semplice partita.',
         'links' => [
             'howItWorks' => 'Come Funziona',

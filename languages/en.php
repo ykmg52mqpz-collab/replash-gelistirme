@@ -114,7 +114,7 @@ return [
                     'desc' => 'Every video purchased generates value for both players and your facility.'
                 ],
                 '5' => [
-                    'title' => 'Zero Complexity',
+                    'title' => 'Simple for Your Staff',
                     'desc' => 'Replash handles cameras, storage, and delivery. Your team does one simple action per sale.'
                 ],
                 '6' => [
@@ -157,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => 'Are there any upfront costs or contract commitments?',
-                    'a' => 'No. Replash covers 100% of the cost. Cameras, installation, maintenance, software updates. No monthly fees. Minimum commitment is 6 months. For the duration of the contract, your facility receives the same agreed revenue share every month.'
+                    'a' => 'No upfront cost: Replash covers cameras, installation, maintenance and software updates, with no monthly fee. The agreement has a minimum term of 6 months; during that term your facility keeps its agreed revenue share every month.'
                 ],
                 '3' => [
                     'q' => 'How does Replash share revenue with the facility?',
-                    'a' => 'At the end of each month, all unlocked videos are tracked through the admin panel. The share defined in your contract stays with your facility; the remaining amount is paid to Replash at month-end. The more active your courts, the more your facility earns — every new match is additional revenue. Everything is reconciled automatically from the panel. With zero operational cost on your side.'
+                    'a' => 'At the end of each month, every sold video appears in the panel. The share set in your agreement stays with your facility; the rest is paid to Replash at month-end. The monthly statement comes from the panel: valid sales, your share and Replash’s share. The more your courts are used, the more your facility earns.'
                 ],
                 '4' => [
                     'q' => 'Does my staff have to do anything per match?',
@@ -169,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => 'What happens if a camera fails or there\'s a technical issue?',
-                    'a' => 'Replash monitors all cameras 24/7. In rare cases of failure, our support team is notified automatically and resolves it remotely. Usually within hours. If a recording is lost, that sale doesn\'t appear in your report and you\'re not charged.'
+                    'a' => 'The facility panel shows each camera’s last signal, and Replash watches recordings as they arrive. If a camera fails, we fix it remotely where possible or plan a visit. A match without a recording can’t be sold, so it never appears in your report.'
                 ],
                 '6' => [
                     'q' => 'How quickly can we get started?',
@@ -185,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => 'What if we don’t have strong Wi-Fi at the courts?',
-                    'a' => 'PoE cameras operate with local buffer storage so brief network drops never cause data loss. For outdoor courts without Wi-Fi, LTE/SIM cellular gateways are fully supported.'
+                    'a' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey.'
                 ],
                 '10' => [
                     'q' => 'What about GDPR?',
-                    'a' => 'Replash is fully compliant with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). A three-tier notice model is in place (entrance signage + QR + booking notification). A Privacy & Legal Justification file is provided before installation.'
+                    'a' => 'Replash is designed around GDPR and the Italian Garante’s video-surveillance guidance: cameras frame only the playing area, with no audio and no facial recognition, and videos close after 3 days if unsold or 7 if sold. The legal basis and notices (entrance signage, QR, booking notice) are agreed with each facility before installation.'
                 ],
                 '12' => [
                     'q' => 'What if we don\'t have a strong WiFi connection?',
-                    'a' => 'PoE cameras run on a local buffer. Short connection drops don\'t cause data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. The Replash team handles all setup.'
+                    'a' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey.'
                 ]
             ],
             'categories' => [
@@ -218,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'How It Works',
-            'title' => 'Six simple steps. Zero complexity for your team.',
-            'subtitle' => 'From kickoff to replay, Replash handles everything in between. Below: every step explained, with Marco\'s Tuesday-night padel match as a concrete example.'
+            'title' => 'Three steps for players. One tap for your staff.',
+            'subtitle' => 'Players open their match with a 4-digit code; the front desk unlocks it after payment. Below: the player’s side, the facility’s side and the real screens.'
         ],
         'steps' => [
             '1' => [
@@ -823,7 +823,7 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'What about GDPR?',
-                    'answer' => 'Replash\'s privacy architecture complies with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and closed after 3 days if unsold, 7 if sold. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
+                    'answer' => 'Replash\'s privacy approach is designed around GDPR, ECHR Article 8 and the Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and closed after 3 days if unsold, 7 if sold. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
                     'items' => [
                         '1' => 'No audio. No facial recognition.',
                         '2' => 'Access closes after 3 days (unsold) / 7 days (sold).',
@@ -833,12 +833,12 @@ return [
                 ],
                 'tech' => [
                     'question' => 'What if we don\'t have WiFi?',
-                    'answer' => 'PoE cameras run on a local buffer. Short connection drops cause no data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. Installation, cabling, and camera mounting are entirely handled by Replash. Your tech staff is not involved.',
+                    'answer' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey. Installation, cabling and camera mounting are done by Replash; your staff only needs to give us access.',
                     'items' => [
                         '1' => 'PoE local buffer handles drops.',
                         '2' => 'LTE/SIM fallback for venues without WiFi.',
                         '3' => 'Full setup handled by Replash.',
-                        '4' => 'Zero interference with venue operations.'
+                        '4' => 'No change to how you run bookings and courts.'
                     ]
                 ]
             ]
@@ -858,7 +858,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Pilot Tournaments',
-                    'desc' => 'At launch, we run themed tournaments at partner venues. New customers and added visibility, on the house.'
+                    'desc' => 'At launch, we can organise a themed tournament with selected partner venues to bring in new players. Agreed case by case.'
                 ]
             ]
         ],
@@ -1170,7 +1170,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Wide-Angle HD Recording',
-                'desc' => 'High-definition video coverage capturing the entire court with zero blind spots.'
+                'desc' => 'High-definition video that covers the whole court from a fixed angle.'
             ],
             '2' => [
                 'title' => 'Clip in Seconds',
@@ -1406,7 +1406,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'For Facilities. Replash',
-            'description' => 'Turn your sports venue into a modern match experience. Zero operational complexity, new digital service, proven model.'
+            'description' => 'Offer match videos at your venue: we install and run the cameras, your front desk unlocks paid videos with one tap, and you keep a share of every sale.'
         ],
         'forPlayers' => [
             'title' => 'For Players. Replash',
@@ -1418,6 +1418,7 @@ return [
         ]
     ],
     'footer' => [
+        'get_started' => 'Get Started',
         'tagline' => 'More than just a match.',
         'links' => [
             'howItWorks' => 'How It Works',

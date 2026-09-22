@@ -484,6 +484,9 @@ require_once __DIR__ . '/includes/header.php';
 </main>
 
 <script>
+  // Sayı biçimi sayfanın diline göre
+  var RP_LOCALE = <?= json_encode(['it' => 'it-IT', 'en' => 'en-GB', 'tr' => 'tr-TR', 'es' => 'es-ES'][$current_lang] ?? 'it-IT') ?>;
+
   const ROI_CONFIG = <?= json_encode($roiConfig, JSON_UNESCAPED_UNICODE) ?>;
   const SHARE_LABEL = <?= json_encode(__('forFacilities.roi.results.share'), JSON_UNESCAPED_UNICODE) ?>;
   let currentSportKey = '<?= e($defaultSportKey) ?>';
@@ -561,9 +564,9 @@ require_once __DIR__ . '/includes/header.php';
       labelMonthlyShare.textContent = SHARE_LABEL.replace('{pct}', tier.facility_pct);
     }
 
-    resMonthlyVideos.textContent = totalVideos.toLocaleString('tr-TR');
-    resMonthlyShare.textContent = symbol + monthlyTotal.toLocaleString('tr-TR');
-    resYearlyShare.textContent = symbol + yearlyTotal.toLocaleString('tr-TR');
+    resMonthlyVideos.textContent = totalVideos.toLocaleString(RP_LOCALE);
+    resMonthlyShare.textContent = symbol + monthlyTotal.toLocaleString(RP_LOCALE);
+    resYearlyShare.textContent = symbol + yearlyTotal.toLocaleString(RP_LOCALE);
   }
 
   sportButtons.forEach(btn => {

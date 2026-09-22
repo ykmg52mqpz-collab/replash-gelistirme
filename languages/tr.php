@@ -114,7 +114,7 @@ return [
                     'desc' => 'Satılan her video hem oyuncular hem de sahanız için değer üretir.'
                 ],
                 '5' => [
-                    'title' => 'Sıfır Karmaşıklık',
+                    'title' => 'Personel İçin Basit',
                     'desc' => 'Replash kameraları, depolamayı ve teslimatı yönetir. Ekibiniz sadece her satışta bir basit eylem yapar.'
                 ],
                 '6' => [
@@ -157,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => 'Başlangıç maliyeti veya sözleşme yükümlülüğü var mı?',
-                    'a' => 'Hayır. Replash maliyetin %100\'ünü karşılar. Kameralar, kurulum, bakım, yazılım güncellemeleri. Aylık ücret yok. Minimum taahhüt 6 aydır. Sözleşme süresince tesis, anlaşılan yüzde payını her ay almaya devam eder.'
+                    'a' => 'Başlangıç maliyeti yok: kameralar, kurulum, bakım ve yazılım güncellemeleri Replash’e aittir, aylık ücret de yoktur. Sözleşmenin asgari süresi 6 aydır; bu süre boyunca tesis anlaşılan gelir payını her ay alır.'
                 ],
                 '3' => [
                     'q' => 'Replash sahayla geliri nasıl paylaşır?',
-                    'a' => 'Her ay sonunda, unlocked edilmiş tüm videolar admin panelinden takip edilir. Sözleşmede belirlenen pay tesiste kalır; kalan pay ise her ay sonunda Replash\'e ödenir. Saha ne kadar aktif olursa, tesisin kazancı da o kadar büyür — her yeni maç ek gelir demek. Her şey panel üzerinden otomatik mutabakata bağlanır. Sizin tarafınızda sıfır operasyonel maliyetle.'
+                    'a' => 'Her ay sonunda satılan her video panelde görünür. Sözleşmede belirlenen pay tesiste kalır; kalanı ay sonunda Replash’e ödenir. Aylık döküm panelden çıkar: geçerli satışlar, tesis payı ve Replash payı. Sahalar ne kadar çok kullanılırsa tesisin kazancı o kadar artar.'
                 ],
                 '4' => [
                     'q' => 'Personelimin her maç için bir şey yapması gerekiyor mu?',
@@ -169,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => 'Bir kamera arızalanırsa veya teknik sorun olursa ne olur?',
-                    'a' => 'Replash tüm kameraları 7/24 izler. Nadir arıza durumlarında, destek ekibimiz otomatik olarak bilgilendirilir ve sorunu uzaktan çözer. Genellikle saatler içinde. Bir kayıt kaybolursa, o satış raporunuzda görünmez ve sizden ücret alınmaz.'
+                    'a' => 'Tesis panelinde her kameranın son sinyali görünür; Replash da gelen kayıtları takip eder. Bir kamera arızalanırsa mümkünse uzaktan düzeltir, değilse ziyaret planlarız. Kaydı olmayan maç satılamaz, bu yüzden raporunuza da girmez.'
                 ],
                 '6' => [
                     'q' => 'Ne kadar hızlı başlayabiliriz?',
@@ -185,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => 'Güçlü bir Wi-Fi bağlantımız yoksa ne olur?',
-                    'a' => 'Kameralar dahili tampon belleğe (buffer) sahiptir. Kısa süreli internet kesintilerinde veri kaybolmaz. Wi-Fi olmayan açık alanlar için LTE/SIM modem desteği sunulmaktadır.'
+                    'a' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz.'
                 ],
                 '10' => [
                     'q' => 'Ya GDPR?',
-                    'a' => 'Replash GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleriyle tamamen uyumludur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli vardır (giriş tabelası + QR + rezervasyon bildirimi). Kurulumdan önce bir Gizlilik & Yasal Gerekçe dosyası sağlanır.'
+                    'a' => 'Replash GDPR ve İtalyan Garante’nin video kayıt yönergeleri gözetilerek tasarlanmıştır: kameralar yalnızca oyun alanını çeker, ses ve yüz tanıma yoktur; videolar satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Hukuki dayanak ve bildirimler (giriş tabelası, QR, rezervasyon bildirimi) kurulumdan önce her tesisle birlikte belirlenir.'
                 ],
                 '12' => [
                     'q' => 'Güçlü WiFi bağlantımız yoksa?',
-                    'a' => 'PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi\'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Replash ekibi tüm kurulumu yönetir.'
+                    'a' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz.'
                 ]
             ],
             'categories' => [
@@ -218,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
-            'title' => 'Altı basit adım. Ekibiniz için sıfır karmaşıklık.',
-            'subtitle' => 'İlk vuruştan tekrar oynatmaya kadar, Replash aradaki her şeyi halleder. Aşağıda: her adım, Marco\'nun salı gecesi padel maçı somut örnek olarak açıklanıyor.'
+            'title' => 'Oyuncu için üç adım. Personel için tek dokunuş.',
+            'subtitle' => 'Oyuncu maçını 4 haneli kodla açar; resepsiyon ödemeyi alınca kilidi açar. Aşağıda oyuncu tarafı, tesis tarafı ve gerçek ekranlar.'
         ],
         'steps' => [
             '1' => [
@@ -823,7 +823,7 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'Ya GDPR?',
-                    'answer' => 'Replash\'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
+                    'answer' => 'Replash\'in gizlilik yaklaşımı GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleri gözetilerek tasarlanmıştır. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
                     'items' => [
                         '1' => 'Ses yok. Yüz tanıma yok.',
                         '2' => '3 gün (satılmayan) / 7 gün (satılan) sonra erişim kapanır.',
@@ -833,12 +833,12 @@ return [
                 ],
                 'tech' => [
                     'question' => 'Ya WiFi\'mız yoksa?',
-                    'answer' => 'PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi\'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Kurulum, kablolama ve kamera montajı tamamen Replash tarafından yapılır. Teknik personeliniz bu sürece dahil olmaz.',
+                    'answer' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz. Kurulum, kablolama ve kamera montajını Replash yapar; personelinizin yalnızca erişim sağlaması yeterlidir.',
                     'items' => [
                         '1' => 'PoE yerel tampon kesintileri yönetir.',
                         '2' => 'WiFi\'siz sahalar için LTE/SIM yedek.',
                         '3' => 'Tüm kurulum Replash tarafından yapılır.',
-                        '4' => 'Saha operasyonlarına sıfır müdahale.'
+                        '4' => 'Rezervasyon ve saha işleyişinizde değişiklik yok.'
                     ]
                 ]
             ]
@@ -858,7 +858,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Pilot Turnuvalar',
-                    'desc' => 'Lansmanda partner sahalarda temalı turnuvalar düzenleriz. Yeni müşteriler ve eklenen görünürlük, bizden hediye.'
+                    'desc' => 'Lansmanda seçili partner tesislerle yeni oyuncu çekmek için temalı bir turnuva düzenleyebiliriz. Her tesisle ayrıca kararlaştırılır.'
                 ]
             ]
         ],
@@ -1170,7 +1170,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Geniş Açı HD Kayıt',
-                'desc' => 'Kortu ve sahayı kör nokta olmadan bütünüyle yakalayan yüksek çözünürlüklü video akışı.'
+                'desc' => 'Sahanın tamamını sabit bir açıdan çeken yüksek çözünürlüklü video.'
             ],
             '2' => [
                 'title' => 'Saniyeler İçinde Klip Kes',
@@ -1407,7 +1407,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'Sahalar İçin. Replash',
-            'description' => 'Spor tesisinizi modern bir maç deneyimine dönüştürün. Sıfır operasyonel karmaşıklık, yeni dijital hizmet, kanıtlanmış model.'
+            'description' => 'Tesisinde maç videosu sat: kameraları biz kurar ve işletiriz, resepsiyon ödemesi alınan videoyu tek dokunuşla açar, her satıştan payını alırsın.'
         ],
         'forPlayers' => [
             'title' => 'Oyuncular İçin. Replash',
@@ -1419,6 +1419,7 @@ return [
         ]
     ],
     'footer' => [
+        'get_started' => 'Başlayın',
         'tagline' => 'Sadece bir maçtan fazlası.',
         'links' => [
             'howItWorks' => 'Nasıl Çalışır',
