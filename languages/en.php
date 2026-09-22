@@ -1326,7 +1326,7 @@ return [
         'success' => 'Message received! We\'ll be in touch within 24 hours.',
         'errors' => [
             'required' => 'Please enter your name and email address.',
-            'general' => 'An error occurred during submission: '
+            'general' => 'We could not save your request right now. Please try again shortly or message us on WhatsApp.'
         ],
         'form' => [
             'name' => 'Full Name *',

@@ -30,7 +30,7 @@ if ($pdo) {
             $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = IF(status = 'UNLOCKABLE', sold_at, NOW()), billable = 1 WHERE id = ?");
             $upd->execute([$mRow['access_code'], $playbackUrl, $matchId]);
             if ($wasLocked) replash_record_sale($pdo, $mRow, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
-            $success = "{$mRow['facility_name']} - {$mRow['court']} ({$mRow['time_slot']}) satışı onaylandı! Erişim Kodu: <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
+            $success = "{$mRow['facility_name']} · {$mRow['court']} · {$mRow['time_slot']} satışa açıldı. Erişim kodu: {$mRow['access_code']}";
         }
     }
 
@@ -73,10 +73,14 @@ if ($pdo) {
         $stmtRow = $pdo->prepare("SELECT * FROM matches WHERE id = ? LIMIT 1");
         $stmtRow->execute([$matchId]);
         $delRow = $stmtRow->fetch();
-        if ($delRow && $delRow['status'] === 'UNLOCKABLE') replash_log_sale_event($pdo, $delRow, 'admin_deleted', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
-        $pdo->prepare("DELETE FROM refunds WHERE match_id = ?")->execute([$matchId]);
-        $pdo->prepare("DELETE FROM matches WHERE id = ?")->execute([$matchId]);
-        $success = "Maç kaydı ve bağlı tüm veriler başarıyla silindi.";
+        if ($delRow && !empty($delRow['sold_at'])) {
+            // Satış geçmişi silinmez (mutabakat); satılan maç için İade veya Kilitle kullanılır
+            $error = "Satılmış maç silinemez; muhasebe kaydı korunur. İade edildiyse 'İade' kullanın.";
+        } else {
+            $pdo->prepare("DELETE FROM refunds WHERE match_id = ?")->execute([$matchId]);
+            $pdo->prepare("DELETE FROM matches WHERE id = ?")->execute([$matchId]);
+            $success = "Maç kaydı silindi.";
+        }
     }
 
     // 4. Edit Match Action
@@ -272,6 +276,12 @@ require_once __DIR__ . '/../includes/header.php';
   <div class="container-x py-10 relative z-10">
 
     <?php $adminTab = 'matches'; include __DIR__ . '/../includes/admin_nav.php'; ?>
+      <?php if (!empty($error)): ?>
+        <div class="mb-6 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm font-medium text-red-200" role="alert"><?= e($error) ?></div>
+      <?php endif; ?>
+      <?php if (!empty($success)): ?>
+        <div class="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm font-medium text-emerald-300" role="status"><?= e($success) ?></div>
+      <?php endif; ?>
 
     <!-- Summary Metrics -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -107,6 +107,16 @@ class DB {
                 $pdo->exec("ALTER TABLE `sale_events` ADD COLUMN `amount` DECIMAL(10,2) NULL DEFAULT NULL, ADD COLUMN `currency` CHAR(3) NULL DEFAULT NULL");
             }
 
+            // Tesis PIN'leri özet olarak saklanır (includes/sales.php replash_pin_hash ile aynı formül)
+            $pinCol = $pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'pin'")->fetch(PDO::FETCH_ASSOC);
+            if ($pinCol && !preg_match('/varchar\((\d{3,})\)/i', (string)$pinCol['Type'])) {
+                $pdo->exec("ALTER TABLE `facilities` MODIFY `pin` VARCHAR(100) NOT NULL");
+            }
+            if (defined('REPLASH_TOKEN_SECRET')) {
+                $pdo->prepare("UPDATE `facilities` SET `pin` = CONCAT('h:', SHA2(CONCAT(?, '|', TRIM(`pin`)), 256)) WHERE `pin` NOT LIKE 'h:%'")
+                    ->execute([REPLASH_TOKEN_SECRET]);
+            }
+
             // Failed access-code attempts, for rate limiting 4-digit codes (includes/sales.php)
             $pdo->exec("CREATE TABLE IF NOT EXISTS `code_attempts` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,

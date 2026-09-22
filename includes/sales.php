@@ -257,6 +257,15 @@ function replash_code_failed(PDO $pdo): void {
     replash_attempt_failed($pdo, 'code');
 }
 
+/**
+ * Tesis PIN'i veritabanında düz değil, gizli anahtarlı özet olarak tutulur (T16).
+ * Formül config/db.php'deki SQL geçişiyle aynıdır: 'h:' . sha256(secret . '|' . pin).
+ * Not: REPLASH_TOKEN_SECRET değişirse PIN'ler yeniden belirlenmelidir.
+ */
+function replash_pin_hash(string $pin): string {
+    return 'h:' . hash('sha256', REPLASH_TOKEN_SECRET . '|' . trim($pin));
+}
+
 /** Facility PIN and admin login: 5 wrong tries per 15 minutes. */
 const REPLASH_LOGIN_MAX_FAILS = 5;
 const REPLASH_LOGIN_WINDOW_MIN = 15;

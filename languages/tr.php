@@ -1327,7 +1327,7 @@ return [
         'success' => 'Mesajınız alındı! 24 saat içinde size ulaşacağız.',
         'errors' => [
             'required' => 'Lütfen adınızı ve e-posta adresinizi giriniz.',
-            'general' => 'Kayıt sırasında bir hata oluştu: '
+            'general' => 'Başvurunuz şu anda kaydedilemedi. Lütfen biraz sonra tekrar deneyin veya WhatsApp’tan yazın.'
         ],
         'form' => [
             'name' => 'Adınız Soyadınız *',

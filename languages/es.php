@@ -1326,7 +1326,7 @@ return [
         'success' => '¡Mensaje recibido! Te contactaremos en 24 horas.',
         'errors' => [
             'required' => 'Por favor, introduce tu nombre y correo electrónico.',
-            'general' => 'Ocurrió un error al enviar el formulario: '
+            'general' => 'No hemos podido guardar tu solicitud. Inténtalo de nuevo en breve o escríbenos por WhatsApp.'
         ],
         'form' => [
             'name' => 'Nombre y Apellidos *',

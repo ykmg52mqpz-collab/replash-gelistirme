@@ -17,19 +17,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $court_count = (int)($_POST['court_count'] ?? 1);
     $message = trim($_POST['message'] ?? '');
 
-    if (empty($name) || empty($email)) {
+    if (trim($_POST['website'] ?? '') !== '') {
+        // Görünmez alanı dolduran bot: kaydetmeden başarılı gibi davran
+        $success = true;
+    } elseif (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = __('contact.errors.required');
+    } elseif (!$pdo || replash_attempt_blocked($pdo, 'lead', 5, 60)) {
+        $error = __('contact.errors.general');
     } else {
         try {
-            if ($pdo) {
-                $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, facility_name, city, sport, court_count, message, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $email, $phone, $facility_name, $city, $sport, $court_count, $message, $_SERVER['REMOTE_ADDR'] ?? '']);
-                $success = true;
-            } else {
-                $success = true;
-            }
+            $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, facility_name, city, sport, court_count, message, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([mb_substr($name, 0, 120), mb_substr($email, 0, 190), mb_substr($phone, 0, 40), mb_substr($facility_name, 0, 190), mb_substr($city, 0, 120), mb_substr($sport, 0, 40), max(1, min(99, $court_count)), mb_substr($message, 0, 3000), substr(replash_client_key('lead'), 0, 16)]);
+            replash_attempt_failed($pdo, 'lead'); // saatlik gönderim sınırı için sayılır
+            $success = true; // yalnızca kalıcı kayıttan sonra
         } catch (Exception $e) {
-            $error = __('contact.errors.general') . $e->getMessage();
+            error_log('contact.php: ' . $e->getMessage());
+            $error = __('contact.errors.general');
         }
     }
 }
@@ -57,7 +60,8 @@ require_once __DIR__ . '/includes/header.php';
   <?php if ($error): ?>
     <div class="mx-auto mt-12 max-w-2xl rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-center text-sm text-rose-200"><?= e($error) ?></div>
   <?php endif; ?>
-  <form action="<?= base_url('contact.php') ?>" method="POST" class="card-elevated mx-auto mt-12 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"  data-reveal="up">
+  <form action="<?= base_url('contact.php') ?>" method="POST" class="card-elevated mx-auto mt-12 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"  data-reveal="up"><?= csrf_field() ?>
+  <div class="hidden" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
   <div class="grid gap-5 sm:grid-cols-2">
   <div class="flex flex-col gap-2">
   <label class="text-xs font-medium uppercase tracking-wider text-white/60">

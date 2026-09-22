@@ -1326,7 +1326,7 @@ return [
         'success' => 'Messaggio ricevuto! Ti risponderemo entro 24 ore.',
         'errors' => [
             'required' => 'Inserisci il tuo nome e il tuo indirizzo email.',
-            'general' => 'Si è verificato un errore durante l\'invio: '
+            'general' => 'Non siamo riusciti a salvare la richiesta. Riprova tra poco o scrivici su WhatsApp.'
         ],
         'form' => [
             'name' => 'Nome e Cognome *',

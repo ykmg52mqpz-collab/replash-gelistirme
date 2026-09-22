@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_pin'])) {
         $error = str_replace('{m}', (string)REPLASH_LOGIN_WINDOW_MIN, __('panel.login.too_many'));
     } elseif ($pdo) {
         $stmt = $pdo->prepare("SELECT * FROM facilities WHERE pin = ? LIMIT 1");
-        $stmt->execute([$pin]);
+        $stmt->execute([replash_pin_hash($pin)]);
         $fac = $stmt->fetch();
         if ($fac) {
             session_regenerate_id(true);
@@ -413,7 +413,8 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             <span class="text-xs font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.cameras.title')) ?></span>
             <?php foreach ($facilityCameras as $fc):
               $seen = !empty($fc['last_seen_at']) ? strtotime($fc['last_seen_at']) : 0;
-              if (($fc['status'] ?? '') === 'offline') { $dot = 'bg-red-600'; $txt = __('panel.cameras.offline'); $cls = 'text-red-700 font-medium'; }
+              if (!$seen) { $dot = 'bg-gray-400'; $txt = __('panel.cameras.never'); $cls = 'text-gray-500'; }
+              elseif (($fc['status'] ?? '') === 'offline') { $dot = 'bg-red-600'; $txt = __('panel.cameras.offline'); $cls = 'text-red-700 font-medium'; }
               elseif ($seen && time() - $seen <= 7200) { $dot = 'bg-emerald-600'; $txt = __('panel.cameras.online'); $cls = 'text-gray-700'; }
               else { $dot = 'bg-gray-400'; $txt = $seen ? str_replace('{t}', date(date('Y-m-d', $seen) === date('Y-m-d') ? 'H:i' : 'd.m H:i', $seen), __('panel.cameras.last_seen')) : __('panel.cameras.never'); $cls = 'text-gray-500'; }
             ?>
@@ -471,7 +472,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             <?php if ($viewDay >= date('Y-m-d') && $viewDay <= date('Y-m-d', strtotime('+7 days'))):
               $psDefault = ($viewDay === date('Y-m-d')) ? sprintf('%02d:%s', (int)date('G'), (int)date('i') >= 30 ? '30' : '00') : '18:00'; ?>
               <!-- Maçtan önce satış: ödeme alınınca kod hemen verilir, video maç bitince açılır -->
-              <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3">
+              <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3"><?= csrf_field() ?>
                 <input type="hidden" name="action" value="presell">
                 <input type="hidden" name="date" value="<?= e($viewDay) ?>">
                 <div class="mr-auto min-w-[180px]">
@@ -547,7 +548,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                   <?php endif; ?>
                                 <?php else: ?>
                                   <div class="min-w-[110px] text-[11px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></div>
-                                  <form action="<?= e($panelUrl()) ?>" method="POST">
+                                  <form action="<?= e($panelUrl()) ?>" method="POST"><?= csrf_field() ?>
                                     <input type="hidden" name="action" value="mark_sold">
                                     <input type="hidden" name="match_id" value="<?= e($cm['id']) ?>">
                                     <button type="submit" class="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.shell.unlock')) ?></button>
@@ -576,7 +577,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
 
         <!-- Tekrar kilitleme (aynı düğme; kurallar: includes/sales.php) -->
         <dialog id="relockDialog" class="w-full max-w-md rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/30">
-          <form action="<?= e($panelUrl()) ?>" method="POST" class="p-6">
+          <form action="<?= e($panelUrl()) ?>" method="POST" class="p-6"><?= csrf_field() ?>
             <input type="hidden" name="action" value="mark_locked">
             <input type="hidden" name="match_id" id="relockMatchId">
             <h2 class="text-base font-semibold text-gray-900"><?= e(__('panel.shell.relock_title')) ?></h2>

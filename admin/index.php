@@ -95,6 +95,17 @@ if ($isAdmin && $pdo && ($_GET['export'] ?? '') === 'statement') {
 }
 
 /**
+ * PIN kuralı: 6 hane, başka tesiste kullanılmıyor (giriş PIN özeti üzerinden yapılır).
+ * $exceptFacility: düzenlenen tesisin kendisi. Sorun yoksa null döner.
+ */
+function admin_pin_problem(PDO $pdo, string $pin, ?string $exceptFacility): ?string {
+    if (!preg_match('/^\d{6}$/', $pin)) return 'PIN 6 haneli bir sayı olmalı.';
+    $st = $pdo->prepare("SELECT id FROM facilities WHERE pin = ? AND id <> ? LIMIT 1");
+    $st->execute([replash_pin_hash($pin), (string)$exceptFacility]);
+    return $st->fetchColumn() ? 'Bu PIN başka bir tesiste kullanılıyor, farklı bir PIN seçin.' : null;
+}
+
+/**
  * Tesis sporları ve spor başına video fiyatı (facilities.sport_prices).
  */
 function admin_sport_prices_from_post(): array {
@@ -240,11 +251,15 @@ if ($isAdmin && $pdo) {
         }
         $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
+        $pinErr = admin_pin_problem($pdo, $pin, null);
+        if ($pinErr) {
+            $error = $pinErr;
+        } else {
         $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency, sport_prices) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), $pin, $unitPrice, $currency, json_encode($sportPrices)]);
+        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), replash_pin_hash($pin), $unitPrice, $currency, json_encode($sportPrices)]);
 
         // Add cameras for each court
-        $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
+        $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'offline', NULL)");
         foreach ($courtList as $cItem) {
             $c = $cItem['name'];
             $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
@@ -261,6 +276,7 @@ if ($isAdmin && $pdo) {
         }
 
         $success = "Yeni tesis ve sahalara özel canlı yayın linkleri başarıyla kaydedildi.";
+        }
     }
 
     // Update Camera Stream URL
@@ -347,7 +363,10 @@ if ($isAdmin && $pdo) {
         $unitPrice = (float)reset($sportPrices);
         $currency = REPLASH_BILLING_CURRENCY;
 
-        if (!empty($facId) && !empty($name) && !empty($pin)) {
+        $pinErr = ($pin !== '') ? admin_pin_problem($pdo, $pin, $facId) : null;
+        if ($pinErr) {
+            $error = $pinErr;
+        } elseif (!empty($facId) && !empty($name)) {
             // Kamera kimlikleri tesis adı değişse de sabit kalsın (kayıt sistemi channel_id ile bağlanıyor)
             $slugStmt = $pdo->prepare("SELECT slug FROM facilities WHERE id = ?");
             $slugStmt->execute([$facId]);
@@ -372,13 +391,14 @@ if ($isAdmin && $pdo) {
             }
             $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
-            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
+            // PIN alanı boş bırakıldıysa mevcut PIN korunur
+            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = COALESCE(?, pin), unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
+            $upd->execute([$name, $city, $primarySport, $pin !== '' ? replash_pin_hash($pin) : null, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
 
             // Sync cameras
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
 
-            $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
+            $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             foreach ($courtList as $cItem) {
                 $c = $cItem['name'];
                 $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
@@ -390,7 +410,8 @@ if ($isAdmin && $pdo) {
                     $channelId = $prev['channel_id'] ?? (($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}");
                     $token = $prev['token'] ?? ('camk_' . bin2hex(random_bytes(8)));
                     $camName = ($totalCams > 1) ? "{$name} · {$c} · {$camNum}. Kamera" : "{$name} · {$c}";
-                    $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream]);
+                    // Gerçek durum korunur: yeni kamera 'henüz sinyal yok' olarak başlar
+                    $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream, $prev['status'] ?? 'offline', $prev['last_seen_at'] ?? null]);
                     $camNum++;
                 }
             }
@@ -402,7 +423,11 @@ if ($isAdmin && $pdo) {
     // Delete Facility
     if (isset($_POST['action']) && $_POST['action'] === 'delete_facility') {
         $facId = trim($_POST['facility_id'] ?? '');
-        if (!empty($facId)) {
+        $soldCnt = $pdo->prepare("SELECT COUNT(*) FROM matches WHERE facility_id = ? AND sold_at IS NOT NULL");
+        $soldCnt->execute([$facId]);
+        if ((int)$soldCnt->fetchColumn() > 0) {
+            $error = "Bu tesisin satış geçmişi var; muhasebe kaydı kaybolmasın diye silinemez.";
+        } elseif (!empty($facId)) {
             $pdo->prepare("DELETE FROM matches WHERE facility_id = ?")->execute([$facId]);
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
             $pdo->prepare("DELETE FROM refunds WHERE facility_id = ?")->execute([$facId]);
@@ -649,6 +674,10 @@ require_once __DIR__ . '/../includes/header.php';
 
     <?php else: ?>
       <?php include __DIR__ . '/../includes/admin_nav.php'; ?>
+
+      <?php if (!empty($error)): ?>
+        <div class="mb-6 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm font-medium text-red-200" role="alert"><?= e($error) ?></div>
+      <?php endif; ?>
 
       <?php if ($success): ?>
         <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-300 text-sm font-medium mb-6">
@@ -1014,7 +1043,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <div>
                       <div class="font-semibold text-white text-base"><?= e($f['name']) ?></div>
                       <div class="text-xs text-neutral-400 mt-0.5">
-                        <?= e($f['city']) ?> · PIN: <code class="text-accent font-bold"><?= e($f['pin']) ?></code> · <?= e($f['unit_price']) ?> <?= e($f['currency']) ?>
+                        <?= e($f['city']) ?> · PIN: <code class="text-accent font-bold">••••••</code> · <?= e($f['unit_price']) ?> <?= e($f['currency']) ?>
                       </div>
                       <div class="text-[11px] text-neutral-500 mt-1">Sahalar: <?= e($courtsStr) ?></div>
                     </div>
@@ -1028,7 +1057,7 @@ require_once __DIR__ . '/../includes/header.php';
                       </button>
 
                       <!-- Delete Facility Form -->
-                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?><?= csrf_field() ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
+                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline"><?= csrf_field() ?>
                         <input type="hidden" name="action" value="delete_facility">
                         <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                         <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="Tesisi Sil">
@@ -1062,7 +1091,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                       <div>
                         <label class="block text-neutral-400 mb-1 font-medium">6 haneli PIN</label>
-                        <input type="text" name="pin" maxlength="6" inputmode="numeric" value="<?= e($f['pin']) ?>" required class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
+                        <input type="text" name="pin" maxlength="6" inputmode="numeric" value="" placeholder="Değiştirmek için yeni PIN" autocomplete="off" class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
                       </div>
                       <?php
                         $fPrices = replash_facility_prices($f);
@@ -1207,7 +1236,7 @@ require_once __DIR__ . '/../includes/header.php';
                   </div>
 
                   <!-- Edit Stream URL Form -->
-                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2">
+                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2"><?= csrf_field() ?>
                     <input type="hidden" name="action" value="update_camera_stream">
                     <input type="hidden" name="camera_id" value="<?= e($c['id']) ?>">
                     <input type="text" name="stream_url" value="<?= e($c['stream_url'] ?? '') ?>" placeholder="rtsp://... veya https://..." class="flex-1 rounded-lg border border-white/10 bg-ink-900 px-2 py-1 text-xs text-white font-mono focus:border-accent focus:outline-none">
