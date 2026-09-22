@@ -619,6 +619,34 @@ if ($isAdmin && $pdo) {
     $totals = $stmtTotals->fetch(PDO::FETCH_ASSOC) ?: [];
 }
 
+// Dikkat gerekenler (rapor §7): büyük toplamlar yerine önce istisnalar
+$alerts = ['cameras' => [], 'delayed' => [], 'undo' => [], 'leads' => 0];
+if ($isAdmin && $pdo) {
+    try {
+        foreach ($pdo->query("SELECT c.name, c.court, c.status, c.last_seen_at, f.name AS facility_name FROM cameras c JOIN facilities f ON f.id = c.facility_id ORDER BY f.name, c.court") as $c) {
+            $seen = $c['last_seen_at'] ? strtotime($c['last_seen_at']) : 0;
+            if (!$seen || $c['status'] === 'offline' || time() - $seen > 7200) {
+                $alerts['cameras'][] = $c + ['why' => !$seen ? 'Hiç sinyal yok' : ($c['status'] === 'offline' ? 'Kapalı' : 'Son sinyal ' . date('d.m H:i', $seen))];
+            }
+        }
+        $st = $pdo->query("SELECT m.*, f.name AS facility_name FROM matches m JOIN facilities f ON f.id = m.facility_id
+            WHERE m.status = 'UNLOCKABLE' AND m.available_at IS NULL AND m.date >= DATE_SUB(CURDATE(), INTERVAL 2 DAY)");
+        foreach ($st as $m) {
+            $vs = replash_video_state($pdo, $m);
+            if ($vs['state'] === 'delayed') $alerts['delayed'][] = $m + ['eta' => $vs['eta']];
+        }
+        $st = $pdo->query("SELECT se.facility_id, f.name, SUM(se.action = 'undone') AS undone, SUM(se.action = 'sold') AS sold
+            FROM sale_events se JOIN facilities f ON f.id = se.facility_id
+            WHERE DATE_FORMAT(se.created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') GROUP BY se.facility_id, f.name");
+        foreach ($st as $u) {
+            if ((int)$u['sold'] >= 5 && (int)$u['undone'] * 10 >= (int)$u['sold']) $alerts['undo'][] = $u;
+        }
+        $alerts['leads'] = (int)$pdo->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn();
+    } catch (Exception $e) {
+        error_log('admin alerts: ' . $e->getMessage());
+    }
+}
+
 // Sekme + satış denetimi verisi (includes/sales.php)
 $adminTab = in_array($_GET['tab'] ?? '', ['overview', 'facilities', 'audit', 'leads', 'settings'], true) ? $_GET['tab'] : 'overview';
 $auditEvents = [];
@@ -686,6 +714,41 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <?php if ($adminTab === 'overview'): ?>
+      <!-- Dikkat gerekenler -->
+      <?php $alertCount = count($alerts['cameras']) + count($alerts['delayed']) + count($alerts['undo']); ?>
+      <section class="mb-8 rounded-2xl border <?= $alertCount ? 'border-amber-400/30 bg-amber-400/[0.05]' : 'border-emerald-400/20 bg-emerald-400/[0.04]' ?> p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="font-display text-lg font-bold text-white"><?= $alertCount ? 'Dikkat gerekenler (' . $alertCount . ')' : 'Her şey yolunda' ?></h2>
+          <?php if ($alerts['leads']): ?><a href="index.php?tab=leads" class="text-sm text-accent hover:underline">Son 7 günde <?= (int)$alerts['leads'] ?> yeni başvuru →</a><?php endif; ?>
+        </div>
+        <?php if ($alertCount): ?>
+          <div class="mt-4 grid gap-4 md:grid-cols-3 text-sm">
+            <div>
+              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Kameralar (sinyal)</div>
+              <?php if (!$alerts['cameras']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
+              <?php foreach (array_slice($alerts['cameras'], 0, 8) as $c): ?>
+                <p class="text-white/80"><?= e($c['facility_name'] . ' · ' . $c['court']) ?> <span class="text-amber-300"><?= e($c['why']) ?></span></p>
+              <?php endforeach; ?>
+              <?php if (count($alerts['cameras']) > 8): ?><p class="text-white/40">+<?= count($alerts['cameras']) - 8 ?> kamera daha</p><?php endif; ?>
+            </div>
+            <div>
+              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Satıldı, video gelmedi</div>
+              <?php if (!$alerts['delayed']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
+              <?php foreach (array_slice($alerts['delayed'], 0, 8) as $m): ?>
+                <p class="text-white/80"><?= e($m['facility_name'] . ' · ' . $m['court'] . ' · ' . $m['date'] . ' ' . $m['time_slot']) ?> <span class="text-amber-300">bekleniyordu <?= e(date('H:i', $m['eta'])) ?></span></p>
+              <?php endforeach; ?>
+            </div>
+            <div>
+              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Bu ay geri alma oranı ≥ %10</div>
+              <?php if (!$alerts['undo']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
+              <?php foreach ($alerts['undo'] as $u): ?>
+                <p class="text-white/80"><?= e($u['name']) ?> <span class="text-amber-300"><?= (int)$u['undone'] ?>/<?= (int)$u['sold'] ?></span> <a class="text-accent hover:underline" href="index.php?tab=audit&audit_facility=<?= e(urlencode($u['facility_id'])) ?>">incele</a></p>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+      </section>
+
       <!-- Facility Filter Toolbar for Analytics -->
       <div class="rounded-2xl bg-white/[0.02] p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
