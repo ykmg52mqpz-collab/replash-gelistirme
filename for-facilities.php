@@ -15,6 +15,11 @@ $defaultSportKey = $roiConfig['default_sport'] ?? array_key_first($activeSports)
 if (!isset($activeSports[$defaultSportKey])) {
     $defaultSportKey = array_key_first($activeSports);
 }
+// Satın alma oranı ayrı girdi (rapor §14): talep var sayılmaz, oynanan maçın ne kadarının video aldığı seçilir
+foreach ($activeSports as $k => $sp) {
+    $activeSports[$k] += ['rate_min' => 5, 'rate_max' => 60, 'rate_default' => 20];
+    $roiConfig['sports'][$k] = $activeSports[$k];
+}
 $defaultSport = $activeSports[$defaultSportKey];
 
 require_once __DIR__ . '/includes/header.php';
@@ -57,6 +62,7 @@ require_once __DIR__ . '/includes/header.php';
     $sliders = [
         'courts' => ['label' => __('forFacilities.roi.inputs.courts'), 'suffix' => __('forFacilities.roi.inputs.courtsSuffix'), 'min' => 'courts_min', 'max' => 'courts_max', 'def' => 'courts_default'],
         'videos' => ['label' => __('forFacilities.roi.inputs.videos'), 'suffix' => __('forFacilities.roi.inputs.videosSuffix'), 'min' => 'videos_min', 'max' => 'videos_max', 'def' => 'videos_default'],
+        'rate'   => ['label' => __('forFacilities.roi.inputs.rate'),   'suffix' => '%',                                          'min' => 'rate_min',   'max' => 'rate_max',   'def' => 'rate_default'],
         'days'   => ['label' => __('forFacilities.roi.inputs.days'),   'suffix' => __('forFacilities.roi.inputs.daysSuffix'),   'min' => 'days_min',   'max' => 'days_max',   'def' => 'days_default'],
     ];
   ?>
@@ -87,7 +93,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Kaydırıcılar -->
-        <div class="grid gap-6 md:grid-cols-3">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <?php foreach ($sliders as $key => $sl): ?>
             <div class="flex flex-col gap-2">
               <label for="slider-<?= $key ?>" class="text-xs font-semibold uppercase tracking-wider text-white/55"><?= e($sl['label']) ?></label>
@@ -496,6 +502,10 @@ require_once __DIR__ . '/includes/header.php';
   const sliderCourts = document.getElementById('slider-courts');
   const sliderVideos = document.getElementById('slider-videos');
   const sliderDays = document.getElementById('slider-days');
+  const sliderRate = document.getElementById('slider-rate');
+  const valRate = document.getElementById('val-rate');
+  const minRate = document.getElementById('min-rate');
+  const maxRate = document.getElementById('max-rate');
 
   const valCourts = document.getElementById('val-courts');
   const valVideos = document.getElementById('val-videos');
@@ -531,6 +541,12 @@ require_once __DIR__ . '/includes/header.php';
     minVideos.textContent = sliderVideos.min;
     maxVideos.textContent = sliderVideos.max;
 
+    sliderRate.min = sp.rate_min || 5;
+    sliderRate.max = sp.rate_max || 60;
+    sliderRate.value = sp.rate_default || 20;
+    minRate.textContent = sliderRate.min;
+    maxRate.textContent = sliderRate.max;
+
     sliderDays.min = sp.days_min || 20;
     sliderDays.max = sp.days_max || 30;
     sliderDays.value = sp.days_default || 26;
@@ -546,13 +562,16 @@ require_once __DIR__ . '/includes/header.php';
     const courts = parseInt(sliderCourts.value);
     const videos = parseInt(sliderVideos.value);
     const days = parseInt(sliderDays.value);
+    const rate = parseInt(sliderRate.value);
 
     valCourts.textContent = courts;
+    valRate.textContent = rate;
     valVideos.textContent = videos;
     valDays.textContent = days;
 
     // Billing Guide: monthly facility-wide sales pick the tier; it applies to all sales of the month
-    const totalVideos = courts * videos * days;
+    // Oynanan maç × satın alma oranı = satılan video (videos kaydırıcısı: saha başına günlük maç)
+    const totalVideos = Math.round(courts * videos * days * rate / 100);
     const price = parseFloat(sp.price || 0);
     const tier = (ROI_CONFIG.share_tiers || []).filter(t => totalVideos >= t.min).pop() || { facility_pct: 20 };
     const symbol = sp.currency_symbol || '€';
@@ -591,6 +610,7 @@ require_once __DIR__ . '/includes/header.php';
   sliderCourts.addEventListener('input', calculate);
   sliderVideos.addEventListener('input', calculate);
   sliderDays.addEventListener('input', calculate);
+  sliderRate.addEventListener('input', calculate);
 
   // Initial calculation
   calculate();

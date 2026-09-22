@@ -821,15 +821,16 @@ return [
             'inputs' => [
                 'courts' => 'Número de pistas',
                 'courtsSuffix' => 'pistas',
-                'videos' => 'Videos vendidos / pista / día',
-                'videosSuffix' => 'por pista',
+                'videos' => 'Partidos por pista al día',
+                'videosSuffix' => 'partidos',
+                'rate' => 'Tasa de compra de vídeo',
                 'days' => 'Días activos al mes',
                 'daysSuffix' => 'días'
             ],
             'results' => [
                 'eyebrow' => 'TU ESTIMACIÓN',
                 'videos' => 'Videos vendidos',
-                'videosHint' => 'al mes',
+                'videosHint' => 'Partidos jugados × tasa de compra',
                 'share' => 'Tu parte estimada',
                 'shareHint' => 'ganancia mensual',
                 'yearlyEyebrow' => 'POTENCIAL ANUAL',

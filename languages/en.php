@@ -821,15 +821,16 @@ return [
             'inputs' => [
                 'courts' => 'Number of courts',
                 'courtsSuffix' => 'courts',
-                'videos' => 'Videos sold / court / day',
-                'videosSuffix' => 'per court',
+                'videos' => 'Matches per court per day',
+                'videosSuffix' => 'matches',
+                'rate' => 'Video purchase rate',
                 'days' => 'Active days per month',
                 'daysSuffix' => 'days'
             ],
             'results' => [
                 'eyebrow' => 'YOUR ESTIMATE',
                 'videos' => 'Videos sold',
-                'videosHint' => 'per month',
+                'videosHint' => 'Matches played × purchase rate',
                 'share' => 'Your estimated share',
                 'shareHint' => 'monthly earning',
                 'yearlyEyebrow' => 'YEARLY POTENTIAL',

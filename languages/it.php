@@ -821,15 +821,16 @@ return [
             'inputs' => [
                 'courts' => 'Numero di campi',
                 'courtsSuffix' => 'campi',
-                'videos' => 'Video venduti / campo / giorno',
-                'videosSuffix' => 'per campo',
+                'videos' => 'Partite per campo al giorno',
+                'videosSuffix' => 'partite',
+                'rate' => 'Tasso di acquisto video',
                 'days' => 'Giorni attivi al mese',
                 'daysSuffix' => 'giorni'
             ],
             'results' => [
                 'eyebrow' => 'LA TUA STIMA',
                 'videos' => 'Video venduti',
-                'videosHint' => 'al mese',
+                'videosHint' => 'Partite giocate × tasso di acquisto',
                 'share' => 'La tua quota stimata',
                 'shareHint' => 'guadagno mensile',
                 'yearlyEyebrow' => 'POTENZIALE ANNUO',

@@ -821,15 +821,16 @@ return [
             'inputs' => [
                 'courts' => 'Saha sayısı',
                 'courtsSuffix' => 'saha',
-                'videos' => 'Saha başı günlük satılan video',
-                'videosSuffix' => 'saha başı',
+                'videos' => 'Saha başına günlük maç',
+                'videosSuffix' => 'maç',
+                'rate' => 'Video satın alma oranı',
                 'days' => 'Aylık aktif gün',
                 'daysSuffix' => 'gün'
             ],
             'results' => [
                 'eyebrow' => 'TAHMINI GELIRINIZ',
                 'videos' => 'Satılan video',
-                'videosHint' => 'aylık',
+                'videosHint' => 'Oynanan maçlar × satın alma oranı',
                 'share' => 'Tahmini payın',
                 'shareHint' => 'aylık kazanç',
                 'yearlyEyebrow' => 'YILLIK POTANSIYEL',
