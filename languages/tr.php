@@ -529,6 +529,7 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Çok fazla hatalı kod denendi. Lütfen {m} dakika sonra tekrar deneyin.',
+                'check_desk' => 'Kodu tesis görevlisiyle kontrol et.',
                 'video_not_found' => 'Video bulunamadı',
             'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
             'expired' => 'Bu maçın erişim süresi doldu; video artık izlenemez.',
@@ -664,7 +665,8 @@ return [
         'shell' => [
             'cal_legend' => 'Sayı: o günkü maç',
             'tab_matches' => 'Maçlar ve Slotlar',
-            'unlock' => 'Kilidi aç',
+            'unlock' => 'Ödeme alındı · Aç',
+            'copy_failed' => 'Kopyalanamadı, kodu not alın',
             'relock' => 'Tekrar kilitle',
             'locked_state' => 'Kilitli',
             'final_state' => 'Kesinleşti',

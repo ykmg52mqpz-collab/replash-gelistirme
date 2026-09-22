@@ -117,25 +117,13 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 
         <!-- Desktop Navigation -->
         <nav class="hidden items-center gap-1 md:flex">
-          <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'index' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url() ?>">
-            <?= e(__('nav.home')) ?>
-            <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'index' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
-          </a>
-          <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'how-it-works' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>">
-            <?= e(__('nav.howItWorks')) ?>
-            <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'how-it-works' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
-          </a>
           <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'for-facilities' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url('for-facilities.php') ?>">
             <?= e(__('nav.forFacilities')) ?>
             <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'for-facilities' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
           </a>
-          <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'for-players' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url('for-players.php') ?>">
-            <?= e(__('nav.forPlayers')) ?>
-            <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'for-players' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
-          </a>
-          <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'about' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url('about.php') ?>">
-            <?= e(__('nav.about')) ?>
-            <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
+          <a class="group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200 <?= $currentPage === 'how-it-works' ? 'text-white' : 'text-white/60 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>">
+            <?= e(__('nav.howItWorks')) ?>
+            <span class="absolute inset-x-3 bottom-1 h-px rounded-full bg-accent transition-transform duration-200 <?= $currentPage === 'how-it-works' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' ?>"></span>
           </a>
         </nav>
 
@@ -154,9 +142,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
           </div>
 
           <!-- CTA Demo Button -->
+          <?php if (empty($watching)): ?>
           <a class="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-200 hover:bg-accent-neon hover:shadow-[0_0_30px_rgba(253,230,138,0.4)] md:inline-flex" href="<?= base_url('contact.php') ?>">
             <?= e(__('nav.bookDemo')) ?>
           </a>
+          <?php endif; ?>
 
           <!-- Mobile Hamburger Toggle -->
           <button type="button" id="mobile-menu-btn" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white md:hidden" aria-label="Toggle menu">
@@ -170,18 +160,17 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
       <!-- Mobile Dropdown Menu -->
       <div id="mobile-menu" class="hidden pointer-events-auto mx-auto mt-2 overflow-hidden rounded-2xl border border-white/[0.08] bg-ink-900/95 backdrop-blur-2xl transition-[max-height,opacity] duration-300 md:hidden">
         <nav class="flex flex-col gap-1 p-3">
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'index' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url() ?>"><?= e(__('nav.home')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'how-it-works' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>"><?= e(__('nav.howItWorks')) ?></a>
           <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-facilities' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-facilities.php') ?>"><?= e(__('nav.forFacilities')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'for-players' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('for-players.php') ?>"><?= e(__('nav.forPlayers')) ?></a>
-          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'about' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('about.php') ?>"><?= e(__('nav.about')) ?></a>
+          <a class="rounded-lg px-3 py-2.5 text-sm transition <?= $currentPage === 'how-it-works' ? 'bg-accent/10 text-accent' : 'text-white/65 hover:bg-white/5 hover:text-white' ?>" href="<?= base_url('how-it-works.php') ?>"><?= e(__('nav.howItWorks')) ?></a>
 
           <a class="mt-2 rounded-full border border-accent/40 px-5 py-2.5 text-center text-sm font-semibold text-accent transition hover:border-accent hover:bg-accent/10" href="<?= base_url('find.php') ?>">
             <?= e(__('nav.find')) ?>
           </a>
+          <?php if (empty($watching)): ?>
           <a class="rounded-full bg-accent px-5 py-2.5 text-center text-sm font-semibold text-ink-900 shadow-glow transition hover:bg-accent-neon" href="<?= base_url('contact.php') ?>">
             <?= e(__('nav.bookDemo')) ?>
           </a>
+          <?php endif; ?>
         </nav>
       </div>
 

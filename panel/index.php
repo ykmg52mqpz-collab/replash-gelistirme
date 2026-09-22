@@ -407,6 +407,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
           $dayTotals = ['t' => count($dayMatches), 's' => 0, 'l' => 0];
           foreach ($dayMatches as $dm) { if ($dm['status'] === 'UNLOCKABLE') $dayTotals['s']++; elseif ($dm['status'] === 'LOCKED') $dayTotals['l']++; }
         ?>
+        <?php $courtPrices = []; foreach (get_facility_courts_data($facility) as $cd) { $courtPrices[$cd['name']] = (float)$cd['price']; } ?>
         <?php if (!empty($facilityCameras)): ?>
           <!-- Kamera durumu: kapalı kamera fark edilmeden maç kaydı kaçmasın -->
           <div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm">
@@ -534,7 +535,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                   <span class="text-sm text-gray-400"><?= e(__('panel.shell.deleted_state')) ?></span>
                                 <?php elseif ($cm['status'] === 'UNLOCKABLE'): ?>
                                   <div class="min-w-[110px]">
-                                    <div class="text-[11px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div>
+                                    <div class="text-[11px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?><?php if ($cm['sale_price'] !== null): ?> · <?= e(replash_money((float)$cm['sale_price'])) ?><?php endif; ?></div>
                                     <button type="button" data-copy="<?= e($cm['access_code']) ?>" title="<?= e(__('panel.shell.copy')) ?>" class="select-all font-mono text-base font-semibold tracking-wider text-gray-900 hover:underline"><?= e($cm['access_code']) ?></button>
                                     <?php $vs = replash_video_state($pdo, $cm); if ($vs['state'] !== 'ready'): ?>
                                       <div class="mt-0.5 text-[11px] <?= $vs['state'] === 'delayed' ? 'font-medium text-red-700' : 'text-gray-500' ?>"><?= e(str_replace('{t}', date('H:i', $vs['eta']), __('panel.presale.state_' . $vs['state']))) ?></div>
@@ -547,7 +548,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                     <button type="button" disabled title="<?= e(__('panel.shell.final_hint')) ?>" class="cursor-not-allowed rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400"><?= e(__('panel.shell.final_state')) ?></button>
                                   <?php endif; ?>
                                 <?php else: ?>
-                                  <div class="min-w-[110px] text-[11px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></div>
+                                  <div class="min-w-[110px] text-[11px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?><?php if (isset($courtPrices[$cm['court']])): ?> · <?= e(replash_money($courtPrices[$cm['court']])) ?><?php endif; ?></div>
                                   <form action="<?= e($panelUrl()) ?>" method="POST"><?= csrf_field() ?>
                                     <input type="hidden" name="action" value="mark_sold">
                                     <input type="hidden" name="match_id" value="<?= e($cm['id']) ?>">
@@ -776,8 +777,11 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
     var btn = e.target.closest('[data-copy]');
     if (btn) {
       var label = btn.textContent;
-      var done = function () { btn.textContent = <?= json_encode(__('panel.shell.copied')) ?>; setTimeout(function () { btn.textContent = label; }, 1500); };
-      if (navigator.clipboard) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(done, done); else done();
+      var show = function (text) { btn.textContent = text; setTimeout(function () { btn.textContent = label; }, 1800); };
+      var ok = function () { show(<?= json_encode(__('panel.shell.copied')) ?>); };
+      var fail = function () { show(<?= json_encode(__('panel.shell.copy_failed')) ?>); };
+      // "Kopyalandı" yalnız gerçekten kopyalanınca gösterilir
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(ok, fail); else fail();
       return;
     }
     // Aynı düğme: satılmış maçı tekrar kilitle (neden sorulur)

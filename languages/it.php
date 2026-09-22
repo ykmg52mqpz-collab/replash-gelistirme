@@ -529,6 +529,7 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Troppi codici errati. Riprova tra {m} minuti.',
+                'check_desk' => 'Verifica il codice con lo staff del centro.',
                 'video_not_found' => 'Video non trovato',
             'not_found' => 'Nessuna registrazione trovata per i criteri selezionati (Centro, Data, Orario).',
             'expired' => 'L\'accesso a questa partita è scaduto; il video non è più disponibile.',
@@ -664,7 +665,8 @@ return [
         'shell' => [
             'cal_legend' => 'Numero: partite del giorno',
             'tab_matches' => 'Partite e fasce',
-            'unlock' => 'Sblocca',
+            'unlock' => 'Pagato · Sblocca',
+            'copy_failed' => 'Copia non riuscita, annota il codice',
             'relock' => 'Blocca di nuovo',
             'locked_state' => 'Bloccata',
             'final_state' => 'Definitiva',

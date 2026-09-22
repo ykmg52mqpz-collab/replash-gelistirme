@@ -529,6 +529,7 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Too many wrong codes. Please try again in {m} minutes.',
+                'check_desk' => 'Please check the code with the facility staff.',
                 'video_not_found' => 'Video not found',
             'not_found' => 'No match recording found for selected criteria (Venue, Date, Time).',
             'expired' => 'Access to this match has expired; the video is no longer available.',
@@ -664,7 +665,8 @@ return [
         'shell' => [
             'cal_legend' => 'Number: matches that day',
             'tab_matches' => 'Matches and slots',
-            'unlock' => 'Unlock',
+            'unlock' => 'Paid · Unlock',
+            'copy_failed' => 'Copy failed, note the code',
             'relock' => 'Lock again',
             'locked_state' => 'Locked',
             'final_state' => 'Final',

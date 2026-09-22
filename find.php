@@ -100,6 +100,8 @@ if ($pdo && !$codeBlocked) {
             $videoState = replash_video_state($pdo, $match);
         }
         $videoReady = $videoState && $videoState['state'] === 'ready';
+        // Oyuncu kendi maçını görüyor: başlıktaki satış düğmesi gizlenir (includes/header.php)
+        $watching = $match && $match['status'] === 'UNLOCKABLE' && $codeValidated;
 
         // Oyuncu videoyu açtı: izlenme sayılır, satış kesinleşir (includes/sales.php)
         if ($videoReady) {
@@ -387,6 +389,7 @@ require_once __DIR__ . '/includes/header.php';
           <p class="font-semibold text-red-200"><?= e($error) ?></p>
         <?php else: ?>
           <div class="font-semibold text-red-200"><?= e(__('find.errors.video_not_found')) ?></div>
+          <p class="mt-1 text-sm text-red-100/70"><?= e(__('find.errors.check_desk')) ?></p>
         <?php endif; ?>
       </div>
 
@@ -681,6 +684,9 @@ require_once __DIR__ . '/includes/header.php';
                   <span class="font-mono text-neutral-300" id="modal-clip-format">MP4 Video</span>
                 </div>
               </div>
+
+              <!-- Klip önizleme (hazır olunca) -->
+              <video id="modal-clip-preview" class="mb-5 hidden aspect-video w-full rounded-xl bg-black" controls playsinline muted></video>
 
               <!-- Klip hazırlanma durumu -->
               <div id="modal-clip-progress" class="mb-5 hidden">
@@ -1189,6 +1195,8 @@ function clipOfferBlob(clip, blob) {
   if (lbl) lbl.textContent = I18N.saveToGallery;
   var fmt = document.getElementById('modal-clip-format');
   if (fmt) fmt.textContent = ext.toUpperCase() + ' Video';
+  var pv = document.getElementById('modal-clip-preview');
+  if (pv) { pv.src = clipBlobUrl; pv.classList.remove('hidden'); }
   clipSetStatus('');
   return true;
 }
@@ -1507,6 +1515,8 @@ function openClipModal(clip) {
   if (dlLabel) dlLabel.textContent = I18N.downloadMp4;
   var fmtEl = document.getElementById('modal-clip-format');
   if (fmtEl) fmtEl.textContent = 'MP4 Video';
+  var pvEl = document.getElementById('modal-clip-preview');
+  if (pvEl) { pvEl.pause(); pvEl.removeAttribute('src'); pvEl.classList.add('hidden'); }
   clipSetStatus('');
   clipSetBusyUI(false);
   var steps = document.getElementById('modal-social-steps');

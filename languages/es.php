@@ -529,6 +529,7 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Demasiados códigos incorrectos. Inténtalo de nuevo en {m} minutos.',
+                'check_desk' => 'Comprueba el código con el personal del centro.',
                 'video_not_found' => 'Vídeo no encontrado',
             'not_found' => 'No se encontró ninguna grabación para los criterios seleccionados (Club, Fecha, Hora).',
             'expired' => 'El acceso a este partido ha caducado; el vídeo ya no está disponible.',
@@ -664,7 +665,8 @@ return [
         'shell' => [
             'cal_legend' => 'Número: partidos del día',
             'tab_matches' => 'Partidos y franjas',
-            'unlock' => 'Desbloquear',
+            'unlock' => 'Pagado · Desbloquear',
+            'copy_failed' => 'No se pudo copiar, anota el código',
             'relock' => 'Volver a bloquear',
             'locked_state' => 'Bloqueado',
             'final_state' => 'Definitivo',
