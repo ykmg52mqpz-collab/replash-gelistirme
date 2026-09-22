@@ -814,7 +814,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'GELİR HESAPLAYICI',
-            'title' => 'Aylık pasif gelirinizi hesaplayın',
+            'title' => 'Aylık payınızı tahmin edin',
             'subtitle' => 'Kaç sahanız var? Saha başına günlük kaç video satmayı bekliyorsunuz? Rakamlarınızı girin, aylık payınızı görün.',
             'sport' => [
                 'padel' => 'Padel',
@@ -837,7 +837,7 @@ return [
                 'shareHint' => 'aylık kazanç',
                 'yearlyEyebrow' => 'YILLIK POTANSIYEL',
                 'yearlySuffix' => 'yıllık',
-                'yearlyNote' => 'Personelinize sıfır ek iş yükü ile.'
+                'yearlyNote' => 'Tahmindir; gerçek tutar oynanan maçlara ve satışlara bağlıdır.'
             ],
             'disclaimer' => '* Hizmet kullanımına dayalı gösterge niteliğinde bir tahmindir. Hesaplama yalnızca örnektir; nihai koşullar onboarding sırasında belirlenir.',
             'hook' => [

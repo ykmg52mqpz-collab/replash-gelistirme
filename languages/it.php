@@ -814,7 +814,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'CALCOLATORE DI RICAVI',
-            'title' => 'Calcola la tua entrata mensile passiva',
+            'title' => 'Stima la tua quota mensile',
             'subtitle' => 'Quanti campi hai? Quanti video pensi di vendere al giorno per campo? Inserisci i tuoi numeri e scopri la tua quota mensile.',
             'sport' => [
                 'padel' => 'Padel',
@@ -837,7 +837,7 @@ return [
                 'shareHint' => 'guadagno mensile',
                 'yearlyEyebrow' => 'POTENZIALE ANNUO',
                 'yearlySuffix' => 'all\'anno',
-                'yearlyNote' => 'Con zero lavoro aggiuntivo per il tuo staff.'
+                'yearlyNote' => 'È una stima: l’importo reale dipende dalle partite giocate e dai video venduti.'
             ],
             'disclaimer' => '* Stima indicativa basata sull\'utilizzo del servizio. Il calcolo è puramente illustrativo; i termini finali vengono definiti in fase di onboarding.',
             'hook' => [

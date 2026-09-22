@@ -814,7 +814,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'REVENUE CALCULATOR',
-            'title' => 'Calculate your passive monthly income',
+            'title' => 'Estimate your monthly share',
             'subtitle' => 'How many courts do you have? How many videos do you expect to sell per day per court? Enter your numbers and see your monthly share.',
             'sport' => [
                 'padel' => 'Padel',
@@ -837,7 +837,7 @@ return [
                 'shareHint' => 'monthly earning',
                 'yearlyEyebrow' => 'YEARLY POTENTIAL',
                 'yearlySuffix' => 'per year',
-                'yearlyNote' => 'With zero extra work for your staff.'
+                'yearlyNote' => 'An estimate; the real amount depends on matches played and videos sold.'
             ],
             'disclaimer' => '* Indicative estimate based on service usage. The calculation is illustrative only; final terms are defined during onboarding.',
             'hook' => [

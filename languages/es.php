@@ -814,7 +814,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'CALCULADORA DE INGRESOS',
-            'title' => 'Calcula tu ingreso pasivo mensual',
+            'title' => 'Estima tu parte mensual',
             'subtitle' => '¿Cuántas pistas tienes? ¿Cuántos videos esperas vender al día por pista? Ingresa tus números y descubre tu parte mensual.',
             'sport' => [
                 'padel' => 'Pádel',
@@ -837,7 +837,7 @@ return [
                 'shareHint' => 'ganancia mensual',
                 'yearlyEyebrow' => 'POTENCIAL ANUAL',
                 'yearlySuffix' => 'al año',
-                'yearlyNote' => 'Sin trabajo extra para tu personal.'
+                'yearlyNote' => 'Es una estimación: el importe real depende de los partidos jugados y los vídeos vendidos.'
             ],
             'disclaimer' => '* Estimación indicativa basada en el uso del servicio. El cálculo es solo ilustrativo; los términos finales se definen durante el onboarding.',
             'hook' => [
