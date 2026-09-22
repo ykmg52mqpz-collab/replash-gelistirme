@@ -160,7 +160,7 @@ require_once __DIR__ . '/../includes/header.php';
       <!-- Left Column: Form & Sports Settings (7 cols) -->
       <div class="lg:col-span-7 space-y-6">
 
-        <form action="calculator.php" method="POST" id="calculatorSettingsForm" class="space-y-6"><?= csrf_field() ?>
+        <form action="calculator.php" method="POST" id="calculatorSettingsForm" class="space-y-6">
           <input type="hidden" name="action" value="save_calculator">
 
           <!-- Sports & Models Header Card -->
@@ -519,7 +519,7 @@ require_once __DIR__ . '/../includes/header.php';
       <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
     </div>
 
-    <form action="calculator.php" method="POST" class="space-y-4 text-xs"><?= csrf_field() ?>
+    <form action="calculator.php" method="POST" class="space-y-4 text-xs">
       <input type="hidden" name="action" value="add_sport">
 
       <div class="grid grid-cols-2 gap-3">
@@ -576,13 +576,13 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <!-- Hidden Delete Form -->
-<form id="deleteSportForm" action="calculator.php" method="POST" class="hidden"><?= csrf_field() ?>
+<form id="deleteSportForm" action="calculator.php" method="POST" class="hidden">
   <input type="hidden" name="action" value="delete_sport">
   <input type="hidden" name="sport_key" id="deleteSportKey">
 </form>
 
 <!-- Hidden Reset Form -->
-<form id="resetDefaultsForm" action="calculator.php" method="POST" class="hidden"><?= csrf_field() ?>
+<form id="resetDefaultsForm" action="calculator.php" method="POST" class="hidden">
   <input type="hidden" name="action" value="reset_defaults">
 </form>
 

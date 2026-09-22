@@ -1,7 +1,6 @@
 <?php
 return [
     'nav' => [
-        'menu' => 'Menú',
         'home' => 'Inicio',
         'howItWorks' => 'Cómo Funciona',
         'forFacilities' => 'Para Centros',
@@ -115,7 +114,7 @@ return [
                     'desc' => 'Cada video comprado genera valor tanto para los jugadores como para tu centro.'
                 ],
                 '5' => [
-                    'title' => 'Sencillo para tu Personal',
+                    'title' => 'Cero Complejidad',
                     'desc' => 'Replash gestiona cámaras, almacenamiento y entrega. Tu equipo hace una sola acción por venta.'
                 ],
                 '6' => [
@@ -158,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => '¿Hay costes iniciales o compromisos contractuales?',
-                    'a' => 'Sin coste inicial: Replash cubre cámaras, instalación, mantenimiento y actualizaciones de software, sin cuota mensual. El acuerdo tiene una duración mínima de 6 meses; durante ese periodo tu centro recibe cada mes la parte de ingresos acordada.'
+                    'a' => 'No. Replash cubre el 100% del coste. Cámaras, instalación, mantenimiento, actualizaciones de software. Sin cuotas mensuales. El compromiso mínimo es de 6 meses. Durante la duración del contrato, tu centro recibe la misma parte de ingresos acordada cada mes.'
                 ],
                 '3' => [
                     'q' => '¿Cómo comparte Replash los ingresos con el centro?',
-                    'a' => 'Al final de cada mes, cada vídeo vendido aparece en el panel. La parte fijada en tu acuerdo se queda en tu centro; el resto se paga a Replash a fin de mes. El resumen mensual sale del panel: ventas válidas, tu parte y la de Replash. Cuanto más se usan tus pistas, más gana tu centro.'
+                    'a' => 'Al final de cada mes, todos los videos desbloqueados se registran a través del panel de administración. La parte definida en tu contrato se queda en tu centro; el importe restante se paga a Replash a fin de mes. Cuanto más activas estén tus pistas, más gana tu centro — cada nuevo partido son ingresos adicionales. Todo se concilia automáticamente desde el panel. Con cero coste operativo por tu parte.'
                 ],
                 '4' => [
                     'q' => '¿Mi personal tiene que hacer algo por cada partido?',
@@ -170,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => '¿Qué pasa si una cámara falla o hay un problema técnico?',
-                    'a' => 'El panel del centro muestra la última señal de cada cámara y Replash vigila la llegada de las grabaciones. Si una cámara falla, la arreglamos en remoto cuando es posible o planificamos una visita. Un partido sin grabación no se puede vender, así que no aparece en tu informe.'
+                    'a' => 'Replash monitoriza todas las cámaras 24/7. En raros casos de fallo, nuestro equipo de soporte es notificado automáticamente y lo resuelve remotamente. Generalmente en horas. Si se pierde una grabación, esa venta no aparece en tu informe y no se te cobra.'
                 ],
                 '6' => [
                     'q' => '¿Qué tan rápido podemos empezar?',
@@ -186,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => '¿Y si no disponemos de buena conexión Wi-Fi?',
-                    'a' => 'Las cámaras guardan un breve búfer local: las caídas cortas suelen recuperarse; las largas pueden hacer perder parte de la grabación. En pistas exteriores sin Wi-Fi se puede usar LTE/SIM si hay cobertura. Comprobamos la conexión en la visita técnica.'
+                    'a' => 'Las cámaras PoE disponen de almacenamiento local en búfer. Las caídas breves de conexión no pierden datos. Para pistas exteriores sin Wi-Fi, ofrecemos conectividad LTE/SIM.'
                 ],
                 '10' => [
                     'q' => '¿Y el RGPD?',
-                    'a' => 'Replash está diseñado conforme al RGPD y las pautas del Garante italiano sobre videovigilancia: las cámaras encuadran solo el área de juego, sin audio ni reconocimiento facial, y los vídeos se cierran a los 3 días si no se venden o a los 7 si se venden. La base jurídica y los avisos (cartel de entrada, QR, aviso de reserva) se acuerdan con cada centro antes de la instalación.'
+                    'a' => 'Replash cumple totalmente con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Hay un modelo de notificación de tres niveles (señalización de entrada + QR + notificación de reserva). Se proporciona un archivo de Justificación de Privacidad y Legal antes de la instalación.'
                 ],
                 '12' => [
                     'q' => '¿Qué pasa si no tenemos una conexión WiFi fuerte?',
-                    'a' => 'Las cámaras guardan un breve búfer local: las caídas cortas suelen recuperarse; las largas pueden hacer perder parte de la grabación. En pistas exteriores sin Wi-Fi se puede usar LTE/SIM si hay cobertura. Comprobamos la conexión en la visita técnica.'
+                    'a' => 'Las cámaras PoE funcionan con un búfer local. Las caídas cortas de conexión no causan pérdida de datos. Para centros outdoor sin WiFi, la conectividad LTE/SIM autónoma está totalmente soportada. El equipo de Replash gestiona toda la configuración.'
                 ]
             ],
             'categories' => [
@@ -211,30 +210,6 @@ return [
         ]
     ],
     'howItWorks' => [
-        'guide' => [
-            'players' => 'Para jugadores',
-            'facilities' => 'Para centros',
-            'demo' => 'Las pantallas reales',
-            'demo_sub' => 'Panel del personal, introducción del código y pantalla del jugador: exactamente lo que funciona en el sitio.',
-            'faq' => 'Preguntas frecuentes',
-            'p' => [
-                '1' => ['t' => 'Consigue tu código en recepción', 'd' => 'Compra el vídeo del partido en recepción y recibe tu código de 4 cifras.'],
-                '2' => ['t' => 'Mira tu partido', 'd' => 'Introduce el código en replash.it, comprueba pista y hora y abre la grabación.'],
-                '3' => ['t' => 'Elige tu momento y comparte', 'd' => 'Elige un tramo de 15–40 segundos, guarda el clip o compártelo.'],
-            ],
-            'f' => [
-                '1' => ['t' => 'Instalación y grabación', 'd' => 'Replash instala las cámaras; cada partido se graba automáticamente.'],
-                '2' => ['t' => 'Venta y acceso', 'd' => 'El personal cobra, lo desbloquea en el panel con un toque y da el código. También se puede vender antes del partido.'],
-                '3' => ['t' => 'Seguimiento de ingresos', 'd' => 'Las ventas y tu parte acordada están en el panel; el resumen está listo a fin de mes.'],
-            ],
-            'q' => [
-                '1' => ['q' => '¿Dónde veo el precio?', 'a' => 'El precio lo fija el centro y te lo dice en recepción; el vídeo se vende por partido, no por persona.'],
-                '2' => ['q' => '¿Y si mi código no funciona?', 'a' => 'Vuelve a escribir las 4 cifras. Si sigue sin abrir, pregunta en recepción: puede que el partido no esté desbloqueado o haya caducado. Si el vídeo aún se está preparando, la página te lo indica.'],
-                '3' => ['q' => '¿Hasta cuándo puedo ver mi partido?', 'a' => 'Hasta 7 días después del final del partido; la fecha y hora exactas aparecen en la página del vídeo. Los archivos que descargues se quedan en tu dispositivo.'],
-                '4' => ['q' => '¿Cómo descargo un clip?', 'a' => 'Selecciona un tramo de 15–40 segundos en la línea de tiempo y pulsa Cortar; cuando esté listo, usa Guardar en la galería o Compartir.'],
-                '5' => ['q' => '¿A qué doy acceso al compartir?', 'a' => 'Si compartes un clip, solo envías ese archivo de vídeo. Si compartes el enlace del partido, quien lo reciba puede ver el partido completo.'],
-            ],
-        ],
         'flow' => [
             '1' => ['label' => 'Paso 1', 'title' => 'Se juega el partido, Replash lo graba', 'desc' => 'Las cámaras fijas de la pista graban el partido entero de principio a fin. Sin botones, sin iniciar/parar, el personal no tiene que hacer nada.'],
             '2' => ['label' => 'Paso 2', 'title' => 'Recepción lo desbloquea y da el código', 'desc' => 'Cuando el equipo quiere el vídeo, el personal cobra y lo desbloquea en el panel con un toque. Aparece un código de partido de 4 cifras, uno para todo el equipo. También se puede vender antes del partido: el código funciona en cuanto el vídeo está listo.'],
@@ -243,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Cómo Funciona',
-            'title' => 'Tres pasos para el jugador. Un toque para tu personal.',
-            'subtitle' => 'El jugador abre su partido con un código de 4 cifras; recepción lo desbloquea tras el pago. Abajo, el lado del jugador, el del centro y las pantallas reales.'
+            'title' => 'Seis pasos simples. Cero complejidad para tu equipo.',
+            'subtitle' => 'Del saque inicial a la repetición, Replash gestiona todo lo que hay en medio. Abajo: cada paso explicado, con el partido de pádel del martes por la noche de Marco como ejemplo concreto.'
         ],
         'steps' => [
             '1' => [
@@ -367,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Retención 7 Días',
-                    'desc' => 'Las grabaciones no vendidas se cierran a los 3 días y las vendidas a los 7. Almacenamiento limpio, privacidad intacta.'
+                    'desc' => 'Todas las grabaciones se eliminan automáticamente después de 7 días. Almacenamiento limpio, privacidad intacta.'
                 ],
                 '5' => [
                     'title' => 'Conectividad Resiliente',
@@ -407,8 +382,6 @@ return [
         ]
     ],
     'common' => [
-        'close' => 'Cerrar',
-        'csrf_failed' => 'La verificación de seguridad ha fallado. Actualiza la página e inténtalo de nuevo.',
         'loading' => 'Cargando...',
         'all_rights_reserved' => 'Todos los derechos reservados.',
         'privacy_policy' => 'Política de Privacidad',
@@ -531,10 +504,9 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Demasiados códigos incorrectos. Inténtalo de nuevo en {m} minutos.',
-                'check_desk' => 'Comprueba el código con el personal del centro.',
                 'video_not_found' => 'Vídeo no encontrado',
             'not_found' => 'No se encontró ninguna grabación para los criterios seleccionados (Club, Fecha, Hora).',
-            'expired' => 'El acceso a este partido ha caducado; el vídeo ya no está disponible.',
+            'expired' => 'Este video ha sido eliminado porque su periodo de almacenamiento de 7 días ha expirado.',
             'code_mismatch' => 'El código introducido no corresponde a este partido. Introduce el código correcto.',
             'invalid_code' => 'No se encontró ningún partido con este código. Revisa el código.',
             'too_short' => 'El clip es demasiado corto (al menos 2 segundos).',
@@ -606,7 +578,7 @@ return [
                 'download' => 'Descargar clip',
                 'range' => 'Selecciona entre 15 y 40 segundos.'
             ],
-            'expires' => 'Puedes acceder a este vídeo hasta el {date}. Los archivos que descargues se quedan en tu dispositivo.'
+            'expires' => 'Este vídeo se elimina automáticamente el {date}.'
         ]
     ],
     'api' => [
@@ -615,7 +587,7 @@ return [
             'too_many' => 'Demasiados intentos incorrectos. Inténtalo de nuevo en 15 minutos.',
             'code_required' => 'Se necesita el código del partido para abrir este vídeo.',
             'not_found' => 'Vídeo no encontrado.',
-            'expired' => 'El acceso a este partido ha caducado; el vídeo ya no está disponible.',
+            'expired' => 'El periodo de conservación de 7 días ha terminado y el vídeo se ha eliminado.',
         ],
     ],
     'panel' => [
@@ -627,9 +599,6 @@ return [
             'never' => 'Sin señal',
         ],
         'presale' => [
-            'start' => 'Inicio',
-            'duration' => 'Duración',
-            'minutes' => 'min',
             'title' => 'Vender antes del partido',
             'hint' => 'Da el código en cuanto cobres; el vídeo se abre al terminar el partido.',
             'court' => 'Pista',
@@ -667,16 +636,15 @@ return [
         'shell' => [
             'cal_legend' => 'Número: partidos del día',
             'tab_matches' => 'Partidos y franjas',
-            'unlock' => 'Pagado · Desbloquear',
-            'copy_failed' => 'No se pudo copiar, anota el código',
+            'unlock' => 'Desbloquear',
             'relock' => 'Volver a bloquear',
             'locked_state' => 'Bloqueado',
             'final_state' => 'Definitivo',
             'final_hint' => 'El vídeo se abrió o pasó el plazo; contacta con Replash para correcciones.',
-            'deleted_state' => 'Caducado',
+            'deleted_state' => 'Eliminado',
             'time_col' => 'Hora',
             'day_summary' => '{t} partidos · {s} vendidos · {l} bloqueados',
-            'auto_note' => 'Cada vídeo recibido por el sistema aparece aquí, bloqueado, bajo su pista y hora. Desbloquea el partido cobrado y da el código al jugador. Las grabaciones se cierran 3 días después del final del partido si no se venden, 7 días si se venden.',
+            'auto_note' => 'Cada vídeo recibido por el sistema aparece aquí, bloqueado, bajo su pista y hora. Desbloquea el partido cobrado y da el código al jugador. Las grabaciones se eliminan 7 días después de la fecha del partido.',
             'relock_title' => 'Volver a bloquear el partido',
             'relock_desc' => 'Al bloquearlo, el acceso del jugador con el código y el enlace anterior se corta de inmediato.',
             'cancel' => 'Cancelar',
@@ -814,7 +782,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'CALCULADORA DE INGRESOS',
-            'title' => 'Estima tu parte mensual',
+            'title' => 'Calcula tu ingreso pasivo mensual',
             'subtitle' => '¿Cuántas pistas tienes? ¿Cuántos videos esperas vender al día por pista? Ingresa tus números y descubre tu parte mensual.',
             'sport' => [
                 'padel' => 'Pádel',
@@ -823,21 +791,20 @@ return [
             'inputs' => [
                 'courts' => 'Número de pistas',
                 'courtsSuffix' => 'pistas',
-                'videos' => 'Partidos por pista al día',
-                'videosSuffix' => 'partidos',
-                'rate' => 'Tasa de compra de vídeo',
+                'videos' => 'Videos vendidos / pista / día',
+                'videosSuffix' => 'por pista',
                 'days' => 'Días activos al mes',
                 'daysSuffix' => 'días'
             ],
             'results' => [
                 'eyebrow' => 'TU ESTIMACIÓN',
                 'videos' => 'Videos vendidos',
-                'videosHint' => 'Partidos jugados × tasa de compra',
+                'videosHint' => 'al mes',
                 'share' => 'Tu parte estimada',
                 'shareHint' => 'ganancia mensual',
                 'yearlyEyebrow' => 'POTENCIAL ANUAL',
                 'yearlySuffix' => 'al año',
-                'yearlyNote' => 'Es una estimación: el importe real depende de los partidos jugados y los vídeos vendidos.'
+                'yearlyNote' => 'Sin trabajo extra para tu personal.'
             ],
             'disclaimer' => '* Estimación indicativa basada en el uso del servicio. El cálculo es solo ilustrativo; los términos finales se definen durante el onboarding.',
             'hook' => [
@@ -852,22 +819,22 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => '¿Y el RGPD?',
-                    'answer' => 'El enfoque de privacidad de Replash está diseñado conforme al RGPD, el CEDH Artículo 8 y las directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Los videos no son adivinables, están vinculados a la franja horaria y se cierran a los 3 días si no se venden, 7 si se venden. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Modelo de notificación de tres niveles (señalización + QR + notificación de reserva) listo antes de la instalación.',
+                    'answer' => 'La arquitectura de privacidad de Replash cumple con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Los videos no son adivinables, están vinculados a la franja horaria y se eliminan automáticamente después de 7 días. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Modelo de notificación de tres niveles (señalización + QR + notificación de reserva) listo antes de la instalación.',
                     'items' => [
                         '1' => 'Sin audio. Sin reconocimiento facial.',
-                        '2' => 'Acceso cerrado a los 3 días (no vendidas) / 7 días (vendidas).',
+                        '2' => 'Auto-eliminación después de 7 días.',
                         '3' => 'Conforme RGPD / CEDH Art. 8 / Garante.',
                         '4' => 'Archivo de Justificación de Privacidad y Legal entregado por adelantado.'
                     ]
                 ],
                 'tech' => [
                     'question' => '¿Y si no tenemos WiFi?',
-                    'answer' => 'Las cámaras guardan un breve búfer local: las caídas cortas suelen recuperarse; las largas pueden hacer perder parte de la grabación. En pistas exteriores sin Wi-Fi se puede usar LTE/SIM si hay cobertura. Comprobamos la conexión en la visita técnica. La instalación, el cableado y el montaje de las cámaras los hace Replash; tu personal solo tiene que darnos acceso.',
+                    'answer' => 'Las cámaras PoE funcionan con un búfer local. Las caídas cortas de conexión no causan pérdida de datos. Para centros outdoor sin WiFi, la conectividad LTE/SIM autónoma está totalmente soportada. La instalación, cableado y montaje de cámaras los gestiona enteramente Replash. Tu personal técnico no está involucrado.',
                     'items' => [
                         '1' => 'Búfer local PoE gestiona las caídas.',
                         '2' => 'Respaldo LTE/SIM para centros sin WiFi.',
                         '3' => 'Configuración completa gestionada por Replash.',
-                        '4' => 'Sin cambios en cómo gestionas reservas y pistas.'
+                        '4' => 'Cero interferencia con las operaciones del centro.'
                     ]
                 ]
             ]
@@ -887,7 +854,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Torneos Piloto',
-                    'desc' => 'En el lanzamiento podemos organizar un torneo temático con algunos centros asociados para atraer nuevos jugadores. Se acuerda caso por caso.'
+                    'desc' => 'En el lanzamiento, organizamos torneos temáticos en centros asociados. Nuevos clientes y visibilidad añadida, por cuenta nuestra.'
                 ]
             ]
         ],
@@ -1199,7 +1166,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Grabación HD Gran Angular',
-                'desc' => 'Vídeo en alta definición que cubre toda la pista desde un ángulo fijo.'
+                'desc' => 'Cobertura de video en alta definición que captura la pista completa sin puntos ciegos.'
             ],
             '2' => [
                 'title' => 'Recorta Clips en Segundos',
@@ -1355,7 +1322,7 @@ return [
         'success' => '¡Mensaje recibido! Te contactaremos en 24 horas.',
         'errors' => [
             'required' => 'Por favor, introduce tu nombre y correo electrónico.',
-            'general' => 'No hemos podido guardar tu solicitud. Inténtalo de nuevo en breve o escríbenos por WhatsApp.'
+            'general' => 'Ocurrió un error al enviar el formulario: '
         ],
         'form' => [
             'name' => 'Nombre y Apellidos *',
@@ -1435,7 +1402,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'Para Centros. Replash',
-            'description' => 'Ofrece vídeos de partidos en tu centro: instalamos y gestionamos las cámaras, recepción desbloquea los vídeos pagados con un toque y tú te quedas una parte de cada venta.'
+            'description' => 'Convierte tu centro deportivo en una experiencia moderna de partido. Cero complejidad operativa, nuevo servicio digital, modelo probado.'
         ],
         'forPlayers' => [
             'title' => 'Para Jugadores. Replash',
@@ -1447,7 +1414,6 @@ return [
         ]
     ],
     'footer' => [
-        'get_started' => 'Empieza',
         'tagline' => 'Más que solo un partido.',
         'links' => [
             'howItWorks' => 'Cómo Funciona',

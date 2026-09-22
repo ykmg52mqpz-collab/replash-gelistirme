@@ -32,7 +32,7 @@
           <a class="text-sm text-white/50 transition hover:text-accent" href="<?= base_url('admin/index.php') ?>"><?= e(__('nav.admin')) ?></a>
         </nav>
         <div class="flex flex-col gap-4">
-          <span class="text-xs font-semibold uppercase tracking-widest text-white/25"><?= e(__('footer.get_started')) ?></span>
+          <span class="text-xs font-semibold uppercase tracking-widest text-white/25">Get Started</span>
           <a class="inline-flex w-fit items-center justify-center rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-ink-900 shadow-glow transition hover:bg-accent-neon" href="<?= base_url('contact.php') ?>"><?= e(__('nav.bookDemo')) ?></a>
         </div>
       </div>
@@ -56,6 +56,6 @@
   </a>
   <?php endif; ?>
   <?php endif; ?>
-  <script src="<?= asset('js/main.js') ?>?v=<?= @filemtime(REPLASH_ROOT . '/assets/js/main.js') ?>"></script>
+  <script src="<?= asset('js/main.js') ?>?v=<?= time() ?>"></script>
 </body>
 </html>

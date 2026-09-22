@@ -34,50 +34,110 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </section>
 
-  <!-- Oyuncu ve tesis: kısa adımlar -->
   <section class="section-y border-t border-white/5 bg-section-gradient">
-    <div class="container-x mx-auto grid max-w-5xl gap-4 md:grid-cols-2">
-      <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-6" data-reveal="up">
-        <h2 class="font-display text-xl font-bold text-white md:text-2xl"><?= e(__('howItWorks.guide.players')) ?></h2>
-        <ol class="mt-5 flex flex-col gap-4">
-          <?php for ($i = 1; $i <= 3; $i++): ?>
-            <li class="flex gap-4">
-              <span class="grid h-8 w-8 flex-none place-items-center rounded-full border border-accent/30 font-display text-sm font-bold text-accent"><?= $i ?></span>
-              <div>
-                <h3 class="font-semibold text-white"><?= e(__("howItWorks.guide.p.{$i}.t")) ?></h3>
-                <p class="mt-0.5 text-sm leading-relaxed text-white/55"><?= e(__("howItWorks.guide.p.{$i}.d")) ?></p>
-              </div>
-            </li>
-          <?php endfor; ?>
-        </ol>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/[0.02] p-6" data-reveal="up">
-        <h2 class="font-display text-xl font-bold text-white md:text-2xl"><?= e(__('howItWorks.guide.facilities')) ?></h2>
-        <ol class="mt-5 flex flex-col gap-4">
-          <?php for ($i = 1; $i <= 3; $i++): ?>
-            <li class="flex gap-4">
-              <span class="grid h-8 w-8 flex-none place-items-center rounded-full border border-accent/30 font-display text-sm font-bold text-accent"><?= $i ?></span>
-              <div>
-                <h3 class="font-semibold text-white"><?= e(__("howItWorks.guide.f.{$i}.t")) ?></h3>
-                <p class="mt-0.5 text-sm leading-relaxed text-white/55"><?= e(__("howItWorks.guide.f.{$i}.d")) ?></p>
-              </div>
-            </li>
-          <?php endfor; ?>
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  <!-- Gerçek ekranlar: panel, kod girişi, oyuncu -->
-  <section class="section-y border-t border-white/5 bg-ink-900">
-    <div class="container-x mx-auto max-w-6xl">
-      <div class="mx-auto max-w-2xl text-center" data-reveal="up">
-        <h2 class="font-display text-3xl font-bold text-white md:text-4xl"><?= e(__('howItWorks.guide.demo')) ?></h2>
-        <p class="mt-3 text-white/55"><?= e(__('howItWorks.guide.demo_sub')) ?></p>
-      </div>
-      <div class="mt-10 grid gap-6 lg:grid-cols-3">
-        <figure data-reveal="up">
-          <!-- Gerçek tesis paneli: gün tablosu, personel "Kilidi aç"a basar -->
+  <div class="container-x">
+  <div class="mx-auto max-w-4xl">
+  <div class="relative">
+  <div class="absolute left-[27px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/40 via-accent/15 to-accent/5 sm:left-[35px]">
+  </div>
+  <div class="flex flex-col gap-8">
+  <div class="relative flex gap-5"  data-reveal="up">
+  <div class="relative flex-shrink-0">
+  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 7l-7 5 7 5V7z">
+  </path>
+  <rect x="1" y="5" width="15" height="14" rx="2">
+  </rect>
+  </svg>
+  </div>
+  </div>
+  <div class="flex-1 pb-2">
+  <div class="mb-3">
+  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
+  <?= e(__('howItWorks.flow.1.label')) ?>
+  </span>
+  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
+  <?= e(__('howItWorks.flow.1.title')) ?>
+  </h3>
+  </div>
+  <p class="text-sm leading-relaxed text-white/55 md:text-base">
+  <?= e(__('howItWorks.flow.1.desc')) ?>
+  </p>
+  <div class="mt-5">
+  <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
+  <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
+  <span class="h-2 w-2 rounded-full bg-white/15">
+  </span>
+  <span class="h-2 w-2 rounded-full bg-white/15">
+  </span>
+  <span class="h-2 w-2 rounded-full bg-white/15">
+  </span>
+  <span class="ml-3 font-mono text-[10px] uppercase tracking-widest text-white/35">Replash Cam · Live feed</span>
+  </div>
+  <div class="relative p-4">
+  <div class="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
+  <div class="absolute inset-0 bg-[#0f2a1c]">
+  </div>
+  <svg class="absolute inset-0 h-full w-full" viewBox="0 0 320 180" preserveAspectRatio="none">
+  <g stroke="rgba(255,255,255,0.22)" stroke-width="0.8" fill="none">
+  <rect x="10" y="12" width="300" height="156" rx="2">
+  </rect>
+  <line x1="160" y1="12" x2="160" y2="168">
+  </line>
+  <circle cx="160" cy="90" r="18">
+  </circle>
+  <rect x="10" y="60" width="30" height="60">
+  </rect>
+  <rect x="280" y="60" width="30" height="60">
+  </rect>
+  </g>
+  <circle r="2.5" fill="rgb(253,230,138)" cx="160" cy="90"><animate attributeName="cx" values="160;120;100;130;160;200;220;190;160" dur="10s" begin="0s" repeatCount="indefinite"/><animate attributeName="cy" values="90;70;100;120;90;70;100;120;90" dur="10s" begin="0s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3" fill="white" cx="90" cy="70"><animate attributeName="cx" values="90;110;95;90" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="70;85;100;70" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  <circle r="3" fill="white" cx="140" cy="110"><animate attributeName="cx" values="140;160;145;140" dur="12s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="110;100;130;110" dur="12s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  <circle r="3" fill="#111" stroke="white" stroke-width="0.5" cx="230" cy="80"><animate attributeName="cx" values="230;210;220;230" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="80;95;110;80" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  <circle r="3" fill="#111" stroke="white" stroke-width="0.5" cx="180" cy="110"><animate attributeName="cx" values="180;200;185;180" dur="12s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="110;95;125;110" dur="12s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </circle>
+  </svg>
+  <div class="absolute right-2 top-2 flex items-center gap-1.5 rounded bg-black/50 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white/85 backdrop-blur-sm">
+  <span class="h-1.5 w-1.5 rounded-full bg-red-500 hw-blink">
+  </span>Rec 47:12</div>
+  <div class="absolute bottom-2 left-2 font-mono text-[9px] uppercase tracking-widest text-white/50">Cam 01 · Auto</div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  <div class="relative flex gap-5"  data-reveal="up">
+  <div class="relative flex-shrink-0">
+  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z">
+  </path>
+  <line x1="7" y1="7" x2="7.01" y2="7">
+  </line>
+  </svg>
+  </div>
+  </div>
+  <div class="flex-1 pb-2">
+  <div class="mb-3">
+  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
+  <?= e(__('howItWorks.flow.2.label')) ?>
+  </span>
+  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
+  <?= e(__('howItWorks.flow.2.title')) ?>
+  </h3>
+  </div>
+  <p class="text-sm leading-relaxed text-white/55 md:text-base">
+  <?= e(__('howItWorks.flow.2.desc')) ?>
+  </p>
+  <div class="mt-5">
+<!-- Gerçek tesis paneli: gün tablosu, personel "Kilidi aç"a basar -->
 <div class="overflow-hidden rounded-2xl border border-white/10 bg-white text-gray-900 shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
   <div class="flex items-center gap-1.5 border-b border-gray-200 bg-gray-50 px-3 py-2">
     <span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span>
@@ -106,10 +166,34 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </div>
 </div>
-          <figcaption class="mt-3 text-center text-sm text-white/60"><?= e(__('howItWorks.flow.2.title')) ?></figcaption>
-        </figure>
-        <figure data-reveal="up">
-          <!-- Gerçek "Maçını bul" kartı: kod yazılır, Maçı izle -->
+</div>
+  </div>
+  </div>
+  <div class="relative flex gap-5"  data-reveal="up">
+  <div class="relative flex-shrink-0">
+  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="11" cy="11" r="8">
+  </circle>
+  <line x1="21" y1="21" x2="16.65" y2="16.65">
+  </line>
+  </svg>
+  </div>
+  </div>
+  <div class="flex-1 pb-2">
+  <div class="mb-3">
+  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
+  <?= e(__('howItWorks.flow.3.label')) ?>
+  </span>
+  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
+  <?= e(__('howItWorks.flow.3.title')) ?>
+  </h3>
+  </div>
+  <p class="text-sm leading-relaxed text-white/55 md:text-base">
+  <?= e(__('howItWorks.flow.3.desc')) ?>
+  </p>
+  <div class="mt-5">
+<!-- Gerçek "Maçını bul" kartı: kod yazılır, Maçı izle -->
 <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
   <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
     <span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span>
@@ -128,10 +212,40 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </div>
 </div>
-          <figcaption class="mt-3 text-center text-sm text-white/60"><?= e(__('howItWorks.flow.3.title')) ?></figcaption>
-        </figure>
-        <figure data-reveal="up">
-          <!-- Gerçek oynatıcı: UNLOCKED, filigranlı video, aralık seç, Klip kes, paylaş -->
+</div>
+  </div>
+  </div>
+  <div class="relative flex gap-5"  data-reveal="up">
+  <div class="relative flex-shrink-0">
+  <div class="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-ink-900 text-accent sm:h-[70px] sm:w-[70px]">
+  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="6" cy="6" r="3">
+  </circle>
+  <circle cx="6" cy="18" r="3">
+  </circle>
+  <line x1="20" y1="4" x2="8.12" y2="15.88">
+  </line>
+  <line x1="14.47" y1="14.48" x2="20" y2="20">
+  </line>
+  <line x1="8.12" y1="8.12" x2="12" y2="12">
+  </line>
+  </svg>
+  </div>
+  </div>
+  <div class="flex-1 pb-2">
+  <div class="mb-3">
+  <span class="text-[10px] font-bold uppercase tracking-widest text-accent/70">
+  <?= e(__('howItWorks.flow.4.label')) ?>
+  </span>
+  <h3 class="mt-1 font-display text-xl font-bold text-white md:text-2xl">
+  <?= e(__('howItWorks.flow.4.title')) ?>
+  </h3>
+  </div>
+  <p class="text-sm leading-relaxed text-white/55 md:text-base">
+  <?= e(__('howItWorks.flow.4.desc')) ?>
+  </p>
+  <div class="mt-5">
+<!-- Gerçek oynatıcı: UNLOCKED, filigranlı video, aralık seç, Klip kes, paylaş -->
 <div class="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0d11] shadow-[0_25px_70px_-30px_rgba(0,0,0,0.85)]">
   <div class="flex items-center gap-1.5 border-b border-white/[0.06] bg-black/40 px-3 py-2">
     <span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span><span class="h-2 w-2 rounded-full bg-white/15"></span>
@@ -175,28 +289,13 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </div>
 </div>
-          <figcaption class="mt-3 text-center text-sm text-white/60"><?= e(__('howItWorks.flow.4.title')) ?></figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sık sorulanlar -->
-  <section class="section-y border-t border-white/5 bg-section-gradient">
-    <div class="container-x mx-auto max-w-3xl">
-      <h2 class="text-center font-display text-3xl font-bold text-white md:text-4xl" data-reveal="up"><?= e(__('howItWorks.guide.faq')) ?></h2>
-      <div class="mt-8 divide-y divide-white/[0.06] rounded-2xl border border-white/10 bg-white/[0.02]">
-        <?php for ($i = 1; $i <= 5; $i++): ?>
-          <details class="group px-5 py-4" <?= $i === 1 ? 'open' : '' ?>>
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-white/85 marker:hidden">
-              <?= e(__("howItWorks.guide.q.{$i}.q")) ?>
-              <span class="text-accent transition-transform group-open:rotate-45" aria-hidden="true">+</span>
-            </summary>
-            <p class="mt-2 text-sm leading-relaxed text-white/60"><?= e(__("howItWorks.guide.q.{$i}.a")) ?></p>
-          </details>
-        <?php endfor; ?>
-      </div>
-    </div>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
   </section>
 
   <section class="section-y border-t border-white/5 bg-section-gradient relative overflow-hidden">

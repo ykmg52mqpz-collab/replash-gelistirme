@@ -1,7 +1,6 @@
 <?php
 return [
     'nav' => [
-        'menu' => 'Menü',
         'home' => 'Ana Sayfa',
         'howItWorks' => 'Nasıl Çalışır',
         'forFacilities' => 'Sahalar İçin',
@@ -115,7 +114,7 @@ return [
                     'desc' => 'Satılan her video hem oyuncular hem de sahanız için değer üretir.'
                 ],
                 '5' => [
-                    'title' => 'Personel İçin Basit',
+                    'title' => 'Sıfır Karmaşıklık',
                     'desc' => 'Replash kameraları, depolamayı ve teslimatı yönetir. Ekibiniz sadece her satışta bir basit eylem yapar.'
                 ],
                 '6' => [
@@ -158,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => 'Başlangıç maliyeti veya sözleşme yükümlülüğü var mı?',
-                    'a' => 'Başlangıç maliyeti yok: kameralar, kurulum, bakım ve yazılım güncellemeleri Replash’e aittir, aylık ücret de yoktur. Sözleşmenin asgari süresi 6 aydır; bu süre boyunca tesis anlaşılan gelir payını her ay alır.'
+                    'a' => 'Hayır. Replash maliyetin %100\'ünü karşılar. Kameralar, kurulum, bakım, yazılım güncellemeleri. Aylık ücret yok. Minimum taahhüt 6 aydır. Sözleşme süresince tesis, anlaşılan yüzde payını her ay almaya devam eder.'
                 ],
                 '3' => [
                     'q' => 'Replash sahayla geliri nasıl paylaşır?',
-                    'a' => 'Her ay sonunda satılan her video panelde görünür. Sözleşmede belirlenen pay tesiste kalır; kalanı ay sonunda Replash’e ödenir. Aylık döküm panelden çıkar: geçerli satışlar, tesis payı ve Replash payı. Sahalar ne kadar çok kullanılırsa tesisin kazancı o kadar artar.'
+                    'a' => 'Her ay sonunda, unlocked edilmiş tüm videolar admin panelinden takip edilir. Sözleşmede belirlenen pay tesiste kalır; kalan pay ise her ay sonunda Replash\'e ödenir. Saha ne kadar aktif olursa, tesisin kazancı da o kadar büyür — her yeni maç ek gelir demek. Her şey panel üzerinden otomatik mutabakata bağlanır. Sizin tarafınızda sıfır operasyonel maliyetle.'
                 ],
                 '4' => [
                     'q' => 'Personelimin her maç için bir şey yapması gerekiyor mu?',
@@ -170,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => 'Bir kamera arızalanırsa veya teknik sorun olursa ne olur?',
-                    'a' => 'Tesis panelinde her kameranın son sinyali görünür; Replash da gelen kayıtları takip eder. Bir kamera arızalanırsa mümkünse uzaktan düzeltir, değilse ziyaret planlarız. Kaydı olmayan maç satılamaz, bu yüzden raporunuza da girmez.'
+                    'a' => 'Replash tüm kameraları 7/24 izler. Nadir arıza durumlarında, destek ekibimiz otomatik olarak bilgilendirilir ve sorunu uzaktan çözer. Genellikle saatler içinde. Bir kayıt kaybolursa, o satış raporunuzda görünmez ve sizden ücret alınmaz.'
                 ],
                 '6' => [
                     'q' => 'Ne kadar hızlı başlayabiliriz?',
@@ -186,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => 'Güçlü bir Wi-Fi bağlantımız yoksa ne olur?',
-                    'a' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz.'
+                    'a' => 'Kameralar dahili tampon belleğe (buffer) sahiptir. Kısa süreli internet kesintilerinde veri kaybolmaz. Wi-Fi olmayan açık alanlar için LTE/SIM modem desteği sunulmaktadır.'
                 ],
                 '10' => [
                     'q' => 'Ya GDPR?',
-                    'a' => 'Replash GDPR ve İtalyan Garante’nin video kayıt yönergeleri gözetilerek tasarlanmıştır: kameralar yalnızca oyun alanını çeker, ses ve yüz tanıma yoktur; videolar satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Hukuki dayanak ve bildirimler (giriş tabelası, QR, rezervasyon bildirimi) kurulumdan önce her tesisle birlikte belirlenir.'
+                    'a' => 'Replash GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleriyle tamamen uyumludur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli vardır (giriş tabelası + QR + rezervasyon bildirimi). Kurulumdan önce bir Gizlilik & Yasal Gerekçe dosyası sağlanır.'
                 ],
                 '12' => [
                     'q' => 'Güçlü WiFi bağlantımız yoksa?',
-                    'a' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz.'
+                    'a' => 'PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi\'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Replash ekibi tüm kurulumu yönetir.'
                 ]
             ],
             'categories' => [
@@ -211,30 +210,6 @@ return [
         ]
     ],
     'howItWorks' => [
-        'guide' => [
-            'players' => 'Oyuncular için',
-            'facilities' => 'Tesisler için',
-            'demo' => 'Gerçek ekranlar',
-            'demo_sub' => 'Personel paneli, kod girişi ve oyuncu ekranı: sitede kullanılanların aynısı.',
-            'faq' => 'Sık sorulanlar',
-            'p' => [
-                '1' => ['t' => 'Kodunu tesisten al', 'd' => 'Maç videosunu resepsiyonda satın al; 4 haneli maç kodunu al.'],
-                '2' => ['t' => 'Maçını izle', 'd' => 'replash.it’de kodu gir; saha ve saati kontrol et, kaydı aç.'],
-                '3' => ['t' => 'Anını seç ve paylaş', 'd' => '15–40 saniyelik aralığı seç, klibi kaydet ya da paylaş.'],
-            ],
-            'f' => [
-                '1' => ['t' => 'Kurulum ve kayıt', 'd' => 'Replash kameraları kurar; her maç kendiliğinden kaydedilir.'],
-                '2' => ['t' => 'Satış ve erişim', 'd' => 'Personel ödemeyi alır, panelden tek dokunuşla açar ve kodu verir. Maçtan önce de satılabilir.'],
-                '3' => ['t' => 'Gelir takibi', 'd' => 'Satışlar ve sözleşmedeki pay panelde; ay sonunda döküm hazır.'],
-            ],
-            'q' => [
-                '1' => ['q' => 'Fiyatı nereden öğrenirim?', 'a' => 'Fiyatı tesis belirler ve resepsiyonda söyler; video kişi başına değil, maç başına satılır.'],
-                '2' => ['q' => 'Kodum çalışmıyorsa ne yaparım?', 'a' => 'Kodu 4 hane olarak tekrar gir. Yine açılmazsa resepsiyona sor: maçın kilidi açılmamış ya da süresi dolmuş olabilir. Video henüz hazırlanıyorsa sayfa bunu gösterir.'],
-                '3' => ['q' => 'Maçıma ne zamana kadar erişirim?', 'a' => 'Maç bitiminden 7 gün sonrasına kadar; kesin tarih ve saat video sayfasında yazar. İndirdiğin dosyalar cihazında kalır.'],
-                '4' => ['q' => 'Klibi nasıl indiririm?', 'a' => 'Zaman çizelgesinde 15–40 saniyelik aralığı seç ve Klip kes’e bas; klip hazır olunca Galeriye kaydet ya da Paylaş’ı kullan.'],
-                '5' => ['q' => 'Paylaşınca neye erişim vermiş olurum?', 'a' => 'Klip paylaşırsan yalnızca o video dosyasını gönderirsin. Maç linkini paylaşırsan linki alan herkes maçın tamamını izleyebilir.'],
-            ],
-        ],
         'flow' => [
             '1' => ['label' => 'Adım 1', 'title' => 'Maç oynanır, Replash kaydeder', 'desc' => 'Sahaya kurulan sabit kameralar maçın tamamını baştan sona kaydeder. Tuş yok, başlat/durdur yok, personel hiçbir şey yapmaz.'],
             '2' => ['label' => 'Adım 2', 'title' => 'Resepsiyon kilidi açar, kodu verir', 'desc' => 'Takım videoyu istediğinde personel ödemeyi alır ve panelden tek dokunuşla kilidi açar. Ekranda 4 haneli maç kodu çıkar; tüm takım için tek kod. Satış maçtan önce de yapılabilir, video hazır olunca kod kendiliğinden çalışır.'],
@@ -243,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
-            'title' => 'Oyuncu için üç adım. Personel için tek dokunuş.',
-            'subtitle' => 'Oyuncu maçını 4 haneli kodla açar; resepsiyon ödemeyi alınca kilidi açar. Aşağıda oyuncu tarafı, tesis tarafı ve gerçek ekranlar.'
+            'title' => 'Altı basit adım. Ekibiniz için sıfır karmaşıklık.',
+            'subtitle' => 'İlk vuruştan tekrar oynatmaya kadar, Replash aradaki her şeyi halleder. Aşağıda: her adım, Marco\'nun salı gecesi padel maçı somut örnek olarak açıklanıyor.'
         ],
         'steps' => [
             '1' => [
@@ -367,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => '7 Gün Saklama',
-                    'desc' => 'Satılmayan kayıtlar 3, satılanlar 7 gün sonra erişime kapanır. Depolama temiz, gizlilik korunmuş.'
+                    'desc' => 'Tüm kayıtlar 7 gün sonra otomatik silinir. Depolama temiz, gizlilik korunmuş.'
                 ],
                 '5' => [
                     'title' => 'Esnek Bağlantı',
@@ -407,8 +382,6 @@ return [
         ]
     ],
     'common' => [
-        'close' => 'Kapat',
-        'csrf_failed' => 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.',
         'loading' => 'Yükleniyor...',
         'all_rights_reserved' => 'Tüm hakları saklıdır.',
         'privacy_policy' => 'Gizlilik Politikası',
@@ -531,10 +504,9 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Çok fazla hatalı kod denendi. Lütfen {m} dakika sonra tekrar deneyin.',
-                'check_desk' => 'Kodu tesis görevlisiyle kontrol et.',
                 'video_not_found' => 'Video bulunamadı',
             'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
-            'expired' => 'Bu maçın erişim süresi doldu; video artık izlenemez.',
+            'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
             'code_mismatch' => 'Girdiğiniz erişim kodu bu maça/saat dilimine ait değildir! Lütfen doğru kodu giriniz.',
             'invalid_code' => 'Girdiğiniz erişim koduna ait maç bulunamadı. Lütfen kodu kontrol edin.',
             'too_short' => 'Kayıt çok kısa (en az 2 saniye olmalıdır).',
@@ -606,7 +578,7 @@ return [
                 'download' => 'Klibi indir',
                 'range' => '15 ile 40 saniye arasında seç.'
             ],
-            'expires' => 'Bu videoya {date} saatine kadar erişebilirsin. İndirdiğin dosyalar kendi cihazında kalır.'
+            'expires' => 'Bu video {date} tarihinde otomatik silinir.'
         ]
     ],
     'api' => [
@@ -615,7 +587,7 @@ return [
             'too_many' => 'Çok fazla hatalı deneme. Lütfen 15 dakika sonra tekrar deneyin.',
             'code_required' => 'Bu videoyu açmak için maç kodu gerekiyor.',
             'not_found' => 'Video bulunamadı.',
-            'expired' => 'Bu maçın erişim süresi doldu; video artık izlenemez.',
+            'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silindi.',
         ],
     ],
     'panel' => [
@@ -627,9 +599,6 @@ return [
             'never' => 'Hiç sinyal yok',
         ],
         'presale' => [
-            'start' => 'Başlangıç',
-            'duration' => 'Süre',
-            'minutes' => 'dk',
             'title' => 'Maçtan önce sat',
             'hint' => 'Ödemeyi alınca kodu hemen ver; video maç bitince açılır.',
             'court' => 'Saha',
@@ -667,16 +636,15 @@ return [
         'shell' => [
             'cal_legend' => 'Sayı: o günkü maç',
             'tab_matches' => 'Maçlar ve Slotlar',
-            'unlock' => 'Ödeme alındı · Aç',
-            'copy_failed' => 'Kopyalanamadı, kodu not alın',
+            'unlock' => 'Kilidi aç',
             'relock' => 'Tekrar kilitle',
             'locked_state' => 'Kilitli',
             'final_state' => 'Kesinleşti',
             'final_hint' => 'Video açıldı veya süre doldu; düzeltme için Replash ile iletişime geçin.',
-            'deleted_state' => 'Süresi doldu',
+            'deleted_state' => 'Silindi',
             'time_col' => 'Saat',
             'day_summary' => '{t} maç · {s} satıldı · {l} kilitli',
-            'auto_note' => 'Sisteme gelen her maç videosu ilgili saha ve saatte kilitli olarak görünür. Ödemeyi aldığınız maçın kilidini açın ve kodu oyuncuya verin. Kayıtlar maç bitişinden sonra satılmadıysa 3, satıldıysa 7 gün içinde erişime kapanır.',
+            'auto_note' => 'Sisteme gelen her maç videosu ilgili saha ve saatte kilitli olarak görünür. Ödemeyi aldığınız maçın kilidini açın ve kodu oyuncuya verin. Kayıtlar maç tarihinden 7 gün sonra silinir.',
             'relock_title' => 'Maçı tekrar kilitle',
             'relock_desc' => 'Kilitlenince oyuncunun kodla ve eski bağlantıyla erişimi hemen kapanır.',
             'cancel' => 'Vazgeç',
@@ -814,7 +782,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'GELİR HESAPLAYICI',
-            'title' => 'Aylık payınızı tahmin edin',
+            'title' => 'Aylık pasif gelirinizi hesaplayın',
             'subtitle' => 'Kaç sahanız var? Saha başına günlük kaç video satmayı bekliyorsunuz? Rakamlarınızı girin, aylık payınızı görün.',
             'sport' => [
                 'padel' => 'Padel',
@@ -823,21 +791,20 @@ return [
             'inputs' => [
                 'courts' => 'Saha sayısı',
                 'courtsSuffix' => 'saha',
-                'videos' => 'Saha başına günlük maç',
-                'videosSuffix' => 'maç',
-                'rate' => 'Video satın alma oranı',
+                'videos' => 'Saha başı günlük satılan video',
+                'videosSuffix' => 'saha başı',
                 'days' => 'Aylık aktif gün',
                 'daysSuffix' => 'gün'
             ],
             'results' => [
                 'eyebrow' => 'TAHMINI GELIRINIZ',
                 'videos' => 'Satılan video',
-                'videosHint' => 'Oynanan maçlar × satın alma oranı',
+                'videosHint' => 'aylık',
                 'share' => 'Tahmini payın',
                 'shareHint' => 'aylık kazanç',
                 'yearlyEyebrow' => 'YILLIK POTANSIYEL',
                 'yearlySuffix' => 'yıllık',
-                'yearlyNote' => 'Tahmindir; gerçek tutar oynanan maçlara ve satışlara bağlıdır.'
+                'yearlyNote' => 'Personelinize sıfır ek iş yükü ile.'
             ],
             'disclaimer' => '* Hizmet kullanımına dayalı gösterge niteliğinde bir tahmindir. Hesaplama yalnızca örnektir; nihai koşullar onboarding sırasında belirlenir.',
             'hook' => [
@@ -852,22 +819,22 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'Ya GDPR?',
-                    'answer' => 'Replash\'in gizlilik yaklaşımı GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleri gözetilerek tasarlanmıştır. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve satılmadıysa 3, satıldıysa 7 gün sonra erişime kapanır. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
+                    'answer' => 'Replash\'in gizlilik mimarisi GDPR, AİHS Madde 8 ve İtalyan Garante yönergelerine uygundur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Videolar tahmin edilemez, saat slotuna bağlı ve 7 gün sonra otomatik silinir. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli (tabela + QR + rezervasyon bildirimi) kurulumdan önce hazır.',
                     'items' => [
                         '1' => 'Ses yok. Yüz tanıma yok.',
-                        '2' => '3 gün (satılmayan) / 7 gün (satılan) sonra erişim kapanır.',
+                        '2' => '7 gün sonra otomatik silme.',
                         '3' => 'GDPR / AİHS Madde 8 / Garante uyumlu.',
                         '4' => 'Gizlilik & Yasal Gerekçe dosyası önceden teslim edilir.'
                     ]
                 ],
                 'tech' => [
                     'question' => 'Ya WiFi\'mız yoksa?',
-                    'answer' => 'Kameralar kısa bir yerel tampon tutar; kısa kesintiler genellikle telafi edilir, uzun kesintilerde kaydın bir kısmı kaybolabilir. Wi-Fi olmayan açık sahalarda kapsama uygunsa LTE/SIM bağlantısı kullanılabilir. Bağlantıyı keşif ziyaretinde kontrol ederiz. Kurulum, kablolama ve kamera montajını Replash yapar; personelinizin yalnızca erişim sağlaması yeterlidir.',
+                    'answer' => 'PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi\'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Kurulum, kablolama ve kamera montajı tamamen Replash tarafından yapılır. Teknik personeliniz bu sürece dahil olmaz.',
                     'items' => [
                         '1' => 'PoE yerel tampon kesintileri yönetir.',
                         '2' => 'WiFi\'siz sahalar için LTE/SIM yedek.',
                         '3' => 'Tüm kurulum Replash tarafından yapılır.',
-                        '4' => 'Rezervasyon ve saha işleyişinizde değişiklik yok.'
+                        '4' => 'Saha operasyonlarına sıfır müdahale.'
                     ]
                 ]
             ]
@@ -887,7 +854,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Pilot Turnuvalar',
-                    'desc' => 'Lansmanda seçili partner tesislerle yeni oyuncu çekmek için temalı bir turnuva düzenleyebiliriz. Her tesisle ayrıca kararlaştırılır.'
+                    'desc' => 'Lansmanda partner sahalarda temalı turnuvalar düzenleriz. Yeni müşteriler ve eklenen görünürlük, bizden hediye.'
                 ]
             ]
         ],
@@ -1199,7 +1166,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Geniş Açı HD Kayıt',
-                'desc' => 'Sahanın tamamını sabit bir açıdan çeken yüksek çözünürlüklü video.'
+                'desc' => 'Kortu ve sahayı kör nokta olmadan bütünüyle yakalayan yüksek çözünürlüklü video akışı.'
             ],
             '2' => [
                 'title' => 'Saniyeler İçinde Klip Kes',
@@ -1356,7 +1323,7 @@ return [
         'success' => 'Mesajınız alındı! 24 saat içinde size ulaşacağız.',
         'errors' => [
             'required' => 'Lütfen adınızı ve e-posta adresinizi giriniz.',
-            'general' => 'Başvurunuz şu anda kaydedilemedi. Lütfen biraz sonra tekrar deneyin veya WhatsApp’tan yazın.'
+            'general' => 'Kayıt sırasında bir hata oluştu: '
         ],
         'form' => [
             'name' => 'Adınız Soyadınız *',
@@ -1436,7 +1403,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'Sahalar İçin. Replash',
-            'description' => 'Tesisinde maç videosu sat: kameraları biz kurar ve işletiriz, resepsiyon ödemesi alınan videoyu tek dokunuşla açar, her satıştan payını alırsın.'
+            'description' => 'Spor tesisinizi modern bir maç deneyimine dönüştürün. Sıfır operasyonel karmaşıklık, yeni dijital hizmet, kanıtlanmış model.'
         ],
         'forPlayers' => [
             'title' => 'Oyuncular İçin. Replash',
@@ -1448,7 +1415,6 @@ return [
         ]
     ],
     'footer' => [
-        'get_started' => 'Başlayın',
         'tagline' => 'Sadece bir maçtan fazlası.',
         'links' => [
             'howItWorks' => 'Nasıl Çalışır',

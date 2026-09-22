@@ -45,7 +45,7 @@ try {
     }
 
     // Retention Check: 7-day expiry rule (only reached for sold matches)
-    if (replash_match_expired($match)) {
+    if (is_match_expired($match['date']) || $match['status'] === 'EXPIRED') {
         http_response_code(410);
         replash_video_error(410, 'expired');
     }
@@ -58,14 +58,12 @@ try {
     $requestedCamId = $_GET['camera_id'] ?? '';
     
     if (!empty($requestedCamId) && $pdo) {
-        // Kamera maçın kendi sahasına ait olmalı (aynı tesisteki başka saha açılamaz)
-        $camStmt = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? AND facility_id = ? AND court = ? LIMIT 1");
-        $camStmt->execute([$requestedCamId, $match['facility_id'], $match['court']]);
+        $camStmt = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? AND facility_id = ? LIMIT 1");
+        $camStmt->execute([$requestedCamId, $match['facility_id']]);
         $camStream = $camStmt->fetchColumn();
-        if (!$camStream) {
-            replash_video_error(404, 'not_found');
+        if ($camStream) {
+            $rawPlayback = $camStream;
         }
-        $rawPlayback = $camStream;
     } elseif (empty($rawPlayback) && !empty($match['camera_id']) && $pdo) {
         $camStmt = $pdo->prepare("SELECT stream_url FROM cameras WHERE id = ? LIMIT 1");
         $camStmt->execute([$match['camera_id']]);
@@ -77,23 +75,14 @@ try {
 
     // Check if download or clipping was requested
     $isDownload = (isset($_GET['download']) && $_GET['download'] == '1');
-    $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', basename((string)($_GET['filename'] ?? ''))) ?: 'replash.mp4';
-    // Zaman aralığı maçın kendi süresiyle sınırlı; klip en fazla REPLASH_CLIP_MAX saniye
-    [$slotStart, $slotEnd] = replash_slot_bounds($match);
-    $matchLen = max(60, $slotEnd - $slotStart);
-    $isClip = isset($_GET['duration']) || isset($_GET['start_offset']);
-    $startOffset = min(max(0, (int)($_GET['start_offset'] ?? 0)), $matchLen - 1);
-    if ($isClip) {
-        $duration = (int)($_GET['duration'] ?? REPLASH_CLIP_MAX);
-        $duration = min(max(1, $duration), REPLASH_CLIP_MAX, $matchLen - $startOffset);
-    } else {
-        $duration = $matchLen;
+    $filename = !empty($_GET['filename']) ? $_GET['filename'] : 'replash.mp4';
+    $startOffset = max(0, (int)($_GET['start_offset'] ?? 0));
+    $duration = (int)($_GET['duration'] ?? 0);
+    if ($duration <= 0) {
+        $duration = (int)($match['duration_sec'] ?? 3600);
     }
 
-    $finalPlaybackUrl = buildMatchPlaybackUrl($rawPlayback, $match['date'], $match['time_slot'], $duration, $isDownload, $filename, $startOffset, $isClip);
-    if (!preg_match('#^https?://#i', $finalPlaybackUrl)) {
-        replash_video_error(404, 'not_found');
-    }
+    $finalPlaybackUrl = buildMatchPlaybackUrl($rawPlayback, $match['date'], $match['time_slot'], $duration, $isDownload, $filename, $startOffset);
     if ($finalPlaybackUrl === '') {
         http_response_code(404);
         replash_video_error(404, 'not_found');
@@ -116,8 +105,8 @@ try {
                 'header' => "User-Agent: Replash-Video-Downloader/1.0\r\n"
             ],
             'ssl' => [
-                'verify_peer' => true,
-                'verify_peer_name' => true
+                'verify_peer' => false,
+                'verify_peer_name' => false
             ]
         ]);
 

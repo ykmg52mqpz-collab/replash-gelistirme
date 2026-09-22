@@ -120,11 +120,6 @@ function replash_valid_sale_sql(string $m = 'm'): string {
  * $fallbackSql is used for sports without a standard price (e.g. "f.unit_price").
  */
 function replash_sale_price_sql(string $m = 'm', string $fallbackSql = 'f.unit_price', ?array $facilityPrices = null, ?string $f = 'f'): string {
-    // Satış anında dondurulan tutar varsa o kullanılır (T07); yoksa (eski kayıt) güncel kurala göre
-    return "COALESCE({$m}.sale_price, " . replash_sale_price_sql_live($m, $fallbackSql, $facilityPrices, $f) . ")";
-}
-
-function replash_sale_price_sql_live(string $m, string $fallbackSql, ?array $facilityPrices, ?string $f): string {
     $cases = '';
     foreach (REPLASH_VIDEO_PRICES as $sport => $price) {
         $cases .= " WHEN '" . $sport . "' THEN " . number_format($price, 2, '.', '');

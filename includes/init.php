@@ -17,20 +17,6 @@ if (session_status() === PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli' && !headers_se
     setcookie(session_name(), session_id(), ['path' => '/', 'secure' => $isHttps, 'httponly' => true, 'samesite' => 'Lax']);
 }
 
-// CSRF (T16): panel, yönetim ve iletişim formları oturuma özel bir anahtar taşır; başka siteden gönderilen form reddedilir
-if (session_status() === PHP_SESSION_ACTIVE && empty($_SESSION['csrf'])) {
-    $_SESSION['csrf'] = bin2hex(random_bytes(16));
-}
-function csrf_field(): string {
-    return '<input type="hidden" name="_csrf" value="' . htmlspecialchars($_SESSION['csrf'] ?? '', ENT_QUOTES) . '">';
-}
-function replash_csrf_required(): bool {
-    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
-    return (bool)preg_match('#/(panel|admin)/[^/]+\.php$|/contact\.php$#', $script);
-}
-$csrfFailed = PHP_SAPI !== 'cli' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && replash_csrf_required()
-    && !hash_equals((string)($_SESSION['csrf'] ?? ''), (string)($_POST['_csrf'] ?? ''));
-
 // Ensure DB is initialized
 $dbError = null;
 try {
@@ -266,7 +252,7 @@ function formatDateLocalized($dateStr, $lang = null) {
  * Example output:
  * https://cloud.kamerabulutkayit.com/cameras/59/streaming/main.mp4?authorization=Basic%20YWRtaW46&time=2026-09-11T22:00:00&duration=01:00:00
  */
-function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600, $download = false, $filename = 'replash.mp4', $startOffsetSec = 0, $exactDuration = false) {
+function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600, $download = false, $filename = 'replash.mp4', $startOffsetSec = 0) {
     if (empty($streamUrl)) {
         return ''; // kaynak yok: çağıran taraf "video bulunamadı" gösterir
     }
@@ -294,9 +280,8 @@ function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600
         $date = date('Y-m-d', $slotStartTime);
     }
 
-    // Tam maç: süre slotun bitişinden hesaplanır. Klip ($exactDuration): istenen süre korunur
-    // (0. saniyeden başlayan 20 sn'lik klip tüm maça dönüşmesin)
-    if (!$exactDuration && $startOffsetSec == 0 && !empty($endRaw) && preg_match('/^\d{1,2}:\d{2}/', $endRaw)) {
+    // Calculate duration in seconds if end time is given and not a custom clip
+    if ($startOffsetSec == 0 && !empty($endRaw) && preg_match('/^\d{1,2}:\d{2}/', $endRaw)) {
         $endTime = strtotime("{$date} {$endRaw}:00");
         if ($endTime && $slotStartTime && $endTime > $slotStartTime) {
             $durationSec = $endTime - $slotStartTime;
@@ -412,8 +397,3 @@ function get_facility_court_names($facility) {
     return array_column($courtsData, 'name');
 }
 
-if (!empty($csrfFailed)) {
-    http_response_code(400);
-    header('Content-Type: text/plain; charset=utf-8');
-    exit(__('common.csrf_failed'));
-}

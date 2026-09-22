@@ -17,22 +17,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $court_count = (int)($_POST['court_count'] ?? 1);
     $message = trim($_POST['message'] ?? '');
 
-    if (trim($_POST['website'] ?? '') !== '') {
-        // Görünmez alanı dolduran bot: kaydetmeden başarılı gibi davran
-        $success = true;
-    } elseif (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (empty($name) || empty($email)) {
         $error = __('contact.errors.required');
-    } elseif (!$pdo || replash_attempt_blocked($pdo, 'lead', 5, 60)) {
-        $error = __('contact.errors.general');
     } else {
         try {
-            $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, facility_name, city, sport, court_count, message, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([mb_substr($name, 0, 120), mb_substr($email, 0, 190), mb_substr($phone, 0, 40), mb_substr($facility_name, 0, 190), mb_substr($city, 0, 120), mb_substr($sport, 0, 40), max(1, min(99, $court_count)), mb_substr($message, 0, 3000), substr(replash_client_key('lead'), 0, 16)]);
-            replash_attempt_failed($pdo, 'lead'); // saatlik gönderim sınırı için sayılır
-            $success = true; // yalnızca kalıcı kayıttan sonra
+            if ($pdo) {
+                $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, facility_name, city, sport, court_count, message, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $email, $phone, $facility_name, $city, $sport, $court_count, $message, $_SERVER['REMOTE_ADDR'] ?? '']);
+                $success = true;
+            } else {
+                $success = true;
+            }
         } catch (Exception $e) {
-            error_log('contact.php: ' . $e->getMessage());
-            $error = __('contact.errors.general');
+            $error = __('contact.errors.general') . $e->getMessage();
         }
     }
 }
@@ -60,38 +57,37 @@ require_once __DIR__ . '/includes/header.php';
   <?php if ($error): ?>
     <div class="mx-auto mt-12 max-w-2xl rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-center text-sm text-rose-200"><?= e($error) ?></div>
   <?php endif; ?>
-  <form action="<?= base_url('contact.php') ?>" method="POST" class="card-elevated mx-auto mt-12 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"  data-reveal="up"><?= csrf_field() ?>
-  <div class="hidden" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+  <form action="<?= base_url('contact.php') ?>" method="POST" class="card-elevated mx-auto mt-12 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"  data-reveal="up">
   <div class="grid gap-5 sm:grid-cols-2">
   <div class="flex flex-col gap-2">
-  <label for="contact-name" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.name')) ?>
   </label>
-  <input id="contact-name" type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="name"/>
+  <input type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="name"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label for="contact-facility-name" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.facilityName')) ?>
   </label>
-  <input id="contact-facility-name" type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="facility_name"/>
+  <input type="text" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="facility_name"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label for="contact-email" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.email')) ?>
   </label>
-  <input id="contact-email" type="email" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="email"/>
+  <input type="email" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="email"/>
   </div>
   <div class="flex flex-col gap-2">
-  <label for="contact-phone" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.phone')) ?>
   </label>
-  <input id="contact-phone" type="tel" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="phone"/>
+  <input type="tel" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-accent" name="phone"/>
   </div>
   <div class="flex flex-col gap-2 sm:col-span-2">
-  <label for="contact-sport" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.sport')) ?>
   </label>
-  <select id="contact-sport" name="sport" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
+  <select name="sport" required="" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
   <option value="" disabled="" class="bg-ink-900" selected="">—</option>
   <option value="football" class="bg-ink-900">
   <?= e(__('contact.fields.sportOptions.football')) ?>
@@ -106,10 +102,10 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </div>
   <div class="mt-5 flex flex-col gap-2">
-  <label for="contact-message" class="text-xs font-medium uppercase tracking-wider text-white/60">
+  <label class="text-xs font-medium uppercase tracking-wider text-white/60">
   <?= e(__('contact.fields.message')) ?>
   </label>
-  <textarea id="contact-message" name="message" rows="4" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
+  <textarea name="message" rows="4" class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none focus:border-accent">
   </textarea>
   </div>
   <button type="submit" class="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-ink-900 shadow-glow transition hover:bg-accent-neon active:scale-[0.98] sm:w-auto">

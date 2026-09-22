@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/init.php';
 
-// Metin 4 dilde (replash.info IT/EN metninden). Saklama bölümü sistemle uyumlu: satılmayan 3, satılan 7 gün.
+// Metin 4 dilde (replash.info IT/EN metninden). Saklama bölümü sistemle uyumlu: tüm kayıtlar 7 günde silinir.
 $pageTitle = __('footer.privacy');
 $metaTitle = __('footer.privacy') . '. ' . APP_NAME;
 
@@ -34,7 +34,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Conservazione",
         "p": [
-          "Le registrazioni non vendute vengono chiuse automaticamente 3 giorni dopo la fine della partita, quelle vendute dopo 7 giorni, e contrassegnate per l'eliminazione. I file che un giocatore scarica restano sul suo dispositivo."
+          "Tutte le registrazioni, sbloccate o no, vengono eliminate automaticamente 7 giorni dopo la data della partita. I file che un giocatore scarica restano sul suo dispositivo."
         ]
       },
       {
@@ -84,7 +84,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Retention",
         "p": [
-          "Unsold recordings are automatically closed 3 days after the match ends and sold recordings after 7 days, and are marked for deletion. Files a player downloads stay on their own device."
+          "All recordings, unlocked or not, are automatically deleted 7 days after the match date. Files a player downloads stay on their own device."
         ]
       },
       {
@@ -134,7 +134,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Saklama süresi",
         "p": [
-          "Satılmayan kayıtlar maç bitişinden 3 gün, satılan kayıtlar 7 gün sonra otomatik olarak erişime kapanır ve silinmek üzere işaretlenir. Oyuncunun indirdiği dosyalar kendi cihazında kalır."
+          "Kilidi açılmış olsun olmasın tüm kayıtlar maç tarihinden 7 gün sonra otomatik olarak silinir. Oyuncunun indirdiği dosyalar kendi cihazında kalır."
         ]
       },
       {
@@ -184,7 +184,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Conservación",
         "p": [
-          "Las grabaciones no vendidas se cierran automáticamente 3 días después del final del partido y las vendidas a los 7 días, y se marcan para su eliminación. Los archivos que descarga un jugador permanecen en su propio dispositivo."
+          "Todas las grabaciones, desbloqueadas o no, se eliminan automáticamente 7 días después de la fecha del partido. Los archivos que descarga un jugador permanecen en su propio dispositivo."
         ]
       },
       {

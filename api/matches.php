@@ -51,7 +51,7 @@ try {
         $row = replash_match_by_code($pdo, $code, true);
         $match = $row ? array_intersect_key($row, array_flip(['id', 'court', 'date', 'time_slot', 'sport', 'status', 'facility_name'])) : null;
 
-        if (!$match || $match['status'] !== 'UNLOCKABLE' || replash_match_expired($match)) {
+        if (!$match || $match['status'] !== 'UNLOCKABLE' || is_match_expired($match['date'])) {
             replash_code_failed($pdo);
             echo json_encode(['ok' => false, 'error' => 'Geçersiz veya süresi dolmuş kod']);
             exit;

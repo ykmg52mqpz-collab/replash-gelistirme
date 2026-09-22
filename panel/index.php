@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_pin'])) {
         $error = str_replace('{m}', (string)REPLASH_LOGIN_WINDOW_MIN, __('panel.login.too_many'));
     } elseif ($pdo) {
         $stmt = $pdo->prepare("SELECT * FROM facilities WHERE pin = ? LIMIT 1");
-        $stmt->execute([replash_pin_hash($pin)]);
+        $stmt->execute([$pin]);
         $fac = $stmt->fetch();
         if ($fac) {
             session_regenerate_id(true);
@@ -73,7 +73,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $stmtFind->execute([$matchId, $facility['id']]);
             $mRow = $stmtFind->fetch();
 
-            if ($mRow && (replash_match_expired($mRow))) {
+            if ($mRow && ($mRow['status'] === 'EXPIRED' || is_match_expired($mRow['date']))) {
                 $error = __('panel.shell.expired_sell');
             } elseif ($mRow && $mRow['status'] === 'LOCKED') {
                 // Ensure playback URL is current
@@ -85,7 +85,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                 $newCode = replash_new_access_code($pdo);
                 $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'");
                 $upd->execute([$newCode, $playbackUrl, $matchId]);
-                replash_record_sale($pdo, $mRow, 'sold', 'panel');
+                replash_log_sale_event($pdo, $mRow, 'sold', 'panel');
                 $soldNotice = ['code' => $newCode, 'court' => $mRow['court'], 'slot' => $mRow['time_slot']];
             }
         }
@@ -95,24 +95,21 @@ if (isset($_SESSION['facility_id']) && $pdo) {
         if (isset($_POST['action']) && $_POST['action'] === 'presell') {
             $psCourt = trim((string)($_POST['court'] ?? ''));
             $psDate = (string)($_POST['date'] ?? date('Y-m-d'));
-            $psStart = (string)($_POST['start'] ?? '');
-            $psDur = (int)($_POST['duration'] ?? 60);
+            $psHour = (int)($_POST['hour'] ?? -1);
             $courtData = null;
             foreach (get_facility_courts_data($facility) as $cd) { if ($cd['name'] === $psCourt) { $courtData = $cd; break; } }
             $validDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $psDate) && $psDate >= date('Y-m-d') && $psDate <= date('Y-m-d', strtotime('+7 days'));
-            if (!$courtData || !$validDate || !preg_match('/^([01]\d|2[0-3]):(00|30)$/', $psStart) || !in_array($psDur, [60, 90, 120], true)) {
+            if (!$courtData || !$validDate || $psHour < 0 || $psHour > 23) {
                 $error = __('panel.presale.invalid');
             } else {
-                $psStartTs = strtotime($psDate . ' ' . $psStart);
-                $psSlot = $psStart . '–' . date('H:i', $psStartTs + $psDur * 60);
-                $psHour = (int)substr($psStart, 0, 2);
+                $psSlot = sprintf('%02d:00–%02d:00', $psHour, $psHour + 1);
                 $ex = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
                 $ex->execute([$facility['id'], $psCourt, $psDate, $psSlot]);
                 $row = $ex->fetch();
                 if ($row && $row['status'] === 'UNLOCKABLE') {
                     // Zaten satılmış: aynı kodu tekrar göster
                     $soldNotice = ['code' => $row['access_code'], 'court' => $row['court'], 'slot' => $row['time_slot']];
-                } elseif ($row && (replash_match_expired($row))) {
+                } elseif ($row && ($row['status'] === 'EXPIRED' || is_match_expired($row['date']))) {
                     $error = __('panel.shell.expired_sell');
                 } else {
                     $newCode = replash_new_access_code($pdo);
@@ -126,11 +123,11 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                         $logRow = ['id' => 'm-' . bin2hex(random_bytes(5)), 'facility_id' => $facility['id']];
                         $pdo->prepare("INSERT INTO matches
                             (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, duration_sec, sold_at, views, billable, sport, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, " . ($psDur * 60) . ", NOW(), 0, 1, ?, 'presale')")
-                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . str_replace(':', '', $psStart), $newCode,
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, 3600, NOW(), 0, 1, ?, 'presale')")
+                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . sprintf('%02d00', $psHour), $newCode,
                                        $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
                     }
-                    replash_record_sale($pdo, $logRow, 'sold', 'panel', 'presale');
+                    replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
                     $soldNotice = ['code' => $newCode, 'court' => $psCourt, 'slot' => $psSlot];
                     $presaleDay = $psDate; // tablo satılan günü göstersin
                 }
@@ -153,9 +150,9 @@ if (isset($_SESSION['facility_id']) && $pdo) {
                     $error = __('panel.shell.undo_reason_required');
                 } else {
                     // Kod iptal: oyuncunun kodu ve eski linki artık çalışmaz
-                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0, sale_price = NULL, sale_currency = NULL WHERE id = ? AND first_opened_at IS NULL");
+                    $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ? AND first_opened_at IS NULL");
                     $upd->execute([replash_locked_placeholder(), $matchId]);
-                    replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason, isset($mRow['sale_price']) ? (float)$mRow['sale_price'] : null, $mRow['sale_currency'] ?? null);
+                    replash_log_sale_event($pdo, $mRow, 'undone', 'panel', $reason);
                     $success = e($mRow['court'] . ' · ' . $mRow['time_slot'] . ' — ' . __('panel.shell.undone_ok'));
                 }
             }
@@ -345,7 +342,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
     <?php if (!$facility): ?>
       <!-- Giriş -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm"><?= csrf_field() ?>
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
           <input type="hidden" name="login_pin" value="1">
           <h1 class="text-lg font-semibold text-gray-900"><?= e(__('panel.shell.login_title')) ?></h1>
           <p class="mb-5 mt-1 text-sm text-gray-500"><?= e(__('panel.shell.login_sub')) ?></p>
@@ -407,15 +404,13 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
           $dayTotals = ['t' => count($dayMatches), 's' => 0, 'l' => 0];
           foreach ($dayMatches as $dm) { if ($dm['status'] === 'UNLOCKABLE') $dayTotals['s']++; elseif ($dm['status'] === 'LOCKED') $dayTotals['l']++; }
         ?>
-        <?php $courtPrices = []; foreach (get_facility_courts_data($facility) as $cd) { $courtPrices[$cd['name']] = (float)$cd['price']; } ?>
         <?php if (!empty($facilityCameras)): ?>
           <!-- Kamera durumu: kapalı kamera fark edilmeden maç kaydı kaçmasın -->
           <div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm">
             <span class="text-xs font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.cameras.title')) ?></span>
             <?php foreach ($facilityCameras as $fc):
               $seen = !empty($fc['last_seen_at']) ? strtotime($fc['last_seen_at']) : 0;
-              if (!$seen) { $dot = 'bg-gray-400'; $txt = __('panel.cameras.never'); $cls = 'text-gray-500'; }
-              elseif (($fc['status'] ?? '') === 'offline') { $dot = 'bg-red-600'; $txt = __('panel.cameras.offline'); $cls = 'text-red-700 font-medium'; }
+              if (($fc['status'] ?? '') === 'offline') { $dot = 'bg-red-600'; $txt = __('panel.cameras.offline'); $cls = 'text-red-700 font-medium'; }
               elseif ($seen && time() - $seen <= 7200) { $dot = 'bg-emerald-600'; $txt = __('panel.cameras.online'); $cls = 'text-gray-700'; }
               else { $dot = 'bg-gray-400'; $txt = $seen ? str_replace('{t}', date(date('Y-m-d', $seen) === date('Y-m-d') ? 'H:i' : 'd.m H:i', $seen), __('panel.cameras.last_seen')) : __('panel.cameras.never'); $cls = 'text-gray-500'; }
             ?>
@@ -471,9 +466,9 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             </div>
 
             <?php if ($viewDay >= date('Y-m-d') && $viewDay <= date('Y-m-d', strtotime('+7 days'))):
-              $psDefault = ($viewDay === date('Y-m-d')) ? sprintf('%02d:%s', (int)date('G'), (int)date('i') >= 30 ? '30' : '00') : '18:00'; ?>
+              $psDefaultHour = ($viewDay === date('Y-m-d')) ? (int)date('G') : 18; ?>
               <!-- Maçtan önce satış: ödeme alınınca kod hemen verilir, video maç bitince açılır -->
-              <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3"><?= csrf_field() ?>
+              <form action="<?= e($panelUrl()) ?>" method="POST" class="flex flex-wrap items-end gap-3 border-b border-gray-200 bg-gray-50 px-5 py-3">
                 <input type="hidden" name="action" value="presell">
                 <input type="hidden" name="date" value="<?= e($viewDay) ?>">
                 <div class="mr-auto min-w-[180px]">
@@ -481,28 +476,15 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                   <div class="text-xs text-gray-500"><?= e(__('panel.presale.hint')) ?></div>
                 </div>
                 <label class="text-xs text-gray-600"><?= e(__('panel.presale.court')) ?>
-                  <select name="court" id="psCourt" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
-                    <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>" data-sport="<?= e(strtolower($cd['sport'])) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
+                  <select name="court" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
+                    <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
                   </select>
                 </label>
-                <label class="text-xs text-gray-600"><?= e(__('panel.presale.start')) ?>
-                  <select name="start" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 font-mono text-sm text-gray-900">
-                    <?php for ($m = 6 * 60; $m <= 23 * 60 + 30; $m += 30): $hv = sprintf('%02d:%02d', intdiv($m, 60), $m % 60); ?><option value="<?= $hv ?>" <?= $hv === $psDefault ? 'selected' : '' ?>><?= $hv ?></option><?php endfor; ?>
+                <label class="text-xs text-gray-600"><?= e(__('panel.shell.time_col')) ?>
+                  <select name="hour" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 font-mono text-sm text-gray-900">
+                    <?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= $h === $psDefaultHour ? 'selected' : '' ?>><?= sprintf('%02d:00–%02d:00', $h, $h + 1) ?></option><?php endfor; ?>
                   </select>
                 </label>
-                <label class="text-xs text-gray-600"><?= e(__('panel.presale.duration')) ?>
-                  <select name="duration" id="psDuration" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
-                    <?php foreach ([60, 90, 120] as $dm): ?><option value="<?= $dm ?>"><?= $dm ?> <?= e(__('panel.presale.minutes')) ?></option><?php endforeach; ?>
-                  </select>
-                </label>
-                <script>
-                  // Padel genelde 90 dk, futbol 60 dk: saha seçilince varsayılan süre
-                  (function () {
-                    var c = document.getElementById('psCourt'), d = document.getElementById('psDuration');
-                    var set = function () { var o = c.options[c.selectedIndex]; d.value = (o && o.getAttribute('data-sport') === 'padel') ? '90' : '60'; };
-                    c.addEventListener('change', set); set();
-                  })();
-                </script>
                 <button type="submit" class="rounded-md bg-gray-900 px-3.5 py-2 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.presale.button')) ?></button>
               </form>
             <?php endif; ?>
@@ -527,7 +509,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                             <?php if (empty($grid[$gs][$gc])): ?>
                               <span class="text-gray-300">—</span>
                             <?php else: foreach ($grid[$gs][$gc] as $cm):
-                              $expired = replash_match_expired($cm);
+                              $expired = ($cm['status'] === 'EXPIRED' || is_match_expired($cm['date']));
                               $undoState = replash_staff_undo_status($cm);
                             ?>
                               <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -535,7 +517,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                   <span class="text-sm text-gray-400"><?= e(__('panel.shell.deleted_state')) ?></span>
                                 <?php elseif ($cm['status'] === 'UNLOCKABLE'): ?>
                                   <div class="min-w-[110px]">
-                                    <div class="text-[11px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?><?php if ($cm['sale_price'] !== null): ?> · <?= e(replash_money((float)$cm['sale_price'])) ?><?php endif; ?></div>
+                                    <div class="text-[11px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div>
                                     <button type="button" data-copy="<?= e($cm['access_code']) ?>" title="<?= e(__('panel.shell.copy')) ?>" class="select-all font-mono text-base font-semibold tracking-wider text-gray-900 hover:underline"><?= e($cm['access_code']) ?></button>
                                     <?php $vs = replash_video_state($pdo, $cm); if ($vs['state'] !== 'ready'): ?>
                                       <div class="mt-0.5 text-[11px] <?= $vs['state'] === 'delayed' ? 'font-medium text-red-700' : 'text-gray-500' ?>"><?= e(str_replace('{t}', date('H:i', $vs['eta']), __('panel.presale.state_' . $vs['state']))) ?></div>
@@ -548,8 +530,8 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                                     <button type="button" disabled title="<?= e(__('panel.shell.final_hint')) ?>" class="cursor-not-allowed rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400"><?= e(__('panel.shell.final_state')) ?></button>
                                   <?php endif; ?>
                                 <?php else: ?>
-                                  <div class="min-w-[110px] text-[11px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?><?php if (isset($courtPrices[$cm['court']])): ?> · <?= e(replash_money($courtPrices[$cm['court']])) ?><?php endif; ?></div>
-                                  <form action="<?= e($panelUrl()) ?>" method="POST"><?= csrf_field() ?>
+                                  <div class="min-w-[110px] text-[11px] font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></div>
+                                  <form action="<?= e($panelUrl()) ?>" method="POST">
                                     <input type="hidden" name="action" value="mark_sold">
                                     <input type="hidden" name="match_id" value="<?= e($cm['id']) ?>">
                                     <button type="submit" class="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.shell.unlock')) ?></button>
@@ -578,7 +560,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
 
         <!-- Tekrar kilitleme (aynı düğme; kurallar: includes/sales.php) -->
         <dialog id="relockDialog" class="w-full max-w-md rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/30">
-          <form action="<?= e($panelUrl()) ?>" method="POST" class="p-6"><?= csrf_field() ?>
+          <form action="<?= e($panelUrl()) ?>" method="POST" class="p-6">
             <input type="hidden" name="action" value="mark_locked">
             <input type="hidden" name="match_id" id="relockMatchId">
             <h2 class="text-base font-semibold text-gray-900"><?= e(__('panel.shell.relock_title')) ?></h2>
@@ -777,11 +759,8 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
     var btn = e.target.closest('[data-copy]');
     if (btn) {
       var label = btn.textContent;
-      var show = function (text) { btn.textContent = text; setTimeout(function () { btn.textContent = label; }, 1800); };
-      var ok = function () { show(<?= json_encode(__('panel.shell.copied')) ?>); };
-      var fail = function () { show(<?= json_encode(__('panel.shell.copy_failed')) ?>); };
-      // "Kopyalandı" yalnız gerçekten kopyalanınca gösterilir
-      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(ok, fail); else fail();
+      var done = function () { btn.textContent = <?= json_encode(__('panel.shell.copied')) ?>; setTimeout(function () { btn.textContent = label; }, 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(done, done); else done();
       return;
     }
     // Aynı düğme: satılmış maçı tekrar kilitle (neden sorulur)

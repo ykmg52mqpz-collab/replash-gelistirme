@@ -46,65 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
 
 $isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 
-// Aylık mutabakat CSV (T20): geçerli satışlar satış anındaki tutarla, kademe ve paylar, iadeler
-if ($isAdmin && $pdo && ($_GET['export'] ?? '') === 'statement') {
-    $fid = (string)($_GET['facility_id'] ?? '');
-    $ym = preg_match('/^\d{4}-\d{2}$/', (string)($_GET['month'] ?? '')) ? $_GET['month'] : date('Y-m');
-    $fst = $pdo->prepare("SELECT * FROM facilities WHERE id = ? LIMIT 1");
-    $fst->execute([$fid]);
-    $fac = $fst->fetch();
-    if (!$fac) { http_response_code(404); exit('Tesis bulunamadı'); }
-    $st = replash_monthly_statement($pdo, $fid, $ym);
-    $price = replash_sale_price_sql('m', 'f.unit_price');
-    $rows = $pdo->prepare("SELECT m.date, m.time_slot, m.court, m.sport, m.sold_at, m.status, {$price} AS amount, COALESCE(m.sale_currency, f.currency, 'EUR') AS cur
-        FROM matches m JOIN facilities f ON f.id = m.facility_id
-        WHERE m.facility_id = ? AND " . replash_valid_sale_sql('m') . " AND DATE_FORMAT(" . replash_sale_date_sql('m') . ", '%Y-%m') = ?
-        ORDER BY m.sold_at, m.date, m.time_slot");
-    $rows->execute([$fid, $ym]);
-    $ref = $pdo->prepare("SELECT se.created_at, se.reason, se.amount, se.currency, m.date, m.time_slot, m.court FROM sale_events se
-        LEFT JOIN matches m ON m.id = se.match_id WHERE se.facility_id = ? AND se.action = 'refunded' AND DATE_FORMAT(se.created_at, '%Y-%m') = ? ORDER BY se.created_at");
-    $ref->execute([$fid, $ym]);
-    $slug = preg_replace('/[^a-z0-9]+/i', '-', strtolower($fac['name']));
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="replash-mutabakat-' . $slug . '-' . $ym . '.csv"');
-    $out = fopen('php://output', 'w');
-    fwrite($out, "\xEF\xBB\xBF"); // Excel için UTF-8 işareti
-    fputcsv($out, ['Tesis', $fac['name'], 'Dönem', $ym, 'Para birimi', $st['currency']], ';');
-    fputcsv($out, [], ';');
-    fputcsv($out, ['Maç tarihi', 'Saat', 'Saha', 'Spor', 'Satış zamanı', 'Durum', 'Tutar', 'Para birimi'], ';');
-    foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $r) {
-        fputcsv($out, [$r['date'], $r['time_slot'], $r['court'], $r['sport'], $r['sold_at'], $r['status'], number_format((float)$r['amount'], 2, ',', ''), $r['cur']], ';');
-    }
-    fputcsv($out, [], ';');
-    fputcsv($out, ['Geçerli satış', $st['valid_sales']], ';');
-    fputcsv($out, ['Brüt satış', number_format($st['gross'], 2, ',', '')], ';');
-    fputcsv($out, ['Tesis payı %', $st['facility_pct']], ';');
-    fputcsv($out, ['Tesis payı', number_format($st['facility_share'], 2, ',', '')], ';');
-    fputcsv($out, ['Replash payı', number_format($st['replash_share'], 2, ',', '')], ';');
-    $refRows = $ref->fetchAll(PDO::FETCH_ASSOC);
-    if ($refRows) {
-        fputcsv($out, [], ';');
-        fputcsv($out, ['İADELER (bu dönemde, satıştan düşülmüştür)'], ';');
-        fputcsv($out, ['İade zamanı', 'Maç tarihi', 'Saat', 'Saha', 'Tutar', 'Para birimi', 'Sebep'], ';');
-        foreach ($refRows as $r) {
-            fputcsv($out, [$r['created_at'], $r['date'], $r['time_slot'], $r['court'], $r['amount'] !== null ? number_format((float)$r['amount'], 2, ',', '') : '', $r['currency'], $r['reason']], ';');
-        }
-    }
-    fclose($out);
-    exit;
-}
-
-/**
- * PIN kuralı: 6 hane, başka tesiste kullanılmıyor (giriş PIN özeti üzerinden yapılır).
- * $exceptFacility: düzenlenen tesisin kendisi. Sorun yoksa null döner.
- */
-function admin_pin_problem(PDO $pdo, string $pin, ?string $exceptFacility): ?string {
-    if (!preg_match('/^\d{6}$/', $pin)) return 'PIN 6 haneli bir sayı olmalı.';
-    $st = $pdo->prepare("SELECT id FROM facilities WHERE pin = ? AND id <> ? LIMIT 1");
-    $st->execute([replash_pin_hash($pin), (string)$exceptFacility]);
-    return $st->fetchColumn() ? 'Bu PIN başka bir tesiste kullanılıyor, farklı bir PIN seçin.' : null;
-}
-
 /**
  * Tesis sporları ve spor başına video fiyatı (facilities.sport_prices).
  */
@@ -251,15 +192,11 @@ if ($isAdmin && $pdo) {
         }
         $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-        $pinErr = admin_pin_problem($pdo, $pin, null);
-        if ($pinErr) {
-            $error = $pinErr;
-        } else {
         $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency, sport_prices) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), replash_pin_hash($pin), $unitPrice, $currency, json_encode($sportPrices)]);
+        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), $pin, $unitPrice, $currency, json_encode($sportPrices)]);
 
         // Add cameras for each court
-        $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'offline', NULL)");
+        $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
         foreach ($courtList as $cItem) {
             $c = $cItem['name'];
             $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
@@ -276,7 +213,6 @@ if ($isAdmin && $pdo) {
         }
 
         $success = "Yeni tesis ve sahalara özel canlı yayın linkleri başarıyla kaydedildi.";
-        }
     }
 
     // Update Camera Stream URL
@@ -363,10 +299,7 @@ if ($isAdmin && $pdo) {
         $unitPrice = (float)reset($sportPrices);
         $currency = REPLASH_BILLING_CURRENCY;
 
-        $pinErr = ($pin !== '') ? admin_pin_problem($pdo, $pin, $facId) : null;
-        if ($pinErr) {
-            $error = $pinErr;
-        } elseif (!empty($facId) && !empty($name)) {
+        if (!empty($facId) && !empty($name) && !empty($pin)) {
             // Kamera kimlikleri tesis adı değişse de sabit kalsın (kayıt sistemi channel_id ile bağlanıyor)
             $slugStmt = $pdo->prepare("SELECT slug FROM facilities WHERE id = ?");
             $slugStmt->execute([$facId]);
@@ -391,14 +324,13 @@ if ($isAdmin && $pdo) {
             }
             $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-            // PIN alanı boş bırakıldıysa mevcut PIN korunur
-            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = COALESCE(?, pin), unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
-            $upd->execute([$name, $city, $primarySport, $pin !== '' ? replash_pin_hash($pin) : null, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
+            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
+            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
 
             // Sync cameras
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
 
-            $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
             foreach ($courtList as $cItem) {
                 $c = $cItem['name'];
                 $cSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $c));
@@ -410,8 +342,7 @@ if ($isAdmin && $pdo) {
                     $channelId = $prev['channel_id'] ?? (($camNum === 1) ? "{$slug}-{$cSlug}" : "{$slug}-{$cSlug}-{$camNum}");
                     $token = $prev['token'] ?? ('camk_' . bin2hex(random_bytes(8)));
                     $camName = ($totalCams > 1) ? "{$name} · {$c} · {$camNum}. Kamera" : "{$name} · {$c}";
-                    // Gerçek durum korunur: yeni kamera 'henüz sinyal yok' olarak başlar
-                    $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream, $prev['status'] ?? 'offline', $prev['last_seen_at'] ?? null]);
+                    $insCam->execute([$camId, $facId, $c, $camName, $token, $channelId, $cStream]);
                     $camNum++;
                 }
             }
@@ -423,11 +354,7 @@ if ($isAdmin && $pdo) {
     // Delete Facility
     if (isset($_POST['action']) && $_POST['action'] === 'delete_facility') {
         $facId = trim($_POST['facility_id'] ?? '');
-        $soldCnt = $pdo->prepare("SELECT COUNT(*) FROM matches WHERE facility_id = ? AND sold_at IS NOT NULL");
-        $soldCnt->execute([$facId]);
-        if ((int)$soldCnt->fetchColumn() > 0) {
-            $error = "Bu tesisin satış geçmişi var; muhasebe kaydı kaybolmasın diye silinemez.";
-        } elseif (!empty($facId)) {
+        if (!empty($facId)) {
             $pdo->prepare("DELETE FROM matches WHERE facility_id = ?")->execute([$facId]);
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
             $pdo->prepare("DELETE FROM refunds WHERE facility_id = ?")->execute([$facId]);
@@ -619,34 +546,6 @@ if ($isAdmin && $pdo) {
     $totals = $stmtTotals->fetch(PDO::FETCH_ASSOC) ?: [];
 }
 
-// Dikkat gerekenler (rapor §7): büyük toplamlar yerine önce istisnalar
-$alerts = ['cameras' => [], 'delayed' => [], 'undo' => [], 'leads' => 0];
-if ($isAdmin && $pdo) {
-    try {
-        foreach ($pdo->query("SELECT c.name, c.court, c.status, c.last_seen_at, f.name AS facility_name FROM cameras c JOIN facilities f ON f.id = c.facility_id ORDER BY f.name, c.court") as $c) {
-            $seen = $c['last_seen_at'] ? strtotime($c['last_seen_at']) : 0;
-            if (!$seen || $c['status'] === 'offline' || time() - $seen > 7200) {
-                $alerts['cameras'][] = $c + ['why' => !$seen ? 'Hiç sinyal yok' : ($c['status'] === 'offline' ? 'Kapalı' : 'Son sinyal ' . date('d.m H:i', $seen))];
-            }
-        }
-        $st = $pdo->query("SELECT m.*, f.name AS facility_name FROM matches m JOIN facilities f ON f.id = m.facility_id
-            WHERE m.status = 'UNLOCKABLE' AND m.available_at IS NULL AND m.date >= DATE_SUB(CURDATE(), INTERVAL 2 DAY)");
-        foreach ($st as $m) {
-            $vs = replash_video_state($pdo, $m);
-            if ($vs['state'] === 'delayed') $alerts['delayed'][] = $m + ['eta' => $vs['eta']];
-        }
-        $st = $pdo->query("SELECT se.facility_id, f.name, SUM(se.action = 'undone') AS undone, SUM(se.action = 'sold') AS sold
-            FROM sale_events se JOIN facilities f ON f.id = se.facility_id
-            WHERE DATE_FORMAT(se.created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') GROUP BY se.facility_id, f.name");
-        foreach ($st as $u) {
-            if ((int)$u['sold'] >= 5 && (int)$u['undone'] * 10 >= (int)$u['sold']) $alerts['undo'][] = $u;
-        }
-        $alerts['leads'] = (int)$pdo->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn();
-    } catch (Exception $e) {
-        error_log('admin alerts: ' . $e->getMessage());
-    }
-}
-
 // Sekme + satış denetimi verisi (includes/sales.php)
 $adminTab = in_array($_GET['tab'] ?? '', ['overview', 'facilities', 'audit', 'leads', 'settings'], true) ? $_GET['tab'] : 'overview';
 $auditEvents = [];
@@ -682,7 +581,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if (!$isAdmin): ?>
       <!-- Yönetim girişi (replash.info AdminApp) -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8"><?= csrf_field() ?>
+        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
           <input type="hidden" name="admin_login" value="1">
           <h1 class="font-display text-xl font-bold">Platform Admin</h1>
           <p class="mb-5 mt-1 text-sm text-white/50">Replash sistem yöneticisi hesabınızla giriş yapın.</p>
@@ -703,10 +602,6 @@ require_once __DIR__ . '/../includes/header.php';
     <?php else: ?>
       <?php include __DIR__ . '/../includes/admin_nav.php'; ?>
 
-      <?php if (!empty($error)): ?>
-        <div class="mb-6 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm font-medium text-red-200" role="alert"><?= e($error) ?></div>
-      <?php endif; ?>
-
       <?php if ($success): ?>
         <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-300 text-sm font-medium mb-6">
           <?= e($success) ?>
@@ -714,41 +609,6 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <?php if ($adminTab === 'overview'): ?>
-      <!-- Dikkat gerekenler -->
-      <?php $alertCount = count($alerts['cameras']) + count($alerts['delayed']) + count($alerts['undo']); ?>
-      <section class="mb-8 rounded-2xl border <?= $alertCount ? 'border-amber-400/30 bg-amber-400/[0.05]' : 'border-emerald-400/20 bg-emerald-400/[0.04]' ?> p-5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h2 class="font-display text-lg font-bold text-white"><?= $alertCount ? 'Dikkat gerekenler (' . $alertCount . ')' : 'Her şey yolunda' ?></h2>
-          <?php if ($alerts['leads']): ?><a href="index.php?tab=leads" class="text-sm text-accent hover:underline">Son 7 günde <?= (int)$alerts['leads'] ?> yeni başvuru →</a><?php endif; ?>
-        </div>
-        <?php if ($alertCount): ?>
-          <div class="mt-4 grid gap-4 md:grid-cols-3 text-sm">
-            <div>
-              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Kameralar (sinyal)</div>
-              <?php if (!$alerts['cameras']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
-              <?php foreach (array_slice($alerts['cameras'], 0, 8) as $c): ?>
-                <p class="text-white/80"><?= e($c['facility_name'] . ' · ' . $c['court']) ?> <span class="text-amber-300"><?= e($c['why']) ?></span></p>
-              <?php endforeach; ?>
-              <?php if (count($alerts['cameras']) > 8): ?><p class="text-white/40">+<?= count($alerts['cameras']) - 8 ?> kamera daha</p><?php endif; ?>
-            </div>
-            <div>
-              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Satıldı, video gelmedi</div>
-              <?php if (!$alerts['delayed']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
-              <?php foreach (array_slice($alerts['delayed'], 0, 8) as $m): ?>
-                <p class="text-white/80"><?= e($m['facility_name'] . ' · ' . $m['court'] . ' · ' . $m['date'] . ' ' . $m['time_slot']) ?> <span class="text-amber-300">bekleniyordu <?= e(date('H:i', $m['eta'])) ?></span></p>
-              <?php endforeach; ?>
-            </div>
-            <div>
-              <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">Bu ay geri alma oranı ≥ %10</div>
-              <?php if (!$alerts['undo']): ?><p class="text-white/40">Sorun yok.</p><?php endif; ?>
-              <?php foreach ($alerts['undo'] as $u): ?>
-                <p class="text-white/80"><?= e($u['name']) ?> <span class="text-amber-300"><?= (int)$u['undone'] ?>/<?= (int)$u['sold'] ?></span> <a class="text-accent hover:underline" href="index.php?tab=audit&audit_facility=<?= e(urlencode($u['facility_id'])) ?>">incele</a></p>
-              <?php endforeach; ?>
-            </div>
-          </div>
-        <?php endif; ?>
-      </section>
-
       <!-- Facility Filter Toolbar for Analytics -->
       <div class="rounded-2xl bg-white/[0.02] p-4 sm:p-5 border border-white/10 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -1004,7 +864,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <span class="text-[11px] text-neutral-400">Her sahaya özel canlı RTSP/HLS linki bağlayın</span>
               </div>
 
-              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs"><?= csrf_field() ?>
+              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs">
                 <input type="hidden" name="action" value="add_facility">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1106,7 +966,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <div>
                       <div class="font-semibold text-white text-base"><?= e($f['name']) ?></div>
                       <div class="text-xs text-neutral-400 mt-0.5">
-                        <?= e($f['city']) ?> · PIN: <code class="text-accent font-bold">••••••</code> · <?= e($f['unit_price']) ?> <?= e($f['currency']) ?>
+                        <?= e($f['city']) ?> · PIN: <code class="text-accent font-bold"><?= e($f['pin']) ?></code> · <?= e($f['unit_price']) ?> <?= e($f['currency']) ?>
                       </div>
                       <div class="text-[11px] text-neutral-500 mt-1">Sahalar: <?= e($courtsStr) ?></div>
                     </div>
@@ -1120,7 +980,7 @@ require_once __DIR__ . '/../includes/header.php';
                       </button>
 
                       <!-- Delete Facility Form -->
-                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline"><?= csrf_field() ?>
+                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
                         <input type="hidden" name="action" value="delete_facility">
                         <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                         <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="Tesisi Sil">
@@ -1137,7 +997,7 @@ require_once __DIR__ . '/../includes/header.php';
                       <span class="text-[11px] text-neutral-400">Her sahaya birden fazla kamera URL'si atayabilirsiniz</span>
                     </div>
 
-                    <form action="index.php?tab=facilities" method="POST" class="space-y-3"><?= csrf_field() ?>
+                    <form action="index.php?tab=facilities" method="POST" class="space-y-3">
                       <input type="hidden" name="action" value="update_facility">
                       <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                       
@@ -1154,7 +1014,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                       <div>
                         <label class="block text-neutral-400 mb-1 font-medium">6 haneli PIN</label>
-                        <input type="text" name="pin" maxlength="6" inputmode="numeric" value="" placeholder="Değiştirmek için yeni PIN" autocomplete="off" class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
+                        <input type="text" name="pin" maxlength="6" inputmode="numeric" value="<?= e($f['pin']) ?>" required class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
                       </div>
                       <?php
                         $fPrices = replash_facility_prices($f);
@@ -1299,7 +1159,7 @@ require_once __DIR__ . '/../includes/header.php';
                   </div>
 
                   <!-- Edit Stream URL Form -->
-                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2"><?= csrf_field() ?>
+                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2">
                     <input type="hidden" name="action" value="update_camera_stream">
                     <input type="hidden" name="camera_id" value="<?= e($c['id']) ?>">
                     <input type="text" name="stream_url" value="<?= e($c['stream_url'] ?? '') ?>" placeholder="rtsp://... veya https://..." class="flex-1 rounded-lg border border-white/10 bg-ink-900 px-2 py-1 text-xs text-white font-mono focus:border-accent focus:outline-none">
@@ -1335,7 +1195,7 @@ require_once __DIR__ . '/../includes/header.php';
           </span>
         </div>
 
-        <form action="index.php?tab=settings" method="POST" class="space-y-6"><?= csrf_field() ?>
+        <form action="index.php?tab=settings" method="POST" class="space-y-6">
           <input type="hidden" name="action" value="update_search_form_settings">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1418,24 +1278,6 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <?php if ($adminTab === 'audit'): ?>
-      <!-- Aylık mutabakat dışa aktarımı -->
-      <form method="GET" action="index.php" class="mb-5 flex flex-wrap items-end gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-        <input type="hidden" name="export" value="statement">
-        <div class="mr-auto">
-          <div class="text-sm font-semibold text-white">Aylık mutabakat (CSV)</div>
-          <div class="text-xs text-white/50">Geçerli satışlar satış anındaki tutarla, kademe, tesis ve Replash payı, iadeler.</div>
-        </div>
-        <label class="text-xs text-white/60">Tesis
-          <select name="facility_id" class="mt-1 block rounded-lg border border-white/10 bg-ink-900 px-2.5 py-1.5 text-sm text-white">
-            <?php foreach ($facilities as $fOpt): ?><option value="<?= e($fOpt['id']) ?>"><?= e($fOpt['name']) ?></option><?php endforeach; ?>
-          </select>
-        </label>
-        <label class="text-xs text-white/60">Ay
-          <input type="month" name="month" value="<?= date('Y-m') ?>" class="mt-1 block rounded-lg border border-white/10 bg-ink-900 px-2.5 py-1.5 text-sm text-white">
-        </label>
-        <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-ink-900">CSV indir</button>
-      </form>
-
       <!-- SATIŞ DENETİMİ: satış / geri alma kayıtları (silinmez) -->
       <p class="mb-5 inline-block rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/50">
         ⓘ Tesisler satışı yalnızca ilk <?= REPLASH_UNDO_WINDOW_MIN ?> dakikada, video açılmadıysa ve neden yazarak geri alabilir. Daha sonraki düzeltmeler yalnızca buradan (Maçlar sekmesi) yapılır.
@@ -1462,11 +1304,11 @@ require_once __DIR__ . '/../includes/header.php';
       <div class="overflow-x-auto rounded-2xl border border-white/10">
         <table class="w-full min-w-[860px] text-sm">
           <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
-            <tr><th class="px-4 py-3">Zaman</th><th class="px-4 py-3">Tesis</th><th class="px-4 py-3">Maç</th><th class="px-4 py-3">İşlem</th><th class="px-4 py-3 text-right">Tutar</th><th class="px-4 py-3">Kim</th><th class="px-4 py-3">Neden</th></tr>
+            <tr><th class="px-4 py-3">Zaman</th><th class="px-4 py-3">Tesis</th><th class="px-4 py-3">Maç</th><th class="px-4 py-3">İşlem</th><th class="px-4 py-3">Kim</th><th class="px-4 py-3">Neden</th></tr>
           </thead>
           <tbody>
             <?php if (empty($auditEvents)): ?>
-              <tr><td colspan="7" class="px-4 py-8 text-center text-white/40">Kayıt yok.</td></tr>
+              <tr><td colspan="6" class="px-4 py-8 text-center text-white/40">Kayıt yok.</td></tr>
             <?php endif; ?>
             <?php
               $actionLabels = [
@@ -1475,7 +1317,6 @@ require_once __DIR__ . '/../includes/header.php';
                 'admin_sold' => ['Yönetim açtı', 'bg-emerald-400/15 text-emerald-300'],
                 'admin_undone' => ['Yönetim geri aldı', 'bg-white/10 text-white/70'],
                 'admin_deleted' => ['Yönetim sildi', 'bg-white/10 text-white/70'],
-                'refunded' => ['İade edildi', 'bg-amber-400/15 text-amber-300'],
               ];
             ?>
             <?php foreach ($auditEvents as $ev): [$al, $ac] = $actionLabels[$ev['action']] ?? [$ev['action'], 'bg-white/10 text-white/70']; ?>
@@ -1484,7 +1325,6 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="px-4 py-2.5"><?= e($ev['facility_name'] ?? $ev['facility_id']) ?></td>
                 <td class="px-4 py-2.5 text-xs"><?= e(($ev['court'] ?? '—') . ' · ' . ($ev['date'] ?? '') . ' · ' . ($ev['time_slot'] ?? '')) ?></td>
                 <td class="px-4 py-2.5"><span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold <?= $ac ?>"><?= e($al) ?></span></td>
-                <td class="px-4 py-2.5 text-right font-mono text-xs text-white/70"><?= isset($ev['amount']) && $ev['amount'] !== null ? e(replash_money((float)$ev['amount'])) : '—' ?></td>
                 <td class="px-4 py-2.5 font-mono text-xs text-white/50"><?= e($ev['actor']) ?></td>
                 <td class="px-4 py-2.5 text-xs text-white/70"><?= e($ev['reason'] ?? '') ?></td>
               </tr>

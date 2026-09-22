@@ -1,7 +1,6 @@
 <?php
 return [
     'nav' => [
-        'menu' => 'Menu',
         'home' => 'Home',
         'howItWorks' => 'How It Works',
         'forFacilities' => 'For Facilities',
@@ -115,7 +114,7 @@ return [
                     'desc' => 'Every video purchased generates value for both players and your facility.'
                 ],
                 '5' => [
-                    'title' => 'Simple for Your Staff',
+                    'title' => 'Zero Complexity',
                     'desc' => 'Replash handles cameras, storage, and delivery. Your team does one simple action per sale.'
                 ],
                 '6' => [
@@ -158,11 +157,11 @@ return [
                 ],
                 '2' => [
                     'q' => 'Are there any upfront costs or contract commitments?',
-                    'a' => 'No upfront cost: Replash covers cameras, installation, maintenance and software updates, with no monthly fee. The agreement has a minimum term of 6 months; during that term your facility keeps its agreed revenue share every month.'
+                    'a' => 'No. Replash covers 100% of the cost. Cameras, installation, maintenance, software updates. No monthly fees. Minimum commitment is 6 months. For the duration of the contract, your facility receives the same agreed revenue share every month.'
                 ],
                 '3' => [
                     'q' => 'How does Replash share revenue with the facility?',
-                    'a' => 'At the end of each month, every sold video appears in the panel. The share set in your agreement stays with your facility; the rest is paid to Replash at month-end. The monthly statement comes from the panel: valid sales, your share and Replash’s share. The more your courts are used, the more your facility earns.'
+                    'a' => 'At the end of each month, all unlocked videos are tracked through the admin panel. The share defined in your contract stays with your facility; the remaining amount is paid to Replash at month-end. The more active your courts, the more your facility earns — every new match is additional revenue. Everything is reconciled automatically from the panel. With zero operational cost on your side.'
                 ],
                 '4' => [
                     'q' => 'Does my staff have to do anything per match?',
@@ -170,7 +169,7 @@ return [
                 ],
                 '5' => [
                     'q' => 'What happens if a camera fails or there\'s a technical issue?',
-                    'a' => 'The facility panel shows each camera’s last signal, and Replash watches recordings as they arrive. If a camera fails, we fix it remotely where possible or plan a visit. A match without a recording can’t be sold, so it never appears in your report.'
+                    'a' => 'Replash monitors all cameras 24/7. In rare cases of failure, our support team is notified automatically and resolves it remotely. Usually within hours. If a recording is lost, that sale doesn\'t appear in your report and you\'re not charged.'
                 ],
                 '6' => [
                     'q' => 'How quickly can we get started?',
@@ -186,15 +185,15 @@ return [
                 ],
                 '9' => [
                     'q' => 'What if we don’t have strong Wi-Fi at the courts?',
-                    'a' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey.'
+                    'a' => 'PoE cameras operate with local buffer storage so brief network drops never cause data loss. For outdoor courts without Wi-Fi, LTE/SIM cellular gateways are fully supported.'
                 ],
                 '10' => [
                     'q' => 'What about GDPR?',
-                    'a' => 'Replash is designed around GDPR and the Italian Garante’s video-surveillance guidance: cameras frame only the playing area, with no audio and no facial recognition, and videos close after 3 days if unsold or 7 if sold. The legal basis and notices (entrance signage, QR, booking notice) are agreed with each facility before installation.'
+                    'a' => 'Replash is fully compliant with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). A three-tier notice model is in place (entrance signage + QR + booking notification). A Privacy & Legal Justification file is provided before installation.'
                 ],
                 '12' => [
                     'q' => 'What if we don\'t have a strong WiFi connection?',
-                    'a' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey.'
+                    'a' => 'PoE cameras run on a local buffer. Short connection drops don\'t cause data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. The Replash team handles all setup.'
                 ]
             ],
             'categories' => [
@@ -211,30 +210,6 @@ return [
         ]
     ],
     'howItWorks' => [
-        'guide' => [
-            'players' => 'For players',
-            'facilities' => 'For facilities',
-            'demo' => 'The real screens',
-            'demo_sub' => 'Staff panel, code entry and player screen: exactly what runs on the site.',
-            'faq' => 'Common questions',
-            'p' => [
-                '1' => ['t' => 'Get your code at the desk', 'd' => 'Buy the match video at reception and get your 4-digit match code.'],
-                '2' => ['t' => 'Watch your match', 'd' => 'Enter the code on replash.it, check the court and time, and open the recording.'],
-                '3' => ['t' => 'Pick your moment and share', 'd' => 'Choose a 15–40 second range, save the clip or share it.'],
-            ],
-            'f' => [
-                '1' => ['t' => 'Setup and recording', 'd' => 'Replash installs the cameras; every match is recorded automatically.'],
-                '2' => ['t' => 'Sale and access', 'd' => 'Staff take payment, unlock it in the panel with one tap and give the code. It can also be sold before the match.'],
-                '3' => ['t' => 'Revenue tracking', 'd' => 'Sales and your agreed share are in the panel; the statement is ready at month-end.'],
-            ],
-            'q' => [
-                '1' => ['q' => 'Where do I find the price?', 'a' => 'The facility sets the price and tells you at reception; the video is sold per match, not per person.'],
-                '2' => ['q' => 'What if my code doesn\'t work?', 'a' => 'Re-enter the 4 digits. If it still won\'t open, ask at reception: the match may not be unlocked or may have expired. If the video is still being prepared, the page tells you.'],
-                '3' => ['q' => 'How long can I access my match?', 'a' => 'Up to 7 days after the match ends; the exact date and time are shown on the video page. Files you download stay on your device.'],
-                '4' => ['q' => 'How do I download a clip?', 'a' => 'Select a 15–40 second range on the timeline and press Cut a clip; when it is ready, use Save to gallery or Share.'],
-                '5' => ['q' => 'What do I give access to when I share?', 'a' => 'Sharing a clip sends only that video file. Sharing the match link lets anyone with the link watch the whole match.'],
-            ],
-        ],
         'flow' => [
             '1' => ['label' => 'Step 1', 'title' => 'The match is played, Replash records it', 'desc' => 'Fixed cameras on the court record the whole match from start to finish. No buttons, no start/stop, nothing for staff to do.'],
             '2' => ['label' => 'Step 2', 'title' => 'The front desk unlocks it and gives the code', 'desc' => 'When the team wants the video, staff take payment and unlock it in the panel with one tap. A 4-digit match code appears, one code for the whole team. You can also sell before the match; the code works as soon as the video is ready.'],
@@ -243,8 +218,8 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'How It Works',
-            'title' => 'Three steps for players. One tap for your staff.',
-            'subtitle' => 'Players open their match with a 4-digit code; the front desk unlocks it after payment. Below: the player’s side, the facility’s side and the real screens.'
+            'title' => 'Six simple steps. Zero complexity for your team.',
+            'subtitle' => 'From kickoff to replay, Replash handles everything in between. Below: every step explained, with Marco\'s Tuesday-night padel match as a concrete example.'
         ],
         'steps' => [
             '1' => [
@@ -367,7 +342,7 @@ return [
                 ],
                 '4' => [
                     'title' => '7-Day Retention',
-                    'desc' => 'Unsold footage closes after 3 days, sold footage after 7. Storage clean, privacy intact.'
+                    'desc' => 'All footage automatically deleted after 7 days. Storage clean, privacy intact.'
                 ],
                 '5' => [
                     'title' => 'Resilient Connectivity',
@@ -407,8 +382,6 @@ return [
         ]
     ],
     'common' => [
-        'close' => 'Close',
-        'csrf_failed' => 'Security check failed. Please refresh the page and try again.',
         'loading' => 'Loading...',
         'all_rights_reserved' => 'All rights reserved.',
         'privacy_policy' => 'Privacy Policy',
@@ -531,10 +504,9 @@ return [
         ],
         'errors' => [
                 'too_many' => 'Too many wrong codes. Please try again in {m} minutes.',
-                'check_desk' => 'Please check the code with the facility staff.',
                 'video_not_found' => 'Video not found',
             'not_found' => 'No match recording found for selected criteria (Venue, Date, Time).',
-            'expired' => 'Access to this match has expired; the video is no longer available.',
+            'expired' => 'This match video has been deleted as its 7-day retention period has expired.',
             'code_mismatch' => 'The entered access code does not belong to this match slot! Please check and enter the correct code.',
             'invalid_code' => 'No match found matching this access code. Please check your code.',
             'too_short' => 'Clip is too short (must be at least 2 seconds).',
@@ -606,7 +578,7 @@ return [
                 'download' => 'Download clip',
                 'range' => 'Select between 15 and 40 seconds.'
             ],
-            'expires' => 'You can access this video until {date}. Files you download stay on your device.'
+            'expires' => 'This video auto-deletes on {date}.'
         ]
     ],
     'api' => [
@@ -615,7 +587,7 @@ return [
             'too_many' => 'Too many wrong attempts. Please try again in 15 minutes.',
             'code_required' => 'A match code is needed to open this video.',
             'not_found' => 'Video not found.',
-            'expired' => 'Access to this match has expired; the video is no longer available.',
+            'expired' => 'The 7-day storage period for this match has ended, so the video was deleted.',
         ],
     ],
     'panel' => [
@@ -627,9 +599,6 @@ return [
             'never' => 'No signal yet',
         ],
         'presale' => [
-            'start' => 'Start',
-            'duration' => 'Length',
-            'minutes' => 'min',
             'title' => 'Sell before the match',
             'hint' => 'Give the code as soon as you get paid; the video opens after the match.',
             'court' => 'Court',
@@ -667,16 +636,15 @@ return [
         'shell' => [
             'cal_legend' => 'Number: matches that day',
             'tab_matches' => 'Matches and slots',
-            'unlock' => 'Paid · Unlock',
-            'copy_failed' => 'Copy failed, note the code',
+            'unlock' => 'Unlock',
             'relock' => 'Lock again',
             'locked_state' => 'Locked',
             'final_state' => 'Final',
             'final_hint' => 'The video was opened or the time limit passed; contact Replash for corrections.',
-            'deleted_state' => 'Expired',
+            'deleted_state' => 'Deleted',
             'time_col' => 'Time',
             'day_summary' => '{t} matches · {s} sold · {l} locked',
-            'auto_note' => 'Every match video received by the system appears here, locked, under its court and time. Unlock the match you were paid for and give the code to the player. Recordings close 3 days after the match ends if unsold, 7 days if sold.',
+            'auto_note' => 'Every match video received by the system appears here, locked, under its court and time. Unlock the match you were paid for and give the code to the player. Recordings are deleted 7 days after the match date.',
             'relock_title' => 'Lock match again',
             'relock_desc' => 'Once locked, the player\'s access by code and old link stops immediately.',
             'cancel' => 'Cancel',
@@ -814,7 +782,7 @@ return [
         ],
         'roi' => [
             'eyebrow' => 'REVENUE CALCULATOR',
-            'title' => 'Estimate your monthly share',
+            'title' => 'Calculate your passive monthly income',
             'subtitle' => 'How many courts do you have? How many videos do you expect to sell per day per court? Enter your numbers and see your monthly share.',
             'sport' => [
                 'padel' => 'Padel',
@@ -823,21 +791,20 @@ return [
             'inputs' => [
                 'courts' => 'Number of courts',
                 'courtsSuffix' => 'courts',
-                'videos' => 'Matches per court per day',
-                'videosSuffix' => 'matches',
-                'rate' => 'Video purchase rate',
+                'videos' => 'Videos sold / court / day',
+                'videosSuffix' => 'per court',
                 'days' => 'Active days per month',
                 'daysSuffix' => 'days'
             ],
             'results' => [
                 'eyebrow' => 'YOUR ESTIMATE',
                 'videos' => 'Videos sold',
-                'videosHint' => 'Matches played × purchase rate',
+                'videosHint' => 'per month',
                 'share' => 'Your estimated share',
                 'shareHint' => 'monthly earning',
                 'yearlyEyebrow' => 'YEARLY POTENTIAL',
                 'yearlySuffix' => 'per year',
-                'yearlyNote' => 'An estimate; the real amount depends on matches played and videos sold.'
+                'yearlyNote' => 'With zero extra work for your staff.'
             ],
             'disclaimer' => '* Indicative estimate based on service usage. The calculation is illustrative only; final terms are defined during onboarding.',
             'hook' => [
@@ -852,22 +819,22 @@ return [
             'items' => [
                 'gdpr' => [
                     'question' => 'What about GDPR?',
-                    'answer' => 'Replash\'s privacy approach is designed around GDPR, ECHR Article 8 and the Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and closed after 3 days if unsold, 7 if sold. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
+                    'answer' => 'Replash\'s privacy architecture complies with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Videos are unguessable, time-slot-tied, and auto-deleted after 7 days. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). Three-tier notice model (signage + QR + booking notification) ready before installation.',
                     'items' => [
                         '1' => 'No audio. No facial recognition.',
-                        '2' => 'Access closes after 3 days (unsold) / 7 days (sold).',
+                        '2' => 'Auto-delete after 7 days.',
                         '3' => 'GDPR / ECHR Art. 8 / Garante compliant.',
                         '4' => 'Privacy & Legal Justification file delivered upfront.'
                     ]
                 ],
                 'tech' => [
                     'question' => 'What if we don\'t have WiFi?',
-                    'answer' => 'Cameras keep a short local buffer, so brief connection drops are usually recovered; long outages can lose part of a recording. For outdoor courts without Wi-Fi, an LTE/SIM connection can be used where coverage allows. We check the connection during the site survey. Installation, cabling and camera mounting are done by Replash; your staff only needs to give us access.',
+                    'answer' => 'PoE cameras run on a local buffer. Short connection drops cause no data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. Installation, cabling, and camera mounting are entirely handled by Replash. Your tech staff is not involved.',
                     'items' => [
                         '1' => 'PoE local buffer handles drops.',
                         '2' => 'LTE/SIM fallback for venues without WiFi.',
                         '3' => 'Full setup handled by Replash.',
-                        '4' => 'No change to how you run bookings and courts.'
+                        '4' => 'Zero interference with venue operations.'
                     ]
                 ]
             ]
@@ -887,7 +854,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Pilot Tournaments',
-                    'desc' => 'At launch, we can organise a themed tournament with selected partner venues to bring in new players. Agreed case by case.'
+                    'desc' => 'At launch, we run themed tournaments at partner venues. New customers and added visibility, on the house.'
                 ]
             ]
         ],
@@ -1199,7 +1166,7 @@ return [
         'features' => [
             '1' => [
                 'title' => 'Wide-Angle HD Recording',
-                'desc' => 'High-definition video that covers the whole court from a fixed angle.'
+                'desc' => 'High-definition video coverage capturing the entire court with zero blind spots.'
             ],
             '2' => [
                 'title' => 'Clip in Seconds',
@@ -1355,7 +1322,7 @@ return [
         'success' => 'Message received! We\'ll be in touch within 24 hours.',
         'errors' => [
             'required' => 'Please enter your name and email address.',
-            'general' => 'We could not save your request right now. Please try again shortly or message us on WhatsApp.'
+            'general' => 'An error occurred during submission: '
         ],
         'form' => [
             'name' => 'Full Name *',
@@ -1435,7 +1402,7 @@ return [
         ],
         'forFacilities' => [
             'title' => 'For Facilities. Replash',
-            'description' => 'Offer match videos at your venue: we install and run the cameras, your front desk unlocks paid videos with one tap, and you keep a share of every sale.'
+            'description' => 'Turn your sports venue into a modern match experience. Zero operational complexity, new digital service, proven model.'
         ],
         'forPlayers' => [
             'title' => 'For Players. Replash',
@@ -1447,7 +1414,6 @@ return [
         ]
     ],
     'footer' => [
-        'get_started' => 'Get Started',
         'tagline' => 'More than just a match.',
         'links' => [
             'howItWorks' => 'How It Works',

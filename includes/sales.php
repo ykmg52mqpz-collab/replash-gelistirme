@@ -37,55 +37,13 @@ function replash_record_match_open(PDO $pdo, string $matchId): void {
  * Append an entry to the sale audit trail.
  * $action: sold | undone | admin_sold | admin_undone
  */
-function replash_log_sale_event(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null, ?float $amount = null, ?string $currency = null): void {
+function replash_log_sale_event(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null): void {
     try {
-        $pdo->prepare("INSERT INTO sale_events (match_id, facility_id, action, actor, reason, amount, currency) VALUES (?, ?, ?, ?, ?, ?, ?)")
-            ->execute([$match['id'], $match['facility_id'], $action, $actor, $reason, $amount, $currency]);
+        $pdo->prepare("INSERT INTO sale_events (match_id, facility_id, action, actor, reason) VALUES (?, ?, ?, ?, ?)")
+            ->execute([$match['id'], $match['facility_id'], $action, $actor, $reason]);
     } catch (Exception $e) {
         error_log('replash_log_sale_event: ' . $e->getMessage());
     }
-}
-
-/**
- * Satış anındaki tutarı maça yazar (T07): saha sporunun tesis fiyatı, yoksa standart fiyat.
- * Sonradan fiyat değişse de o satışın raporu değişmez. Döner: [tutar, para birimi].
- */
-function replash_snapshot_price(PDO $pdo, string $matchId): array {
-    $st = $pdo->prepare("SELECT m.id AS m_id, m.court AS m_court, m.sport AS m_sport, m.sale_price AS m_sale_price,
-            m.sale_currency AS m_sale_currency, f.*
-        FROM matches m JOIN facilities f ON f.id = m.facility_id WHERE m.id = ? LIMIT 1");
-    $st->execute([$matchId]);
-    $row = $st->fetch(PDO::FETCH_ASSOC);
-    if (!$row) return [null, null];
-    if ($row['m_sale_price'] !== null) return [(float)$row['m_sale_price'], $row['m_sale_currency'] ?: REPLASH_BILLING_CURRENCY];
-    $fallback = (float)($row['unit_price'] ?? 0);
-    $sport = $row['m_sport'] ?: 'football';
-    foreach (get_facility_courts_data($row) as $cd) {
-        if ($cd['name'] === $row['m_court']) { $fallback = (float)$cd['price']; break; }
-    }
-    $price = replash_video_price($sport, $fallback, $row);
-    $cur = strtoupper(substr((string)($row['currency'] ?? ''), 0, 3)) ?: REPLASH_BILLING_CURRENCY;
-    $pdo->prepare("UPDATE matches SET sale_price = ?, sale_currency = ? WHERE id = ? AND sale_price IS NULL")->execute([$price, $cur, $row['m_id']]);
-    return [$price, $cur];
-}
-
-/** Tutarı olmayan satılmış maçlara güncel kuralla tutar yazar (tek seferlik geçiş; sonra no-op). */
-function replash_backfill_sale_prices(PDO $pdo): int {
-    try {
-        $expr = replash_sale_price_sql_live('m', 'f.unit_price', null, 'f');
-        return (int)$pdo->exec("UPDATE matches m JOIN facilities f ON f.id = m.facility_id
-            SET m.sale_price = {$expr}, m.sale_currency = COALESCE(NULLIF(f.currency, ''), '" . REPLASH_BILLING_CURRENCY . "')
-            WHERE m.sold_at IS NOT NULL AND m.sale_price IS NULL");
-    } catch (Exception $e) {
-        error_log('replash_backfill_sale_prices: ' . $e->getMessage());
-        return 0;
-    }
-}
-
-/** Satış olayı: tutarı dondurur ve olayı tutarıyla yazar. */
-function replash_record_sale(PDO $pdo, array $match, string $action, string $actor, ?string $reason = null): void {
-    [$amount, $cur] = replash_snapshot_price($pdo, $match['id']);
-    replash_log_sale_event($pdo, $match, $action, $actor, $reason, $amount, $cur);
 }
 
 /**
@@ -125,48 +83,26 @@ function replash_undo_count(PDO $pdo, ?string $facilityId, string $yearMonth): i
     }
 }
 
-/*
- * Saklama: süre maçın gerçek bitişinden sayılır. Satılmayan kayıt REPLASH_RETENTION_UNSOLD_DAYS (3),
- * satılan kayıt RETENTION_DAYS (7) gün sonra erişime kapanır: durum EXPIRED olur ve kayıtlı video
- * adresi silinir, kodlar ve eski bağlantılar çalışmaz. Satış kaydı (sold_at, billable, sale_events)
- * faturalama için korunur. Kamera bulutundaki fiziksel dosyanın silinmesi sağlayıcının saklama
- * ayarına bağlıdır, buradan doğrulanamaz.
- * Sayfa açıldıkça saatte en fazla bir kez çalışır; cron/purge.php ile zamanlanabilir.
+/**
+ * 7-day retention (Platform Brief): from the match date, every recording — sold or not —
+ * is removed after RETENTION_DAYS. Status becomes EXPIRED and the stored playback URL is
+ * cleared, so access codes and old links stop working. Sold matches keep sold_at/billable
+ * for monthly billing.
+ * Runs at most once per hour on normal page loads; cron/purge.php can run it on a schedule.
  */
-const REPLASH_RETENTION_UNSOLD_DAYS = 3;
-
-/** Maçın erişim süresinin bittiği an (timestamp). */
-function replash_expires_at(array $match): int {
-    [, $end] = replash_slot_bounds($match);
-    $sold = !empty($match['sold_at']) || ($match['status'] ?? '') === 'UNLOCKABLE';
-    return $end + ($sold ? RETENTION_DAYS : REPLASH_RETENTION_UNSOLD_DAYS) * 86400;
-}
-
-function replash_match_expired(array $match): bool {
-    return ($match['status'] ?? '') === 'EXPIRED' || time() >= replash_expires_at($match);
-}
-
 function replash_purge_expired(PDO $pdo, bool $force = false): int {
     try {
         if (!$force) {
             $last = (int)get_setting('last_retention_purge', 0);
             if (time() - $last < 3600) return 0;
         }
-        // Aday: en az 2 gün önceki maçlar (satılmayan en erken bitiş + 3 günde kapanır)
-        $stmt = $pdo->prepare("SELECT id, date, time_slot, status, sold_at, duration_sec FROM matches
-            WHERE status <> 'EXPIRED' AND `date` <= DATE_SUB(CURDATE(), INTERVAL 2 DAY)");
-        $stmt->execute();
-        $ids = [];
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $m) {
-            if (replash_match_expired($m)) $ids[] = $m['id'];
-        }
-        foreach (array_chunk($ids, 200) as $chunk) {
-            $in = implode(',', array_fill(0, count($chunk), '?'));
-            $pdo->prepare("UPDATE matches SET status = 'EXPIRED', playback_url = NULL WHERE id IN ($in)")->execute($chunk);
-        }
+        $stmt = $pdo->prepare("UPDATE matches SET status = 'EXPIRED', playback_url = NULL
+            WHERE status <> 'EXPIRED' AND DATE_ADD(`date`, INTERVAL ? DAY) < CURDATE()");
+        $stmt->execute([RETENTION_DAYS]);
+        $n = $stmt->rowCount();
         $pdo->exec("DELETE vs FROM viewer_sessions vs JOIN matches m ON m.id = vs.match_id WHERE m.status = 'EXPIRED'");
         set_setting('last_retention_purge', (string)time());
-        return count($ids);
+        return $n;
     } catch (Exception $e) {
         error_log('replash_purge_expired: ' . $e->getMessage());
         return 0;
@@ -257,15 +193,6 @@ function replash_code_failed(PDO $pdo): void {
     replash_attempt_failed($pdo, 'code');
 }
 
-/**
- * Tesis PIN'i veritabanında düz değil, gizli anahtarlı özet olarak tutulur (T16).
- * Formül config/db.php'deki SQL geçişiyle aynıdır: 'h:' . sha256(secret . '|' . pin).
- * Not: REPLASH_TOKEN_SECRET değişirse PIN'ler yeniden belirlenmelidir.
- */
-function replash_pin_hash(string $pin): string {
-    return 'h:' . hash('sha256', REPLASH_TOKEN_SECRET . '|' . trim($pin));
-}
-
 /** Facility PIN and admin login: 5 wrong tries per 15 minutes. */
 const REPLASH_LOGIN_MAX_FAILS = 5;
 const REPLASH_LOGIN_WINDOW_MIN = 15;
@@ -277,11 +204,7 @@ const REPLASH_LOGIN_WINDOW_MIN = 15;
  * Ready = recording reported by the camera (available_at), or, for time-window cloud playback,
  * the slot ended PROCESSING_MINUTES ago and the court has a camera.
  */
-const REPLASH_DELAY_GRACE_MIN = 30;
-
-/** Klip süresi sınırları (saniye) — oyuncu sayfası ve video API'si aynı değeri kullanır. */
-const REPLASH_CLIP_MIN = 15;
-const REPLASH_CLIP_MAX = 40; // after the estimate, show "taking longer than expected"
+const REPLASH_DELAY_GRACE_MIN = 30; // after the estimate, show "taking longer than expected"
 
 /** [start, end] timestamps of a match slot like "21:00–22:00" (end may be 24:00). */
 function replash_slot_bounds(array $match): array {
