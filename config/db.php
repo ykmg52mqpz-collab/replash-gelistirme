@@ -66,52 +66,66 @@ class DB {
     }
 
     public static function ensureSchemaUpdates(PDO $pdo): void {
-        try {
-            // Check if stream_url column exists in cameras
-            $check = $pdo->query("SHOW COLUMNS FROM `cameras` LIKE 'stream_url'")->fetch();
-            if (!$check) {
-                $pdo->exec("ALTER TABLE `cameras` ADD COLUMN `stream_url` TEXT NULL AFTER `channel_id`");
-            }
-
-            // Sales control (includes/sales.php): first open finalizes a sale; append-only audit trail
-            if (!$pdo->query("SHOW COLUMNS FROM `matches` LIKE 'first_opened_at'")->fetch()) {
-                $pdo->exec("ALTER TABLE `matches` ADD COLUMN `first_opened_at` DATETIME NULL DEFAULT NULL");
-                // Already watched/downloaded sales are final
-                $pdo->exec("UPDATE `matches` SET `first_opened_at` = COALESCE(`sold_at`, `created_at`) WHERE `views` > 0");
-            }
-            $pdo->exec("CREATE TABLE IF NOT EXISTS `sale_events` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `match_id` VARCHAR(64) NOT NULL,
-                `facility_id` VARCHAR(64) NOT NULL,
-                `action` VARCHAR(20) NOT NULL,
-                `actor` VARCHAR(64) NOT NULL,
-                `reason` TEXT NULL,
-                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                INDEX (`facility_id`, `created_at`),
-                INDEX (`match_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-
+        // Her adım ayrı çalışır: biri başarısız olursa diğerleri yine denenir ve hata kaydına yazılır
+        // (eskiden tek try içindeydi; bir hata sonraki tabloların sessizce oluşmamasına yol açıyordu).
+        // Aynı değişiklikler elle: replash-veritabani-guncelleme.sql
+        $steps = [
+            'cameras.stream_url' => function (PDO $pdo) {
+                if (!$pdo->query("SHOW COLUMNS FROM `cameras` LIKE 'stream_url'")->fetch()) {
+                    $pdo->exec("ALTER TABLE `cameras` ADD COLUMN `stream_url` TEXT NULL AFTER `channel_id`");
+                }
+            },
+            // Sales control (includes/sales.php): first open finalizes a sale
+            'matches.first_opened_at' => function (PDO $pdo) {
+                if (!$pdo->query("SHOW COLUMNS FROM `matches` LIKE 'first_opened_at'")->fetch()) {
+                    $pdo->exec("ALTER TABLE `matches` ADD COLUMN `first_opened_at` DATETIME NULL DEFAULT NULL");
+                    // Already watched/downloaded sales are final
+                    $pdo->exec("UPDATE `matches` SET `first_opened_at` = COALESCE(`sold_at`, `created_at`) WHERE `views` > 0");
+                }
+            },
+            // Append-only audit trail
+            'sale_events' => function (PDO $pdo) {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `sale_events` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `match_id` VARCHAR(64) NOT NULL,
+                    `facility_id` VARCHAR(64) NOT NULL,
+                    `action` VARCHAR(20) NOT NULL,
+                    `actor` VARCHAR(64) NOT NULL,
+                    `reason` TEXT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX (`facility_id`, `created_at`),
+                    INDEX (`match_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            },
             // Failed access-code attempts, for rate limiting 4-digit codes (includes/sales.php)
-            $pdo->exec("CREATE TABLE IF NOT EXISTS `code_attempts` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `client_key` CHAR(64) NOT NULL,
-                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                INDEX (`client_key`, `created_at`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-
+            'code_attempts' => function (PDO $pdo) {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `code_attempts` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `client_key` CHAR(64) NOT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX (`client_key`, `created_at`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            },
             // Facility sport prices: {"football": 15, "padel": 10} (includes/billing.php)
-            if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'sport_prices'")->fetch()) {
-                $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `sport_prices` TEXT NULL DEFAULT NULL");
+            'facilities.sport_prices' => function (PDO $pdo) {
+                if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'sport_prices'")->fetch()) {
+                    $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `sport_prices` TEXT NULL DEFAULT NULL");
+                }
+            },
+            'settings' => function (PDO $pdo) {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
+                    `key_name` VARCHAR(64) NOT NULL PRIMARY KEY,
+                    `value` LONGTEXT NULL,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            },
+        ];
+        foreach ($steps as $name => $step) {
+            try {
+                $step($pdo);
+            } catch (Exception $e) {
+                error_log("Replash şema güncellemesi başarısız ({$name}): " . $e->getMessage());
             }
-
-            // Ensure settings table exists
-            $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
-                `key_name` VARCHAR(64) NOT NULL PRIMARY KEY,
-                `value` LONGTEXT NULL,
-                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        } catch (Exception $e) {
-            // Ignore if table doesn't exist yet
         }
     }
 
