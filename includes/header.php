@@ -91,13 +91,13 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <!-- İç araç üst çubuğu (replash.info InternalShell) -->
   <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
     <div class="container-x flex h-16 items-center gap-3">
-      <a href="<?= base_url() ?>" class="flex items-center gap-2.5 font-display text-lg font-bold">
+      <a href="<?= base_url() ?>" class="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold">
         <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
         Replash<span class="text-accent">.</span>
       </a>
-      <span class="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600"><?= e($internalShell) ?></span>
+      <span class="hidden whitespace-nowrap rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600 sm:inline-block"><?= e($internalShell) ?></span>
       <!-- Dil seçimi: açık temada görünür renkler (beyaz üstüne beyazdı) -->
-      <div role="group" aria-label="<?= e(__('common.language', 'Language')) ?>" class="ml-auto inline-flex items-center rounded-full border border-gray-300 bg-white p-0.5 text-xs font-semibold">
+      <div role="group" aria-label="<?= e(__('common.language', 'Language')) ?>" class="ml-auto inline-flex shrink-0 items-center rounded-full border border-gray-300 bg-white p-0.5 text-xs font-semibold">
         <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
           <a href="<?= e(lang_url($lng)) ?>" hreflang="<?= e($lng) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' ?>"><?= strtoupper(e($lng)) ?></a>
         <?php endforeach; ?>
