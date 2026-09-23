@@ -573,6 +573,10 @@ return [
                 'sent' => 'Request sent. Reference:'
             ],
             'clip' => [
+                    'quick' => 'Clip this moment',
+                    'length' => 'Clip length',
+                    'quick_hint' => 'Press right after the goal: the chosen number of seconds before it is cut.',
+                    'advanced' => 'Advanced: pick seconds',
                 'label' => 'Cut a clip',
                 'hint' => 'Drag on the timeline to select 15–40s, fine-tune with ±1s if needed, then press Cut a clip.',
                 'download' => 'Download clip',

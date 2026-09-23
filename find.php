@@ -522,6 +522,7 @@ require_once __DIR__ . '/includes/header.php';
           $directVideoSrc = $cameraList[0]['url'];
           ?>
 
+          <div id="rp-stage" class="rp-stage">
           <div id="rp-frame" class="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black group">
             <div id="clappr-player" class="w-full h-full relative"></div>
             <div class="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] text-white/80">
@@ -559,24 +560,42 @@ require_once __DIR__ . '/includes/header.php';
               </button>
               </div>
             </div>
-            <!-- Tek klip aracı: sürükleyerek seç, ±1 sn ile ayarla, Klip kes -->
-            <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-xs text-white/50">
-              <div class="flex items-center gap-1.5">
-                <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.start_time')) ?></span>
-                <button type="button" onclick="nudgeClip('start', -1)" aria-label="-1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-start-input" value="00:00" inputmode="numeric" onchange="syncClipFromInputs()" class="h-8 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('start', 1)" aria-label="+1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+            <!-- Klip: tek dokunuşla "bu anı kes"; ince ayar gelişmiş bölümde -->
+            <div class="mt-3 border-t border-white/[0.06] pt-3">
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" id="rp-quick-cut" onclick="quickCut()" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-ink-900 transition hover:bg-accent-neon active:scale-[0.98] sm:flex-none">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
+                  <?= e(__('find.watch.clip.quick')) ?>
+                </button>
+                <div class="flex items-center gap-1.5" role="group" aria-label="<?= e(__('find.watch.clip.length')) ?>">
+                  <?php foreach ([15, 20, 30, 40] as $len): ?>
+                    <button type="button" data-cliplen="<?= $len ?>" onclick="setClipLength(<?= $len ?>)" class="rp-len h-11 min-w-[52px] rounded-xl border border-white/10 px-3 text-sm font-semibold text-white/60 transition hover:border-accent hover:text-white"><?= $len ?> sn</button>
+                  <?php endforeach; ?>
+                </div>
+                <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/50"></span>
               </div>
-              <div class="flex items-center gap-1.5">
-                <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
-                <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:30" inputmode="numeric" onchange="syncClipFromInputs()" class="h-8 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
-              </div>
-              <span id="rp-clip-info" class="font-mono"></span>
-              <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
-                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
-                <?= e(__('find.watch.clip.label')) ?>
-              </button>
+              <p class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.quick_hint')) ?></p>
+
+              <details class="mt-2 text-xs text-white/50">
+                <summary class="cursor-pointer select-none py-1 text-white/60 marker:hidden"><?= e(__('find.watch.clip.advanced')) ?></summary>
+                <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.start_time')) ?></span>
+                    <button type="button" onclick="nudgeClip('start', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-start-input" value="00:00" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('start', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
+                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:30" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                  </div>
+                  <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
+                    <?= e(__('find.watch.clip.label')) ?>
+                  </button>
+                  <p class="w-full text-white/35"><?= e(__('find.watch.clip.hint')) ?></p>
+                </div>
+              </details>
             </div>
-            <p class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.hint')) ?></p>
           </div>
+          </div><!-- /rp-stage -->
 
           <!-- Multiple Camera Angles Selection Bar -->
           <?php if (count($cameraList) >= 2): ?>
@@ -1273,6 +1292,62 @@ function setClipEndFromPlayer() {
   if (input) input.value = formatTime(cur);
 }
 
+// "Bu anı kes": oyuncu golü gördükten sonra basar; o anın hemen öncesi kesilir.
+// Tepki payı: basılan anın 3 saniye sonrasına kadar alınır.
+var clipLength = 20, CLIP_REACTION = 3;
+function setClipLength(sec) {
+  clipLength = sec;
+  document.querySelectorAll('.rp-len').forEach(function (b) {
+    var on = parseInt(b.getAttribute('data-cliplen'), 10) === sec;
+    b.classList.toggle('border-accent', on);
+    b.classList.toggle('bg-accent', on);
+    b.classList.toggle('text-ink-900', on);
+    b.classList.toggle('text-white/60', !on);
+  });
+}
+// Tam ekran: oynatıcı + klip düğmeleri birlikte. iPhone Safari kutuları tam ekran yapamadığı için
+// (sadece videoyu tam ekrana alır, düğmeler kaybolur) desteklenmiyorsa ekranı kaplayan katman kullanılır.
+function stageFullscreenOn() {
+  return !!document.fullscreenElement || document.getElementById('rp-stage').classList.contains('rp-fs');
+}
+function toggleStageFullscreen() {
+  var stage = document.getElementById('rp-stage');
+  if (!stage) return;
+  if (stageFullscreenOn()) {
+    if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) {} }
+    stage.classList.remove('rp-fs');
+    document.documentElement.classList.remove('rp-fs-lock');
+    return;
+  }
+  var native = stage.requestFullscreen || stage.webkitRequestFullscreen;
+  if (native) {
+    try {
+      var res = native.call(stage);
+      if (res && res.catch) res.catch(function () { stage.classList.add('rp-fs'); document.documentElement.classList.add('rp-fs-lock'); });
+      return;
+    } catch (e) {}
+  }
+  stage.classList.add('rp-fs');
+  document.documentElement.classList.add('rp-fs-lock');
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('rp-stage') && document.getElementById('rp-stage').classList.contains('rp-fs')) toggleStageFullscreen();
+});
+
+function quickCut() {
+  var cur = 0, dur = 0;
+  try { cur = clapprPlayer.getCurrentTime() || 0; dur = clapprPlayer.getDuration() || 0; } catch (e) {}
+  if (!dur) return;
+  var len = Math.min(Math.max(clipLength, CLIP_MIN), CLIP_MAX);
+  var end = Math.min(dur, Math.round(cur) + CLIP_REACTION);
+  var start = Math.max(0, end - len);
+  if (end - start < CLIP_MIN) end = Math.min(dur, start + CLIP_MIN); // maçın en başındaysa öne doğru al
+  document.getElementById('clip-start-input').value = formatTime(start);
+  document.getElementById('clip-end-input').value = formatTime(end);
+  syncClipFromInputs();
+  createClipFromRangeInputs();
+}
+
 // Başlangıç/bitiş alanları değişince çubuktaki seçimi ve Klip kes düğmesini güncelle
 function syncClipFromInputs() {
   var a = parseTimeToSec(document.getElementById('clip-start-input').value);
@@ -1512,6 +1587,8 @@ function openClipModal(clip) {
   var steps = document.getElementById('modal-social-steps');
   if (steps) steps.classList.add('hidden');
 
+  // Pencere tam ekranın altında kalmasın
+  if (typeof stageFullscreenOn === 'function' && stageFullscreenOn()) toggleStageFullscreen();
   if (modal) modal.classList.remove('hidden');
 }
 
@@ -1718,6 +1795,7 @@ document.addEventListener('DOMContentLoaded', function() {
       $('rp-icon-play').classList.toggle('hidden', playing);
       $('rp-icon-pause').classList.toggle('hidden', !playing);
     };
+    setClipLength(clipLength); // varsayılan süre düğmesi işaretli
     var clipInit = false;
     var render = function () {
       var d = getDur(), c = getCur();
@@ -1740,10 +1818,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var v = videoEl(); if (v) v.playbackRate = parseFloat(this.value) || 1;
     });
     $('rp-full').addEventListener('click', function () {
-      var f = $('rp-frame');
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (f.requestFullscreen) f.requestFullscreen();
-      else { var v = videoEl(); if (v && v.webkitEnterFullscreen) v.webkitEnterFullscreen(); }
+      toggleStageFullscreen();
     });
 
     // Sürükleyerek klip seç: seçim başlangıç/bitiş alanlarını doldurur

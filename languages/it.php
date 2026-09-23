@@ -573,6 +573,10 @@ return [
                 'sent' => 'Richiesta inviata. Riferimento:'
             ],
             'clip' => [
+                    'quick' => 'Taglia questo momento',
+                    'length' => 'Durata clip',
+                    'quick_hint' => 'Premi subito dopo il gol: vengono tagliati i secondi precedenti che hai scelto.',
+                    'advanced' => 'Avanzate: scegli i secondi',
                 'label' => 'Taglia un momento',
                 'hint' => 'Trascina sulla timeline per selezionare 15–40s, regola con ±1s se serve, poi premi Taglia un momento.',
                 'download' => 'Scarica clip',
