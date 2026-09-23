@@ -177,6 +177,24 @@ function get_default_roi_calculator_config() {
                 'days_max' => 30,
                 'active' => 1
             ],
+            'tennis' => [
+                'id' => 'tennis',
+                'name' => 'Tenis',
+                'price' => 10.00,
+                'share_pct' => 15.0,
+                'currency' => 'EUR',
+                'currency_symbol' => '€',
+                'courts_default' => 4,
+                'courts_min' => 1,
+                'courts_max' => 12,
+                'videos_default' => 4,
+                'videos_min' => 1,
+                'videos_max' => 15,
+                'days_default' => 26,
+                'days_min' => 20,
+                'days_max' => 30,
+                'active' => 1
+            ],
             'football' => [
                 'id' => 'football',
                 'name' => 'Futbol',

@@ -7,7 +7,7 @@
  *  - Replash Platform Brief v3.4, section 05 "Commercial model"
  *
  * Rules:
- *  - Video price per sport: football €15, padel €10.
+ *  - Video price per sport: football €15, padel €10, tennis €10.
  *  - Facility share depends on the facility's TOTAL Valid Video Sales in the calendar
  *    month (all fields together, never divided by field count):
  *      0–49 → 20%, 50–99 → 25%, 100+ → 30%. Replash gets the rest.
@@ -23,6 +23,7 @@ const REPLASH_BILLING_CURRENCY = 'EUR';
 const REPLASH_VIDEO_PRICES = [
     'football' => 15.00,
     'padel'    => 10.00,
+    'tennis'   => 10.00,
 ];
 
 // Monthly facility-wide valid sales tiers, highest first: [min_sales, facility_pct]

@@ -37,7 +37,7 @@ return [
             'eyebrow' => 'Para Propietarios de Centros',
             'slogan' => 'Un nuevo flujo de ingresos cada mes. Sin coste inicial.',
             'tagline' => 'Más que tiempo de pista.',
-            'sports' => 'Disponible hoy para fútbol y pádel. Diseñado para crecer con otros deportes.',
+            'sports' => 'Disponible hoy para fútbol, pádel y tenis. Diseñado para crecer con otros deportes.',
             'cta' => 'Habla con nosotros'
         ],
         'twoLayer' => [
@@ -153,7 +153,7 @@ return [
             'items' => [
                 '1' => [
                     'q' => '¿Qué se instala exactamente en mi centro?',
-                    'a' => 'Cámaras fijas PoE de gran angular. En pistas de pádel, montadas en el techo o pared alta; en campos de fútbol, montadas en los postes de las esquinas alrededor del campo. La instalación toma un día y no interrumpe las operaciones. Todo el cableado se oculta. El equipo de Replash gestiona todo, desde el montaje hasta la configuración de red.'
+                    'a' => 'Cámaras fijas PoE de gran angular. En pistas de pádel y tenis, montadas en el techo o pared alta; en campos de fútbol, montadas en los postes de las esquinas alrededor del campo. La instalación toma un día y no interrumpe las operaciones. Todo el cableado se oculta. El equipo de Replash gestiona todo, desde el montaje hasta la configuración de red.'
                 ],
                 '2' => [
                     'q' => '¿Hay costes iniciales o compromisos contractuales?',
@@ -710,7 +710,8 @@ return [
             'tiers_title' => 'Tramos mensuales',
             'note' => 'Las partes se calculan sobre las ventas de vídeo brutas, sin descontar antes el IVA. Los vídeos gratuitos, reembolsados o cancelados se excluyen.',
             'sport_football' => 'Fútbol',
-            'sport_padel' => 'Pádel'
+            'sport_padel' => 'Pádel',
+            'sport_tennis' => 'Tenis'
         ],
         'chart' => [
             'title' => 'Resumen de Ventas e Ingresos',
@@ -790,6 +791,7 @@ return [
             'subtitle' => '¿Cuántas pistas tienes? ¿Cuántos videos esperas vender al día por pista? Ingresa tus números y descubre tu parte mensual.',
             'sport' => [
                 'padel' => 'Pádel',
+                'tennis' => 'Tenis',
                 'football' => 'Fútbol'
             ],
             'inputs' => [
@@ -898,7 +900,7 @@ return [
             'eyebrow' => 'Ya Probado. Solo No Aquí Todavía',
             'title' => 'El comportamiento ya es real. En Turquía.',
             'desc' => 'En toda Turquía, la cultura del fútbol en césped artificial (5 y 7 jugadores) está tan asentada que ofrecer un video del partido en el momento de la reserva es ahora estándar en casi todos los centros. El sistema \'social astroturf\' existe en prácticamente todos los centros. Las cámaras graban, los jugadores ven y descargan, y el servicio es parte del flujo de reserva.',
-            'lesson' => 'La versión turca es básica y se limita al fútbol. Replash trae el mismo comportamiento probado al pádel y al fútbol en toda Europa. Con un producto premium, postura RGPD completa, recorte listo para redes sociales y un modelo transparente de reparto de ingresos.',
+            'lesson' => 'La versión turca es básica y se limita al fútbol. Replash trae el mismo comportamiento probado al pádel, al tenis y al fútbol en toda Europa. Con un producto premium, postura RGPD completa, recorte listo para redes sociales y un modelo transparente de reparto de ingresos.',
             'stats' => [
                 '1' => [
                     'value' => '10.000+',
@@ -1014,7 +1016,7 @@ return [
         'hero' => [
             'eyebrow' => 'Sobre Replash',
             'title' => 'Llevamos la repetición al deporte amateur de cada día.',
-            'subtitle' => 'Replash lleva vídeo de nivel profesional a los partidos amateur de fútbol y pádel de cada día.'
+            'subtitle' => 'Replash lleva vídeo de nivel profesional a los partidos amateur de fútbol, pádel y tenis de cada día.'
         ],
         'missionVision' => [
             'mission' => [
@@ -1058,8 +1060,8 @@ return [
                     'desc' => 'Centros de fútbol 5, fútbol 7 y fútbol sala que buscan ofrecer una experiencia premium.'
                 ],
                 'padel' => [
-                    'title' => 'Clubes de Pádel',
-                    'desc' => 'Instalaciones de pádel modernas que desean destacar en un mercado en rápido crecimiento.'
+                    'title' => 'Clubes de Pádel y Tenis',
+                    'desc' => 'Instalaciones de pádel y tenis modernas que desean destacar en un mercado en rápido crecimiento.'
                 ],
                 'venues' => [
                     'title' => 'Centros Deportivos Amateur',
@@ -1098,7 +1100,7 @@ return [
         'founders' => [
             'eyebrow' => 'Quién está detrás',
             'title' => 'De quienes aman jugar, para quienes aman jugar.',
-            'desc' => 'Creamos Replash a partir de algo simple que vemos cada semana: juegas un gran partido y no queda nada que volver a ver. El fútbol y el pádel amateur merecen la misma oportunidad de revivir sus mejores momentos que el deporte profesional.',
+            'desc' => 'Creamos Replash a partir de algo simple que vemos cada semana: juegas un gran partido y no queda nada que volver a ver. El fútbol, el pádel y el tenis amateur merecen la misma oportunidad de revivir sus mejores momentos que el deporte profesional.',
             'values' => [
                 '1' => 'Nacido del deporte amateur, no de una diapositiva',
                 '2' => 'Construido sobre una necesidad real de los jugadores',
@@ -1122,8 +1124,8 @@ return [
                     'desc' => 'Centros de fútbol 5, fútbol 7 y futsal que buscan ofrecer una experiencia premium.'
                 ],
                 '2' => [
-                    'title' => 'Clubes de Pádel',
-                    'desc' => 'Centros de pádel modernos que quieren destacar en un mercado en rápido crecimiento.'
+                    'title' => 'Clubes de Pádel y Tenis',
+                    'desc' => 'Centros de pádel y tenis modernos que quieren destacar en un mercado en rápido crecimiento.'
                 ],
                 '3' => [
                     'title' => 'Centros Deportivos Amateur',
@@ -1338,6 +1340,7 @@ return [
             'sport' => 'Tipo de Deporte',
             'sports' => [
                 'padel' => 'Pádel',
+                'tennis' => 'Tenis',
                 'football' => 'Fútbol / Fútbol Sala',
                 'both' => 'Ambos',
                 'other' => 'Otro'
@@ -1360,6 +1363,7 @@ return [
             'sportOptions' => [
                 'football' => 'Fútbol / Futsal',
                 'padel' => 'Pádel',
+                'tennis' => 'Tenis',
                 'other' => 'Otro'
             ],
             'sportOtherPlaceholder' => 'Especifica tu deporte...'
@@ -1398,7 +1402,7 @@ return [
         ],
         'find' => [
             'title' => 'Encuentra Tu Partido. Replash',
-            'description' => '¿Tienes el código del partido? Introdúcelo y mira tu partido amateur de fútbol o pádel. Sin app, sin cuenta.'
+            'description' => '¿Tienes el código del partido? Introdúcelo y mira tu partido amateur de fútbol, pádel o tenis. Sin app, sin cuenta.'
         ],
         'howItWorks' => [
             'title' => 'Cómo Funciona. Replash',

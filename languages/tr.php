@@ -37,7 +37,7 @@ return [
             'eyebrow' => 'Saha Sahipleri İçin',
             'slogan' => 'Her ay yeni bir gelir kaynağı. Sıfır başlangıç maliyetiyle.',
             'tagline' => 'Saha zamanından fazlası.',
-            'sports' => 'Bugün futbol ve padel için hazır. Diğer sporlarla büyümek için tasarlandı.',
+            'sports' => 'Bugün futbol, padel ve tenis için hazır. Diğer sporlarla büyümek için tasarlandı.',
             'cta' => 'Bizimle Konuşun'
         ],
         'twoLayer' => [
@@ -153,7 +153,7 @@ return [
             'items' => [
                 '1' => [
                     'q' => 'Sahama tam olarak ne kurulur?',
-                    'a' => 'Sabit PoE geniş açılı kameralar. Padel kortlarında tavana veya yüksek duvara, futbol sahalarında ise sahanın etrafındaki köşe direklerine monte edilir. Kurulum 1 gün sürer ve operasyonları kesintiye uğratmaz. Tüm kablolama gizlenir. Replash ekibi montajdan ağ kurulumuna kadar her şeyi yönetir.'
+                    'a' => 'Sabit PoE geniş açılı kameralar. Padel ve tenis kortlarında tavana veya yüksek duvara, futbol sahalarında ise sahanın etrafındaki köşe direklerine monte edilir. Kurulum 1 gün sürer ve operasyonları kesintiye uğratmaz. Tüm kablolama gizlenir. Replash ekibi montajdan ağ kurulumuna kadar her şeyi yönetir.'
                 ],
                 '2' => [
                     'q' => 'Başlangıç maliyeti veya sözleşme yükümlülüğü var mı?',
@@ -710,7 +710,8 @@ return [
             'tiers_title' => 'Aylık kademeler',
             'note' => 'Paylar KDV düşülmeden brüt video satışı üzerinden hesaplanır. Ücretsiz, iade edilen veya iptal edilen videolar sayılmaz.',
             'sport_football' => 'Futbol',
-            'sport_padel' => 'Padel'
+            'sport_padel' => 'Padel',
+            'sport_tennis' => 'Tenis'
         ],
         'chart' => [
             'title' => 'Satış ve Ciro Grafiği',
@@ -790,6 +791,7 @@ return [
             'subtitle' => 'Kaç sahanız var? Saha başına günlük kaç video satmayı bekliyorsunuz? Rakamlarınızı girin, aylık payınızı görün.',
             'sport' => [
                 'padel' => 'Padel',
+                'tennis' => 'Tenis',
                 'football' => 'Futbol'
             ],
             'inputs' => [
@@ -898,7 +900,7 @@ return [
             'eyebrow' => 'Zaten Kanıtlandı. Sadece Burada Değil Henüz',
             'title' => 'Davranış zaten gerçek. Türkiye\'de.',
             'desc' => 'Türkiye genelinde, halısaha futbol kültürü (5\'lik ve 7\'lik) o kadar yerleşmiş ki rezervasyon sırasında maç videosu sunmak artık neredeyse her tesiste standart. \'sosyal halısaha\' sistemi pratikte her tesiste var. Kameralar kaydeder, oyuncular izler ve indirir, hizmet rezervasyon akışının parçasıdır.',
-            'lesson' => 'Türk versiyonu temel ve sadece futbolla sınırlı. Replash aynı kanıtlanmış davranışı padel ve futbola, tüm Avrupa\'ya taşıyor. Premium ürün, tam GDPR duruşu, sosyal medyaya hazır klip kesme ve şeffaf gelir paylaşım modeli ile.',
+            'lesson' => 'Türk versiyonu temel ve sadece futbolla sınırlı. Replash aynı kanıtlanmış davranışı padel, tenis ve futbola, tüm Avrupa\'ya taşıyor. Premium ürün, tam GDPR duruşu, sosyal medyaya hazır klip kesme ve şeffaf gelir paylaşım modeli ile.',
             'stats' => [
                 '1' => [
                     'value' => '10.000+',
@@ -1014,7 +1016,7 @@ return [
         'hero' => [
             'eyebrow' => 'Replash Hakkında',
             'title' => 'Tekrar izlemeyi günlük amatör spora getiriyoruz.',
-            'subtitle' => 'Replash, her gün oynanan amatör futbol ve padel maçlarına profesyonel kalitede video deneyimi getirir.'
+            'subtitle' => 'Replash, her gün oynanan amatör futbol, padel ve tenis maçlarına profesyonel kalitede video deneyimi getirir.'
         ],
         'missionVision' => [
             'mission' => [
@@ -1058,8 +1060,8 @@ return [
                     'desc' => 'Premium bir deneyim sunmak isteyen halı saha, 7\'ye 7 ve futsal tesisleri.'
                 ],
                 'padel' => [
-                    'title' => 'Padel Kulüpleri',
-                    'desc' => 'Hızla büyüyen pazarda öne çıkmak isteyen modern padel tesisleri.'
+                    'title' => 'Padel ve Tenis Kulüpleri',
+                    'desc' => 'Hızla büyüyen pazarda öne çıkmak isteyen modern padel ve tenis tesisleri.'
                 ],
                 'venues' => [
                     'title' => 'Amatör Spor Tesisleri',
@@ -1098,7 +1100,7 @@ return [
         'founders' => [
             'eyebrow' => 'Arkasındaki ekip',
             'title' => 'Oynamayı sevenlerden, oynamayı sevenlere.',
-            'desc' => 'Replash\'i her hafta gördüğümüz basit bir şeyden yola çıkarak kurduk: güzel bir maç oynuyorsun ve geriye tekrar izleyecek hiçbir şey kalmıyor. Amatör futbol ve padel de, en güzel anlarını yeniden yaşama şansını profesyonel spor kadar hak ediyor.',
+            'desc' => 'Replash\'i her hafta gördüğümüz basit bir şeyden yola çıkarak kurduk: güzel bir maç oynuyorsun ve geriye tekrar izleyecek hiçbir şey kalmıyor. Amatör futbol, padel ve tenis de, en güzel anlarını yeniden yaşama şansını profesyonel spor kadar hak ediyor.',
             'values' => [
                 '1' => 'Bir sunumdan değil, amatör spordan doğdu',
                 '2' => 'Gerçek bir oyuncu ihtiyacı üzerine kuruldu',
@@ -1122,8 +1124,8 @@ return [
                     'desc' => 'Premium deneyim sunmak isteyen 5\'lik, 7\'lik ve futsal sahaları.'
                 ],
                 '2' => [
-                    'title' => 'Padel Kulüpleri',
-                    'desc' => 'Hızla büyüyen bir pazarda öne çıkmak isteyen modern padel tesisleri.'
+                    'title' => 'Padel ve Tenis Kulüpleri',
+                    'desc' => 'Hızla büyüyen bir pazarda öne çıkmak isteyen modern padel ve tenis tesisleri.'
                 ],
                 '3' => [
                     'title' => 'Amatör Spor Tesisleri',
@@ -1339,6 +1341,7 @@ return [
             'sport' => 'Spor Türü',
             'sports' => [
                 'padel' => 'Padel',
+                'tennis' => 'Tenis',
                 'football' => 'Futbol / Halı Saha',
                 'both' => 'İkisi Birden',
                 'other' => 'Diğer'
@@ -1361,6 +1364,7 @@ return [
             'sportOptions' => [
                 'football' => 'Futbol / Futsal',
                 'padel' => 'Padel',
+                'tennis' => 'Tenis',
                 'other' => 'Diğer'
             ],
             'sportOtherPlaceholder' => 'Sporu belirtin...'
@@ -1399,7 +1403,7 @@ return [
         ],
         'find' => [
             'title' => 'Maçını Bul. Replash',
-            'description' => 'Maç kodun var mı? Gir ve amatör futbol veya padel maçını izle. Uygulama yok, hesap yok.'
+            'description' => 'Maç kodun var mı? Gir ve amatör futbol, padel veya tenis maçını izle. Uygulama yok, hesap yok.'
         ],
         'howItWorks' => [
             'title' => 'Nasıl Çalışır. Replash',

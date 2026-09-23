@@ -37,7 +37,7 @@ return [
             'eyebrow' => 'For Facility Owners',
             'slogan' => 'A new revenue stream every month. With zero upfront cost.',
             'tagline' => 'More than pitch time.',
-            'sports' => 'Available today for football and padel. Built to grow with other sports.',
+            'sports' => 'Available today for football, padel and tennis. Built to grow with other sports.',
             'cta' => 'Talk to us'
         ],
         'twoLayer' => [
@@ -153,7 +153,7 @@ return [
             'items' => [
                 '1' => [
                     'q' => 'What exactly gets installed at my facility?',
-                    'a' => 'Fixed PoE wide-angle cameras. On padel courts, mounted on the ceiling or a high wall; on football pitches, mounted on the corner posts around the pitch. Installation takes one day and doesn\'t interrupt operations. All cabling is concealed. The Replash team handles everything from mounting to network setup.'
+                    'a' => 'Fixed PoE wide-angle cameras. On padel and tennis courts, mounted on the ceiling or a high wall; on football pitches, mounted on the corner posts around the pitch. Installation takes one day and doesn\'t interrupt operations. All cabling is concealed. The Replash team handles everything from mounting to network setup.'
                 ],
                 '2' => [
                     'q' => 'Are there any upfront costs or contract commitments?',
@@ -710,7 +710,8 @@ return [
             'tiers_title' => 'Monthly tiers',
             'note' => 'Shares are calculated on gross video sales; VAT is not deducted first. Free, refunded or cancelled videos are excluded.',
             'sport_football' => 'Football',
-            'sport_padel' => 'Padel'
+            'sport_padel' => 'Padel',
+            'sport_tennis' => 'Tennis'
         ],
         'chart' => [
             'title' => 'Sales & Revenue Overview',
@@ -790,6 +791,7 @@ return [
             'subtitle' => 'How many courts do you have? How many videos do you expect to sell per day per court? Enter your numbers and see your monthly share.',
             'sport' => [
                 'padel' => 'Padel',
+                'tennis' => 'Tennis',
                 'football' => 'Football'
             ],
             'inputs' => [
@@ -898,7 +900,7 @@ return [
             'eyebrow' => 'Already Proven. Just Not Here Yet',
             'title' => 'The behavior is already real. In Turkey.',
             'desc' => 'Across Turkey, the astroturf football culture (5-a-side and 7-a-side) is so settled that offering a match video at booking time is now standard at almost every venue. The \'social astroturf\' system exists at virtually every facility. Cameras record, players watch and download, and the service is part of the booking flow.',
-            'lesson' => 'The Turkish version is basic and limited to football. Replash brings the same proven behavior to padel and football across Europe. With a premium product, full GDPR posture, social-media-ready clipping, and a transparent revenue-share model.',
+            'lesson' => 'The Turkish version is basic and limited to football. Replash brings the same proven behavior to padel, tennis and football across Europe. With a premium product, full GDPR posture, social-media-ready clipping, and a transparent revenue-share model.',
             'stats' => [
                 '1' => [
                     'value' => '10,000+',
@@ -1014,7 +1016,7 @@ return [
         'hero' => [
             'eyebrow' => 'About Replash',
             'title' => 'Bringing the replay to everyday amateur sport.',
-            'subtitle' => 'Replash brings professional-grade video to everyday amateur football and padel matches.'
+            'subtitle' => 'Replash brings professional-grade video to everyday amateur football, padel and tennis matches.'
         ],
         'missionVision' => [
             'mission' => [
@@ -1058,8 +1060,8 @@ return [
                     'desc' => 'Five-a-side, seven-a-side, and futsal venues looking to offer a premium experience.'
                 ],
                 'padel' => [
-                    'title' => 'Padel Clubs',
-                    'desc' => 'Modern padel facilities that want to stand out in a rapidly growing market.'
+                    'title' => 'Padel & Tennis Clubs',
+                    'desc' => 'Modern padel and tennis facilities that want to stand out in a rapidly growing market.'
                 ],
                 'venues' => [
                     'title' => 'Amateur Sports Venues',
@@ -1098,7 +1100,7 @@ return [
         'founders' => [
             'eyebrow' => 'Who\'s behind it',
             'title' => 'From people who love to play, for people who love to play.',
-            'desc' => 'We built Replash from something simple we see every week: you play a great match, and there\'s nothing left to rewatch. Amateur football and padel deserve the same chance to relive their best moments that professional sport has.',
+            'desc' => 'We built Replash from something simple we see every week: you play a great match, and there\'s nothing left to rewatch. Amateur football, padel and tennis deserve the same chance to relive their best moments that professional sport has.',
             'values' => [
                 '1' => 'Born from amateur sport, not from a slide',
                 '2' => 'Built on a real player need',
@@ -1122,8 +1124,8 @@ return [
                     'desc' => 'Five-a-side, seven-a-side, and futsal venues looking to offer a premium experience.'
                 ],
                 '2' => [
-                    'title' => 'Padel Clubs',
-                    'desc' => 'Modern padel facilities that want to stand out in a rapidly growing market.'
+                    'title' => 'Padel & Tennis Clubs',
+                    'desc' => 'Modern padel and tennis facilities that want to stand out in a rapidly growing market.'
                 ],
                 '3' => [
                     'title' => 'Amateur Sports Venues',
@@ -1338,6 +1340,7 @@ return [
             'sport' => 'Sport Type',
             'sports' => [
                 'padel' => 'Padel',
+                'tennis' => 'Tennis',
                 'football' => 'Football / 5-a-side',
                 'both' => 'Both',
                 'other' => 'Other'
@@ -1360,6 +1363,7 @@ return [
             'sportOptions' => [
                 'football' => 'Football / Futsal',
                 'padel' => 'Padel',
+                'tennis' => 'Tennis',
                 'other' => 'Other'
             ],
             'sportOtherPlaceholder' => 'Specify your sport...'
@@ -1398,7 +1402,7 @@ return [
         ],
         'find' => [
             'title' => 'Find Your Match. Replash',
-            'description' => 'Got your match code? Enter it and watch your amateur football or padel match. No app, no account.'
+            'description' => 'Got your match code? Enter it and watch your amateur football, padel or tennis match. No app, no account.'
         ],
         'howItWorks' => [
             'title' => 'How It Works. Replash',

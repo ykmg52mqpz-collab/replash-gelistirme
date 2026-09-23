@@ -95,6 +95,9 @@ require_once __DIR__ . '/includes/header.php';
   <option value="padel" class="bg-ink-900">
   <?= e(__('contact.fields.sportOptions.padel')) ?>
   </option>
+  <option value="tennis" class="bg-ink-900">
+  <?= e(__('contact.fields.sportOptions.tennis')) ?>
+  </option>
   <option value="other" class="bg-ink-900">
   <?= e(__('contact.fields.sportOptions.other')) ?>
   </option>

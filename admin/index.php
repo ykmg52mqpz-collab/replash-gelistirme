@@ -89,7 +89,7 @@ function admin_sport_price_fields(array $prices, string $uid): void {
           </label>
         <?php endforeach; ?>
       </div>
-      <p class="text-[11px] text-white/40">Her saha aşağıda seçtiğiniz spora göre bu fiyatla satılır. Varsayılanlar Billing Guide'dan gelir (futbol €15, padel €10).</p>
+      <p class="text-[11px] text-white/40">Her saha aşağıda seçtiğiniz spora göre bu fiyatla satılır. Varsayılanlar Billing Guide'dan gelir (futbol €15, padel €10, tenis €10).</p>
     </div>
     <?php
 }
