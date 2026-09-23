@@ -95,10 +95,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
         Replash<span class="text-accent">.</span>
       </a>
-      <span class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/50"><?= e($internalShell) ?></span>
-      <div role="group" aria-label="Language" class="ml-auto inline-flex items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium">
+      <span class="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600"><?= e($internalShell) ?></span>
+      <!-- Dil seçimi: açık temada görünür renkler (beyaz üstüne beyazdı) -->
+      <div role="group" aria-label="<?= e(__('common.language', 'Language')) ?>" class="ml-auto inline-flex items-center rounded-full border border-gray-300 bg-white p-0.5 text-xs font-semibold">
         <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
-          <a href="<?= e(lang_url($lng)) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white' ?>"><?= strtoupper(e($lng)) ?></a>
+          <a href="<?= e(lang_url($lng)) ?>" hreflang="<?= e($lng) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' ?>"><?= strtoupper(e($lng)) ?></a>
         <?php endforeach; ?>
       </div>
     </div>
