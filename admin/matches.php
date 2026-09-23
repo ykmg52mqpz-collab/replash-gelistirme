@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/init.php';
 
-$pageTitle = 'Maç Yönetimi & Satışlar · Admin';
+$pageTitle = adm('Maç Yönetimi & Satışlar · Admin', 'Match management & sales · Admin');
 $error = null;
 $success = null;
 
@@ -30,7 +30,12 @@ if ($pdo) {
             $upd = $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, playback_url = COALESCE(NULLIF(?, ''), playback_url), sold_at = IF(status = 'UNLOCKABLE', sold_at, NOW()), billable = 1 WHERE id = ?");
             $upd->execute([$mRow['access_code'], $playbackUrl, $matchId]);
             if ($wasLocked) replash_log_sale_event($pdo, $mRow, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
-            $success = "{$mRow['facility_name']} - {$mRow['court']} ({$mRow['time_slot']}) satışı onaylandı! Erişim Kodu: <strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
+            $codeHtml = "<strong class='font-mono text-accent text-lg tracking-widest bg-black/50 px-3 py-1 rounded-xl border border-accent/40 select-all'>{$mRow['access_code']}</strong>";
+            $where = "{$mRow['facility_name']} - {$mRow['court']} ({$mRow['time_slot']})";
+            $success = adm(
+                "{$where} satışı onaylandı. Erişim kodu: {$codeHtml}",
+                "{$where} sale confirmed. Access code: {$codeHtml}"
+            );
         }
     }
 
@@ -43,7 +48,7 @@ if ($pdo) {
         $upd = $pdo->prepare("UPDATE matches SET status = 'LOCKED', access_code = ?, sold_at = NULL, billable = 0 WHERE id = ?");
         $upd->execute([replash_locked_placeholder(), $matchId]);
         if ($lockRow && $lockRow['status'] === 'UNLOCKABLE') replash_log_sale_event($pdo, $lockRow, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'), trim((string)($_POST['reason'] ?? '')) ?: null);
-        $success = "Maç başarıyla KİLİTLİ (Satış Bekliyor) durumuna alındı.";
+        $success = adm('Maç KİLİTLİ (satış bekliyor) durumuna alındı.', 'Match set to LOCKED (awaiting sale).');
     }
 
     // 3. Delete Match Action
@@ -55,7 +60,7 @@ if ($pdo) {
         if ($delRow && $delRow['status'] === 'UNLOCKABLE') replash_log_sale_event($pdo, $delRow, 'admin_deleted', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
         $pdo->prepare("DELETE FROM refunds WHERE match_id = ?")->execute([$matchId]);
         $pdo->prepare("DELETE FROM matches WHERE id = ?")->execute([$matchId]);
-        $success = "Maç kaydı ve bağlı tüm veriler başarıyla silindi.";
+        $success = adm('Maç kaydı ve bağlı tüm veriler silindi.', 'Match record and all related data deleted.');
     }
 
     // 4. Edit Match Action
@@ -98,9 +103,9 @@ if ($pdo) {
                 if ($status === 'UNLOCKABLE') replash_log_sale_event($pdo, $before, 'admin_sold', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
                 elseif ($before['status'] === 'UNLOCKABLE' && $status === 'LOCKED') replash_log_sale_event($pdo, $before, 'admin_undone', 'admin:' . ($_SESSION['admin_id'] ?? 'admin'));
             }
-            $success = "Maç bilgileri başarıyla güncellendi.";
+            $success = adm('Maç bilgileri güncellendi.', 'Match details updated.');
         } else {
-            $error = "Lütfen zorunlu alanları eksiksiz doldurun.";
+            $error = adm('Lütfen zorunlu alanları eksiksiz doldurun.', 'Please fill in all required fields.');
         }
     }
 
@@ -165,7 +170,7 @@ if ($pdo) {
                 $fac['sport'] ?? 'padel'
             ]);
 
-            $success = "Yeni maç kaydı ({$court} · {$slot}) başarıyla oluşturuldu!";
+            $success = adm("Yeni maç kaydı ({$court} · {$slot}) oluşturuldu.", "New match record ({$court} · {$slot}) created.");
         }
     }
 
@@ -233,7 +238,8 @@ if ($pdo) {
     unset($ml);
 }
 
-$internalShell = __('nav.admin');
+$adminShell = true;                       // üst çubukta yalnız TR/EN
+$internalShell = adm('Yönetim', 'Admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -246,7 +252,7 @@ require_once __DIR__ . '/../includes/header.php';
     <!-- Summary Metrics -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
-        <span class="text-xs font-semibold text-neutral-400">Toplam Maç Kaydı</span>
+        <span class="text-xs font-semibold text-neutral-400"><?= e(adm('Toplam Maç Kaydı', 'Total match records')) ?></span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-white"><?= $statsTotal ?></span>
           <span class="text-xs text-neutral-400">slot</span>
@@ -254,15 +260,15 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
-        <span class="text-xs font-semibold text-neutral-400">Satışa Açılan (Satıldı)</span>
+        <span class="text-xs font-semibold text-neutral-400"><?= e(adm('Satışa Açılan (Satıldı)', 'Unlocked (sold)')) ?></span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-emerald-400"><?= $statsSold ?></span>
-          <span class="text-xs text-neutral-400">maç</span>
+          <span class="text-xs text-neutral-400"><?= e(adm('maç', 'matches')) ?></span>
         </div>
       </div>
 
       <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
-        <span class="text-xs font-semibold text-neutral-400">Satış Bekleyen (Kilitli)</span>
+        <span class="text-xs font-semibold text-neutral-400"><?= e(adm('Satış Bekleyen (Kilitli)', 'Awaiting sale (locked)')) ?></span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-amber-400"><?= $statsLocked ?></span>
           <span class="text-xs text-neutral-400">slot</span>
@@ -270,7 +276,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
       <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 flex flex-col justify-between">
-        <span class="text-xs font-semibold text-neutral-400">Toplam Platform Cirosu</span>
+        <span class="text-xs font-semibold text-neutral-400"><?= e(adm('Toplam Platform Cirosu', 'Total platform revenue')) ?></span>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl sm:text-3xl font-bold font-display text-accent"><?= number_format($totalPlatformRevenue, 0, ',', '.') ?></span>
           <span class="text-xs font-semibold text-neutral-300">EUR</span>
@@ -284,9 +290,9 @@ require_once __DIR__ . '/../includes/header.php';
         
         <!-- Facility Filter -->
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Tesis Filtresi</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Tesis Filtresi', 'Facility filter')) ?></label>
           <select name="facility_id" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
-            <option value="all">Tüm Tesisler</option>
+            <option value="all"><?= e(adm('Tüm Tesisler', 'All facilities')) ?></option>
             <?php foreach ($facilities as $fac): ?>
               <option value="<?= e($fac['id']) ?>" <?= $filterFacility === $fac['id'] ? 'selected' : '' ?>>
                 <?= e($fac['name']) ?> (<?= e($fac['city']) ?>)
@@ -297,18 +303,18 @@ require_once __DIR__ . '/../includes/header.php';
 
         <!-- Status Filter -->
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Satış Durumu</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Satış Durumu', 'Sale status')) ?></label>
           <select name="status" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
-            <option value="all">Tüm Durumlar</option>
-            <option value="UNLOCKABLE" <?= $filterStatus === 'UNLOCKABLE' ? 'selected' : '' ?>>Satıldı (İzlemeye Açık)</option>
-            <option value="LOCKED" <?= $filterStatus === 'LOCKED' ? 'selected' : '' ?>>Kilitli (Satış Bekliyor)</option>
-            <option value="EXPIRED" <?= $filterStatus === 'EXPIRED' ? 'selected' : '' ?>>Süresi Dolanlar</option>
+            <option value="all"><?= e(adm('Tüm Durumlar', 'All statuses')) ?></option>
+            <option value="UNLOCKABLE" <?= $filterStatus === 'UNLOCKABLE' ? 'selected' : '' ?>><?= e(adm('Satıldı (İzlemeye Açık)', 'Sold (viewable)')) ?></option>
+            <option value="LOCKED" <?= $filterStatus === 'LOCKED' ? 'selected' : '' ?>><?= e(adm('Kilitli (Satış Bekliyor)', 'Locked (awaiting sale)')) ?></option>
+            <option value="EXPIRED" <?= $filterStatus === 'EXPIRED' ? 'selected' : '' ?>><?= e(adm('Süresi Dolanlar', 'Expired')) ?></option>
           </select>
         </div>
 
         <!-- Date Filter -->
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Tarih</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Tarih', 'Date')) ?></label>
           <input 
             type="date" 
             name="date" 
@@ -319,11 +325,11 @@ require_once __DIR__ . '/../includes/header.php';
 
         <!-- Search Input -->
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Arama (Kod / Saha)</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Arama (Kod / Saha)', 'Search (code / court)')) ?></label>
           <input 
             type="text" 
             name="q" 
-            placeholder="Erişim kodu, saha adı..." 
+            placeholder="<?= e(adm('Erişim kodu, saha adı...', 'Access code, court name...')) ?>" 
             value="<?= e($searchQuery) ?>" 
             class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none"
           >
@@ -332,9 +338,9 @@ require_once __DIR__ . '/../includes/header.php';
         <!-- Submit & Reset Buttons -->
         <div class="flex items-end gap-2">
           <button type="submit" class="flex-1 rounded-xl bg-accent py-2.5 font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-            Filtrele
+            <?= e(adm('Filtrele', 'Filter')) ?>
           </button>
-          <a href="matches.php" class="px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 transition text-center" title="Filtreleri Sıfırla">
+          <a href="matches.php" class="px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 transition text-center" title="<?= e(adm('Filtreleri Sıfırla', 'Reset filters')) ?>">
             &times;
           </a>
         </div>
@@ -345,8 +351,8 @@ require_once __DIR__ . '/../includes/header.php';
     <div id="addMatchModal" class="hidden mb-8 p-6 rounded-3xl bg-ink-800 border border-accent/30 shadow-2xl">
       <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
         <div>
-          <h3 class="font-display text-lg font-bold text-white">Yeni Maç / Slot Kaydı Ekle</h3>
-          <p class="text-xs text-neutral-400">İstediğiniz tesis için doğrudan maç kaydı açabilir, satıldı veya kilitli olarak tanımlayabilirsiniz.</p>
+          <h3 class="font-display text-lg font-bold text-white"><?= e(adm('Yeni Maç / Slot Kaydı Ekle', 'Add a new match / slot record')) ?></h3>
+          <p class="text-xs text-neutral-400"><?= e(adm('İstediğiniz tesis için doğrudan maç kaydı açabilir, satıldı veya kilitli olarak tanımlayabilirsiniz.', 'Create a match record for any facility and set it as sold or locked.')) ?></p>
         </div>
         <button type="button" onclick="document.getElementById('addMatchModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
       </div>
@@ -355,7 +361,7 @@ require_once __DIR__ . '/../includes/header.php';
         <input type="hidden" name="action" value="add_match">
 
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Tesis Seçin</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Tesis Seçin', 'Select facility')) ?></label>
           <select name="facility_id" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
             <?php foreach ($facilities as $fac): ?>
               <option value="<?= e($fac['id']) ?>"><?= e($fac['name']) ?> (<?= e($fac['city']) ?>)</option>
@@ -364,17 +370,17 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Saha / Kort</label>
-          <input type="text" name="court" value="Saha 1" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Saha / Kort', 'Court')) ?></label>
+          <input type="text" name="court" value="<?= e(adm('Saha 1', 'Court 1')) ?>" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Tarih</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Tarih', 'Date')) ?></label>
           <input type="date" name="date" value="<?= date('Y-m-d') ?>" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Saat Slotu</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Saat Slotu', 'Time slot')) ?></label>
           <select name="time_slot" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
             <option value="16:00–17:00">16:00 – 17:00</option>
             <option value="17:00–18:00">17:00 – 18:00</option>
@@ -388,16 +394,16 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <div>
-          <label class="block text-neutral-400 font-semibold mb-1">Başlangıç Durumu</label>
+          <label class="block text-neutral-400 font-semibold mb-1"><?= e(adm('Başlangıç Durumu', 'Initial status')) ?></label>
           <select name="status" class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
-            <option value="UNLOCKABLE">Satıldı (İzlemeye Açık)</option>
-            <option value="LOCKED">Kilitli (Satış Bekliyor)</option>
+            <option value="UNLOCKABLE"><?= e(adm('Satıldı (İzlemeye Açık)', 'Sold (viewable)')) ?></option>
+            <option value="LOCKED"><?= e(adm('Kilitli (Satış Bekliyor)', 'Locked (awaiting sale)')) ?></option>
           </select>
         </div>
 
         <div>
           <button type="submit" class="w-full rounded-xl bg-accent py-2.5 font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
-            Maçı Oluştur &rarr;
+            <?= e(adm('Maçı Oluştur →', 'Create match →')) ?>
           </button>
         </div>
       </form>
@@ -407,8 +413,8 @@ require_once __DIR__ . '/../includes/header.php';
     <div class="rounded-2xl bg-white/[0.02] overflow-hidden border border-white/10">
       <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h2 class="font-display text-xl font-bold text-white">Maç Listesi & Satış Kontrolü</h2>
-          <p class="text-xs text-neutral-400">Bulunan <?= count($matchesList) ?> maç kaydı listeleniyor</p>
+          <h2 class="font-display text-xl font-bold text-white"><?= e(adm('Maç Listesi & Satış Kontrolü', 'Match list & sale control')) ?></h2>
+          <p class="text-xs text-neutral-400"><?= e(adm('Bulunan', 'Found')) ?> <?= count($matchesList) ?> <?= e(adm('maç kaydı listeleniyor', 'match records listed')) ?></p>
         </div>
       </div>
 
@@ -416,21 +422,21 @@ require_once __DIR__ . '/../includes/header.php';
         <table class="w-full text-left text-sm">
           <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
             <tr>
-              <th class="px-4 py-3">Tesis & Şehir</th>
-              <th class="px-4 py-3">Saha & Slot</th>
-              <th class="px-4 py-3">Tarih</th>
-              <th class="px-4 py-3">Durum</th>
-              <th class="px-4 py-3">Erişim Kodu</th>
-              <th class="px-4 py-3">Satış Tarihi / Fiyat</th>
-              <th class="px-4 py-3 text-center">İzlenme</th>
-              <th class="px-4 py-3 text-right">İşlemler</th>
+              <th class="px-4 py-3"><?= e(adm('Tesis & Şehir', 'Facility & city')) ?></th>
+              <th class="px-4 py-3"><?= e(adm('Saha & Slot', 'Court & slot')) ?></th>
+              <th class="px-4 py-3"><?= e(adm('Tarih', 'Date')) ?></th>
+              <th class="px-4 py-3"><?= e(adm('Durum', 'Status')) ?></th>
+              <th class="px-4 py-3"><?= e(adm('Erişim Kodu', 'Access code')) ?></th>
+              <th class="px-4 py-3"><?= e(adm('Satış Tarihi / Fiyat', 'Sale date / price')) ?></th>
+              <th class="px-4 py-3 text-center"><?= e(adm('İzlenme', 'Views')) ?></th>
+              <th class="px-4 py-3 text-right"><?= e(adm('İşlemler', 'Actions')) ?></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5 text-neutral-300">
             <?php if (empty($matchesList)): ?>
               <tr>
                 <td colspan="8" class="p-8 text-center text-neutral-500 italic">
-                  Seçilen filtrelere uygun maç kaydı bulunamadı.
+                  <?= e(adm('Seçilen filtrelere uygun maç kaydı bulunamadı.', 'No match records fit the selected filters.')) ?>
                 </td>
               </tr>
             <?php endif; ?>
@@ -453,12 +459,12 @@ require_once __DIR__ . '/../includes/header.php';
                   <?php if ($m['status'] === 'UNLOCKABLE'): ?>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      Satıldı (Açık)
+                      <?= e(adm('Satıldı (Açık)', 'Sold (open)')) ?>
                     </span>
                   <?php elseif ($m['status'] === 'LOCKED'): ?>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                       <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                      Kilitli (Bekliyor)
+                      <?= e(adm('Kilitli (Bekliyor)', 'Locked (waiting)')) ?>
                     </span>
                   <?php else: ?>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-neutral-500/10 text-neutral-400 border border-neutral-500/20">
@@ -472,7 +478,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <button 
                       type="button" 
                       onclick="navigator.clipboard.writeText('<?= e($m['shown_code']) ?>'); alert('Erişim kodu kopyalandı: <?= e($m['shown_code']) ?>');"
-                      title="Kopyalamak İçin Tıklayın"
+                      title="<?= e(adm('Kopyalamak İçin Tıklayın', 'Click to copy')) ?>"
                       class="inline-flex items-center gap-1.5 font-mono text-sm font-bold text-accent bg-accent/10 hover:bg-accent/20 px-2.5 py-1 rounded-lg border border-accent/30 transition cursor-pointer"
                     >
                       <?= e($m['shown_code']) ?>
@@ -486,9 +492,9 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="px-4 py-2.5 text-xs">
                   <?php if (!empty($m['sold_at'])): ?>
                     <div class="text-neutral-300 font-mono"><?= date('d.m.Y H:i', strtotime($m['sold_at'])) ?></div>
-                    <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price'], $m))) ?><?= empty($m['billable']) ? ' · ücretsiz' : '' ?></div>
+                    <div class="text-emerald-400 font-semibold"><?= e(replash_money(replash_video_price($m['sport'], (float)$m['unit_price'], $m))) ?><?= empty($m['billable']) ? ' · ' . adm('ücretsiz', 'free') : '' ?></div>
                   <?php else: ?>
-                    <span class="text-neutral-500 italic">Satış Yapılmadı</span>
+                    <span class="text-neutral-500 italic"><?= e(adm('Satış Yapılmadı', 'Not sold')) ?></span>
                   <?php endif; ?>
                 </td>
 
@@ -505,16 +511,16 @@ require_once __DIR__ . '/../includes/header.php';
                       <form action="matches.php" method="POST" class="inline-block">
                         <input type="hidden" name="action" value="unlock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
-                        <button type="submit" title="Satışa Aç & Kodu Aktifleştir" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold">
-                          Satışa Aç
+                        <button type="submit" title="<?= e(adm('Satışa Aç & Kodu Aktifleştir', 'Unlock & activate code')) ?>" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold">
+                          <?= e(adm('Satışa Aç', 'Unlock')) ?>
                         </button>
                       </form>
                     <?php else: ?>
                       <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar Kilitli/Bekliyor durumuna almak istediğinize emin misiniz?');">
                         <input type="hidden" name="action" value="lock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
-                        <button type="submit" title="Kilitle / Satış Bekliyor Yap" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
-                          Kilitle
+                        <button type="submit" title="<?= e(adm('Kilitle / Satış Bekliyor Yap', 'Lock / set awaiting sale')) ?>" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
+                          <?= e(adm('Kilitle', 'Lock')) ?>
                         </button>
                       </form>
                     <?php endif; ?>
@@ -523,7 +529,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <a 
                       href="<?= base_url('find.php?code=' . urlencode($m['shown_code'])) ?>" 
                       target="_blank" 
-                      title="Videoyu Aç & İzle" 
+                      title="<?= e(adm('Videoyu Aç & İzle', 'Open & watch video')) ?>" 
                       class="p-1.5 rounded-lg bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
@@ -534,7 +540,7 @@ require_once __DIR__ . '/../includes/header.php';
                       type="button" 
                       data-edit="<?= e(json_encode(['id' => $m['id'], 'title' => $m['facility_name'] . ' · ' . $m['code'], 'court' => $m['court'], 'date' => $m['date'], 'time_slot' => $m['time_slot'], 'access_code' => $m['shown_code'], 'status' => $m['status'], 'playback_url' => $m['playback_url'], 'duration_sec' => (int)($m['duration_sec'] ?? 3600)], JSON_UNESCAPED_UNICODE)) ?>"
                       onclick="openEditMatch(this)"
-                      title="Maçı Düzenle" 
+                      title="<?= e(adm('Maçı Düzenle', 'Edit match')) ?>" 
                       class="p-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 border border-accent/30"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -544,7 +550,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maç kaydını silmek istediğinize emin misiniz?');">
                       <input type="hidden" name="action" value="delete_match">
                       <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
-                      <button type="submit" title="Maçı Sil" class="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30">
+                      <button type="submit" title="<?= e(adm('Maçı Sil', 'Delete match')) ?>" class="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                       </button>
                     </form>
@@ -565,35 +571,35 @@ require_once __DIR__ . '/../includes/header.php';
   <div class="w-full max-w-xl rounded-2xl border border-white/10 bg-ink-900 p-6 text-left shadow-2xl">
     <div class="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
       <div>
-        <h3 id="em_heading" class="font-display text-lg font-bold">Maç kaydını düzenle</h3>
+        <h3 id="em_heading" class="font-display text-lg font-bold"><?= e(adm('Maç kaydını düzenle', 'Edit match record')) ?></h3>
         <span id="em_title" class="text-xs font-semibold text-accent"></span>
       </div>
-      <button type="button" onclick="closeEditMatch()" class="text-xl font-bold text-white/50 hover:text-white" aria-label="Kapat">&times;</button>
+      <button type="button" onclick="closeEditMatch()" class="text-xl font-bold text-white/50 hover:text-white" aria-label="<?= e(adm('Kapat', 'Close')) ?>">&times;</button>
     </div>
     <form action="matches.php" method="POST" class="space-y-3.5 text-xs">
       <input type="hidden" name="action" value="edit_match">
       <input type="hidden" name="match_id" id="em_id">
       <input type="hidden" name="duration_sec" id="em_duration_sec">
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Saha / Kort</span><input type="text" name="court" id="em_court" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent"></label>
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Tarih</span><input type="date" name="date" id="em_date" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent"></label>
+        <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Saha / Kort', 'Court')) ?></span><input type="text" name="court" id="em_court" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent"></label>
+        <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Tarih', 'Date')) ?></span><input type="date" name="date" id="em_date" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent"></label>
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Saat</span><input type="text" name="time_slot" id="em_time_slot" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono"></label>
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Erişim kodu</span><input type="text" name="access_code" id="em_access_code" inputmode="numeric" placeholder="Boş bırakılırsa otomatik" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono font-bold uppercase text-accent"></label>
-        <label class="block"><span class="mb-1 block font-medium text-white/50">Durum</span>
+        <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Saat', 'Time')) ?></span><input type="text" name="time_slot" id="em_time_slot" required class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono"></label>
+        <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Erişim kodu', 'Access code')) ?></span><input type="text" name="access_code" id="em_access_code" inputmode="numeric" placeholder="<?= e(adm('Boş bırakılırsa otomatik', 'Automatic if left empty')) ?>" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono font-bold uppercase text-accent"></label>
+        <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Durum', 'Status')) ?></span>
           <select name="status" id="em_status" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent">
-            <option value="UNLOCKABLE" class="bg-ink-900">Satıldı (açık)</option>
-            <option value="LOCKED" class="bg-ink-900">Kilitli (bekliyor)</option>
-            <option value="EXPIRED" class="bg-ink-900">Süresi doldu</option>
+            <option value="UNLOCKABLE" class="bg-ink-900"><?= e(adm('Satıldı (açık)', 'Sold (open)')) ?></option>
+            <option value="LOCKED" class="bg-ink-900"><?= e(adm('Kilitli (bekliyor)', 'Locked (waiting)')) ?></option>
+            <option value="EXPIRED" class="bg-ink-900"><?= e(adm('Süresi doldu', 'Expired')) ?></option>
           </select>
         </label>
       </div>
-      <label class="block"><span class="mb-1 block font-medium text-white/50">Özel video / yayın adresi (isteğe bağlı)</span><input type="text" name="playback_url" id="em_playback_url" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono"></label>
-      <p class="text-[11px] text-white/40">Durum değişiklikleri Satış Denetimi'ne yönetim işlemi olarak kaydedilir.</p>
+      <label class="block"><span class="mb-1 block font-medium text-white/50"><?= e(adm('Özel video / yayın adresi (isteğe bağlı)', 'Custom video / stream URL (optional)')) ?></span><input type="text" name="playback_url" id="em_playback_url" class="w-full rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white outline-none focus:border-accent font-mono"></label>
+      <p class="text-[11px] text-white/40"><?= e(adm('Durum değişiklikleri Satış Denetimi\'ne yönetim işlemi olarak kaydedilir.', 'Status changes are recorded in Sales audit as an admin action.')) ?></p>
       <div class="flex items-center justify-end gap-2 border-t border-white/10 pt-3">
-        <button type="button" onclick="closeEditMatch()" class="rounded-xl border border-white/15 px-4 py-2 text-white/70 hover:border-accent hover:text-accent">Vazgeç</button>
-        <button type="submit" class="rounded-xl bg-accent px-5 py-2 font-bold text-ink-900">Kaydet</button>
+        <button type="button" onclick="closeEditMatch()" class="rounded-xl border border-white/15 px-4 py-2 text-white/70 hover:border-accent hover:text-accent"><?= e(adm('Vazgeç', 'Cancel')) ?></button>
+        <button type="submit" class="rounded-xl bg-accent px-5 py-2 font-bold text-ink-900"><?= e(adm('Kaydet', 'Save')) ?></button>
       </div>
     </form>
   </div>

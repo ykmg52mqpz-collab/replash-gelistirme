@@ -98,7 +98,10 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
       <span class="hidden whitespace-nowrap rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600 sm:inline-block"><?= e($internalShell) ?></span>
       <!-- Dil seçimi: açık temada görünür renkler (beyaz üstüne beyazdı) -->
       <div role="group" aria-label="<?= e(__('common.language', 'Language')) ?>" class="ml-auto inline-flex shrink-0 items-center rounded-full border border-gray-300 bg-white p-0.5 text-xs font-semibold">
-        <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
+        <?php
+          // Yönetim paneli yalnız Türkçe/İngilizce; diğer iç ekranlar dört dil.
+          $shellLangs = !empty($adminShell) ? ['tr', 'en'] : ['it', 'en', 'tr', 'es'];
+          foreach (array_values(array_intersect($shellLangs, $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>
           <a href="<?= e(lang_url($lng)) ?>" hreflang="<?= e($lng) ?>" aria-pressed="<?= $isCur ? 'true' : 'false' ?>" class="rounded-full px-2.5 py-1.5 tracking-wide transition <?= $isCur ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' ?>"><?= strtoupper(e($lng)) ?></a>
         <?php endforeach; ?>
       </div>

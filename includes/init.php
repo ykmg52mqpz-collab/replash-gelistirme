@@ -8,6 +8,7 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/billing.php';
 require_once __DIR__ . '/sales.php';
+require_once __DIR__ . '/admin_i18n.php';
 
 // Oturum çerezi: JavaScript okuyamaz, HTTPS'te sadece şifreli bağlantıyla gider, başka sitelerden gelen
 // form isteklerinde gönderilmez (config/config.php sunucuda değişmediği için burada yeniden yazılır)

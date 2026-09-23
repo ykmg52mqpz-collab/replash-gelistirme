@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/init.php';
 
-$pageTitle = 'Gelir Hesaplayıcı Ayarları · Admin';
+$pageTitle = adm('Gelir Hesaplayıcı Ayarları · Admin', 'Revenue calculator settings · Admin');
 $error = null;
 $success = null;
 
@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         ];
 
         if (set_setting('roi_calculator_config', $config)) {
-            $success = "Gelir hesaplayıcı parametreleri ve spor modelleri başarıyla güncellendi!";
+            $success = adm('Gelir hesaplayıcı parametreleri ve spor modelleri güncellendi.', 'Revenue calculator parameters and sport models updated.');
         } else {
-            $error = "Ayarlar kaydedilirken bir hata oluştu. Veritabanı bağlantısını kontrol edin.";
+            $error = adm('Ayarlar kaydedilirken bir hata oluştu. Veritabanı bağlantısını kontrol edin.', 'Could not save the settings. Check the database connection.');
         }
     }
 
@@ -98,9 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             ];
 
             set_setting('roi_calculator_config', $config);
-            $success = "Yeni spor türü '{$sportName}' başarıyla eklendi!";
+            $success = adm("'{$sportName}' spor modeli eklendi.", "Sport model '{$sportName}' added.");
         } else {
-            $error = "Spor adı ve anahtarı boş bırakılamaz.";
+            $error = adm('Spor adı ve anahtarı boş bırakılamaz.', 'Sport name and key cannot be empty.');
         }
     }
 
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $config['default_sport'] = $keys[0] ?? 'padel';
             }
             set_setting('roi_calculator_config', $config);
-            $success = "'{$deletedName}' spor modeli başarıyla silindi.";
+            $success = adm("'{$deletedName}' spor modeli silindi.", "Sport model '{$deletedName}' deleted.");
         }
     }
 
@@ -123,11 +123,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'reset_defaults') {
         $config = get_default_roi_calculator_config();
         set_setting('roi_calculator_config', $config);
-        $success = "Gelir hesaplayıcı ayarları varsayılan fabrika ayarlarına sıfırlandı.";
+        $success = adm('Gelir hesaplayıcı ayarları varsayılana sıfırlandı.', 'Revenue calculator settings reset to defaults.');
     }
 }
 
-$internalShell = __('nav.admin');
+$adminShell = true;                       // üst çubukta yalnız TR/EN
+$internalShell = adm('Yönetim', 'Admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -169,9 +170,9 @@ require_once __DIR__ . '/../includes/header.php';
               <div>
                 <h2 class="font-display text-xl font-bold text-white flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
-                  Spor Modelleri & Kazanç Parametreleri
+                  <?= e(adm('Spor Modelleri & Kazanç Parametreleri', 'Sport models & revenue parameters')) ?>
                 </h2>
-                <p class="text-xs text-neutral-400 mt-0.5">Her spor türü için video satış fiyatı, tesis payı oranı ve slider sınırları</p>
+                <p class="text-xs text-neutral-400 mt-0.5"><?= e(adm('Her spor türü için video satış fiyatı, tesis payı oranı ve slider sınırları', 'Video price, facility share and slider limits for each sport')) ?></p>
               </div>
 
               <button 
@@ -180,7 +181,7 @@ require_once __DIR__ . '/../includes/header.php';
                 class="px-3 py-1.5 rounded-xl bg-accent text-ink-900 font-bold text-xs shadow-glow hover:bg-accent-neon transition flex items-center gap-1.5 self-start sm:self-auto"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                + Yeni Spor Ekle
+                <?= e(adm('+ Yeni Spor Ekle', '+ Add sport')) ?>
               </button>
             </div>
 
@@ -212,7 +213,7 @@ require_once __DIR__ . '/../includes/header.php';
                       <!-- Active Checkbox -->
                       <label class="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-neutral-300">
                         <input type="checkbox" name="sports[<?= e($key) ?>][active]" value="1" <?= !empty($sport['active']) ? 'checked' : '' ?> class="rounded border-white/20 bg-ink-900 text-accent focus:ring-accent">
-                        <span>Aktif</span>
+                        <span><?= e(adm('Aktif', 'Active')) ?></span>
                       </label>
 
                       <!-- Delete Button -->
@@ -220,7 +221,7 @@ require_once __DIR__ . '/../includes/header.php';
                         type="button" 
                         onclick="confirmDeleteSport('<?= e($key) ?>', '<?= e($sport['name']) ?>')" 
                         class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 text-xs transition" 
-                        title="Bu sporu sil"
+                        title="<?= e(adm('Bu sporu sil', 'Delete this sport')) ?>"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                       </button>
@@ -230,24 +231,24 @@ require_once __DIR__ . '/../includes/header.php';
                   <!-- Financial Pricing & Share Rates -->
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-ink-900/60 p-3.5 rounded-xl border border-white/5 text-xs">
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Birim Video Fiyatı</label>
-                      <input type="number" step="0.5" min="0" name="sports[<?= e($key) ?>][price]" value="<?= e($sport['price']) ?>" <?= $isStandardPrice ? 'readonly title="Billing Guide sabit fiyatı"' : '' ?> class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white font-mono focus:border-accent focus:outline-none <?= $isStandardPrice ? 'opacity-60 cursor-not-allowed' : '' ?>">
-                      <?php if ($isStandardPrice): ?><span class="text-[10px] text-neutral-500">Sabit fiyat (Billing Guide)</span><?php endif; ?>
+                      <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Birim Video Fiyatı', 'Video price')) ?></label>
+                      <input type="number" step="0.5" min="0" name="sports[<?= e($key) ?>][price]" value="<?= e($sport['price']) ?>" <?= $isStandardPrice ? 'readonly title="' . e(adm('Billing Guide sabit fiyatı', 'Billing Guide fixed price')) . '"' : '' ?> class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white font-mono focus:border-accent focus:outline-none <?= $isStandardPrice ? 'opacity-60 cursor-not-allowed' : '' ?>">
+                      <?php if ($isStandardPrice): ?><span class="text-[10px] text-neutral-500"><?= e(adm('Sabit fiyat (Billing Guide)', 'Fixed price (Billing Guide)')) ?></span><?php endif; ?>
                     </div>
 
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı (aylık kademe)</label>
+                      <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Tesis Payı (aylık kademe)', 'Facility share (monthly tier)')) ?></label>
                       <input type="hidden" name="sports[<?= e($key) ?>][share_pct]" value="<?= e($sport['share_pct']) ?>">
                       <div class="p-2 rounded-lg border border-white/10 bg-ink-800 text-neutral-300 font-mono text-[11px] leading-tight">0–49 %20 · 50–99 %25 · 100+ %30</div>
                     </div>
 
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Para Sembolü</label>
+                      <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Para Sembolü', 'Currency symbol')) ?></label>
                       <input type="text" name="sports[<?= e($key) ?>][currency_symbol]" value="<?= e($sport['currency_symbol'] ?? '€') ?>" class="w-full rounded-lg border border-white/10 bg-ink-800 p-2 text-white text-center font-bold focus:border-accent focus:outline-none">
                     </div>
 
                     <div>
-                      <label class="block text-neutral-400 mb-1 font-medium">Video Başı Tesis Kazancı</label>
+                      <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Video Başı Tesis Kazancı', 'Facility earning per video')) ?></label>
                       <div class="p-2 rounded-lg bg-accent/10 border border-accent/20 text-accent font-bold font-mono text-center">
                         <?= e($sport['currency_symbol'] ?? '€') ?><?= number_format($unitRevenueMin, 2) ?>–<?= number_format($unitRevenueMax, 2) ?>
                       </div>
@@ -256,23 +257,23 @@ require_once __DIR__ . '/../includes/header.php';
 
                   <!-- Sliders Min, Max, Default Matrix -->
                   <div class="space-y-2 pt-1 text-xs">
-                    <span class="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Kullanıcı Slider Sınırları & Varsayılanları</span>
+                    <span class="text-[11px] font-semibold uppercase tracking-wider text-neutral-400"><?= e(adm('Kullanıcı Slider Sınırları & Varsayılanları', 'Slider limits & defaults')) ?></span>
                     
                     <div class="grid grid-cols-3 gap-3">
                       <!-- Courts config -->
                       <div class="bg-ink-900/40 p-2.5 rounded-xl border border-white/5 space-y-1.5">
-                        <div class="font-semibold text-white">Saha Sayısı</div>
+                        <div class="font-semibold text-white"><?= e(adm('Saha Sayısı', 'Number of courts')) ?></div>
                         <div class="grid grid-cols-3 gap-1 text-[11px]">
                           <div>
-                            <span class="text-neutral-500 block">Min</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Min', 'Min')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][courts_min]" value="<?= (int)$sport['courts_min'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Varsayılan</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Varsayılan', 'Default')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][courts_default]" value="<?= (int)$sport['courts_default'] ?>" class="w-full rounded bg-ink-800 border border-accent/40 p-1 text-accent text-center font-bold">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Max</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Max', 'Max')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][courts_max]" value="<?= (int)$sport['courts_max'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                         </div>
@@ -280,18 +281,18 @@ require_once __DIR__ . '/../includes/header.php';
 
                       <!-- Videos config -->
                       <div class="bg-ink-900/40 p-2.5 rounded-xl border border-white/5 space-y-1.5">
-                        <div class="font-semibold text-white">Günlük Satış</div>
+                        <div class="font-semibold text-white"><?= e(adm('Günlük Satış', 'Daily sales')) ?></div>
                         <div class="grid grid-cols-3 gap-1 text-[11px]">
                           <div>
-                            <span class="text-neutral-500 block">Min</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Min', 'Min')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][videos_min]" value="<?= (int)$sport['videos_min'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Varsayılan</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Varsayılan', 'Default')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][videos_default]" value="<?= (int)$sport['videos_default'] ?>" class="w-full rounded bg-ink-800 border border-accent/40 p-1 text-accent text-center font-bold">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Max</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Max', 'Max')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][videos_max]" value="<?= (int)$sport['videos_max'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                         </div>
@@ -299,18 +300,18 @@ require_once __DIR__ . '/../includes/header.php';
 
                       <!-- Days config -->
                       <div class="bg-ink-900/40 p-2.5 rounded-xl border border-white/5 space-y-1.5">
-                        <div class="font-semibold text-white">Aylık Gün</div>
+                        <div class="font-semibold text-white"><?= e(adm('Aylık Gün', 'Active days')) ?></div>
                         <div class="grid grid-cols-3 gap-1 text-[11px]">
                           <div>
-                            <span class="text-neutral-500 block">Min</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Min', 'Min')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][days_min]" value="<?= (int)$sport['days_min'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Varsayılan</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Varsayılan', 'Default')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][days_default]" value="<?= (int)$sport['days_default'] ?>" class="w-full rounded bg-ink-800 border border-accent/40 p-1 text-accent text-center font-bold">
                           </div>
                           <div>
-                            <span class="text-neutral-500 block">Max</span>
+                            <span class="text-neutral-500 block"><?= e(adm('Max', 'Max')) ?></span>
                             <input type="number" name="sports[<?= e($key) ?>][days_max]" value="<?= (int)$sport['days_max'] ?>" class="w-full rounded bg-ink-800 border border-white/10 p-1 text-white text-center">
                           </div>
                         </div>
@@ -325,11 +326,11 @@ require_once __DIR__ . '/../includes/header.php';
 
           <!-- General Calculator & Hook Settings -->
           <div class="rounded-2xl bg-white/[0.02] p-6 border border-white/10 space-y-4">
-            <h3 class="font-display text-lg font-bold text-white pb-3 border-b border-white/10">Genel Ayarlar & Aksiyon Bloğu</h3>
+            <h3 class="font-display text-lg font-bold text-white pb-3 border-b border-white/10"><?= e(adm('Genel Ayarlar & Aksiyon Bloğu', 'General settings & call to action')) ?></h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">Varsayılan Seçili Spor</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Varsayılan Seçili Spor', 'Default selected sport')) ?></label>
                 <select name="default_sport" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
                   <?php foreach ($config['sports'] as $k => $sp): ?>
                     <option value="<?= e($k) ?>" <?= ($config['default_sport'] === $k) ? 'selected' : '' ?>>
@@ -340,29 +341,29 @@ require_once __DIR__ . '/../includes/header.php';
               </div>
 
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">CTA Buton Yönlendirme Linki</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('CTA Buton Yönlendirme Linki', 'CTA button link')) ?></label>
                 <input type="text" name="hook_cta_url" value="<?= e($config['hook_cta_url'] ?? 'contact.php') ?>" placeholder="contact.php" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
               </div>
             </div>
 
             <div class="space-y-3 text-xs">
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">Dipnot / Disclaimer Metni</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Dipnot / Disclaimer Metni', 'Footnote / disclaimer text')) ?></label>
                 <input type="text" name="disclaimer_note" value="<?= e($config['disclaimer_note'] ?? '') ?>" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
               </div>
 
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">Görüşme Kartı Başlığı (Hook Title)</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Görüşme Kartı Başlığı (Hook Title)', 'Hook title')) ?></label>
                 <input type="text" name="hook_title" value="<?= e($config['hook_title'] ?? '') ?>" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
               </div>
 
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">Görüşme Kartı Açıklaması (Hook Description)</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Görüşme Kartı Açıklaması (Hook Description)', 'Hook description')) ?></label>
                 <textarea name="hook_desc" rows="2" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none"><?= e($config['hook_desc'] ?? '') ?></textarea>
               </div>
 
               <div>
-                <label class="block text-neutral-400 mb-1 font-medium">CTA Buton Metni</label>
+                <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('CTA Buton Metni', 'CTA button text')) ?></label>
                 <input type="text" name="hook_cta_text" value="<?= e($config['hook_cta_text'] ?? 'Görüşme ayarla') ?>" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
               </div>
             </div>
@@ -376,12 +377,12 @@ require_once __DIR__ . '/../includes/header.php';
               onclick="if(confirm('Tüm gelir hesaplayıcı ayarlarını fabrika varsayılanlarına döndürmek istediğinize emin misiniz?')) { document.getElementById('resetDefaultsForm').submit(); }" 
               class="px-4 py-3 rounded-2xl border border-white/10 bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 text-xs font-semibold transition"
             >
-              Varsayılanlara Sıfırla
+              <?= e(adm('Varsayılanlara Sıfırla', 'Reset to defaults')) ?>
             </button>
 
             <button type="submit" class="btn-primary px-8 py-3.5 rounded-2xl text-sm font-bold shadow-glow flex items-center gap-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Tüm Değişiklikleri Kaydet</span>
+              <span><?= e(adm('Tüm Değişiklikleri Kaydet', 'Save all changes')) ?></span>
             </button>
           </div>
 
@@ -396,9 +397,9 @@ require_once __DIR__ . '/../includes/header.php';
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-accent flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-              Canlı Simülatör & Önizleme
+              <?= e(adm('Canlı Simülatör & Önizleme', 'Live simulator & preview')) ?>
             </span>
-            <span class="text-[11px] text-neutral-400">for-facilities.php görünümü</span>
+            <span class="text-[11px] text-neutral-400"><?= e(adm('for-facilities.php görünümü', 'for-facilities.php view')) ?></span>
           </div>
 
           <!-- Live Calculator Card Preview -->
@@ -406,10 +407,10 @@ require_once __DIR__ . '/../includes/header.php';
             
             <div class="text-center">
               <div class="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent mb-2">
-                GELİR HESAPLAYICI
+                <?= e(adm('GELİR HESAPLAYICI', 'REVENUE CALCULATOR')) ?>
               </div>
-              <h3 class="font-display text-xl font-bold text-white">Aylık pasif gelirinizi hesaplayın</h3>
-              <p class="text-[11px] text-neutral-400 mt-1">Saha ve satış sayılarınızı belirleyin, payınızı görün.</p>
+              <h3 class="font-display text-xl font-bold text-white"><?= e(adm('Aylık pasif gelirinizi hesaplayın', 'Calculate your monthly passive income')) ?></h3>
+              <p class="text-[11px] text-neutral-400 mt-1"><?= e(adm('Saha ve satış sayılarınızı belirleyin, payınızı görün.', 'Set your courts and sales, see your share.')) ?></p>
             </div>
 
             <!-- Sport Toggle Buttons -->
@@ -424,10 +425,10 @@ require_once __DIR__ . '/../includes/header.php';
               <!-- Courts Slider -->
               <div class="space-y-1.5">
                 <div class="flex justify-between items-baseline">
-                  <span class="text-neutral-400 font-medium">Saha Sayısı</span>
+                  <span class="text-neutral-400 font-medium"><?= e(adm('Saha Sayısı', 'Number of courts')) ?></span>
                   <div class="flex items-baseline gap-1">
                     <span id="prevValCourts" class="font-display text-2xl font-bold text-accent">4</span>
-                    <span class="text-[10px] text-neutral-400">saha</span>
+                    <span class="text-[10px] text-neutral-400"><?= e(adm('saha', 'courts')) ?></span>
                   </div>
                 </div>
                 <input type="range" id="prevSliderCourts" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
@@ -440,10 +441,10 @@ require_once __DIR__ . '/../includes/header.php';
               <!-- Videos Slider -->
               <div class="space-y-1.5">
                 <div class="flex justify-between items-baseline">
-                  <span class="text-neutral-400 font-medium">Saha Başı Günlük Satılan Video</span>
+                  <span class="text-neutral-400 font-medium"><?= e(adm('Saha Başı Günlük Satılan Video', 'Videos sold per court per day')) ?></span>
                   <div class="flex items-baseline gap-1">
                     <span id="prevValVideos" class="font-display text-2xl font-bold text-accent">4</span>
-                    <span class="text-[10px] text-neutral-400">saha başı</span>
+                    <span class="text-[10px] text-neutral-400"><?= e(adm('saha başı', 'per court')) ?></span>
                   </div>
                 </div>
                 <input type="range" id="prevSliderVideos" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
@@ -456,10 +457,10 @@ require_once __DIR__ . '/../includes/header.php';
               <!-- Days Slider -->
               <div class="space-y-1.5">
                 <div class="flex justify-between items-baseline">
-                  <span class="text-neutral-400 font-medium">Aylık Aktif Gün</span>
+                  <span class="text-neutral-400 font-medium"><?= e(adm('Aylık Aktif Gün', 'Active days per month')) ?></span>
                   <div class="flex items-baseline gap-1">
                     <span id="prevValDays" class="font-display text-2xl font-bold text-accent">26</span>
-                    <span class="text-[10px] text-neutral-400">gün</span>
+                    <span class="text-[10px] text-neutral-400"><?= e(adm('gün', 'days')) ?></span>
                   </div>
                 </div>
                 <input type="range" id="prevSliderDays" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
@@ -473,31 +474,31 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- Result Cards -->
             <div class="space-y-3 pt-2 border-t border-white/10">
               <div class="text-center text-[10px] font-bold uppercase tracking-widest text-accent/80">
-                TAHMİNİ GELİRİNİZ
+                <?= e(adm('TAHMİNİ GELİRİNİZ', 'YOUR ESTIMATED INCOME')) ?>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div class="rounded-xl border border-white/10 bg-white/[0.025] p-3.5 text-center">
-                  <div class="text-[9px] font-semibold uppercase tracking-widest text-neutral-400">Satılan Video</div>
+                  <div class="text-[9px] font-semibold uppercase tracking-widest text-neutral-400"><?= e(adm('Satılan Video', 'Videos sold')) ?></div>
                   <div id="prevResVideos" class="mt-1 font-display text-xl font-bold text-white">416</div>
-                  <div class="text-[10px] text-neutral-400">aylık</div>
+                  <div class="text-[10px] text-neutral-400"><?= e(adm('aylık', 'per month')) ?></div>
                 </div>
 
                 <div class="rounded-xl border border-accent/40 bg-accent/[0.08] p-3.5 text-center shadow-glow-sm">
-                  <div id="prevShareLabel" class="text-[9px] font-semibold uppercase tracking-widest text-accent">Payınız (%20)</div>
+                  <div id="prevShareLabel" class="text-[9px] font-semibold uppercase tracking-widest text-accent"><?= e(adm('Payınız', 'Your share')) ?> (%20)</div>
                   <div id="prevResMonthly" class="mt-1 font-display text-xl font-bold text-accent">€500</div>
-                  <div class="text-[10px] text-neutral-300">aylık kazanç</div>
+                  <div class="text-[10px] text-neutral-300"><?= e(adm('aylık kazanç', 'monthly earning')) ?></div>
                 </div>
               </div>
 
               <!-- Yearly Banner -->
               <div class="rounded-xl border border-accent/25 bg-gradient-to-br from-accent/10 to-accent/[0.02] p-4 text-center">
-                <div class="text-[9px] font-semibold uppercase tracking-widest text-accent/90">YILLIK POTANSİYEL</div>
+                <div class="text-[9px] font-semibold uppercase tracking-widest text-accent/90"><?= e(adm('YILLIK POTANSİYEL', 'ANNUAL POTENTIAL')) ?></div>
                 <div class="mt-0.5 font-display text-2xl font-extrabold text-white">
                   ≈ <span id="prevResYearly">€6,000</span>
-                  <span class="text-xs font-medium text-neutral-400">/ yıllık</span>
+                  <span class="text-xs font-medium text-neutral-400"><?= e(adm('/ yıllık', '/ per year')) ?></span>
                 </div>
-                <div class="mt-1 text-[10px] text-neutral-400">Personelinize sıfır ek iş yükü ile.</div>
+                <div class="mt-1 text-[10px] text-neutral-400"><?= e(adm('Personelinize sıfır ek iş yükü ile.', 'With zero extra work for your staff.')) ?></div>
               </div>
             </div>
 
@@ -515,7 +516,7 @@ require_once __DIR__ . '/../includes/header.php';
 <div id="addSportModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
   <div class="max-w-lg w-full rounded-2xl bg-white/[0.02] p-6 sm:p-8 border border-white/20 bg-ink-950 shadow-2xl relative">
     <div class="flex items-center justify-between mb-5 pb-3 border-b border-white/10">
-      <h3 class="font-display text-lg font-bold text-accent">Yeni Spor Türü & Gelir Modeli Ekle</h3>
+      <h3 class="font-display text-lg font-bold text-accent"><?= e(adm('Yeni Spor Türü & Gelir Modeli Ekle', 'Add a new sport & revenue model')) ?></h3>
       <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
     </div>
 
@@ -524,52 +525,52 @@ require_once __DIR__ . '/../includes/header.php';
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Spor Adı</label>
-          <input type="text" name="new_sport_name" placeholder="Örn: Tenis" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
+          <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Spor Adı', 'Sport name')) ?></label>
+          <input type="text" name="new_sport_name" placeholder="<?= e(adm('Örn: Tenis', 'e.g. Tennis')) ?>" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Anahtar / Slug</label>
+          <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Anahtar / Slug', 'Key / slug')) ?></label>
           <input type="text" name="new_sport_key" placeholder="tennis" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white font-mono focus:border-accent focus:outline-none">
         </div>
       </div>
 
       <div class="grid grid-cols-3 gap-3">
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Birim Fiyat</label>
+          <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Birim Fiyat', 'Unit price')) ?></label>
           <input type="number" step="0.5" name="new_sport_price" value="10.00" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white focus:border-accent focus:outline-none">
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Tesis Payı</label>
+          <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Tesis Payı', 'Facility share')) ?></label>
           <input type="hidden" name="new_sport_share_pct" value="20">
-          <div class="rounded-xl border border-white/10 bg-ink-900 p-2.5 text-neutral-300 text-[11px] leading-tight">Aylık kademe: 0–49 %20 · 50–99 %25 · 100+ %30</div>
+          <div class="rounded-xl border border-white/10 bg-ink-900 p-2.5 text-neutral-300 text-[11px] leading-tight"><?= e(adm('Aylık kademe: 0–49 %20 · 50–99 %25 · 100+ %30', 'Monthly tiers: 0–49 20% · 50–99 25% · 100+ 30%')) ?></div>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Sembol</label>
+          <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('Sembol', 'Symbol')) ?></label>
           <input type="text" name="new_sport_currency_symbol" value="€" required class="w-full rounded-xl border border-white/10 bg-ink-900 p-2.5 text-white text-center focus:border-accent focus:outline-none">
         </div>
       </div>
 
       <div class="pt-2 border-t border-white/10">
-        <span class="text-[11px] font-semibold text-neutral-400 block mb-2">Varsayılan Slider Değerleri</span>
+        <span class="text-[11px] font-semibold text-neutral-400 block mb-2"><?= e(adm('Varsayılan Slider Değerleri', 'Default slider values')) ?></span>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-neutral-500 mb-0.5">Saha (Vars.)</label>
+            <label class="block text-neutral-500 mb-0.5"><?= e(adm('Saha (Vars.)', 'Courts (def.)')) ?></label>
             <input type="number" name="new_sport_courts_default" value="4" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-center">
           </div>
           <div>
-            <label class="block text-neutral-500 mb-0.5">Video (Vars.)</label>
+            <label class="block text-neutral-500 mb-0.5"><?= e(adm('Video (Vars.)', 'Videos (def.)')) ?></label>
             <input type="number" name="new_sport_videos_default" value="4" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-center">
           </div>
           <div>
-            <label class="block text-neutral-500 mb-0.5">Gün (Vars.)</label>
+            <label class="block text-neutral-500 mb-0.5"><?= e(adm('Gün (Vars.)', 'Days (def.)')) ?></label>
             <input type="number" name="new_sport_days_default" value="26" class="w-full rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-center">
           </div>
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
-        <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10">İptal</button>
-        <button type="submit" class="px-5 py-2 rounded-xl bg-accent text-ink-900 font-bold hover:bg-accent-neon shadow-glow">Sporu Ekle</button>
+        <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10"><?= e(adm('İptal', 'Cancel')) ?></button>
+        <button type="submit" class="px-5 py-2 rounded-xl bg-accent text-ink-900 font-bold hover:bg-accent-neon shadow-glow"><?= e(adm('Sporu Ekle', 'Add sport')) ?></button>
       </div>
     </form>
   </div>
@@ -587,11 +588,12 @@ require_once __DIR__ . '/../includes/header.php';
 </form>
 
 <script>
+const ADM_LOCALE = <?= json_encode(admin_lang() === 'tr' ? 'tr-TR' : 'en-GB') ?>;
 const roiConfig = <?= json_encode($config, JSON_UNESCAPED_UNICODE) ?>;
 let activeSportKey = roiConfig.default_sport || Object.keys(roiConfig.sports)[0];
 
 function confirmDeleteSport(key, name) {
-  if (confirm(`'${name}' spor modelini silmek istediğinize emin misiniz?`)) {
+  if (confirm(`'${name}' <?= e(adm('spor modelini silmek istediğinize emin misiniz?', 'sport model will be deleted. Are you sure?')) ?>`)) {
     document.getElementById('deleteSportKey').value = key;
     document.getElementById('deleteSportForm').submit();
   }
@@ -685,13 +687,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const tier = (roiConfig.share_tiers || []).filter(t => totalVideos >= t.min).pop() || { facility_pct: 20 };
     const symbol = sp.currency_symbol || '€';
 
-    prevShareLabel.textContent = `Payınız (%${tier.facility_pct})`;
+    prevShareLabel.textContent = `<?= e(adm('Payınız', 'Your share')) ?> (%${tier.facility_pct})`;
     const monthlyTotal = Math.round(totalVideos * price * tier.facility_pct / 100);
     const yearlyTotal = Math.round(monthlyTotal * 12);
 
-    resVideos.textContent = totalVideos.toLocaleString('tr-TR');
-    resMonthly.textContent = symbol + monthlyTotal.toLocaleString('tr-TR');
-    resYearly.textContent = symbol + yearlyTotal.toLocaleString('tr-TR');
+    resVideos.textContent = totalVideos.toLocaleString(ADM_LOCALE);
+    resMonthly.textContent = symbol + monthlyTotal.toLocaleString(ADM_LOCALE);
+    resYearly.textContent = symbol + yearlyTotal.toLocaleString(ADM_LOCALE);
   }
 
   sliderCourts.addEventListener('input', calculatePreview);
