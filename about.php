@@ -117,29 +117,7 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </section>
 
-  <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
-  <div class="absolute inset-0" aria-hidden="true">
-  <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
-  <img loading="lazy" decoding="async" src="<?= asset('images/gen_padel_club_empty.webp') ?>" alt="" class="h-full w-full object-cover" style="opacity:0.12"/>
-  </div>
-  </div>
-  <div class="absolute inset-0 bg-ink-900/80">
-  </div>
-  </div>
-  <div class="container-x relative">
-  <div class="mx-auto max-w-2xl text-center">
-  <div class="max-w-3xl mx-auto text-center"  data-reveal="up">
-  <h2 class="font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl lg:text-5xl">
-  <?= e(__('about.story.title')) ?>
-  </h2>
-  </div>
-  <p class="mt-5 text-base leading-relaxed text-white/60"  data-reveal="up">
-  <?= e(__('about.story.desc')) ?>
-  </p>
-  </div>
-  </div>
-  </section>
+
 
   <section class="section-y border-t border-white/5 bg-section-gradient">
   <div class="container-x">

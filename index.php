@@ -165,49 +165,20 @@ require_once __DIR__ . '/includes/header.php';
           </a>
         </div>
         <ol class="grid gap-3 md:grid-cols-3">
-          <?php for ($i = 1; $i <= 3; $i++): ?>
+          <?php foreach ([1, 2, 3] as $i): ?>
             <li class="rounded-2xl border border-white/10 bg-white/[0.02] p-5" data-reveal="up">
               <span class="grid h-9 w-9 place-items-center rounded-full border border-accent/30 font-display text-sm font-bold text-accent"><?= $i ?></span>
               <h3 class="mt-4 font-display text-lg font-bold text-white"><?= e(__("home.flow.items.{$i}.title")) ?></h3>
               <p class="mt-1.5 text-sm leading-relaxed text-white/55"><?= e(__("home.flow.items.{$i}.desc")) ?></p>
             </li>
-          <?php endfor; ?>
+          <?php endforeach; ?>
         </ol>
       </div>
     </div>
   </section>
 
   <!-- INTRO (replash.info) -->
-  <section class="relative overflow-hidden border-t border-white/5 bg-ink-900 py-20 md:py-28">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,230,138,0.08), transparent 70%)" aria-hidden="true">
-  </div>
-  <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" aria-hidden="true">
-  </div>
-  <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" aria-hidden="true">
-  </div>
-  <div class="container-x relative">
-  <div class="mx-auto max-w-4xl text-center"  data-reveal="up">
-  <h2 class="font-display text-4xl font-bold leading-[1.05] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 30%, rgba(255,255,255,0.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
-  <?= e(__('home.intro.slogan')) ?>
-  </h2>
-  <p class="mt-6 font-display text-xl uppercase tracking-wider text-accent md:text-2xl"  data-reveal="up">
-  <?= e(__('home.intro.tagline')) ?>
-  </p>
-  <p class="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/45"  data-reveal="up">
-  <?= e(__('home.intro.sports')) ?>
-  </p>
-  <div class="mt-9"  data-reveal="up">
-  <a class="group inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-7 py-3 text-sm font-semibold tracking-wide text-accent transition-colors active:scale-[0.98] hover:bg-accent hover:text-ink-900 hover:shadow-glow" href="<?= base_url('contact.php') ?>">
-  <?= e(__('home.intro.cta')) ?>
-  <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-  <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z">
-  </path>
-  </svg>
-  </a>
-  </div>
-  </div>
-  </div>
-  </section>
+
 
   <!-- TWO-LAYER VALUE SECTION (replash.info ile aynı: yapışkan başlık + zaman çizelgesi) -->
   <section class="section-y border-t border-white/5 bg-section-gradient relative overflow-hidden">
@@ -344,90 +315,7 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 
   <!-- WHAT PLAYERS GET SECTION (replash.info) -->
-  <section class="section-y border-t border-white/5 bg-section-gradient">
-  <div class="container-x">
-  <div class="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-  <div class="grid gap-3">
-  <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4"  data-reveal="left">
-  <div class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
-  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-  <path d="M8 5v14l11-7z">
-  </path>
-  </svg>
-  </div>
-  <div>
-  <h3 class="text-sm font-semibold text-white">
-  <?= e(__('home.whatPlayersGet.items.1.title')) ?>
-  </h3>
-  <p class="mt-0.5 text-xs leading-relaxed text-white/50">
-  <?= e(__('home.whatPlayersGet.items.1.desc')) ?>
-  </p>
-  </div>
-  </div>
-  <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4"  data-reveal="left">
-  <div class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
-  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="6" cy="6" r="3">
-  </circle>
-  <circle cx="6" cy="18" r="3">
-  </circle>
-  <line x1="20" y1="4" x2="8.12" y2="15.88">
-  </line>
-  <line x1="14.47" y1="14.48" x2="20" y2="20">
-  </line>
-  <line x1="8.12" y1="8.12" x2="12" y2="12">
-  </line>
-  </svg>
-  </div>
-  <div>
-  <h3 class="text-sm font-semibold text-white">
-  <?= e(__('home.whatPlayersGet.items.2.title')) ?>
-  </h3>
-  <p class="mt-0.5 text-xs leading-relaxed text-white/50">
-  <?= e(__('home.whatPlayersGet.items.2.desc')) ?>
-  </p>
-  </div>
-  </div>
-  <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4"  data-reveal="left">
-  <div class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
-  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="18" cy="5" r="3">
-  </circle>
-  <circle cx="6" cy="12" r="3">
-  </circle>
-  <circle cx="18" cy="19" r="3">
-  </circle>
-  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49">
-  </line>
-  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49">
-  </line>
-  </svg>
-  </div>
-  <div>
-  <h3 class="text-sm font-semibold text-white">
-  <?= e(__('home.whatPlayersGet.items.3.title')) ?>
-  </h3>
-  <p class="mt-0.5 text-xs leading-relaxed text-white/50">
-  <?= e(__('home.whatPlayersGet.items.3.desc')) ?>
-  </p>
-  </div>
-  </div>
-  </div>
-  <div class="lg:order-last"  data-reveal="right">
-  <h2 class="font-display text-3xl font-bold leading-[1.15] tracking-tight md:text-4xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
-  <?= e(__('home.whatPlayersGet.title')) ?>
-  </h2>
-  <a class="mt-8 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-5 py-2.5 text-sm font-semibold text-accent transition hover:bg-accent/20" href="<?= base_url('for-players.php') ?>">
-  <?= e(__('home.twoLayer.layer1.label')) ?>
-  <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-  <path d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z">
-  </path>
-  </svg>
-  </a>
-  </div>
-  </div>
-  </div>
-  </section>
+
 
   <!-- FAQ (replash.info) -->
   <section class="section-y border-t border-white/5 bg-ink-900">
@@ -437,11 +325,10 @@ require_once __DIR__ . '/includes/header.php';
         <p class="mt-4 text-lg text-white/70 md:text-xl"><?= e(__('home.faq.subtitle')) ?></p>
       </div>
       <div class="mx-auto mt-12 max-w-3xl divide-y divide-white/[0.06]">
-        <?php for ($i = 1; $i <= 9; $i++):
+        <?php foreach ([1, 2, 3, 4] as $i): // tesisin ilk sorduğu dört soru
           $q = __("home.faq.items.{$i}.q");
           $a = __("home.faq.items.{$i}.a");
           if ($q === "home.faq.items.{$i}.q") continue;
-          if ($i === 8) continue; // 7. soruyla aynı soru (canlıdaki metinde tekrar)
           $open = ($i === 1);
         ?>
           <div class="faq-item" data-reveal="up">
@@ -455,7 +342,7 @@ require_once __DIR__ . '/includes/header.php';
               <p class="pb-5 pr-10 text-sm leading-relaxed text-white/60"><?= e($a) ?></p>
             </div>
           </div>
-        <?php endfor; ?>
+        <?php endforeach; ?>
       </div>
     </div>
   </section>

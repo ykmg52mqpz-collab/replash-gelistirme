@@ -150,7 +150,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
     <div class="overflow-hidden rounded-lg border border-gray-200">
       <table class="w-full border-collapse text-left text-xs">
-        <thead><tr class="border-b border-gray-200 bg-gray-50 text-[10px] font-medium uppercase tracking-wide text-gray-500"><th class="w-24 px-3 py-2"><?= e(__('panel.shell.time_col')) ?></th><th class="px-3 py-2">Saha 1</th><th class="px-3 py-2">Saha 2</th></tr></thead>
+        <thead><tr class="border-b border-gray-200 bg-gray-50 text-[10px] font-medium uppercase tracking-wide text-gray-500"><th class="w-24 px-3 py-2"><?= e(__('panel.shell.time_col')) ?></th><th class="px-3 py-2"><?= e(__('find.explainer.court', 'Campo 1')) ?> 1</th><th class="px-3 py-2"><?= e(__('find.explainer.court', 'Campo')) ?> 2</th></tr></thead>
         <tbody>
           <tr class="border-b border-gray-100"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">18:00–19:00</td><td class="px-3 py-2.5"><div><div class="text-[10px] font-medium uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></div><div class="font-mono text-[13px] font-semibold tracking-wider text-gray-900">3907</div></div></td><td class="px-3 py-2.5 text-gray-300">—</td></tr>
           <tr class="border-b border-gray-100 hwp-rowflash"><td class="whitespace-nowrap px-3 py-2.5 font-mono text-gray-700">19:00–20:00</td>
@@ -254,7 +254,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="p-4">
     <div class="mb-2 flex items-center gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5">
       <span class="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold tracking-wide text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>UNLOCKED</span>
-      <span class="truncate font-mono text-[10px] text-white/70">Replash Demo Arena · Saha 1 · 19:00–20:00</span>
+      <span class="truncate font-mono text-[10px] text-white/70">Replash Demo Arena · <?= e(__('find.explainer.court', 'Campo')) ?> 1 · 19:00–20:00</span>
     </div>
     <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
       <img loading="lazy" decoding="async" src="<?= asset('images/gen_football_night.webp') ?>" alt="" loading="lazy" class="h-full w-full object-cover opacity-90">

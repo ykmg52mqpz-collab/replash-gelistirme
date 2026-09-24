@@ -43,7 +43,7 @@ return [
         'twoLayer' => [
             'eyebrow' => 'Value on Both Sides',
             'title' => 'For the players. And for your facility.',
-            'subtitle' => 'Replash gives players a match to relive and your facility a new service to offer. One system, two kinds of value.',
+            'subtitle' => 'Replash gives players a match to relive and your facility a new service to offer. One system, two kinds of value. Available today for football, padel and tennis.',
             'layer1' => [
                 'label' => 'For Players',
                 'stat' => '0%',
@@ -179,10 +179,6 @@ return [
                     'q' => 'Can players really share clips to social media?',
                     'a' => 'Yes. That is the core experience. Replash includes an in-browser clip cutter. Players select 15–45s moments, download MP4s directly to their phone, and post them anywhere.'
                 ],
-                '8' => [
-                    'q' => 'Can players actually share clips on social media?',
-                    'a' => 'Yes. That\'s the core experience. Replash has a built-in clip cutter inside the platform. Players pick a 15–45 second moment from the match, download the clip to their phone, and share it on social media platforms under their own account. Replash is the place where the clip is made. Sharing happens on the player\'s own channels.'
-                ],
                 '9' => [
                     'q' => 'What if we don’t have strong Wi-Fi at the courts?',
                     'a' => 'PoE cameras operate with local buffer storage so brief network drops never cause data loss. For outdoor courts without Wi-Fi, LTE/SIM cellular gateways are fully supported.'
@@ -191,10 +187,6 @@ return [
                     'q' => 'What about GDPR?',
                     'a' => 'Replash is fully compliant with GDPR, ECHR Article 8, and Italian Garante guidelines. Cameras record only the playing area. No audio, no facial recognition. Legal basis: legitimate interest (Art. 6/1-f) and contractual necessity (Art. 6/1-b). A three-tier notice model is in place (entrance signage + QR + booking notification). A Privacy & Legal Justification file is provided before installation.'
                 ],
-                '12' => [
-                    'q' => 'What if we don\'t have a strong WiFi connection?',
-                    'a' => 'PoE cameras run on a local buffer. Short connection drops don\'t cause data loss. For outdoor venues without WiFi, LTE/SIM-based standalone connectivity is fully supported. The Replash team handles all setup.'
-                ]
             ],
             'categories' => [
                 'facilities' => 'For Facilities',
@@ -218,7 +210,7 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'How It Works',
-            'title' => 'Six simple steps. Zero complexity for your team.',
+            'title' => 'Four simple steps. Zero complexity for your team.',
             'subtitle' => 'From kickoff to replay, Replash handles everything in between. Below: every step explained, with Marco\'s Tuesday-night padel match as a concrete example.'
         ],
         'steps' => [
@@ -546,6 +538,7 @@ return [
             'date' => 'Date',
             'timeSlot' => 'Time slot',
             'unlocked' => 'Unlocked match',
+            'court' => 'Court',
             'noShare' => 'Videos never appear in search engines. Links are not public.'
         ],
         'watch' => [

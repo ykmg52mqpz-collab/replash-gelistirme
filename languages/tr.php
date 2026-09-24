@@ -43,7 +43,7 @@ return [
         'twoLayer' => [
             'eyebrow' => 'İki Taraf İçin de Değer',
             'title' => 'Oyuncular için. Ve tesisin için.',
-            'subtitle' => 'Replash oyunculara yeniden yaşanacak bir maç, tesisine sunacağı yeni bir hizmet verir. Tek sistem, iki tür değer.',
+            'subtitle' => 'Replash oyunculara yeniden yaşanacak bir maç, tesisine sunacağı yeni bir hizmet verir. Tek sistem, iki tür değer. Bugün futbol, padel ve tenis için hazır.',
             'layer1' => [
                 'label' => 'Oyuncular İçin',
                 'stat' => '0%',
@@ -179,10 +179,6 @@ return [
                     'q' => 'Oyuncular klipleri sosyal medyada gerçekten paylaşabilir mi?',
                     'a' => 'Evet! Sistemin kalbi budur. Oyuncular 15–45 saniyelik pozisyonları seçer, telefonlarına MP4 olarak indirir ve Instagram, TikTok ya da WhatsApp gruplarında doğrudan paylaşır.'
                 ],
-                '8' => [
-                    'q' => 'Oyuncular gerçekten klipleri sosyal medyada paylaşabilir mi?',
-                    'a' => 'Evet. Bu çekirdek deneyim. Replash platformun içinde dahili bir clip cutter\'a sahip. Oyuncular maçtan 15–45 saniyelik bir an seçer, klibi telefonlarına indirir ve kendi hesapları altında sosyal medya platformlarında paylaşır. Replash klibin yapıldığı yerdir. Paylaşım oyuncunun kendi kanallarında gerçekleşir.'
-                ],
                 '9' => [
                     'q' => 'Güçlü bir Wi-Fi bağlantımız yoksa ne olur?',
                     'a' => 'Kameralar dahili tampon belleğe (buffer) sahiptir. Kısa süreli internet kesintilerinde veri kaybolmaz. Wi-Fi olmayan açık alanlar için LTE/SIM modem desteği sunulmaktadır.'
@@ -191,10 +187,6 @@ return [
                     'q' => 'Ya GDPR?',
                     'a' => 'Replash GDPR, AİHS Madde 8 ve İtalyan Garante yönergeleriyle tamamen uyumludur. Kameralar sadece oyun alanını kaydeder. Ses yok, yüz tanıma yok. Yasal temel: meşru menfaat (Madde 6/1-f) ve sözleşmesel gereklilik (Madde 6/1-b). Üç katmanlı bildirim modeli vardır (giriş tabelası + QR + rezervasyon bildirimi). Kurulumdan önce bir Gizlilik & Yasal Gerekçe dosyası sağlanır.'
                 ],
-                '12' => [
-                    'q' => 'Güçlü WiFi bağlantımız yoksa?',
-                    'a' => 'PoE kameralar yerel tampon üzerinde çalışır. Kısa bağlantı kesintileri veri kaybına yol açmaz. WiFi\'siz outdoor sahalar için LTE/SIM tabanlı bağımsız bağlantı tamamen desteklenir. Replash ekibi tüm kurulumu yönetir.'
-                ]
             ],
             'categories' => [
                 'facilities' => 'Sahalar İçin',
@@ -218,7 +210,7 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
-            'title' => 'Altı basit adım. Ekibiniz için sıfır karmaşıklık.',
+            'title' => 'Dört basit adım. Ekibiniz için sıfır karmaşıklık.',
             'subtitle' => 'İlk vuruştan tekrar oynatmaya kadar, Replash aradaki her şeyi halleder. Aşağıda: her adım, Marco\'nun salı gecesi padel maçı somut örnek olarak açıklanıyor.'
         ],
         'steps' => [
@@ -546,6 +538,7 @@ return [
             'date' => 'Tarih',
             'timeSlot' => 'Saat aralığı',
             'unlocked' => 'Kilidi açılmış maç',
+            'court' => 'Saha',
             'noShare' => 'Videolar arama motorlarında asla görünmez. Bağlantılar herkese açık değildir.'
         ],
         'watch' => [

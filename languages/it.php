@@ -43,7 +43,7 @@ return [
         'twoLayer' => [
             'eyebrow' => 'Valore da Entrambi i Lati',
             'title' => 'Per i giocatori. E per il tuo centro.',
-            'subtitle' => 'Replash dà ai giocatori una partita da rivivere e al tuo centro un nuovo servizio da offrire. Un solo sistema, due tipi di valore.',
+            'subtitle' => 'Replash dà ai giocatori una partita da rivivere e al tuo centro un nuovo servizio da offrire. Un solo sistema, due tipi di valore. Disponibile oggi per calcio, padel e tennis.',
             'layer1' => [
                 'label' => 'Per i Giocatori',
                 'stat' => '0%',
@@ -179,10 +179,6 @@ return [
                     'q' => 'I giocatori possono davvero condividere clip sui social media?',
                     'a' => 'Sì. È l\'esperienza centrale. Replash ha un clip cutter integrato nella piattaforma. I giocatori scelgono un momento di 15–45 secondi della partita, scaricano la clip sul telefono e la condividono sui social media sotto il proprio account. Replash è il luogo dove la clip viene fatta. La condivisione avviene sui canali del giocatore.'
                 ],
-                '8' => [
-                    'q' => 'I giocatori possono davvero condividere clip sui social media?',
-                    'a' => 'Sì. È l\'esperienza centrale. Replash ha un clip cutter integrato nella piattaforma. I giocatori scelgono un momento di 15–45 secondi della partita, scaricano la clip sul telefono e la condividono sui social media sotto il proprio account. Replash è il luogo dove la clip viene fatta. La condivisione avviene sui canali del giocatore.'
-                ],
                 '9' => [
                     'q' => 'E se non abbiamo una connessione WiFi forte?',
                     'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
@@ -191,10 +187,6 @@ return [
                     'q' => 'E il GDPR?',
                     'a' => 'Replash è pienamente conforme a GDPR, CEDU Articolo 8 e linee guida del Garante italiano. Le telecamere riprendono solo l\'area di gioco. Nessun audio, nessun riconoscimento facciale. Base legale: legittimo interesse (Art. 6/1-f) e necessità contrattuale (Art. 6/1-b). È in atto un modello di notifica a tre livelli (segnaletica all\'ingresso + QR + notifica prenotazione). Un file Privacy & Legal Justification viene fornito prima dell\'installazione.'
                 ],
-                '12' => [
-                    'q' => 'E se non abbiamo una connessione WiFi forte?',
-                    'a' => 'Le telecamere PoE funzionano con un buffer locale. Brevi cali di connessione non causano perdita di dati. Per centri outdoor senza WiFi, è pienamente supportata la connettività standalone via LTE/SIM. Il team Replash gestisce tutto il setup.'
-                ]
             ],
             'categories' => [
                 'facilities' => 'Per i Centri',
@@ -218,7 +210,7 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Come Funziona',
-            'title' => 'Sei semplici passi. Zero complessità per il tuo team.',
+            'title' => 'Quattro semplici passi. Zero complessità per il tuo team.',
             'subtitle' => 'Dal calcio d\'inizio al replay, Replash gestisce tutto nel mezzo. Sotto: ogni passo spiegato, con la partita di padel di Marco di martedì sera come esempio concreto.'
         ],
         'steps' => [
@@ -546,6 +538,7 @@ return [
             'date' => 'Data',
             'timeSlot' => 'Fascia oraria',
             'unlocked' => 'Partita sbloccata',
+            'court' => 'Campo',
             'noShare' => 'I video non appaiono mai nei motori di ricerca. I link non sono pubblici.'
         ],
         'watch' => [

@@ -43,7 +43,7 @@ return [
         'twoLayer' => [
             'eyebrow' => 'Valor en Ambos Lados',
             'title' => 'Para los jugadores. Y para tu centro.',
-            'subtitle' => 'Replash da a los jugadores un partido que revivir y a tu centro un nuevo servicio que ofrecer. Un sistema, dos tipos de valor.',
+            'subtitle' => 'Replash da a los jugadores un partido que revivir y a tu centro un nuevo servicio que ofrecer. Un sistema, dos tipos de valor. Disponible hoy para fútbol, pádel y tenis.',
             'layer1' => [
                 'label' => 'Para los Jugadores',
                 'stat' => '0%',
@@ -179,10 +179,6 @@ return [
                     'q' => '¿Los jugadores pueden compartir clips en redes sociales?',
                     'a' => 'Sí. Es el núcleo de la experiencia. Los jugadores seleccionan clips de 15–45s, los descargan en formato MP4 a su móvil y los publican en Instagram, TikTok o WhatsApp.'
                 ],
-                '8' => [
-                    'q' => '¿Pueden los jugadores compartir clips en redes sociales?',
-                    'a' => 'Sí. Esa es la experiencia central. Replash tiene un clip cutter integrado dentro de la plataforma. Los jugadores eligen un momento de 15–45 segundos del partido, descargan el clip a su móvil y lo comparten en plataformas de redes sociales bajo su propia cuenta. Replash es el lugar donde se hace el clip. El compartir ocurre en los canales propios del jugador.'
-                ],
                 '9' => [
                     'q' => '¿Y si no disponemos de buena conexión Wi-Fi?',
                     'a' => 'Las cámaras PoE disponen de almacenamiento local en búfer. Las caídas breves de conexión no pierden datos. Para pistas exteriores sin Wi-Fi, ofrecemos conectividad LTE/SIM.'
@@ -191,10 +187,6 @@ return [
                     'q' => '¿Y el RGPD?',
                     'a' => 'Replash cumple totalmente con RGPD, CEDH Artículo 8 y directrices del Garante italiano. Las cámaras graban solo el área de juego. Sin audio, sin reconocimiento facial. Base legal: interés legítimo (Art. 6/1-f) y necesidad contractual (Art. 6/1-b). Hay un modelo de notificación de tres niveles (señalización de entrada + QR + notificación de reserva). Se proporciona un archivo de Justificación de Privacidad y Legal antes de la instalación.'
                 ],
-                '12' => [
-                    'q' => '¿Qué pasa si no tenemos una conexión WiFi fuerte?',
-                    'a' => 'Las cámaras PoE funcionan con un búfer local. Las caídas cortas de conexión no causan pérdida de datos. Para centros outdoor sin WiFi, la conectividad LTE/SIM autónoma está totalmente soportada. El equipo de Replash gestiona toda la configuración.'
-                ]
             ],
             'categories' => [
                 'facilities' => 'Para Centros',
@@ -218,7 +210,7 @@ return [
         ],
         'hero' => [
             'eyebrow' => 'Cómo Funciona',
-            'title' => 'Seis pasos simples. Cero complejidad para tu equipo.',
+            'title' => 'Cuatro pasos simples. Cero complejidad para tu equipo.',
             'subtitle' => 'Del saque inicial a la repetición, Replash gestiona todo lo que hay en medio. Abajo: cada paso explicado, con el partido de pádel del martes por la noche de Marco como ejemplo concreto.'
         ],
         'steps' => [
@@ -546,6 +538,7 @@ return [
             'date' => 'Fecha',
             'timeSlot' => 'Franja horaria',
             'unlocked' => 'Partido desbloqueado',
+            'court' => 'Pista',
             'noShare' => 'Los vídeos nunca aparecen en buscadores. Los enlaces no son públicos.'
         ],
         'watch' => [
