@@ -568,9 +568,17 @@ require_once __DIR__ . '/includes/header.php';
                   <?= e(__('find.watch.clip.quick')) ?>
                 </button>
                 <div class="flex items-center gap-1.5" role="group" aria-label="<?= e(__('find.watch.clip.length')) ?>">
-                  <?php foreach ([15, 20, 30, 40] as $len): ?>
+                  <?php foreach ([15, 30, 45] as $len): ?>
                     <button type="button" data-cliplen="<?= $len ?>" onclick="setClipLength(<?= $len ?>)" class="rp-len h-11 min-w-[52px] rounded-xl border border-white/10 px-3 text-sm font-semibold text-white/60 transition hover:border-accent hover:text-white"><?= $len ?> <?= e(__('find.watch.clip.sec_short', 'sn')) ?></button>
                   <?php endforeach; ?>
+                  <!-- Kendi süreni seç: kronometre düğmesi, yanında saniye kutusu açılır -->
+                  <button type="button" id="rp-len-custom-btn" onclick="toggleCustomLength()" aria-expanded="false" title="<?= e(__('find.watch.clip.custom')) ?>" aria-label="<?= e(__('find.watch.clip.custom')) ?>" class="rp-len-custom grid h-11 w-11 place-items-center rounded-xl border border-white/10 text-white/60 transition hover:border-accent hover:text-white">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" stroke-width="1.8"/><path stroke-linecap="round" stroke-width="1.8" d="M12 9.5V13l2.5 1.5M9.5 2.5h5M19.5 5.5l1.5 1.5"/></svg>
+                  </button>
+                  <label id="rp-len-custom-wrap" class="hidden items-center gap-1.5 rounded-xl border border-accent/40 bg-white/5 px-2 h-11">
+                    <input type="number" id="rp-len-custom" min="<?= (int)REPLASH_CLIP_MIN_SEC ?>" max="<?= (int)REPLASH_CLIP_MAX_SEC ?>" step="1" value="25" inputmode="numeric" oninput="applyCustomLength()" class="h-8 w-14 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-sm font-bold text-accent focus:border-accent focus:outline-none">
+                    <span class="text-xs text-white/60"><?= e(__('find.watch.clip.sec_short', 'sn')) ?></span>
+                  </label>
                 </div>
                 <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/50"></span>
               </div>
@@ -585,7 +593,7 @@ require_once __DIR__ . '/includes/header.php';
                   </div>
                   <div class="flex items-center gap-1.5">
                     <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
-                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:20" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:15" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
                   </div>
                   <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
                     <?= e(__('find.watch.clip.label')) ?>
@@ -634,6 +642,10 @@ require_once __DIR__ . '/includes/header.php';
                   </svg>
                   <?= e(__('find.tools.full_match')) ?>
                 </a>
+                <!-- Tam maç büyük dosyadır: mobil veriyi tüketmemesi için uyarı -->
+                <p id="rp-full-hint" class="w-full text-[11px] leading-relaxed text-white/35">
+                  <?= e(__('find.tools.full_match_wifi')) ?>
+                </p>
 
                 <!-- Maç linkini paylaş: oyuncular birbirine hızlıca iletir -->
                 <button
@@ -909,7 +921,7 @@ require_once __DIR__ . '/includes/header.php';
       </circle>
       </svg>
       </span>
-      <span class="text-sm text-white/65">Facility</span>
+      <span class="text-sm text-white/65"><?= e(__('find.explainer.facility')) ?></span>
       </div>
       <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
       <span class="text-accent">
@@ -924,7 +936,7 @@ require_once __DIR__ . '/includes/header.php';
       </line>
       </svg>
       </span>
-      <span class="text-sm text-white/65">Date</span>
+      <span class="text-sm text-white/65"><?= e(__('find.explainer.date')) ?></span>
       </div>
       <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
       <span class="text-accent">
@@ -935,7 +947,7 @@ require_once __DIR__ . '/includes/header.php';
       </polyline>
       </svg>
       </span>
-      <span class="text-sm text-white/65">Time slot</span>
+      <span class="text-sm text-white/65"><?= e(__('find.explainer.timeSlot')) ?></span>
       </div>
       <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
       <span class="text-accent">
@@ -946,7 +958,7 @@ require_once __DIR__ . '/includes/header.php';
       </path>
       </svg>
       </span>
-      <span class="text-sm text-white/65">UNLOCKABLE status</span>
+      <span class="text-sm text-white/65"><?= e(__('find.explainer.unlocked')) ?></span>
       </div>
       </div>
       <div class="mt-6 flex items-center gap-2 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3">
@@ -994,7 +1006,7 @@ var I18N = {
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
-var CLIP_MIN = 15, CLIP_MAX = 40; // Platform Brief v3.4: klip 15–40 sn
+var CLIP_MIN = <?= (int)REPLASH_CLIP_MIN_SEC ?>, CLIP_MAX = <?= (int)REPLASH_CLIP_MAX_SEC ?>; // includes/sales.php
 
 var cameraList = <?= json_encode($cameraList) ?>;
 var activeCameraIndex = 0;
@@ -1201,7 +1213,7 @@ function clipOfferBlob(clip, blob) {
   clipBlobUrl = URL.createObjectURL(blob);
   var ext = blob.type.indexOf('mp4') !== -1 ? 'mp4' : 'webm';
   clip.blob = blob;
-  clip.filename = 'replash_klip_' + formatTime(clip.start).replace(':', '') + '_' + clip.duration + 's.' + ext;
+  clip.filename = 'replash_clip_' + formatTime(clip.start).replace(':', '') + '_' + clip.duration + 's.' + ext;
   var dl = document.getElementById('modal-download-btn');
   if (dl) { dl.href = clipBlobUrl; dl.setAttribute('download', clip.filename); dl.classList.remove('pointer-events-none', 'opacity-50'); }
   var lbl = document.getElementById('modal-download-label');
@@ -1211,7 +1223,7 @@ function clipOfferBlob(clip, blob) {
   clipSetStatus('');
   return true;
 }
-// Seçilen aralığı baştan sona oynatıp kaydeder (15–40 sn, gerçek zamanlı)
+// Seçilen aralığı baştan sona oynatıp kaydeder (15–45 sn, gerçek zamanlı)
 async function cutClipInBrowser(clip) {
   clipBusy = true;
   clipSetBusyUI(true, 0);
@@ -1294,16 +1306,51 @@ function setClipEndFromPlayer() {
 
 // "Bu anı kes": oyuncu golü gördükten sonra basar; o anın hemen öncesi kesilir.
 // Tepki payı: basılan anın 3 saniye sonrasına kadar alınır.
-var clipLength = 20, CLIP_REACTION = 3;
-function setClipLength(sec) {
-  clipLength = sec;
+var clipLength = 15, CLIP_REACTION = 3;
+function setClipLength(sec, fromCustom) {
+  clipLength = Math.min(Math.max(parseInt(sec, 10) || CLIP_MIN, CLIP_MIN), CLIP_MAX);
+  var hazir = false;
   document.querySelectorAll('.rp-len').forEach(function (b) {
-    var on = parseInt(b.getAttribute('data-cliplen'), 10) === sec;
+    var on = !fromCustom && parseInt(b.getAttribute('data-cliplen'), 10) === clipLength;
+    if (on) hazir = true;
     b.classList.toggle('border-accent', on);
     b.classList.toggle('bg-accent', on);
     b.classList.toggle('text-ink-900', on);
     b.classList.toggle('text-white/60', !on);
   });
+  // Kendi süreni seç düğmesi: hazır seçeneklerden biri değilse vurgulu kalır
+  var cb = document.getElementById('rp-len-custom-btn');
+  if (cb) {
+    var ozel = !hazir;
+    cb.classList.toggle('border-accent', ozel);
+    cb.classList.toggle('text-accent', ozel);
+    cb.classList.toggle('text-white/60', !ozel);
+  }
+  if (!fromCustom) {
+    var inp = document.getElementById('rp-len-custom');
+    if (inp) inp.value = clipLength;
+  }
+}
+// Kronometre düğmesi: yanındaki saniye kutusunu açar/kapatır
+function toggleCustomLength() {
+  var wrap = document.getElementById('rp-len-custom-wrap');
+  var btn = document.getElementById('rp-len-custom-btn');
+  if (!wrap) return;
+  var acik = !wrap.classList.contains('hidden');
+  wrap.classList.toggle('hidden', acik);
+  wrap.classList.toggle('flex', !acik);
+  if (btn) btn.setAttribute('aria-expanded', acik ? 'false' : 'true');
+  if (!acik) {
+    var inp = document.getElementById('rp-len-custom');
+    if (inp) { inp.focus(); inp.select(); applyCustomLength(); }
+  }
+}
+function applyCustomLength() {
+  var inp = document.getElementById('rp-len-custom');
+  if (!inp) return;
+  var sec = parseInt(inp.value, 10);
+  if (!sec) return;                       // kutu boşken seçimi bozma
+  setClipLength(sec, true);
 }
 // Tam ekran: oynatıcı + klip düğmeleri birlikte. iPhone Safari kutuları tam ekran yapamadığı için
 // (sadece videoyu tam ekrana alır, düğmeler kaybolur) desteklenmiyorsa ekranı kaplayan katman kullanılır.
@@ -1571,7 +1618,7 @@ function openClipModal(clip) {
   var matchId = <?= json_encode($match['id'] ?? '') ?>;
   var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
   var camId = clip.cameraId || ((cameraList[activeCameraIndex] && cameraList[activeCameraIndex].id) ? cameraList[activeCameraIndex].id : '');
-  var filename = "replash_klip_" + formatTime(clip.start).replace(':', '') + "_" + clip.duration + "s.mp4";
+  var filename = "replash_clip_" + formatTime(clip.start).replace(':', '') + "_" + clip.duration + "s.mp4";
   var dlUrl = "<?= base_url('api/video.php') ?>?id=" + encodeURIComponent(matchId) + "&code=" + encodeURIComponent(accessCode) + (camId ? "&camera_id=" + encodeURIComponent(camId) : "") + "&start_offset=" + clip.start + "&duration=" + clip.duration + "&download=1&filename=" + encodeURIComponent(filename);
 
   if (dlBtn) {
@@ -1604,7 +1651,7 @@ async function getClipVideoFile() {
   var matchId = <?= json_encode($match['id'] ?? '') ?>;
   var accessCode = <?= json_encode($match['access_code'] ?? '') ?>;
   var camId = currentClip.cameraId || ((cameraList[activeCameraIndex] && cameraList[activeCameraIndex].id) ? cameraList[activeCameraIndex].id : '');
-  var filename = "replash_klip_" + formatTime(currentClip.start).replace(':', '') + "_" + currentClip.duration + "s.mp4";
+  var filename = "replash_clip_" + formatTime(currentClip.start).replace(':', '') + "_" + currentClip.duration + "s.mp4";
   var dlUrl = "<?= base_url('api/video.php') ?>?id=" + encodeURIComponent(matchId) + "&code=" + encodeURIComponent(accessCode) + (camId ? "&camera_id=" + encodeURIComponent(camId) : "") + "&start_offset=" + currentClip.start + "&duration=" + currentClip.duration + "&download=1&filename=" + encodeURIComponent(filename);
 
   try {
@@ -1635,7 +1682,7 @@ function clipDownloadNow() {
   if (!dl || !dl.href || dl.getAttribute('href') === '#') return;
   var a = document.createElement('a');
   a.href = dl.href;
-  a.download = dl.getAttribute('download') || 'replash_klip.mp4';
+  a.download = dl.getAttribute('download') || 'replash_clip.mp4';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

@@ -14,6 +14,10 @@
 
 const REPLASH_UNDO_WINDOW_MIN = 10;
 
+// Oyuncunun kesebileceği klip süresi (saniye). Hazır seçenekler find.php'de.
+const REPLASH_CLIP_MIN_SEC = 15;
+const REPLASH_CLIP_MAX_SEC = 45;
+
 /**
  * Mark a match as opened (first watch or download). The first open makes the sale final.
  * Session-deduplicated so page reloads do not inflate views.

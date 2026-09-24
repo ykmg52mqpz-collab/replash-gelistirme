@@ -71,7 +71,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'İzle, Kes, Paylaş',
-                    'desc' => 'Oyuncular maçlarını izler, 15–40 saniyelik highlight\'lar keser, indirir ve sosyal medyada paylaşır. Uygulama gerekmez. Hesap gerekmez.'
+                    'desc' => 'Oyuncular maçlarını izler, 15–45 saniyelik highlight\'lar keser, indirir ve sosyal medyada paylaşır. Uygulama gerekmez. Hesap gerekmez.'
                 ]
             ]
         ],
@@ -134,7 +134,7 @@ return [
                 ],
                 '2' => [
                     'title' => 'En İyi Anları Kesin',
-                    'desc' => 'Replash içinde 15–40 saniyelik highlight\'lar kesin. Gol, rali, kutlama. Telefona anında indirin.'
+                    'desc' => 'Replash içinde 15–45 saniyelik highlight\'lar kesin. Gol, rali, kutlama. Telefona anında indirin.'
                 ],
                 '3' => [
                     'title' => 'Sosyal Medyada Paylaşın',
@@ -177,11 +177,11 @@ return [
                 ],
                 '7' => [
                     'q' => 'Oyuncular klipleri sosyal medyada gerçekten paylaşabilir mi?',
-                    'a' => 'Evet! Sistemin kalbi budur. Oyuncular 15–40 saniyelik pozisyonları seçer, telefonlarına MP4 olarak indirir ve Instagram, TikTok ya da WhatsApp gruplarında doğrudan paylaşır.'
+                    'a' => 'Evet! Sistemin kalbi budur. Oyuncular 15–45 saniyelik pozisyonları seçer, telefonlarına MP4 olarak indirir ve Instagram, TikTok ya da WhatsApp gruplarında doğrudan paylaşır.'
                 ],
                 '8' => [
                     'q' => 'Oyuncular gerçekten klipleri sosyal medyada paylaşabilir mi?',
-                    'a' => 'Evet. Bu çekirdek deneyim. Replash platformun içinde dahili bir clip cutter\'a sahip. Oyuncular maçtan 15–40 saniyelik bir an seçer, klibi telefonlarına indirir ve kendi hesapları altında sosyal medya platformlarında paylaşır. Replash klibin yapıldığı yerdir. Paylaşım oyuncunun kendi kanallarında gerçekleşir.'
+                    'a' => 'Evet. Bu çekirdek deneyim. Replash platformun içinde dahili bir clip cutter\'a sahip. Oyuncular maçtan 15–45 saniyelik bir an seçer, klibi telefonlarına indirir ve kendi hesapları altında sosyal medya platformlarında paylaşır. Replash klibin yapıldığı yerdir. Paylaşım oyuncunun kendi kanallarında gerçekleşir.'
                 ],
                 '9' => [
                     'q' => 'Güçlü bir Wi-Fi bağlantımız yoksa ne olur?',
@@ -214,7 +214,7 @@ return [
             '1' => ['label' => 'Adım 1', 'title' => 'Maç oynanır, Replash kaydeder', 'desc' => 'Sahaya kurulan sabit kameralar maçın tamamını baştan sona kaydeder. Tuş yok, başlat/durdur yok, personel hiçbir şey yapmaz.'],
             '2' => ['label' => 'Adım 2', 'title' => 'Resepsiyon kilidi açar, kodu verir', 'desc' => 'Takım videoyu istediğinde personel ödemeyi alır ve panelden tek dokunuşla kilidi açar. Ekranda 4 haneli maç kodu çıkar; tüm takım için tek kod. Satış maçtan önce de yapılabilir, video hazır olunca kod kendiliğinden çalışır.'],
             '3' => ['label' => 'Adım 3', 'title' => 'Oyuncu kodu girer', 'desc' => 'Oyuncular replash.it’ye girer, 4 haneli kodu yazar ve maç açılır. Hesap yok, uygulama yok, herkese açık liste yok.'],
-            '4' => ['label' => 'Adım 4', 'title' => 'İzle, kes, paylaş', 'desc' => 'Oyuncular maçın tamamını izler, 15–40 saniyelik anları keser, telefonlarına kaydeder ve kendi hesaplarından paylaşır.'],
+            '4' => ['label' => 'Adım 4', 'title' => 'İzle, kes, paylaş', 'desc' => 'Oyuncular maçın tamamını izler, 15–45 saniyelik anları keser, telefonlarına kaydeder ve kendi hesaplarından paylaşır.'],
         ],
         'hero' => [
             'eyebrow' => 'Nasıl Çalışır',
@@ -270,7 +270,7 @@ return [
             '6' => [
                 'label' => 'Adım 6',
                 'title' => 'İzle, Kes, Paylaş',
-                'desc' => 'Oyuncular maçın tamamını izler, dahili clip cutter ile 15–40 saniyelik highlight\'lar keser, indirir ve sosyal medyada kendi kimlikleriyle paylaşır.',
+                'desc' => 'Oyuncular maçın tamamını izler, dahili clip cutter ile 15–45 saniyelik highlight\'lar keser, indirir ve sosyal medyada kendi kimlikleriyle paylaşır.',
                 'marco' => [
                     'time' => '20:15',
                     'example' => 'Marco 17. dakikadaki golü izler, 20 saniyelik bir highlight keser, indirir ve sosyal medyasında paylaşır. Arkadaşları görür. Döngü tekrar başlar.'
@@ -456,6 +456,7 @@ return [
             'btn_stop' => 'Kaydı Durdur',
             'recording_active' => 'KAYIT ALINIYOR',
             'full_match' => 'Tüm Maç (Full)',
+            'full_match_wifi' => 'Tüm maç büyük bir dosyadır (birkaç yüz MB). Mobil veriyi tüketmemek için Wi-Fi ile indirmeni öneririz.',
             'share_clip' => 'Klibi paylaş',
             'share_link' => 'Maç linkini paylaş',
             'share_link_text' => 'Maçımızı Replash’te izle',
@@ -541,6 +542,10 @@ return [
         'explainer' => [
             'title' => 'Erişim nasıl çalışır',
             'desc' => 'Video yalnızca tesisin takıma verdiği maç koduyla açılır. Herkese açık liste yok, tahmin edilebilir bağlantı yok, arama motorlarında video yok. Maçın sadece senin.',
+            'facility' => 'Tesis',
+            'date' => 'Tarih',
+            'timeSlot' => 'Saat aralığı',
+            'unlocked' => 'Kilidi açılmış maç',
             'noShare' => 'Videolar arama motorlarında asla görünmez. Bağlantılar herkese açık değildir.'
         ],
         'watch' => [
@@ -576,10 +581,11 @@ return [
                     'quick' => 'Bu anı kes',
                     'length' => 'Klip süresi',
                     'quick_hint' => 'Golden hemen sonra bas: seçtiğin süre kadar geriye dönük kesilir.',
+                    'custom' => 'Kendi süreni seç',
                     'sec_short' => 'sn',
                     'advanced' => 'Gelişmiş: saniye seç',
                 'label' => 'Klip kes',
-                'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, gerekirse ±1 sn ile ayarla, sonra Klip kes’e bas.',
+                'hint' => 'Zaman çizelgesinde sürükleyerek 15–45 sn seç, gerekirse ±1 sn ile ayarla, sonra Klip kes’e bas.',
                 'download' => 'Klibi indir',
                 'range' => '15 ile 40 saniye arasında seç.'
             ],
@@ -1207,7 +1213,7 @@ return [
                 '3' => [
                     'num' => '03',
                     'title' => 'Klip Kes ve Paylaş, Sıfır Engel',
-                    'desc' => 'Kaydı açın. 15–40 saniye seçin. İndirin. Paylaşın. Hesap yok, uygulama yok, profil yok.'
+                    'desc' => 'Kaydı açın. 15–45 saniye seçin. İndirin. Paylaşın. Hesap yok, uygulama yok, profil yok.'
                 ],
                 '4' => [
                     'num' => '04',
@@ -1227,7 +1233,7 @@ return [
                 ],
                 '3' => [
                     'title' => 'Kes ve Paylaş, Sürtünmesiz',
-                    'desc' => 'Kaydı aç. 15–40 saniye seç. İndir. Paylaş. Hesap yok, uygulama yok, profil yok.'
+                    'desc' => 'Kaydı aç. 15–45 saniye seç. İndir. Paylaş. Hesap yok, uygulama yok, profil yok.'
                 ],
                 '4' => [
                     'title' => 'Arkadaşların gördüğünde',
@@ -1254,7 +1260,7 @@ return [
         'clipping' => [
             'eyebrow' => 'En İyi Anları Kesin',
             'title' => 'Bir gol kes. Bir rali sakla. Saniyeler içinde paylaş.',
-            'desc' => 'Replash\'in dahili bir clip cutter\'ı var. Maçınızı tarayın, 15–40 saniyelik bir an seçin ve doğrudan telefonunuza indirin. 17. dakikadaki gol. Son setin galibiyet vuruşu. Kutlama. İstediğiniz saniyeleri seçin, kesin ve telefonunuzun rulosunda olsun.',
+            'desc' => 'Replash\'in dahili bir clip cutter\'ı var. Maçınızı tarayın, 15–45 saniyelik bir an seçin ve doğrudan telefonunuza indirin. 17. dakikadaki gol. Son setin galibiyet vuruşu. Kutlama. İstediğiniz saniyeleri seçin, kesin ve telefonunuzun rulosunda olsun.',
             'features' => [
                 '1' => [
                     'label' => 'Kaydı aç',
@@ -1262,7 +1268,7 @@ return [
                 ],
                 '2' => [
                     'label' => 'Anı seç',
-                    'desc' => 'Zaman çizelgesini tara, 15–40 saniye seç.'
+                    'desc' => 'Zaman çizelgesini tara, 15–45 saniye seç.'
                 ],
                 '3' => [
                     'label' => 'İndir',
