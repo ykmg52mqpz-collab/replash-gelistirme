@@ -31,7 +31,7 @@ return [
             'title' => 'Play. Record. Relive.',
             'subtitle' => 'Dai ai giocatori una partita da rivivere. Un nuovo ricavo per il tuo centro. Replash registra le partite in automatico e le rende pronte da guardare, ritagliare e condividere.',
             'cta' => 'Richiedi una demo',
-            'ctaSecondary' => 'Scopri come funziona'
+            'ctaSecondary' => 'Per i centri'
         ],
         'intro' => [
             'eyebrow' => 'Per i Gestori di Centri Sportivi',
@@ -793,6 +793,13 @@ return [
                 'padel' => 'Padel',
                 'tennis' => 'Tennis',
                 'football' => 'Calcio'
+            ],
+            'combined' => [
+                'eyebrow' => 'Se offri più di uno sport',
+                'total' => 'Quota mensile totale del centro',
+                'videos' => 'video / mese',
+                'tier' => 'Scaglione:',
+                'note' => 'Lo scaglione si calcola sul totale mensile del centro: offrire più sport insieme fa salire lo scaglione.'
             ],
             'inputs' => [
                 'courts' => 'Numero di campi',

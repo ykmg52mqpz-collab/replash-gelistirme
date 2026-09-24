@@ -31,7 +31,7 @@ return [
             'title' => 'Play. Record. Relive.',
             'subtitle' => 'Dale a los jugadores un partido para revivir. Un nuevo ingreso para tu centro. Replash graba los partidos automáticamente y los deja listos para ver, recortar y compartir.',
             'cta' => 'Solicita una demo',
-            'ctaSecondary' => 'Cómo funciona'
+            'ctaSecondary' => 'Para instalaciones'
         ],
         'intro' => [
             'eyebrow' => 'Para Propietarios de Centros',
@@ -793,6 +793,13 @@ return [
                 'padel' => 'Pádel',
                 'tennis' => 'Tenis',
                 'football' => 'Fútbol'
+            ],
+            'combined' => [
+                'eyebrow' => 'Si ofreces más de un deporte',
+                'total' => 'Cuota mensual total del centro',
+                'videos' => 'vídeos / mes',
+                'tier' => 'Tramo:',
+                'note' => 'El tramo se calcula sobre el total mensual de la instalación, así que ofrecer varios deportes juntos sube el tramo.'
             ],
             'inputs' => [
                 'courts' => 'Número de pistas',

@@ -22,7 +22,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <main class="relative bg-ink-900">
 
-  <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
+  <section class="relative overflow-hidden bg-ink-900 pt-28 pb-8 md:pt-32 md:pb-10">
   <div class="absolute inset-0" aria-hidden="true">
   <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
@@ -60,7 +60,7 @@ require_once __DIR__ . '/includes/header.php';
         'days'   => ['label' => __('forFacilities.roi.inputs.days'),   'suffix' => __('forFacilities.roi.inputs.daysSuffix'),   'min' => 'days_min',   'max' => 'days_max',   'def' => 'days_default'],
     ];
   ?>
-  <section id="calculator" class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
+  <section id="calculator" class="border-t border-white/5 bg-ink-900 relative overflow-hidden pt-10 pb-20 md:pt-12 md:pb-28">
     <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
       <div class="absolute -inset-y-[30%] inset-x-0 will-change-transform" data-parallax="16">
         <img loading="lazy" decoding="async" src="<?= asset('images/gen_facility_owner_pov.webp') ?>" alt="" class="h-full w-full object-cover opacity-30" style="filter:brightness(1.1)" />
@@ -127,6 +127,25 @@ require_once __DIR__ . '/includes/header.php';
             <span class="text-base font-medium text-white/55"><?= e(__('forFacilities.roi.results.yearlySuffix')) ?></span>
           </div>
           <div class="mt-2 text-xs text-white/45"><?= e(__('forFacilities.roi.results.yearlyNote')) ?></div>
+        </div>
+
+        <!-- Birden fazla spor: her sporun kendi seçimi saklanır, burada toplanır -->
+        <div id="roi-combined" class="mx-auto mt-6 hidden max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-5">
+          <div class="text-[10px] font-semibold uppercase tracking-widest text-white/45"><?= e(__('forFacilities.roi.combined.eyebrow')) ?></div>
+          <div id="roi-combined-lines" class="mt-3 space-y-1.5 text-sm text-white/65"></div>
+          <div class="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-white/10 pt-4">
+            <div>
+              <div class="text-[10px] font-semibold uppercase tracking-widest text-accent/80"><?= e(__('forFacilities.roi.combined.total')) ?></div>
+              <div class="mt-1 font-display text-2xl font-bold text-white md:text-3xl"><span id="roi-combined-monthly">&nbsp;</span>
+                <span class="text-sm font-medium text-white/55"><?= e(__('forFacilities.roi.results.shareHint')) ?></span>
+              </div>
+            </div>
+            <div class="text-right text-xs text-white/45">
+              <div><span id="roi-combined-videos">&nbsp;</span> <?= e(__('forFacilities.roi.combined.videos')) ?></div>
+              <div class="mt-0.5"><?= e(__('forFacilities.roi.combined.tier')) ?> <span id="roi-combined-tier" class="font-semibold text-accent">&nbsp;</span></div>
+            </div>
+          </div>
+          <p class="mt-3 text-[11px] leading-relaxed text-white/35"><?= e(__('forFacilities.roi.combined.note')) ?></p>
         </div>
 
         <p class="mx-auto mt-6 max-w-2xl text-center text-[11px] leading-relaxed text-white/35"><?= e($roiText('disclaimer_note', 'forFacilities.roi.disclaimer')) ?></p>
@@ -341,6 +360,7 @@ require_once __DIR__ . '/includes/header.php';
 </main>
 
 <script>
+  const ROI_LOCALE = <?= json_encode(['tr'=>'tr-TR','en'=>'en-GB','it'=>'it-IT','es'=>'es-ES'][$current_lang] ?? 'it-IT') ?>;
   const ROI_CONFIG = <?= json_encode($roiConfig, JSON_UNESCAPED_UNICODE) ?>;
   const SHARE_LABEL = <?= json_encode(__('forFacilities.roi.results.share'), JSON_UNESCAPED_UNICODE) ?>;
   let currentSportKey = '<?= e($defaultSportKey) ?>';
@@ -371,23 +391,35 @@ require_once __DIR__ . '/includes/header.php';
     return (ROI_CONFIG.sports && ROI_CONFIG.sports[currentSportKey]) ? ROI_CONFIG.sports[currentSportKey] : {};
   }
 
+  // Her sporun seçimi ayrı saklanır; sporlar arasında geçince sıfırlanmaz.
+  var roiState = {};
+  function roiSave() {
+    roiState[currentSportKey] = {
+      courts: parseInt(sliderCourts.value, 10),
+      videos: parseInt(sliderVideos.value, 10),
+      days: parseInt(sliderDays.value, 10),
+      touched: true
+    };
+  }
+
   function applySportSliders(sp) {
     if (!sp) return;
+    var kayit = roiState[currentSportKey];
     sliderCourts.min = sp.courts_min || 1;
     sliderCourts.max = sp.courts_max || 12;
-    sliderCourts.value = sp.courts_default || 4;
+    sliderCourts.value = kayit ? kayit.courts : (sp.courts_default || 4);
     minCourts.textContent = sliderCourts.min;
     maxCourts.textContent = sliderCourts.max;
 
     sliderVideos.min = sp.videos_min || 1;
     sliderVideos.max = sp.videos_max || 15;
-    sliderVideos.value = sp.videos_default || 4;
+    sliderVideos.value = kayit ? kayit.videos : (sp.videos_default || 4);
     minVideos.textContent = sliderVideos.min;
     maxVideos.textContent = sliderVideos.max;
 
     sliderDays.min = sp.days_min || 20;
     sliderDays.max = sp.days_max || 30;
-    sliderDays.value = sp.days_default || 26;
+    sliderDays.value = kayit ? kayit.days : (sp.days_default || 26);
     minDays.textContent = sliderDays.min;
     maxDays.textContent = sliderDays.max;
 
@@ -418,9 +450,50 @@ require_once __DIR__ . '/includes/header.php';
       labelMonthlyShare.textContent = SHARE_LABEL.replace('{pct}', tier.facility_pct);
     }
 
-    resMonthlyVideos.textContent = totalVideos.toLocaleString('tr-TR');
-    resMonthlyShare.textContent = symbol + monthlyTotal.toLocaleString('tr-TR');
-    resYearlyShare.textContent = symbol + yearlyTotal.toLocaleString('tr-TR');
+    resMonthlyVideos.textContent = totalVideos.toLocaleString(ROI_LOCALE);
+    resMonthlyShare.textContent = symbol + monthlyTotal.toLocaleString(ROI_LOCALE);
+    resYearlyShare.textContent = symbol + yearlyTotal.toLocaleString(ROI_LOCALE);
+
+    roiSave();
+    roiCombined();
+  }
+
+  // Birden fazla spor seçilmişse: toplam video, toplam ciro ve tesisin toplam payı.
+  // Kademe tesisin AY TOPLAMINA göre belirlenir (Billing Guide), bu yüzden ayrı ayrı değil birlikte hesaplanır.
+  function roiCombined() {
+    var kutu = document.getElementById('roi-combined');
+    if (!kutu) return;
+    var sporlar = Object.keys(roiState).filter(function (k) { return roiState[k] && roiState[k].touched; });
+    if (sporlar.length < 2) { kutu.classList.add('hidden'); return; }
+
+    var toplamVideo = 0, brut = 0, satirlar = [], simge = '€';
+    sporlar.forEach(function (k) {
+      var sp = (ROI_CONFIG.sports && ROI_CONFIG.sports[k]) ? ROI_CONFIG.sports[k] : {};
+      var d = roiState[k];
+      var adet = d.courts * d.videos * d.days;
+      var tutar = adet * parseFloat(sp.price || 0);
+      simge = sp.currency_symbol || simge;
+      toplamVideo += adet;
+      brut += tutar;
+      var dugme = document.querySelector('.roi-sport-btn[data-sport="' + k + '"]');
+      var ad = dugme ? dugme.textContent.trim() : (sp.name || k);   // sekme etiketi sayfanın dilinde
+      satirlar.push({ ad: ad, courts: d.courts, videos: d.videos, adet: adet });
+    });
+
+    var kademe = (ROI_CONFIG.share_tiers || []).filter(function (t) { return toplamVideo >= t.min; }).pop() || { facility_pct: 20 };
+    var pay = Math.round(brut * kademe.facility_pct / 100);
+
+    document.getElementById('roi-combined-lines').innerHTML = satirlar.map(function (r) {
+      return '<div class="flex justify-between gap-4"><span>' + r.ad +
+             ' <span class="text-white/35">· ' + r.courts + ' × ' + r.videos + '</span></span>' +
+             '<span class="font-mono text-white/50">' + r.adet.toLocaleString(ROI_LOCALE) + '</span></div>';
+    }).join('');
+    document.getElementById('roi-combined-videos').textContent = toplamVideo.toLocaleString(ROI_LOCALE);
+    // Yüzde biçimi: Türkçe "%30", diğer dillerde "30%"
+    document.getElementById('roi-combined-tier').textContent =
+      (ROI_LOCALE.indexOf('tr') === 0) ? ('%' + kademe.facility_pct) : (kademe.facility_pct + '%');
+    document.getElementById('roi-combined-monthly').textContent = simge + pay.toLocaleString(ROI_LOCALE);
+    kutu.classList.remove('hidden');
   }
 
   sportButtons.forEach(btn => {

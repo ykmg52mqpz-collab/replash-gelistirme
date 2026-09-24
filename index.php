@@ -51,7 +51,7 @@ require_once __DIR__ . '/includes/header.php';
   </path>
   </svg>
   </a>
-  <a class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-8 py-3.5 text-base font-medium text-white/70 backdrop-blur transition-colors active:scale-[0.98] duration-200 hover:border-white/20 hover:bg-white/[0.08] hover:text-white" href="<?= base_url('how-it-works.php') ?>">
+  <a class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-8 py-3.5 text-base font-medium text-white/70 backdrop-blur transition-colors active:scale-[0.98] duration-200 hover:border-white/20 hover:bg-white/[0.08] hover:text-white" href="<?= base_url('for-facilities.php') ?>">
   <?= e(__('home.hero.ctaSecondary')) ?>
   </a>
   </div>

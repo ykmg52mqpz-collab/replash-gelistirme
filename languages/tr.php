@@ -31,7 +31,7 @@ return [
             'title' => 'Play. Record. Relive.',
             'subtitle' => 'Oyunculara yeniden yaşanacak bir maç ver. Tesisine yeni bir gelir. Replash maçları otomatik kaydeder; izlemeye, kesmeye ve paylaşmaya hazır hale getirir.',
             'cta' => 'Demo iste',
-            'ctaSecondary' => 'Nasıl çalışır'
+            'ctaSecondary' => 'Tesisler için'
         ],
         'intro' => [
             'eyebrow' => 'Saha Sahipleri İçin',
@@ -793,6 +793,13 @@ return [
                 'padel' => 'Padel',
                 'tennis' => 'Tenis',
                 'football' => 'Futbol'
+            ],
+            'combined' => [
+                'eyebrow' => 'Birden fazla spor sunuyorsan',
+                'total' => 'Aylık toplam tesis payı',
+                'videos' => 'video / ay',
+                'tier' => 'Kademe:',
+                'note' => 'Kademe, tesisin bir aydaki toplam satışına göre belirlenir; bu yüzden sporları birlikte sunmak kademeyi yukarı taşır.'
             ],
             'inputs' => [
                 'courts' => 'Saha sayısı',

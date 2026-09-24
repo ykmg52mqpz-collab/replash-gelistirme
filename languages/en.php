@@ -31,7 +31,7 @@ return [
             'title' => 'Play. Record. Relive.',
             'subtitle' => 'Give players a match to relive. A new revenue stream for your venue. Replash records matches automatically and makes them ready to watch, clip, and share.',
             'cta' => 'Book a demo',
-            'ctaSecondary' => 'See how it works'
+            'ctaSecondary' => 'For facilities'
         ],
         'intro' => [
             'eyebrow' => 'For Facility Owners',
@@ -793,6 +793,13 @@ return [
                 'padel' => 'Padel',
                 'tennis' => 'Tennis',
                 'football' => 'Football'
+            ],
+            'combined' => [
+                'eyebrow' => 'If you offer more than one sport',
+                'total' => 'Total monthly facility share',
+                'videos' => 'videos / month',
+                'tier' => 'Tier:',
+                'note' => 'The tier is set by the facility total for the month, so offering the sports together pushes the tier up.'
             ],
             'inputs' => [
                 'courts' => 'Number of courts',
