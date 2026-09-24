@@ -1080,6 +1080,7 @@ return [
                 ]
             ]
         ],
+        'linkedin' => 'Open the LinkedIn profile',
         'cta' => [
             'title' => 'Want to bring Replash to your facility?',
             'button' => 'Contact Us'

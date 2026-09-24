@@ -10,6 +10,11 @@ require_once __DIR__ . '/billing.php';
 require_once __DIR__ . '/sales.php';
 require_once __DIR__ . '/admin_i18n.php';
 
+// Hakkımızda sayfasındaki LinkedIn bağlantısı. Boş bırakılırsa düğme hiç çizilmez.
+if (!defined('REPLASH_LINKEDIN_URL')) {
+    define('REPLASH_LINKEDIN_URL', 'https://www.linkedin.com/in/%C3%B6mer-tan-sager-0021692a9/');
+}
+
 // Oturum çerezi: JavaScript okuyamaz, HTTPS'te sadece şifreli bağlantıyla gider, başka sitelerden gelen
 // form isteklerinde gönderilmez (config/config.php sunucuda değişmediği için burada yeniden yazılır)
 if (session_status() === PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli' && !headers_sent()) {

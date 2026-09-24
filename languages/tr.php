@@ -1080,6 +1080,7 @@ return [
                 ]
             ]
         ],
+        'linkedin' => 'LinkedIn profilini aç',
         'cta' => [
             'title' => 'Replash\'i sahanıza getirmek ister misiniz?',
             'button' => 'İletişime Geçin'

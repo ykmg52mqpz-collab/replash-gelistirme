@@ -1080,6 +1080,7 @@ return [
                 ]
             ]
         ],
+        'linkedin' => 'Abrir el perfil de LinkedIn',
         'cta' => [
             'title' => '¿Quieres traer Replash a tu centro?',
             'button' => 'Contáctanos'
