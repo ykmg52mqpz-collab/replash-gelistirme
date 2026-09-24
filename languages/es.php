@@ -576,6 +576,7 @@ return [
                     'quick' => 'Corta este momento',
                     'length' => 'Duración del clip',
                     'quick_hint' => 'Pulsa justo después del gol: se cortan los segundos anteriores que has elegido.',
+                    'sec_short' => 's',
                     'advanced' => 'Avanzado: elige segundos',
                 'label' => 'Corta un momento',
                 'hint' => 'Arrastra en la línea de tiempo para seleccionar 15–40s, ajusta con ±1s si hace falta y pulsa Corta un momento.',

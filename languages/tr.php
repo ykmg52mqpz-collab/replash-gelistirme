@@ -576,6 +576,7 @@ return [
                     'quick' => 'Bu anı kes',
                     'length' => 'Klip süresi',
                     'quick_hint' => 'Golden hemen sonra bas: seçtiğin süre kadar geriye dönük kesilir.',
+                    'sec_short' => 'sn',
                     'advanced' => 'Gelişmiş: saniye seç',
                 'label' => 'Klip kes',
                 'hint' => 'Zaman çizelgesinde sürükleyerek 15–40 sn seç, gerekirse ±1 sn ile ayarla, sonra Klip kes’e bas.',

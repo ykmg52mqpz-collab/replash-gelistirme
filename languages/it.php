@@ -576,6 +576,7 @@ return [
                     'quick' => 'Taglia questo momento',
                     'length' => 'Durata clip',
                     'quick_hint' => 'Premi subito dopo il gol: vengono tagliati i secondi precedenti che hai scelto.',
+                    'sec_short' => 's',
                     'advanced' => 'Avanzate: scegli i secondi',
                 'label' => 'Taglia un momento',
                 'hint' => 'Trascina sulla timeline per selezionare 15–40s, regola con ±1s se serve, poi premi Taglia un momento.',

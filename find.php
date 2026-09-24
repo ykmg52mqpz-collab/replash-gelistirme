@@ -569,7 +569,7 @@ require_once __DIR__ . '/includes/header.php';
                 </button>
                 <div class="flex items-center gap-1.5" role="group" aria-label="<?= e(__('find.watch.clip.length')) ?>">
                   <?php foreach ([15, 20, 30, 40] as $len): ?>
-                    <button type="button" data-cliplen="<?= $len ?>" onclick="setClipLength(<?= $len ?>)" class="rp-len h-11 min-w-[52px] rounded-xl border border-white/10 px-3 text-sm font-semibold text-white/60 transition hover:border-accent hover:text-white"><?= $len ?> sn</button>
+                    <button type="button" data-cliplen="<?= $len ?>" onclick="setClipLength(<?= $len ?>)" class="rp-len h-11 min-w-[52px] rounded-xl border border-white/10 px-3 text-sm font-semibold text-white/60 transition hover:border-accent hover:text-white"><?= $len ?> <?= e(__('find.watch.clip.sec_short', 'sn')) ?></button>
                   <?php endforeach; ?>
                 </div>
                 <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/50"></span>
@@ -585,7 +585,7 @@ require_once __DIR__ . '/includes/header.php';
                   </div>
                   <div class="flex items-center gap-1.5">
                     <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
-                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:30" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:20" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
                   </div>
                   <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
                     <?= e(__('find.watch.clip.label')) ?>
