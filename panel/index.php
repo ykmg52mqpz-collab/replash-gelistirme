@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/init.php';
+replash_shell_languages(['it', 'en']);   // tesis paneli: İtalyanca / İngilizce
 
 $pageTitle = __('panel.header.badge');
 $error = null;

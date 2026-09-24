@@ -84,6 +84,25 @@ function lang_url($lang) {
 }
 
 /**
+ * İç ekranın (panel / yönetim) dillerini kısıtlar.
+ * Geçerli dil listede yoksa listenin ilkine düşer ve çeviriler yeniden yüklenir.
+ * header.php dil düğmelerini $shellLangs'e göre çizer.
+ */
+function replash_shell_languages(array $langs): void
+{
+    global $current_lang, $translations, $shellLangs, $SUPPORTED_LANGUAGES;
+
+    $langs = array_values(array_intersect($langs, $SUPPORTED_LANGUAGES));
+    if (!$langs) return;
+    $shellLangs = $langs;
+
+    if (in_array($current_lang, $langs, true)) return;
+    $current_lang = $langs[0];
+    $file = REPLASH_ROOT . '/languages/' . $current_lang . '.php';
+    if (file_exists($file)) $translations = require $file;
+}
+
+/**
  * Base URL helper
  */
 function base_url($path = '') {

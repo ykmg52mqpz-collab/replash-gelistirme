@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$adminShell = true;                       // üst çubukta yalnız TR/EN
+$shellLangs = ['tr', 'en'];               // yönetim: Türkçe / İngilizce
 $internalShell = adm('Yönetim', 'Admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>

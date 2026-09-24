@@ -574,7 +574,7 @@ if ($isAdmin && $pdo) {
     }
 }
 
-$adminShell = true;                       // üst çubukta yalnız TR/EN
+$shellLangs = ['tr', 'en'];               // yönetim: Türkçe / İngilizce
 $internalShell = adm('Yönetim', 'Admin');
 require_once __DIR__ . '/../includes/header.php';
 ?>
