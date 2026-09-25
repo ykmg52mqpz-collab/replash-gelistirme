@@ -538,7 +538,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
 
           <!-- Kontrol çubuğu (replash.info MatchPlayer): sürükleyerek klip seç -->
-          <div class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 sm:px-4">
+          <div id="rp-controls" class="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 sm:px-4">
             <div class="flex flex-wrap items-center gap-3">
               <button type="button" id="rp-play" aria-label="Play/Pause" class="grid h-10 w-10 flex-none place-items-center rounded-full bg-accent text-ink-900 transition hover:scale-105 active:scale-95">
                 <svg id="rp-icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -582,7 +582,7 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
                 <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/50"></span>
               </div>
-              <p class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.quick_hint')) ?></p>
+              <p id="rp-quick-hint" class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.quick_hint')) ?></p>
 
               <details class="mt-2 text-xs text-white/50">
                 <summary class="cursor-pointer select-none py-1 text-white/60 marker:hidden"><?= e(__('find.watch.clip.advanced')) ?></summary>
@@ -601,6 +601,20 @@ require_once __DIR__ . '/includes/header.php';
                   <p class="w-full text-white/35"><?= e(__('find.watch.clip.hint')) ?></p>
                 </div>
               </details>
+            </div>
+          </div>
+          <!-- Tam ekranda: klip hazırlanırken/hazır olduğunda sağ alt köşe rozeti -->
+          <div id="rp-fs-status" class="pointer-events-none absolute right-4 z-30 hidden max-w-[19rem] rounded-xl border border-white/15 bg-ink-900/90 px-3.5 py-2.5 text-xs text-white shadow-lg backdrop-blur">
+            <div class="flex items-center gap-2">
+              <span id="rp-fs-status-dot" class="h-2 w-2 flex-shrink-0 rounded-full bg-accent"></span>
+              <span id="rp-fs-status-text" class="font-semibold"></span>
+            </div>
+            <div id="rp-fs-status-bar-wrap" class="mt-2 hidden h-1 overflow-hidden rounded-full bg-white/15">
+              <div id="rp-fs-status-bar" class="h-full rounded-full bg-accent transition-[width] duration-200" style="width:0%"></div>
+            </div>
+            <div id="rp-fs-status-actions" class="pointer-events-auto mt-2.5 hidden gap-1.5">
+              <button type="button" onclick="clipSaveToGallery()" class="rounded-lg bg-accent px-2.5 py-1.5 text-[11px] font-bold text-ink-900"><?= e(__('find.modal.download_mp4')) ?></button>
+              <button type="button" onclick="openClipShare()" class="rounded-lg border border-white/20 px-2.5 py-1.5 text-[11px] font-semibold text-white"><?= e(__('find.tools.share_clip')) ?></button>
             </div>
           </div>
           </div><!-- /rp-stage -->
@@ -1108,9 +1122,32 @@ function clipAudioTracks(el, silent) {
 }
 function clipSetStatus(text) {
   var el = document.getElementById('modal-clip-status');
-  if (!el) return;
-  el.textContent = text || '';
-  el.classList.toggle('hidden', !text);
+  if (el) {
+    el.textContent = text || '';
+    el.classList.toggle('hidden', !text);
+  }
+  var t = document.getElementById('rp-fs-status-text');
+  if (t && text) t.textContent = text;
+}
+// Tam ekranda köşe rozeti: hazırlanıyor / hazır
+function fsStatus(durum, pct) {
+  var kutu = document.getElementById('rp-fs-status');
+  if (!kutu) return;
+  var t = document.getElementById('rp-fs-status-text');
+  var nokta = document.getElementById('rp-fs-status-dot');
+  var sarmal = document.getElementById('rp-fs-status-bar-wrap');
+  var cubuk = document.getElementById('rp-fs-status-bar');
+  var eylem = document.getElementById('rp-fs-status-actions');
+
+  if (durum === 'kapali' || !stageFullscreenOn()) { kutu.classList.add('hidden'); return; }
+  kutu.classList.remove('hidden');
+
+  var hazirlaniyor = (durum === 'hazirlaniyor');
+  if (t && !hazirlaniyor) t.textContent = I18N.clipReadyTitle;
+  if (nokta) nokta.className = 'h-2 w-2 flex-shrink-0 rounded-full ' + (hazirlaniyor ? 'bg-white/60 animate-pulse' : 'bg-emerald-400');
+  if (sarmal) sarmal.classList.toggle('hidden', !hazirlaniyor);
+  if (cubuk) cubuk.style.width = Math.round((pct || 0) * 100) + '%';
+  if (eylem) { eylem.classList.toggle('hidden', hazirlaniyor); eylem.classList.toggle('flex', !hazirlaniyor); }
 }
 // Klip hazırlanırken başlık, ilerleme çubuğu ve düğmeler buna göre gösterilir
 function clipSetBusyUI(busy, pct) {
@@ -1125,6 +1162,7 @@ function clipSetBusyUI(busy, pct) {
   if (bar) bar.style.width = Math.round((pct || 0) * 100) + '%';
   if (actions) actions.classList.toggle('opacity-40', busy);
   if (actions) actions.classList.toggle('pointer-events-none', busy);
+  fsStatus(busy ? 'hazirlaniyor' : 'hazir', pct);
 }
 // Filigran: sağ üstte "replash.it" + küçük logo, sağ altta tesis · saha (ince dijital yazı)
 var clipLogo = new Image();
@@ -1354,13 +1392,35 @@ function applyCustomLength() {
 }
 // Tam ekran: oynatıcı + klip düğmeleri birlikte. iPhone Safari kutuları tam ekran yapamadığı için
 // (sadece videoyu tam ekrana alır, düğmeler kaybolur) desteklenmiyorsa ekranı kaplayan katman kullanılır.
+// Telefon yatay çevrildiğinde otomatik tam ekran; dikeye dönünce çıkılır.
+// Kullanıcı yatayken elle çıktıysa zorlamayız; bayrak bir sonraki çevirmede sıfırlanır.
+var fsElleCikildi = false;
+function telefonMu() {
+  return window.matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth, window.innerHeight) <= 560;
+}
+function yonaGoreTamEkran() {
+  if (!document.getElementById('rp-stage') || !telefonMu()) return;
+  var yatay = window.matchMedia('(orientation: landscape)').matches;
+  if (yatay && !stageFullscreenOn() && !fsElleCikildi) toggleStageFullscreen(true);
+  else if (!yatay && stageFullscreenOn()) toggleStageFullscreen(true);
+}
+(function () {
+  var mq = window.matchMedia('(orientation: landscape)');
+  var tetik = function () { fsElleCikildi = false; setTimeout(yonaGoreTamEkran, 250); };
+  if (mq.addEventListener) mq.addEventListener('change', tetik);
+  else if (mq.addListener) mq.addListener(tetik);
+  window.addEventListener('orientationchange', tetik);
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(yonaGoreTamEkran, 400); });
+})();
+
 function stageFullscreenOn() {
   return !!document.fullscreenElement || document.getElementById('rp-stage').classList.contains('rp-fs');
 }
-function toggleStageFullscreen() {
+function toggleStageFullscreen(otomatik) {
   var stage = document.getElementById('rp-stage');
   if (!stage) return;
   if (stageFullscreenOn()) {
+    if (!otomatik) fsElleCikildi = true;   // elle çıkıldıysa yatayken geri zorlanmaz
     if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) {} }
     stage.classList.remove('rp-fs');
     document.documentElement.classList.remove('rp-fs-lock');
@@ -1634,8 +1694,11 @@ function openClipModal(clip) {
   var steps = document.getElementById('modal-social-steps');
   if (steps) steps.classList.add('hidden');
 
-  // Pencere tam ekranın altında kalmasın
-  if (typeof stageFullscreenOn === 'function' && stageFullscreenOn()) toggleStageFullscreen();
+  // Tam ekranda izlerken video kapanmasın: pencere yerine köşe rozeti kullanılır
+  if (typeof stageFullscreenOn === 'function' && stageFullscreenOn()) {
+    fsStatus('hazirlaniyor', 0);
+    return;
+  }
   if (modal) modal.classList.remove('hidden');
 }
 

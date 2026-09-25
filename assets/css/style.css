@@ -461,7 +461,7 @@ html.rp-fs-lock header, html.rp-fs-lock footer, html.rp-fs-lock a[href*="wa.me"]
   border: 0;
   border-radius: 0;
 }
-#rp-stage.rp-fs > div:last-child, #rp-stage:fullscreen > div:last-child {
+#rp-stage.rp-fs #rp-controls, #rp-stage:fullscreen #rp-controls {
   margin-top: 0;
   border: 0;
   border-radius: 0;
@@ -472,3 +472,50 @@ html.rp-fs-lock header, html.rp-fs-lock footer, html.rp-fs-lock a[href*="wa.me"]
 /* Tam ekranda "Bu anı kes" tam genişlik, süre düğmeleri altında */
 #rp-stage.rp-fs #rp-quick-cut, #rp-stage:fullscreen #rp-quick-cut { flex: 1 0 100%; }
 #rp-stage.rp-fs #rp-clip-info, #rp-stage:fullscreen #rp-clip-info { margin-left: 0; }
+
+/* Tam ekran: video ekranı doldurur, kontroller videonun ÜSTÜNDE alt köşelerde durur.
+   Oyuncu izlemeye devam ederken kesebilsin diye kontroller videoyu kısaltmaz. */
+#rp-stage.rp-fs, #rp-stage:fullscreen { position: fixed; justify-content: flex-start; }
+#rp-stage.rp-fs #rp-frame, #rp-stage:fullscreen #rp-frame {
+  position: absolute;
+  inset: 0;
+  flex: none;
+  height: 100%;
+  width: 100%;
+}
+#rp-stage.rp-fs #rp-controls, #rp-stage:fullscreen #rp-controls {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  background: linear-gradient(to top, rgba(6,6,6,0.92) 45%, rgba(6,6,6,0.55) 75%, transparent);
+  padding: 2.5rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+}
+/* Kesme düğmesi ve süreler sol altta kalsın, aralık bilgisi sağa yaslansın */
+#rp-stage.rp-fs #rp-clip-info, #rp-stage:fullscreen #rp-clip-info { margin-left: auto; }
+/* Hazırlanma rozeti: sağ altta, kontrol şeridinin hemen üstünde */
+#rp-stage.rp-fs #rp-fs-status, #rp-stage:fullscreen #rp-fs-status { bottom: 8.5rem; }
+
+/* Telefon yatay tutulduğunda: ekran alçak, kontroller videoyu yiyordu.
+   Tek satıra sıkıştırılır, ipucu gizlenir; video ekranın çoğunu alır. */
+@media (max-height: 520px) and (orientation: landscape) {
+  #rp-stage.rp-fs #rp-controls, #rp-stage:fullscreen #rp-controls {
+    padding-top: 2rem;
+    padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
+  }
+  #rp-stage.rp-fs #rp-fs-status, #rp-stage:fullscreen #rp-fs-status { bottom: 6.5rem; }
+  /* "Bu anı kes" artık tam satır kaplamasın, süre düğmeleriyle yan yana dursun */
+  #rp-stage.rp-fs #rp-quick-cut, #rp-stage:fullscreen #rp-quick-cut {
+    flex: 1 1 auto;
+    min-width: 12rem;
+    height: 2.5rem;
+  }
+  #rp-stage.rp-fs .rp-len, #rp-stage:fullscreen .rp-len,
+  #rp-stage.rp-fs .rp-len-custom, #rp-stage:fullscreen .rp-len-custom,
+  #rp-stage.rp-fs #rp-len-custom-wrap, #rp-stage:fullscreen #rp-len-custom-wrap {
+    height: 2.5rem;
+  }
+  #rp-stage.rp-fs .rp-len-custom, #rp-stage:fullscreen .rp-len-custom { width: 2.5rem; }
+  /* ipucu ve boşluklar yatayda gereksiz yer kaplıyor */
+  #rp-stage.rp-fs #rp-quick-hint, #rp-stage:fullscreen #rp-quick-hint { display: none; }
+  #rp-stage.rp-fs #rp-controls > div, #rp-stage:fullscreen #rp-controls > div { gap: 0.4rem; }
+}
