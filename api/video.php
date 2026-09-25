@@ -110,6 +110,22 @@ try {
             ]
         ]);
 
+        // Aynı sunucudaki dosya (göreli adres): HTTP'ye çıkmadan doğrudan okunur.
+        // Göreli adres, sitenin hangi ana bilgisayardan açıldığından bağımsız çalışır.
+        if (strpos($finalPlaybackUrl, '/') === 0 && strpos($finalPlaybackUrl, '//') !== 0) {
+            $yerelYol = REPLASH_ROOT . '/' . ltrim(parse_url($finalPlaybackUrl, PHP_URL_PATH) ?: '', '/');
+            $yerelYol = realpath($yerelYol);
+            $kok = realpath(REPLASH_ROOT);
+            if ($yerelYol && $kok && strpos($yerelYol, $kok) === 0 && is_file($yerelYol)) {
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Length: ' . filesize($yerelYol));
+                readfile($yerelYol);
+                exit;
+            }
+            http_response_code(404);
+            replash_video_error(404, 'not_found');
+        }
+
         $handle = @fopen($finalPlaybackUrl, 'rb', false, $context);
         if ($handle) {
             while (ob_get_level()) {
