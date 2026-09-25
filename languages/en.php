@@ -459,6 +459,8 @@ return [
         'modal' => [
                 'clip_downloaded' => 'The clip was saved to your device. Upload the video on the page that opened to share it.',
                 'clip_saved' => 'The clip was saved to your device.',
+                'interrupted' => 'The clip was interrupted. Try again without leaving the page.',
+                'shared_again' => 'Clip shared. You can cut another moment too.',
                 'preparing_title' => 'Preparing your clip',
                 'preparing_desc' => 'Cutting the selected range and adding the logo. Takes as long as the clip.',
                 'save_to_gallery' => 'Save to gallery',
@@ -570,6 +572,7 @@ return [
                 'send' => 'Send request',
                 'sent' => 'Request sent. Reference:'
             ],
+            'rotate_hint' => 'Turn your phone sideways to watch full screen',
             'clip' => [
                     'quick' => 'Clip a moment',
                     'length' => 'Clip length',

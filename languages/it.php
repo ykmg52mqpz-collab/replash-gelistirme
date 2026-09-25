@@ -459,6 +459,8 @@ return [
         'modal' => [
                 'clip_downloaded' => 'La clip è stata salvata sul tuo dispositivo. Carica il video nella pagina che si è aperta per condividerlo.',
                 'clip_saved' => 'La clip è stata salvata sul tuo dispositivo.',
+                'interrupted' => 'Il taglio si è interrotto. Riprova senza uscire dalla pagina.',
+                'shared_again' => 'Clip condivisa. Puoi tagliare anche un altro momento.',
                 'preparing_title' => 'Preparazione della clip',
                 'preparing_desc' => 'Stiamo tagliando l’intervallo scelto e aggiungendo il logo. Dura quanto la clip.',
                 'save_to_gallery' => 'Salva in galleria',
@@ -570,6 +572,7 @@ return [
                 'send' => 'Invia richiesta',
                 'sent' => 'Richiesta inviata. Riferimento:'
             ],
+            'rotate_hint' => 'Gira il telefono per guardare a schermo intero',
             'clip' => [
                     'quick' => 'Taglia un momento',
                     'length' => 'Durata clip',

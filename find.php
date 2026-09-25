@@ -531,6 +531,14 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- Floating Recording Indicator Overlay -->
+            <!-- Dikeyde bir kez: telefonu çevirince tam ekran olduğunu söyler -->
+            <div id="rp-rotate-hint" class="pointer-events-none absolute inset-x-0 bottom-3 z-20 hidden justify-center px-4">
+              <div class="pointer-events-auto flex items-center gap-2 rounded-full border border-white/15 bg-black/75 px-3.5 py-2 text-[11px] text-white/85 backdrop-blur">
+                <svg class="h-4 w-4 flex-shrink-0 text-accent" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 9a8 8 0 0113-3l2 2m1 7a8 8 0 01-13 3l-2-2"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 4v4h-4M5 20v-4h4"/></svg>
+                <span><?= e(__('find.watch.rotate_hint')) ?></span>
+                <button type="button" onclick="rotateHintKapat()" aria-label="<?= e(__('find.modal.close', 'Kapat')) ?>" class="ml-1 text-white/50 hover:text-white">&times;</button>
+              </div>
+            </div>
             <div id="recording-overlay" class="hidden absolute top-3 right-3 z-20 flex items-center gap-2 bg-rose-600/90 border border-rose-400/60 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md animate-pulse">
               <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
               <span><?= e(__('find.tools.recording_active')) ?> — <span id="record-timer" class="font-mono text-accent">00:00</span></span>
@@ -593,11 +601,11 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
                   <div class="flex items-center gap-1.5">
                     <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.start_time')) ?></span>
-                    <button type="button" onclick="nudgeClip('start', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-start-input" value="00:00" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('start', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                    <button type="button" onclick="nudgeClip('start', -1)" aria-label="-1 s" class="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-base text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-start-input" value="00:00" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('start', 1)" aria-label="+1 s" class="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-base text-white/80 transition hover:border-accent hover:text-accent">+</button>
                   </div>
                   <div class="flex items-center gap-1.5">
                     <span class="w-16 sm:w-auto sm:mr-0.5"><?= e(__('find.tools.end_time')) ?></span>
-                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:15" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm text-white/80 transition hover:border-accent hover:text-accent">+</button>
+                    <button type="button" onclick="nudgeClip('end', -1)" aria-label="-1 s" class="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-base text-white/80 transition hover:border-accent hover:text-accent">−</button><input type="text" id="clip-end-input" value="00:15" inputmode="numeric" onchange="syncClipFromInputs()" class="h-9 w-16 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-xs font-bold text-accent focus:border-accent focus:outline-none"><button type="button" onclick="nudgeClip('end', 1)" aria-label="+1 s" class="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-base text-white/80 transition hover:border-accent hover:text-accent">+</button>
                   </div>
                   <button type="button" id="rp-cut" onclick="createClipFromRangeInputs()" disabled class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/40 transition enabled:border-accent enabled:bg-accent enabled:text-ink-900 enabled:hover:bg-accent-neon disabled:cursor-not-allowed">
                     <?= e(__('find.watch.clip.label')) ?>
@@ -992,6 +1000,34 @@ require_once __DIR__ . '/includes/header.php';
       </div>
       </div>
       </section>
+
+<script>
+// Kod kutuları: 4 rakam tamamlanınca formu kendiliğinden gönderir (telefonda bir adım siler).
+// Ayrıca son açılan kod hatırlanır; oyuncu geri döndüğünde tekrar yazmak zorunda kalmaz.
+(function () {
+  var SON_KOD = 'rp_son_kod';
+  document.querySelectorAll('input[name="code"]').forEach(function (inp) {
+    if (!inp.value) {
+      try {
+        var kayit = localStorage.getItem(SON_KOD);
+        if (kayit && /^\d{4}$/.test(kayit)) inp.placeholder = kayit;
+      } catch (e) {}
+    }
+    inp.addEventListener('input', function () {
+      var t = inp.value.replace(/\D/g, '');
+      if (t !== inp.value) inp.value = t;
+      if (t.length === 4 && inp.form && !inp.form.dataset.gonderildi) {
+        inp.form.dataset.gonderildi = '1';
+        try { localStorage.setItem(SON_KOD, t); } catch (e) {}
+        inp.blur();
+        inp.form.submit();
+      }
+    });
+  });
+  var acikKod = <?= json_encode($code ?? '') ?>;
+  if (acikKod && /^\d{4}$/.test(acikKod)) { try { localStorage.setItem(SON_KOD, acikKod); } catch (e) {} }
+})();
+</script>
 </main>
 
 <?php if ($match && $match['status'] === 'UNLOCKABLE' && $codeValidated && $videoReady): ?>
@@ -1010,6 +1046,8 @@ var I18N = {
   clipPreparing: <?= json_encode(__('find.modal.preparing_clip')) ?>,
   clipReady: <?= json_encode(__('find.modal.clip_ready')) ?>,
   clipServer: <?= json_encode(__('find.modal.clip_server')) ?>,
+  clipInterrupted: <?= json_encode(__('find.modal.interrupted')) ?>,
+  clipSharedAgain: <?= json_encode(__('find.modal.shared_again')) ?>,
   clipWait: <?= json_encode(__('find.modal.clip_wait')) ?>,
   clipSaved: <?= json_encode(__('find.modal.clip_saved')) ?>,
   saveToGallery: <?= json_encode(__('find.modal.save_to_gallery')) ?>,
@@ -1265,6 +1303,18 @@ function clipOfferBlob(clip, blob) {
   clipSetStatus('');
   return true;
 }
+// Kesim gerçek zamanlı olduğu için telefon ekranı sönerse kayıt bozulur.
+var clipWakeLock = null;
+async function clipEkraniUyanikTut() {
+  try {
+    if ('wakeLock' in navigator) clipWakeLock = await navigator.wakeLock.request('screen');
+  } catch (e) { clipWakeLock = null; }   // desteklemeyen tarayıcıda sessizce geçilir
+}
+function clipUyanikBirak() {
+  try { if (clipWakeLock) clipWakeLock.release(); } catch (e) {}
+  clipWakeLock = null;
+}
+
 // Seçilen aralığı baştan sona oynatıp kaydeder (15–45 sn, gerçek zamanlı)
 async function cutClipInBrowser(clip) {
   clipBusy = true;
@@ -1278,18 +1328,39 @@ async function cutClipInBrowser(clip) {
     try { if (v._clipAudio) v._clipAudio.ctx.close(); } catch (e) {}
     v.pause(); v.removeAttribute('src'); v.load(); v.remove();
   };
+  var iptal = null;                     // arka plana düşülürse kesimi durdurur
   var onSeeked = function () {
     v.removeEventListener('seeked', onSeeked);
     var mime;
     try { mime = clipStartRecorder(v, source.hidden); } catch (err) { cleanup(); clipFallbackToServer(); return; }
+    clipEkraniUyanikTut();
     v.playbackRate = 1;
     var p = v.play(); if (p && p.catch) p.catch(function () {});
+    var bitir = function () {
+      clearInterval(tick);
+      document.removeEventListener('visibilitychange', iptal);
+      clipUyanikBirak();
+    };
+    // Oyuncu başka uygulamaya geçerse video durur ve klip donmuş karelerle dolar:
+    // bozuk klip vermek yerine kesimi iptal edip tekrar denemesini isteriz.
+    iptal = function () {
+      if (!document.hidden) return;
+      bitir();
+      try { v.pause(); if (clipRecorder && clipRecorder.state !== 'inactive') clipRecorder.stop(); } catch (e) {}
+      cleanup();
+      clipBusy = false;
+      clipSetBusyUI(false);
+      clipSetStatus(I18N.clipInterrupted);
+      fsStatus('kapali');
+    };
+    document.addEventListener('visibilitychange', iptal);
+
     var tick = setInterval(function () {
       var done = Math.max(0, Math.min(clip.duration, v.currentTime - clip.start));
       clipSetStatus(I18N.clipPreparing.replace('{s}', Math.round(done)).replace('{t}', clip.duration));
       clipSetBusyUI(true, done / clip.duration);
       if (v.currentTime >= clip.end || v.ended) {
-        clearInterval(tick);
+        bitir();
         v.pause();
         clipFinishRecorder(mime).then(function (blob) {
           cleanup();
@@ -1410,12 +1481,30 @@ function yonaGoreTamEkran() {
 }
 (function () {
   var mq = window.matchMedia('(orientation: landscape)');
-  var tetik = function () { fsElleCikildi = false; setTimeout(yonaGoreTamEkran, 250); };
+  var tetik = function () { fsElleCikildi = false; setTimeout(function () { yonaGoreTamEkran(); rotateHintGoster(); }, 250); };
   if (mq.addEventListener) mq.addEventListener('change', tetik);
   else if (mq.addListener) mq.addListener(tetik);
   window.addEventListener('orientationchange', tetik);
-  document.addEventListener('DOMContentLoaded', function () { setTimeout(yonaGoreTamEkran, 400); });
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(function () { yonaGoreTamEkran(); rotateHintGoster(); }, 600); });
 })();
+
+// Çevirme ipucu: yalnız telefonda, dikeyken, bir kez. Kapatınca bir daha çıkmaz.
+function rotateHintKapat() {
+  var k = document.getElementById('rp-rotate-hint');
+  if (k) k.classList.add('hidden');
+  try { localStorage.setItem('rp_rotate_hint', '1'); } catch (e) {}
+}
+function rotateHintGoster() {
+  var k = document.getElementById('rp-rotate-hint');
+  if (!k || !telefonMu()) return;
+  var gorulmus = false;
+  try { gorulmus = localStorage.getItem('rp_rotate_hint') === '1'; } catch (e) {}
+  var dikey = !window.matchMedia('(orientation: landscape)').matches;
+  var goster = dikey && !gorulmus && !stageFullscreenOn();
+  k.classList.toggle('hidden', !goster);
+  k.classList.toggle('flex', goster);
+  if (goster) setTimeout(function () { k.classList.add('hidden'); k.classList.remove('flex'); }, 8000);
+}
 
 function stageFullscreenOn() {
   return !!document.fullscreenElement || document.getElementById('rp-stage').classList.contains('rp-fs');
@@ -1778,10 +1867,24 @@ function clipNativeShare(file, onFail) {
   try {
     if (!navigator.canShare({ files: [file] })) return false;
   } catch (e) { return false; }
-  navigator.share({ files: [file], title: clipShareTitle() }).catch(function (e) {
+  navigator.share({ files: [file], title: clipShareTitle() }).then(function () {
+    clipPaylasimSonrasi();
+  }).catch(function (e) {
     if (e && e.name !== 'AbortError' && onFail) onFail();
   });
   return true;
+}
+
+// Paylaşımdan sonra: oyuncuyu ikinci klibe davet et (her klip yeni bir paylaşım demek)
+function clipPaylasimSonrasi() {
+  clipSetStatus(I18N.clipSharedAgain);
+  if (stageFullscreenOn()) {
+    var t = document.getElementById('rp-fs-status-text');
+    if (t) t.textContent = I18N.clipSharedAgain;
+    return;
+  }
+  var d = document.getElementById('modal-clip-desc');
+  if (d) d.textContent = I18N.clipSharedAgain;
 }
 
 // "Paylaş" düğmesi: klip dosyasını paylaşım menüsüyle gönder; desteklenmiyorsa dosyayı indir
@@ -1909,7 +2012,8 @@ document.addEventListener('DOMContentLoaded', function() {
           v.setAttribute('playsinline', '');
           v.setAttribute('webkit-playsinline', '');
           v.playsInline = true;
-          v.setAttribute('preload', 'auto');
+          // Telefonda 3 dakikalık dosyayı önden indirmek mobil veriyi yakar
+          v.setAttribute('preload', telefonMu() ? 'metadata' : 'auto');
           clearInterval(t);
         }
         if (++dene > 40) clearInterval(t);

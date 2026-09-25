@@ -459,6 +459,8 @@ return [
         'modal' => [
                 'clip_downloaded' => 'Klip cihazına indirildi. Açılan sayfada videoyu yükleyip paylaşabilirsin.',
                 'clip_saved' => 'Klip cihazına indirildi.',
+                'interrupted' => 'Kesim yarıda kaldı. Uygulamadan çıkmadan tekrar dene.',
+                'shared_again' => 'Klip paylaşıldı. Başka bir anı da kesebilirsin.',
                 'preparing_title' => 'Klip hazırlanıyor',
                 'preparing_desc' => 'Seçtiğin aralık kesiliyor, logo ekleniyor. Klip süresi kadar sürer.',
                 'save_to_gallery' => 'Galeriye kaydet',
@@ -570,6 +572,7 @@ return [
                 'send' => 'Talep gönder',
                 'sent' => 'Talep gönderildi. Referans:'
             ],
+            'rotate_hint' => 'Telefonu yan çevir, tam ekran izle',
             'clip' => [
                     'quick' => 'Bir anı kes',
                     'length' => 'Klip süresi',
