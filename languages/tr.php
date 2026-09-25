@@ -571,7 +571,7 @@ return [
                 'sent' => 'Talep gönderildi. Referans:'
             ],
             'clip' => [
-                    'quick' => 'Bu anı kes',
+                    'quick' => 'Bir anı kes',
                     'length' => 'Klip süresi',
                     'quick_hint' => 'Golden hemen sonra bas: seçtiğin süre kadar geriye dönük kesilir.',
                     'custom' => 'Kendi süreni seç',

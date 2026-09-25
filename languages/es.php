@@ -571,7 +571,7 @@ return [
                 'sent' => 'Solicitud enviada. Referencia:'
             ],
             'clip' => [
-                    'quick' => 'Corta este momento',
+                    'quick' => 'Corta un momento',
                     'length' => 'Duración del clip',
                     'quick_hint' => 'Pulsa justo después del gol: se cortan los segundos anteriores que has elegido.',
                     'custom' => 'Elige tú la duración',

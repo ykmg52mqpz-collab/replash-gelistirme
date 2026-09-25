@@ -1899,6 +1899,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+    // iOS Safari: playsinline yoksa video kendi tam ekranına atlar ve
+    // kesme düğmeleri kaybolur. Clappr öğeyi geç oluşturduğu için burada da uygulanır.
+    (function satirIciOynat() {
+      var dene = 0;
+      var t = setInterval(function () {
+        var v = document.querySelector('#clappr-player video');
+        if (v) {
+          v.setAttribute('playsinline', '');
+          v.setAttribute('webkit-playsinline', '');
+          v.playsInline = true;
+          v.setAttribute('preload', 'auto');
+          clearInterval(t);
+        }
+        if (++dene > 40) clearInterval(t);
+      }, 150);
+    })();
+
     // --- Kontrol çubuğu (replash.info MatchPlayer) ---
     var $ = function (id) { return document.getElementById(id); };
     var scrub = $('rp-scrub'), clipEl = $('rp-clip'), prog = $('rp-progress');
@@ -1917,11 +1934,25 @@ document.addEventListener('DOMContentLoaded', function() {
       prog.style.width = (d ? (c / d) * 100 : 0) + '%';
       $('rp-time').textContent = formatTime(c) + ' / ' + formatTime(d);
     };
-    $('rp-play').addEventListener('click', function () {
-      if (clapprPlayer.isPlaying()) clapprPlayer.pause(); else clapprPlayer.play();
-    });
-    // Videoya tıklayınca da oynat/durdur
-    container.addEventListener('click', function () { $('rp-play').click(); });
+    // iOS: oynatma yalnız GERÇEK dokunuş içinde başlar. Sentetik .click() ile
+    // çağrılırsa Safari engelliyor; bu yüzden her iki dinleyici de doğrudan çağırır.
+    function oynatDurdur() {
+      var v = videoEl();
+      if (v) {                                   // iOS için satır içi oynatma garantiye alınır
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        v.playsInline = true;
+      }
+      try {
+        if (clapprPlayer.isPlaying()) { clapprPlayer.pause(); return; }
+        clapprPlayer.play();
+        // Clappr bazı sürümlerde iOS'ta sessizce düşüyor: video öğesini de doğrudan dener
+        if (v && v.paused) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+      } catch (e) {}
+    }
+    $('rp-play').addEventListener('click', oynatDurdur);
+    // Videoya dokununca da oynat/durdur (sentetik tıklama üretmeden)
+    container.addEventListener('click', oynatDurdur);
     clapprPlayer.on(Clappr.Events.PLAYER_PLAY, function () { setIcons(true); });
     clapprPlayer.on(Clappr.Events.PLAYER_PAUSE, function () { setIcons(false); });
     clapprPlayer.on(Clappr.Events.PLAYER_ENDED, function () { setIcons(false); });

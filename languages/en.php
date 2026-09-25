@@ -571,7 +571,7 @@ return [
                 'sent' => 'Request sent. Reference:'
             ],
             'clip' => [
-                    'quick' => 'Clip this moment',
+                    'quick' => 'Clip a moment',
                     'length' => 'Clip length',
                     'quick_hint' => 'Press right after the goal: the chosen number of seconds before it is cut.',
                     'custom' => 'Choose your own length',

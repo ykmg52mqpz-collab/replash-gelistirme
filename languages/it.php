@@ -571,7 +571,7 @@ return [
                 'sent' => 'Richiesta inviata. Riferimento:'
             ],
             'clip' => [
-                    'quick' => 'Taglia questo momento',
+                    'quick' => 'Taglia un momento',
                     'length' => 'Durata clip',
                     'quick_hint' => 'Premi subito dopo il gol: vengono tagliati i secondi precedenti che hai scelto.',
                     'custom' => 'Scegli tu la durata',
