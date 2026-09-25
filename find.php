@@ -544,6 +544,10 @@ require_once __DIR__ . '/includes/header.php';
                 <svg id="rp-icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 <svg id="rp-icon-pause" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
               </button>
+              <!-- Tam ekranda kesme: oynat düğmesinin yanında, sadece makas -->
+              <button type="button" id="rp-quick-cut-mini" onclick="quickCut()" aria-label="<?= e(__('find.watch.clip.quick')) ?>" title="<?= e(__('find.watch.clip.quick')) ?>" class="hidden h-10 w-10 flex-none place-items-center rounded-xl bg-accent text-ink-900 transition hover:bg-accent-neon active:scale-95">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
+              </button>
               <div id="rp-scrub" class="relative h-8 min-w-[120px] flex-1 cursor-pointer touch-none">
                 <div class="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-white/20">
                   <div id="rp-progress" class="absolute inset-y-0 left-0 rounded-full bg-accent" style="width:0%"></div>

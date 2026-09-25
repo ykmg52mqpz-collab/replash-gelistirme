@@ -503,6 +503,13 @@ html.rp-fs-lock header, html.rp-fs-lock footer, html.rp-fs-lock a[href*="wa.me"]
     padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
   }
   #rp-stage.rp-fs #rp-fs-status, #rp-stage:fullscreen #rp-fs-status { bottom: 6.5rem; }
+  /* Yatay tam ekran: büyük "Bu anı kes" yerine oynat düğmesinin yanında makas */
+  #rp-stage.rp-fs #rp-quick-cut, #rp-stage:fullscreen #rp-quick-cut { display: none; }
+  #rp-stage.rp-fs #rp-quick-cut-mini, #rp-stage:fullscreen #rp-quick-cut-mini {
+    display: grid;
+    width: 52px;          /* süre düğmeleriyle aynı ölçü */
+    height: 2.5rem;
+  }
   /* "Bu anı kes" artık tam satır kaplamasın, süre düğmeleriyle yan yana dursun */
   #rp-stage.rp-fs #rp-quick-cut, #rp-stage:fullscreen #rp-quick-cut {
     flex: 1 1 auto;
