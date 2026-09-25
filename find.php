@@ -553,7 +553,7 @@ require_once __DIR__ . '/includes/header.php';
                 <svg id="rp-icon-pause" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
               </button>
               <!-- Tam ekranda kesme: oynat düğmesinin yanında, sadece makas -->
-              <button type="button" id="rp-quick-cut-mini" onclick="quickCut()" aria-label="<?= e(__('find.watch.clip.quick')) ?>" title="<?= e(__('find.watch.clip.quick')) ?>" class="hidden h-10 w-10 flex-none place-items-center rounded-xl bg-accent text-ink-900 transition hover:bg-accent-neon active:scale-95">
+              <button type="button" id="rp-quick-cut-mini" onclick="createClipFromRangeInputs()" aria-label="<?= e(__('find.watch.clip.quick')) ?>" title="<?= e(__('find.watch.clip.quick')) ?>" class="hidden h-10 w-10 flex-none place-items-center rounded-xl bg-accent text-ink-900 transition hover:bg-accent-neon active:scale-95">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
               </button>
               <div id="rp-scrub" class="relative h-8 min-w-[120px] flex-1 cursor-pointer touch-none">
@@ -575,24 +575,12 @@ require_once __DIR__ . '/includes/header.php';
             <!-- Klip: tek dokunuşla "bu anı kes"; ince ayar gelişmiş bölümde -->
             <div class="mt-3 border-t border-white/[0.06] pt-3">
               <div class="flex flex-wrap items-center gap-2">
-                <button type="button" id="rp-quick-cut" onclick="quickCut()" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-ink-900 transition hover:bg-accent-neon active:scale-[0.98] sm:flex-none">
+                <button type="button" id="rp-quick-cut" onclick="createClipFromRangeInputs()" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-ink-900 transition hover:bg-accent-neon active:scale-[0.98] sm:flex-none">
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
                   <?= e(__('find.watch.clip.quick')) ?>
                 </button>
-                <div class="flex items-center gap-1.5" role="group" aria-label="<?= e(__('find.watch.clip.length')) ?>">
-                  <?php foreach ([15, 30, 45] as $len): ?>
-                    <button type="button" data-cliplen="<?= $len ?>" onclick="setClipLength(<?= $len ?>)" class="rp-len h-11 min-w-[52px] rounded-xl border border-white/10 px-3 text-sm font-semibold text-white/60 transition hover:border-accent hover:text-white"><?= $len ?> <?= e(__('find.watch.clip.sec_short', 'sn')) ?></button>
-                  <?php endforeach; ?>
-                  <!-- Kendi süreni seç: kronometre düğmesi, yanında saniye kutusu açılır -->
-                  <button type="button" id="rp-len-custom-btn" onclick="toggleCustomLength()" aria-expanded="false" title="<?= e(__('find.watch.clip.custom')) ?>" aria-label="<?= e(__('find.watch.clip.custom')) ?>" class="rp-len-custom grid h-11 w-11 place-items-center rounded-xl border border-white/10 text-white/60 transition hover:border-accent hover:text-white">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" stroke-width="1.8"/><path stroke-linecap="round" stroke-width="1.8" d="M12 9.5V13l2.5 1.5M9.5 2.5h5M19.5 5.5l1.5 1.5"/></svg>
-                  </button>
-                  <label id="rp-len-custom-wrap" class="hidden items-center gap-1.5 rounded-xl border border-accent/40 bg-white/5 px-2 h-11">
-                    <input type="number" id="rp-len-custom" min="<?= (int)REPLASH_CLIP_MIN_SEC ?>" max="<?= (int)REPLASH_CLIP_MAX_SEC ?>" step="1" value="25" inputmode="numeric" oninput="applyCustomLength()" class="h-8 w-14 rounded-lg border border-white/15 bg-ink-900 text-center font-mono text-sm font-bold text-accent focus:border-accent focus:outline-none">
-                    <span class="text-xs text-white/60"><?= e(__('find.watch.clip.sec_short', 'sn')) ?></span>
-                  </label>
-                </div>
-                <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/50"></span>
+                <!-- Süre seçimi kaldırıldı: aralık zaman çizgisinden sürüklenerek seçilir -->
+                <span id="rp-clip-info" class="ml-auto font-mono text-xs text-white/60"></span>
               </div>
               <p id="rp-quick-hint" class="mt-2 text-xs text-white/40"><?= e(__('find.watch.clip.quick_hint')) ?></p>
 
@@ -1301,7 +1289,23 @@ function clipOfferBlob(clip, blob) {
   var fmt = document.getElementById('modal-clip-format');
   if (fmt) fmt.textContent = ext.toUpperCase() + ' Video';
   clipSetStatus('');
+  clipOtomatikKaydet(clip);
   return true;
+}
+
+// Klip hazır olunca beklemeden cihaza kaydedilir.
+// iPhone'da Fotoğraflar'a yazmanın tek yolu paylaşım menüsüdür ve Safari onu
+// yalnız kullanıcı dokunuşuyla açar; kesim 15-45 sn önce başladığı için o izin
+// düşmüş olur. Bu yüzden iOS'ta tek dokunuşluk "Galeriye kaydet" düğmesi öne çıkar,
+// diğer cihazlarda dosya kendiliğinden iner (Android'de galeride görünür).
+function clipOtomatikKaydet(clip) {
+  if (clipIsIOS()) {
+    var k = document.getElementById('rp-fs-status-actions');
+    if (k) k.classList.add('animate-pulse');
+    setTimeout(function () { if (k) k.classList.remove('animate-pulse'); }, 4000);
+    return;
+  }
+  try { clipDownloadNow(); clipSetStatus(I18N.clipSaved); } catch (e) {}
 }
 // Kesim gerçek zamanlı olduğu için telefon ekranı sönerse kayıt bozulur.
 var clipWakeLock = null;
@@ -1419,52 +1423,7 @@ function setClipEndFromPlayer() {
 
 // "Bu anı kes": oyuncu golü gördükten sonra basar; o anın hemen öncesi kesilir.
 // Tepki payı: basılan anın 3 saniye sonrasına kadar alınır.
-var clipLength = 15, CLIP_REACTION = 3;
-function setClipLength(sec, fromCustom) {
-  clipLength = Math.min(Math.max(parseInt(sec, 10) || CLIP_MIN, CLIP_MIN), CLIP_MAX);
-  var hazir = false;
-  document.querySelectorAll('.rp-len').forEach(function (b) {
-    var on = !fromCustom && parseInt(b.getAttribute('data-cliplen'), 10) === clipLength;
-    if (on) hazir = true;
-    b.classList.toggle('border-accent', on);
-    b.classList.toggle('bg-accent', on);
-    b.classList.toggle('text-ink-900', on);
-    b.classList.toggle('text-white/60', !on);
-  });
-  // Kendi süreni seç düğmesi: hazır seçeneklerden biri değilse vurgulu kalır
-  var cb = document.getElementById('rp-len-custom-btn');
-  if (cb) {
-    var ozel = !hazir;
-    cb.classList.toggle('border-accent', ozel);
-    cb.classList.toggle('text-accent', ozel);
-    cb.classList.toggle('text-white/60', !ozel);
-  }
-  if (!fromCustom) {
-    var inp = document.getElementById('rp-len-custom');
-    if (inp) inp.value = clipLength;
-  }
-}
-// Kronometre düğmesi: yanındaki saniye kutusunu açar/kapatır
-function toggleCustomLength() {
-  var wrap = document.getElementById('rp-len-custom-wrap');
-  var btn = document.getElementById('rp-len-custom-btn');
-  if (!wrap) return;
-  var acik = !wrap.classList.contains('hidden');
-  wrap.classList.toggle('hidden', acik);
-  wrap.classList.toggle('flex', !acik);
-  if (btn) btn.setAttribute('aria-expanded', acik ? 'false' : 'true');
-  if (!acik) {
-    var inp = document.getElementById('rp-len-custom');
-    if (inp) { inp.focus(); inp.select(); applyCustomLength(); }
-  }
-}
-function applyCustomLength() {
-  var inp = document.getElementById('rp-len-custom');
-  if (!inp) return;
-  var sec = parseInt(inp.value, 10);
-  if (!sec) return;                       // kutu boşken seçimi bozma
-  setClipLength(sec, true);
-}
+var clipLength = 15, CLIP_REACTION = 3, CLIP_VARSAYILAN = 15;
 // Tam ekran: oynatıcı + klip düğmeleri birlikte. iPhone Safari kutuları tam ekran yapamadığı için
 // (sadece videoyu tam ekrana alır, düğmeler kaybolur) desteklenmiyorsa ekranı kaplayan katman kullanılır.
 // Telefon yatay çevrildiğinde otomatik tam ekran; dikeye dönünce çıkılır.
@@ -1534,19 +1493,6 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && document.getElementById('rp-stage') && document.getElementById('rp-stage').classList.contains('rp-fs')) toggleStageFullscreen();
 });
 
-function quickCut() {
-  var cur = 0, dur = 0;
-  try { cur = clapprPlayer.getCurrentTime() || 0; dur = clapprPlayer.getDuration() || 0; } catch (e) {}
-  if (!dur) return;
-  var len = Math.min(Math.max(clipLength, CLIP_MIN), CLIP_MAX);
-  var end = Math.min(dur, Math.round(cur) + CLIP_REACTION);
-  var start = Math.max(0, end - len);
-  if (end - start < CLIP_MIN) end = Math.min(dur, start + CLIP_MIN); // maçın en başındaysa öne doğru al
-  document.getElementById('clip-start-input').value = formatTime(start);
-  document.getElementById('clip-end-input').value = formatTime(end);
-  syncClipFromInputs();
-  createClipFromRangeInputs();
-}
 
 // Başlangıç/bitiş alanları değişince çubuktaki seçimi ve Klip kes düğmesini güncelle
 function syncClipFromInputs() {
@@ -2030,13 +1976,19 @@ document.addEventListener('DOMContentLoaded', function() {
       $('rp-icon-play').classList.toggle('hidden', playing);
       $('rp-icon-pause').classList.toggle('hidden', !playing);
     };
-    setClipLength(clipLength); // varsayılan süre düğmesi işaretli
     var clipInit = false;
     var render = function () {
       var d = getDur(), c = getCur();
       if (!clipInit && d) { clipInit = true; syncClipFromInputs(); } // varsayılan seçimi çubukta göster
       prog.style.width = (d ? (c / d) * 100 : 0) + '%';
       $('rp-time').textContent = formatTime(c) + ' / ' + formatTime(d);
+      // Oyuncu zaman çizgisinden seçim yapmadıysa, kesilecek aralık son saniyeleri izler:
+      // "kes" dediğinde az önce olan anı alır. Sürükleyince takip durur.
+      if (d && !window.rpSecimElle && !dragging && !clipBusy) {
+        var son = Math.min(d, c + CLIP_REACTION);
+        var ilk = Math.max(0, son - CLIP_VARSAYILAN);
+        if (son - ilk >= CLIP_MIN) showClip(ilk, son);
+      }
     };
     // iOS: oynatma yalnız GERÇEK dokunuş içinde başlar. Sentetik .click() ile
     // çağrılırsa Safari engelliyor; bu yüzden her iki dinleyici de doğrudan çağırır.
@@ -2103,7 +2055,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (b - a >= 1) showClip(a, b);
       try { clapprPlayer.seek(t); } catch (err) {}
     };
-    var onUp = function () { dragging = false; };
+    var onUp = function () { dragging = false; window.rpSecimElle = true; };  // elle seçildi: artık takip etme
     scrub.addEventListener('mousedown', onDown);
     scrub.addEventListener('touchstart', onDown, { passive: false });
     window.addEventListener('mousemove', onMove);
