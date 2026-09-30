@@ -93,7 +93,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     <div class="container-x flex h-16 items-center gap-3">
       <a href="<?= base_url() ?>" class="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold">
         <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
-        Replash<span class="text-accent">.</span>
+        REPLASH<span class="text-accent">.</span>
       </a>
       <span class="hidden whitespace-nowrap rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600 sm:inline-block"><?= e($internalShell) ?></span>
       <!-- Dil seçimi: açık temada görünür renkler (beyaz üstüne beyazdı) -->
@@ -116,7 +116,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         <!-- Logo -->
         <a class="flex items-center gap-2" href="<?= base_url() ?>">
           <img src="<?= asset('images/replash-logo.webp') ?>" alt="REPLASH" class="h-8 w-auto select-none md:h-9" draggable="false"/>
-          <span lang="en" style="font-weight:600" class="font-display text-xl tracking-tight text-accent md:text-2xl">replash</span>
+          <span lang="en" style="font-weight:600" class="font-display text-xl tracking-tight text-accent md:text-2xl">REPLASH</span>
         </a>
 
         <!-- Desktop Navigation -->
