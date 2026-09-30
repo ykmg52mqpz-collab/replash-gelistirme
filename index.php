@@ -30,7 +30,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900/40 via-transparent to-ink-900/40">
   </div>
   </div>
-  <div class="pointer-events-none absolute -top-60 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute -top-60 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
   </div>
   <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
   </div>
@@ -71,7 +71,7 @@ require_once __DIR__ . '/includes/header.php';
     <section class="relative -mt-10 z-20 mx-auto mb-20 max-w-2xl px-4 sm:px-6" data-reveal="up">
       <form action="<?= base_url('find.php') ?>" method="GET" class="card-elevated rounded-3xl border border-white/10 bg-ink-900/95 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">
         <div class="mb-5 flex items-center gap-2.5">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDEA9C" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
           <h3 class="font-display text-lg font-bold text-white"><?= e(__('find.watch.title')) ?></h3>
         </div>
         <p class="mb-5 text-sm text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
@@ -182,7 +182,7 @@ require_once __DIR__ . '/includes/header.php';
 
   <!-- TWO-LAYER VALUE SECTION (replash.info ile aynı: yapışkan başlık + zaman çizelgesi) -->
   <section class="section-y border-t border-white/5 bg-section-gradient relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 50% 60% at 15% 30%, rgba(253,230,138,0.06), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 50% 60% at 15% 30%, rgba(253,234,156,0.06), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
   <div class="lg:sticky lg:top-28 lg:self-start"  data-reveal="up">
@@ -349,7 +349,7 @@ require_once __DIR__ . '/includes/header.php';
 
   <!-- CTA (replash.info) -->
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.12), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,234,156,0.12), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative text-center">
   <div  data-reveal="up">

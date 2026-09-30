@@ -70,9 +70,9 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
               600: "#241f0d",
             },
             accent: {
-              DEFAULT: "#FDE68A",
+              DEFAULT: "#FDEA9C",
               neon: "#FEF3C7",
-              glow: "rgba(253, 230, 138, 0.35)",
+              glow: "rgba(253, 234, 156, 0.35)",
             }
           },
           fontFamily: {
@@ -158,7 +158,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
           </div>
 
           <!-- CTA Demo Button -->
-          <a class="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-200 hover:bg-accent-neon hover:shadow-[0_0_30px_rgba(253,230,138,0.4)] md:inline-flex" href="<?= base_url('contact.php') ?>">
+          <a class="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-ink-900 shadow-glow transition-[background-color,box-shadow,transform] active:scale-[0.98] duration-200 hover:bg-accent-neon hover:shadow-[0_0_30px_rgba(253,234,156,0.4)] md:inline-flex" href="<?= base_url('contact.php') ?>">
             <?= e(__('nav.bookDemo')) ?>
           </a>
 

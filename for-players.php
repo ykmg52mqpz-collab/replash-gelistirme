@@ -20,7 +20,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
   </div>
   </div>
-  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
   </div>
   <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
   </div>
@@ -35,7 +35,7 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 30%, rgba(253,230,138,0.08), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 30%, rgba(253,234,156,0.08), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative">
   <div class="mx-auto max-w-3xl text-center">
@@ -214,7 +214,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="flex-1 bg-white/15" style="height:1.02%">
   </div>
   </div>
-  <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent shadow-[0_0_6px_rgba(253,230,138,0.8)]" style="left:32%">
+  <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent shadow-[0_0_6px_rgba(253,234,156,0.8)]" style="left:32%">
   </div>
   <div aria-hidden="true" class="absolute inset-y-0 w-0.5 rounded-full bg-accent/50" style="left:58%">
   </div>
@@ -452,7 +452,7 @@ require_once __DIR__ . '/includes/header.php';
 
 
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.10), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,234,156,0.10), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative text-center">
   <div  data-reveal="up">

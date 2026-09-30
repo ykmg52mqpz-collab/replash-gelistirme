@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
   </div>
   </div>
-  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
   </div>
   <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
   </div>
@@ -67,7 +67,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
     </div>
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink-900/90 via-ink-900/55 to-ink-900/95" aria-hidden="true"></div>
-    <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,230,138,0.10), transparent 70%)" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(253,234,156,0.10), transparent 70%)" aria-hidden="true"></div>
 
     <div class="container-x relative z-10">
       <div class="max-w-3xl mx-auto text-center" data-reveal="up">
@@ -95,7 +95,7 @@ require_once __DIR__ . '/includes/header.php';
                 <span id="val-<?= $key ?>" class="font-display text-3xl font-bold text-accent"><?= (int)$defaultSport[$sl['def']] ?></span>
                 <span class="text-xs text-white/40"><?= e($sl['suffix']) ?></span>
               </div>
-              <input type="range" id="slider-<?= $key ?>" min="<?= (int)$defaultSport[$sl['min']] ?>" max="<?= (int)$defaultSport[$sl['max']] ?>" value="<?= (int)$defaultSport[$sl['def']] ?>" class="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
+              <input type="range" id="slider-<?= $key ?>" min="<?= (int)$defaultSport[$sl['min']] ?>" max="<?= (int)$defaultSport[$sl['max']] ?>" value="<?= (int)$defaultSport[$sl['def']] ?>" class="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
               <div class="flex justify-between text-[10px] text-white/30">
                 <span id="min-<?= $key ?>"><?= (int)$defaultSport[$sl['min']] ?></span>
                 <span id="max-<?= $key ?>"><?= (int)$defaultSport[$sl['max']] ?></span>
@@ -338,7 +338,7 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 
   <section class="section-y border-t border-white/5 bg-ink-900 relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,230,138,0.12), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(253,234,156,0.12), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative text-center">
   <div  data-reveal="up">

@@ -154,7 +154,7 @@ require_once __DIR__ . '/includes/header.php';
   <?php if (!$watching && ($match || $codeOnlySearch)): ?>
     <!-- HERO + KOD KARTI (replash.info) -->
     <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
-    <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
     </div>
     <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
     </div>
@@ -174,7 +174,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="mx-auto max-w-2xl"  data-reveal="up">
     <form action="<?= base_url('find.php') ?>" method="GET" class="card-elevated rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
     <div class="mb-5 flex items-center gap-2.5">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDEA9C" stroke-width="2">
     <rect x="4" y="10" width="16" height="11" rx="2">
     </rect>
     <path d="M8 10V7a4 4 0 118 0v3">
@@ -250,7 +250,7 @@ require_once __DIR__ . '/includes/header.php';
               >
             </div>
 
-            <button type="submit" style="color: #000000 !important;" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-[#FDE68A] hover:bg-accent-neon text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-glow transition flex-shrink-0">
+            <button type="submit" style="color: #000000 !important;" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-[#FDEA9C] hover:bg-accent-neon text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-glow transition flex-shrink-0">
               <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
@@ -281,7 +281,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php if (!$searchFacilityEnabled && $searchCodeEnabled): ?>
           <!-- CENTERED LARGE PIN / ACCESS CODE CARD -->
           <div class="max-w-md mx-auto card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 bg-ink-900/95 shadow-2xl text-center mb-10">
-            <div class="w-16 h-16 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(253,230,138,0.15)]">
+            <div class="w-16 h-16 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(253,234,156,0.15)]">
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
             
@@ -1942,7 +1942,7 @@ document.addEventListener('DOMContentLoaded', function() {
         preload: 'auto'
       },
       mediacontrol: {
-        seekbar: "#FDE68A",
+        seekbar: "#FDEA9C",
         buttons: "#FFFFFF"
       }
     });

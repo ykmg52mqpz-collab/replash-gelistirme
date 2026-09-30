@@ -431,7 +431,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('saha', 'courts')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderCourts" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
+                <input type="range" id="prevSliderCourts" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinCourts">1</span>
                   <span id="prevMaxCourts">12</span>
@@ -447,7 +447,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('saha başı', 'per court')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderVideos" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
+                <input type="range" id="prevSliderVideos" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinVideos">1</span>
                   <span id="prevMaxVideos">15</span>
@@ -463,7 +463,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('gün', 'days')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderDays" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDE68A]">
+                <input type="range" id="prevSliderDays" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinDays">20</span>
                   <span id="prevMaxDays">30</span>

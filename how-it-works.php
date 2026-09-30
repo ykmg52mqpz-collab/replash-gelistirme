@@ -20,7 +20,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="absolute inset-0 bg-gradient-to-b from-ink-900/60 via-ink-900/30 to-ink-900/90">
   </div>
   </div>
-  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,230,138,0.12) 0%, transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
   </div>
   <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
   </div>
@@ -92,7 +92,7 @@ require_once __DIR__ . '/includes/header.php';
   <rect x="280" y="60" width="30" height="60">
   </rect>
   </g>
-  <circle r="2.5" fill="rgb(253,230,138)" cx="160" cy="90"><animate attributeName="cx" values="160;120;100;130;160;200;220;190;160" dur="10s" begin="0s" repeatCount="indefinite"/><animate attributeName="cy" values="90;70;100;120;90;70;100;120;90" dur="10s" begin="0s" repeatCount="indefinite"/>
+  <circle r="2.5" fill="rgb(253,234,156)" cx="160" cy="90"><animate attributeName="cx" values="160;120;100;130;160;200;220;190;160" dur="10s" begin="0s" repeatCount="indefinite"/><animate attributeName="cy" values="90;70;100;120;90;70;100;120;90" dur="10s" begin="0s" repeatCount="indefinite"/>
   </circle>
   <circle r="3" fill="white" cx="90" cy="70"><animate attributeName="cx" values="90;110;95;90" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/><animate attributeName="cy" values="70;85;100;70" dur="12s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
   </circle>
@@ -202,7 +202,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="p-4">
     <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
       <div class="mb-3 flex items-center gap-2.5">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FDEA9C" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 118 0v3"></path></svg>
         <span class="font-display text-base font-bold text-white"><?= e(__('find.watch.title')) ?></span>
       </div>
       <p class="mb-4 text-xs text-white/50"><?= e(__('find.watch.subtitle')) ?></p>
@@ -299,7 +299,7 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 
   <section class="section-y border-t border-white/5 bg-section-gradient relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 60% at 50% 100%, rgba(253,230,138,0.10), transparent 70%)" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 60% 60% at 50% 100%, rgba(253,234,156,0.10), transparent 70%)" aria-hidden="true">
   </div>
   <div class="container-x relative text-center">
   <div  data-reveal="up">
