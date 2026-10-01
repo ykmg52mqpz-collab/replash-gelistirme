@@ -6,10 +6,9 @@
     <div class="container-x py-14">
       <div class="flex flex-col gap-10 md:flex-row md:justify-between">
         <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-2.5">
-            <img loading="lazy" decoding="async" src="<?= asset('images/replash-logo.webp') ?>" alt="REPLASH" class="h-12 w-auto select-none" draggable="false"/>
-            <span lang="en" style="font-weight:600" class="font-display text-2xl tracking-tight text-accent">REPLASH</span>
-          </div>
+          <div class="flex items-center">
+              <img loading="lazy" decoding="async" src="<?= asset('images/replash-lockup.webp') ?>" alt="REPLASH" width="1103" height="240" class="h-9 w-auto select-none" draggable="false"/>
+            </div>
           <p class="max-w-xs text-sm text-white/50 leading-relaxed"><?= e(__('footer.tagline')) ?></p>
           <div role="group" aria-label="Language" class="inline-flex w-fit items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium backdrop-blur">
             <?php foreach (array_values(array_intersect(['it', 'en', 'tr', 'es'], $SUPPORTED_LANGUAGES)) as $lng): $isCur = ($current_lang === $lng); ?>

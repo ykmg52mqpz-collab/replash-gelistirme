@@ -47,7 +47,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <meta name="theme-color" content="#0a0a0a">
 
   <!-- Preloads -->
-  <link rel="preload" as="image" href="<?= asset('images/replash-logo.webp') ?>">
+  <link rel="preload" as="image" href="<?= asset('images/replash-lockup.webp') ?>">
 <?php if ($currentPage === 'index'): ?>
   <link rel="preload" as="image" href="<?= asset('images/gen_hero_friends.webp') ?>">
 <?php endif; ?>
@@ -91,9 +91,8 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
   <!-- İç araç üst çubuğu (replash.info InternalShell) -->
   <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
     <div class="container-x flex h-16 items-center gap-3">
-      <a href="<?= base_url() ?>" class="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold">
-        <img src="<?= asset('images/icon-512.png') ?>" alt="Replash" width="28" height="28" class="rounded">
-        REPLASH<span class="text-accent">.</span>
+      <a href="<?= base_url() ?>" class="flex shrink-0 items-center" aria-label="REPLASH">
+        <img src="<?= asset('images/replash-lockup-dark.webp') ?>" alt="REPLASH" width="1103" height="240" class="h-6 w-auto select-none">
       </a>
       <span class="hidden whitespace-nowrap rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600 sm:inline-block"><?= e($internalShell) ?></span>
       <!-- Dil seçimi: açık temada görünür renkler (beyaz üstüne beyazdı) -->
@@ -114,9 +113,8 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
       <div class="pointer-events-auto mx-auto flex h-14 items-center justify-between gap-4 rounded-full border px-3 pl-4 pr-2 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 md:px-4 md:pl-5 md:pr-2.5 border-white/[0.06] bg-ink-900/50 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl">
         
         <!-- Logo -->
-        <a class="flex items-center gap-2" href="<?= base_url() ?>">
-          <img src="<?= asset('images/replash-logo.webp') ?>" alt="REPLASH" class="h-8 w-auto select-none md:h-9" draggable="false"/>
-          <span lang="en" style="font-weight:600" class="font-display text-xl tracking-tight text-accent md:text-2xl">REPLASH</span>
+        <a class="flex items-center" href="<?= base_url() ?>" aria-label="REPLASH">
+          <img src="<?= asset('images/replash-lockup.webp') ?>" alt="REPLASH" width="1103" height="240" class="h-7 w-auto select-none md:h-8" draggable="false"/>
         </a>
 
         <!-- Desktop Navigation -->
