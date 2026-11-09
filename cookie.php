@@ -33,7 +33,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Contatti",
         "p": [
-          "Per qualsiasi domanda sui cookie puoi scriverci a partnerships@replash.eu."
+          "Per qualsiasi domanda sui cookie puoi scriverci a partnerships@replash.it."
         ]
       }
     ]
@@ -64,7 +64,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "İletişim",
         "p": [
-          "Çerezlerle ilgili sorularınız için partnerships@replash.eu adresine yazabilirsiniz."
+          "Çerezlerle ilgili sorularınız için partnerships@replash.it adresine yazabilirsiniz."
         ]
       }
     ]
@@ -95,7 +95,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Contacto",
         "p": [
-          "Para cualquier pregunta sobre cookies, escríbenos a partnerships@replash.eu."
+          "Para cualquier pregunta sobre cookies, escríbenos a partnerships@replash.it."
         ]
       }
     ]
@@ -126,7 +126,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Contact",
         "p": [
-          "For any question about cookies, contact us at partnerships@replash.eu."
+          "For any question about cookies, contact us at partnerships@replash.it."
         ]
       }
     ]
@@ -138,7 +138,7 @@ $d = $doc[$current_lang] ?? $doc['en'];
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="relative bg-ink-900">
+<main id="main" class="relative bg-ink-900">
   <section class="section-y border-t border-white/5">
     <div class="container-x mx-auto max-w-3xl">
       <p class="text-[11px] font-semibold uppercase tracking-widest text-accent/70"><?= e($d['updated']) ?></p>

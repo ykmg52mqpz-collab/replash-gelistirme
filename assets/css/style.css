@@ -7,12 +7,14 @@
   --bg-ink-800: #131313;
   --bg-ink-700: #1a1709;
   --bg-ink-600: #241f0d;
-  --accent: #FDEA9C;
-  --accent-neon: #FEF3C7;
-  --accent-glow: rgba(253, 234, 156, 0.35);
+  --accent: #FEF1B6;
+  --accent-neon: #FFF8DF;
+  --accent-glow: rgba(254, 241, 182, 0.35);
   --foreground: #ededed;
   --muted: #9CA3AF;
   --border-glass: rgba(255, 255, 255, 0.08);
+  /* Yenileme D03: form parçaları (onay kutusu, liste, kaydırma çubuğu) koyu temaya göre çizilsin */
+  color-scheme: dark;
 }
 
 * {
@@ -97,8 +99,8 @@ h3.font-display {
 }
 
 .bg-section-gradient {
-  background: radial-gradient(ellipse 50% 60% at 15% 30%, rgba(253, 234, 156, 0.04), transparent 70%),
-              linear-gradient(180deg, #0A0A0A 0%, #111111 50%, #0A0A0A 100%);
+  /* Yenileme D05: sarı ışık lekesi kaldırıldı, sadece hafif ton geçişi */
+  background: linear-gradient(180deg, #0A0A0A 0%, #101010 50%, #0A0A0A 100%);
 }
 
 /* Glass & Card Systems */
@@ -120,60 +122,36 @@ h3.font-display {
 }
 
 .card-elevated:hover {
-  border-color: rgba(253, 234, 156, 0.25);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 24px 60px -20px rgba(0, 0, 0, 0.9),
-    0 0 30px rgba(253, 234, 156, 0.08);
-  transform: translateY(-2px);
+  /* Yenileme D11: kart zıplamıyor, parlamıyor; sadece kenar rengi değişir */
+  border-color: rgba(254, 241, 182, 0.25);
 }
 
 /* Grid Noise & Gradients */
 .grid-noise {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
+  /* Yenileme D05: ızgara deseni kaldırıldı */
+  background-image: none;
 }
 
 .hero-glow {
+  display: none; /* Yenileme D05 */
   position: absolute;
   top: -200px;
   left: 50%;
   transform: translateX(-50%);
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(253, 234, 156, 0.12) 0%, rgba(253, 234, 156, 0.02) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(254, 241, 182, 0.12) 0%, rgba(254, 241, 182, 0.02) 45%, transparent 70%);
   pointer-events: none;
   border-radius: 50%;
   z-index: 1;
 }
 
-.shadow-glow {
-  box-shadow: 0 0 35px rgba(253, 234, 156, 0.35);
-}
+/* Yenileme D05: butonlarda hale yok (sınıf adı eski şablonlarda kalabilir) */
+.shadow-glow, .shadow-glow-sm, .shadow-glow:hover { box-shadow: none; }
 
-.shadow-glow-sm {
-  box-shadow: 0 0 20px rgba(253, 234, 156, 0.25);
-}
-
-.shadow-glow:hover {
-  box-shadow: 0 0 55px rgba(254, 243, 199, 0.5);
-}
-
-.text-gradient {
-  background: linear-gradient(180deg, #FFFFFF 40%, rgba(255, 255, 255, 0.45) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-accent-gradient {
-  background: linear-gradient(135deg, #FEF3C7 0%, #FDEA9C 50%, #F59E0B 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Yenileme D04: geçişli yazı yok, düz renk */
+.text-gradient { color: #FFFFFF; }
+.text-accent-gradient { color: var(--accent); }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -187,7 +165,7 @@ h3.font-display {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FDEA9C;
+  background: #FEF1B6;
 }
 
 /* Video Player Scrubber Animation */
@@ -213,19 +191,13 @@ h3.font-display {
 /* Scroll reveal — replash.info'daki Framer Motion "whileInView" karşılığı.
    Hareket azaltma tercihi açıkken animasyon uygulanmaz. */
 .reveal-ready [data-reveal] {
+  /* Yenileme D11: süzülme yok, kademeli gecikme yok; bölüm bir kez, hafifçe belirir */
   opacity: 0;
-  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1),
-              transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
+  transition: opacity 0.35s ease-out;
 }
-.reveal-ready [data-reveal="up"]    { transform: translateY(24px); }
-.reveal-ready [data-reveal="left"]  { transform: translateX(-20px); }
-.reveal-ready [data-reveal="right"] { transform: translateX(20px); }
 
 .reveal-ready [data-reveal].is-visible {
   opacity: 1;
-  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -235,128 +207,6 @@ h3.font-display {
     transition: none;
   }
 }
-
-/* Nasıl Çalışır maketleri — replash.info StepMockups animasyonlarının CSS karşılığı
-   (süre ve zamanlama dizileri canlıdaki framer-motion değerleriyle aynı) */
-.hw-slot    { animation: hw-slot 6s ease-in-out infinite; }
-.hw-toggle  { background: rgba(255,255,255,0.08); animation: hw-toggle 6s ease-in-out infinite; }
-.hw-knob    { left: 0; transform: translateX(2px); animation: hw-knob 6s ease-in-out infinite; }
-.hw-blink   { animation: hw-blink 1.4s ease-in-out infinite; }
-.hw-chip    { opacity: 0; animation: hw-chip 6s ease-out infinite both; }
-.hw-indexed { opacity: 0; animation: hw-indexed 6s linear infinite; }
-.hw-row     { animation: hw-row 6s ease-in-out infinite; }
-.hw-badge   { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); animation: hw-badge 6s ease-in-out infinite; }
-.hw-out     { animation: hw-out 6s linear infinite; }
-.hw-in      { animation: hw-in 6s linear infinite; }
-.hw-field   { animation: hw-field 8s linear infinite both; }
-.hw-watch   { animation: hw-watch 8s linear infinite; }
-.hw-clip    { animation: hw-clip 6s ease-in-out infinite; }
-.hw-share   { opacity: 0.4; animation: hw-share 6s linear infinite; }
-
-@keyframes hw-slot {
-  0%, 100% { border-color: rgba(255,255,255,0.08); background-color: rgba(255,255,255,0.02); }
-  25%, 50%, 75% { border-color: rgba(253,234,156,0.55); background-color: rgba(253,234,156,0.06); }
-}
-@keyframes hw-toggle {
-  0%, 35%, 100% { background-color: rgba(255,255,255,0.08); }
-  50%, 85% { background-color: rgb(253,234,156); }
-}
-@keyframes hw-knob {
-  0%, 35%, 100% { transform: translateX(2px); }
-  50%, 85% { transform: translateX(18px); }
-}
-@keyframes hw-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-@keyframes hw-chip {
-  0%, 100% { opacity: 0; transform: translateX(-12px); }
-  15%, 50%, 85% { opacity: 1; transform: none; }
-}
-@keyframes hw-indexed { 0%, 50%, 70%, 100% { opacity: 0; } 85% { opacity: 1; } }
-@keyframes hw-row {
-  0%, 100% { background-color: rgba(255,255,255,0); }
-  33%, 66% { background-color: rgba(253,234,156,0.08); }
-}
-@keyframes hw-badge {
-  0%, 35%, 100% { background-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-  50%, 85% { background-color: rgb(253,234,156); color: rgb(10,10,10); }
-}
-@keyframes hw-out { 0%, 35%, 100% { opacity: 1; } 50%, 85% { opacity: 0; } }
-@keyframes hw-in  { 0%, 35%, 100% { opacity: 0; } 50%, 85% { opacity: 1; } }
-@keyframes hw-field { 0%, 15%, 100% { opacity: 0.25; } 30%, 85% { opacity: 1; } }
-@keyframes hw-watch { 0%, 30%, 50%, 100% { opacity: 0.3; } 65%, 90% { opacity: 1; } }
-@keyframes hw-clip {
-  0%, 100% { left: 18%; width: 8%; }
-  33.3% { left: 22%; width: 14%; }
-  66.6% { left: 26%; width: 18%; }
-}
-@keyframes hw-share { 0%, 50%, 100% { opacity: 0.4; } 65%, 85% { opacity: 1; } }
-
-/* Nasıl Çalışır: gerçek panel ve oyuncu ekranlarından maketler (6 sn / 8 sn döngü) */
-.hwp-a       { animation: hwp-a 6s linear infinite; }
-.hwp-b       { opacity: 0; animation: hwp-b 6s linear infinite; }
-.hwp-press   { display: inline-block; animation: hwp-press 6s ease-in-out infinite; }
-.hwp-cursor  { opacity: 0; animation: hwp-cursor 6s ease-in-out infinite; }
-.hwp-rowflash { animation: hwp-rowflash 6s ease-in-out infinite; }
-.hwp-char    { display: inline-block; opacity: 0; animation: hwp-char 6s ease-out infinite both; }
-.hwp-copy-a  { animation: hwp-copy-a 6s linear infinite; }
-.hwp-copy-b  { opacity: 0; animation: hwp-copy-b 6s linear infinite; }
-.hwp-type    { display: inline-block; clip-path: inset(0 100% 0 0); animation: hwp-type 8s linear infinite; }
-.hwp-caret   { display: inline-block; animation: hw-blink 1s steps(1, end) infinite; }
-.hwp-input   { animation: hwp-input 8s linear infinite; }
-.hwp-go      { animation: hwp-go 8s ease-in-out infinite; }
-.hwp-cut     { animation: hwp-cut 6s ease-in-out infinite; }
-.hwp-playicon { animation: hwp-playicon 6s ease-in-out infinite; }
-
-@keyframes hwp-a { 0%, 42% { opacity: 1; } 48%, 92% { opacity: 0; } 98%, 100% { opacity: 1; } }
-@keyframes hwp-b { 0%, 42% { opacity: 0; } 48%, 92% { opacity: 1; } 98%, 100% { opacity: 0; } }
-@keyframes hwp-press {
-  0%, 36%, 46%, 100% { transform: scale(1); box-shadow: none; }
-  40% { transform: scale(0.9); box-shadow: 0 0 0 3px rgba(17,17,17,0.15); }
-}
-@keyframes hwp-cursor {
-  0% { opacity: 0; transform: translate(46px, 34px); }
-  10% { opacity: 1; transform: translate(46px, 34px); }
-  34% { opacity: 1; transform: translate(0, 0) scale(1); }
-  40% { opacity: 1; transform: translate(0, 0) scale(0.82); }
-  46% { opacity: 1; transform: translate(0, 0) scale(1); }
-  58%, 100% { opacity: 0; transform: translate(0, 0); }
-}
-@keyframes hwp-rowflash { 0%, 44%, 92%, 100% { background-color: transparent; } 52%, 80% { background-color: rgb(236, 253, 245); } }
-@keyframes hwp-char {
-  0% { opacity: 0; transform: translateY(6px); }
-  6%, 88% { opacity: 1; transform: none; }
-  94%, 100% { opacity: 0; transform: none; }
-}
-@keyframes hwp-copy-a { 0%, 50% { opacity: 1; } 54%, 88% { opacity: 0; } 92%, 100% { opacity: 1; } }
-@keyframes hwp-copy-b { 0%, 50% { opacity: 0; } 54%, 88% { opacity: 1; } 92%, 100% { opacity: 0; } }
-@keyframes hwp-type {
-  0%, 8% { clip-path: inset(0 100% 0 0); animation-timing-function: steps(4, end); }
-  36%, 70% { clip-path: inset(0 0 0 0); }
-  72%, 100% { clip-path: inset(0 100% 0 0); }
-}
-@keyframes hwp-input { 0%, 5% { border-color: rgba(255,255,255,0.1); } 8%, 60% { border-color: rgb(253,234,156); } 64%, 100% { border-color: rgba(255,255,255,0.1); } }
-@keyframes hwp-go {
-  0%, 44%, 56%, 100% { transform: scale(1); box-shadow: none; }
-  48% { transform: scale(0.96); box-shadow: 0 0 24px rgba(253,234,156,0.55); }
-  52% { transform: scale(1); box-shadow: 0 0 30px rgba(253,234,156,0.45); }
-}
-@keyframes hwp-cut {
-  0%, 55%, 100% { background: transparent; color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.1); }
-  62%, 92% { background: rgb(253,234,156); color: rgb(10,10,10); border-color: rgb(253,234,156); }
-}
-@keyframes hwp-playicon { 0%, 20%, 100% { opacity: 1; } 30%, 90% { opacity: 0; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .hw-slot, .hw-toggle, .hw-knob, .hw-blink, .hw-chip, .hw-indexed, .hw-row, .hw-badge,
-  .hw-out, .hw-in, .hw-field, .hw-watch, .hw-clip, .hw-share,
-  .hwp-a, .hwp-b, .hwp-press, .hwp-cursor, .hwp-rowflash, .hwp-char, .hwp-copy-a, .hwp-copy-b,
-  .hwp-type, .hwp-caret, .hwp-input, .hwp-go, .hwp-cut, .hwp-playicon { animation: none; }
-  .hwp-a, .hwp-copy-b, .hwp-cursor { opacity: 0; }
-  .hwp-b, .hwp-char, .hwp-copy-a { opacity: 1; }
-  .hwp-type { clip-path: none; }
-  .hw-chip, .hw-indexed, .hw-field, .hw-watch, .hw-share { opacity: 1 !important; }
-  .hw-in { opacity: 0; }
-}
-
 
 /* ===== Masa başı (panel/yönetim) teması — site tasarımından bağımsız, renksiz =====
    header.php, iç araç sayfalarında <body class="theme-desk"> ekler. */
@@ -387,12 +237,12 @@ body.theme-desk { background:#f5f6f8 !important; color:#111827; }
 .theme-desk .text-white\/8 { color:#9ca3af !important; }
 .theme-desk .text-white\/10 { color:#9ca3af !important; }
 .theme-desk .text-white\/15 { color:#9ca3af !important; }
-.theme-desk .text-white\/20 { color:#9ca3af !important; }
-.theme-desk .text-white\/25 { color:#9ca3af !important; }
-.theme-desk .text-white\/30 { color:#9ca3af !important; }
-.theme-desk .text-white\/35 { color:#6b7280 !important; }
-.theme-desk .text-white\/40 { color:#6b7280 !important; }
-.theme-desk .text-white\/45 { color:#6b7280 !important; }
+.theme-desk .text-white\/20 { color:#5b6472 !important; }
+.theme-desk .text-white\/25 { color:#5b6472 !important; }
+.theme-desk .text-white\/30 { color:#5b6472 !important; }
+.theme-desk .text-white\/35 { color:#5b6472 !important; }
+.theme-desk .text-white\/40 { color:#5b6472 !important; }
+.theme-desk .text-white\/45 { color:#5b6472 !important; }
 .theme-desk .text-white\/50 { color:#4b5563 !important; }
 .theme-desk .text-white\/55 { color:#4b5563 !important; }
 .theme-desk .text-white\/60 { color:#4b5563 !important; }
@@ -404,8 +254,8 @@ body.theme-desk { background:#f5f6f8 !important; color:#111827; }
 .theme-desk .text-white\/90 { color:#374151 !important; }
 .theme-desk .text-white\/95 { color:#374151 !important; }
 .theme-desk .text-neutral-200, .theme-desk .text-neutral-300 { color:#374151 !important; }
-.theme-desk .text-neutral-400 { color:#6b7280 !important; }
-.theme-desk .text-neutral-500, .theme-desk .text-neutral-600 { color:#9ca3af !important; }
+.theme-desk .text-neutral-400 { color:#4b5563 !important; }
+.theme-desk .text-neutral-500, .theme-desk .text-neutral-600 { color:#4b5563 !important; }
 .theme-desk .hover\:text-white:hover, .theme-desk .hover\:text-accent:hover { color:#111827 !important; }
 .theme-desk .border-white\/5, .theme-desk .border-white\/8, .theme-desk .border-white\/10, .theme-desk .border-white\/15, .theme-desk .border-white\/20, .theme-desk .border-white\/\[0\.06\], .theme-desk .border-white\/\[0\.08\], .theme-desk .border-accent\/20, .theme-desk .border-accent\/25, .theme-desk .border-accent\/30, .theme-desk .border-accent\/40, .theme-desk .border-accent\/50, .theme-desk .divide-white\/5, .theme-desk .divide-white\/\[0\.06\] { border-color:#e5e7eb !important; }
 .theme-desk .hover\:border-accent:hover, .theme-desk .hover\:border-white\/20:hover, .theme-desk .hover\:border-white\/30:hover { border-color:#9ca3af !important; }
@@ -525,4 +375,69 @@ html.rp-fs-lock header, html.rp-fs-lock footer, html.rp-fs-lock a[href*="wa.me"]
   /* ipucu ve boşluklar yatayda gereksiz yer kaplıyor */
   #rp-stage.rp-fs #rp-quick-hint, #rp-stage:fullscreen #rp-quick-hint { display: none; }
   #rp-stage.rp-fs #rp-controls > div, #rp-stage:fullscreen #rp-controls > div { gap: 0.4rem; }
+}
+
+/* Animasyon güvencesi (main.js): 2,5 sn sonra gizli kalan her şey görünür olur */
+.reveal-all [data-reveal] { opacity: 1 !important; transform: none !important; }
+
+
+/* Panel / yönetim: gri metinler açık gri zeminde de okunur (WCAG AA kontrast) */
+.theme-desk .text-gray-500 { color: #4b5563; }
+.theme-desk .text-gray-400 { color: #5f6b7a; }
+.theme-desk .text-gray-300 { color: #7a8494; }
+
+/* Yenileme D03: iç araç (panel/yönetim) açık temada kalır */
+.theme-desk { color-scheme: light; }
+
+/* Yenileme D01: dil seçici (details/summary) */
+.lang-menu summary::-webkit-details-marker { display: none; }
+
+/* Yenileme Tasarım 06: küçük etiketler oynatıcıdaki zaman kodu gibi — eşit aralıklı, büyük harf/hap kutusu yok */
+.rp-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/* Fotoğraf erimesi: çerçeve yok, kenarlar koyu zemine yumuşakça karışır (mask = yalnızca opaklık) */
+.photo-melt-y, .photo-melt-l, .photo-melt-r {
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.photo-melt-y {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%);
+}
+/* dar ekranda yan yana düzen yok: sağa/sola yaslı fotoğraflar da dört kenardan erir */
+.photo-melt-l, .photo-melt-r {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 82%, transparent 100%), linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 82%, transparent 100%), linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+@media (min-width: 1024px) {
+  /* foto sağda, metne doğru (sola) erir */
+  .photo-melt-r {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(to right, transparent 0, #000 42%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(to right, transparent 0, #000 42%);
+  }
+  /* foto solda, metne doğru (sağa) erir */
+  .photo-melt-l {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(to left, transparent 0, #000 42%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(to left, transparent 0, #000 42%);
+  }
+}
+
+/* AI Analiz girişi: zaman çizelgesi ilerler, ısı haritası hafifçe nefes alır (hareket azaltılmışsa sabit) */
+.ai-hero .ai-progress { width: 38%; animation: ai-progress 14s linear infinite; }
+.ai-hero .ai-heat { animation: ai-heat 4s ease-in-out infinite alternate; }
+@keyframes ai-progress { from { width: 0; } to { width: 100%; } }
+@keyframes ai-heat { from { opacity: 0.8; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .ai-hero .ai-progress, .ai-hero .ai-heat { animation: none; }
+}
+
+/* Giriş videosu: hareket azaltılmışsa gizlenir, altındaki görsel görünür */
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
 }

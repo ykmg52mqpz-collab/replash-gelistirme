@@ -77,23 +77,23 @@ return [
         ],
         'findPreview' => [
             'eyebrow' => 'Maçını Bul',
-            'title' => 'Üç alan. Maçınız.',
+            'title' => 'Üç alan, bir maç.',
             'desc' => 'Uygulama indirilmesi gerekmez. Hesap gerekmez. Şifre gerekmez. Oyuncular sahadan ayrılır, QR\'ı okutur veya siteyi ziyaret eder ve maçlarını izler.',
             'fields' => [
                 'facility' => 'Saha',
                 'date' => 'Tarih',
-                'time' => 'Saat Slotu',
-                'accessCode' => 'veya Erişim Kodu (örn: 4821)',
-                'facilityPlaceholder' => 'Bir saha seçin',
+                'time' => 'Saat aralığı',
+                'accessCode' => 'ya da maç kodu (ör. 4821)',
+                'facilityPlaceholder' => 'Saha seç',
                 'datePlaceholder' => 'Tarih seçin',
-                'timePlaceholder' => 'Slotunuzu seçin',
+                'timePlaceholder' => 'Saat aralığını seç',
                 'codePlaceholder' => '4821'
             ],
             'button' => 'Maçımı İzle',
             'tryIt' => 'Demoyu deneyin'
         ],
         'whyFacilities' => [
-            'eyebrow' => 'Sahalar Neden Replash\'ı Seçiyor',
+            'eyebrow' => 'Sahalar Neden Replash\'i Seçiyor',
             'title' => 'Sahalar artık sadece saha zamanı satmıyor. Maçın etrafındaki deneyimi satıyorlar.',
             'cta' => 'Sahalar İçin',
             'items' => [
@@ -137,7 +137,7 @@ return [
                     'desc' => 'Replash içinde 15–45 saniyelik highlight\'lar kesin. Gol, rali, kutlama. Telefona anında indirin.'
                 ],
                 '3' => [
-                    'title' => 'Sosyal Medyada Paylaşın',
+                    'title' => 'Sosyal medyada paylaşın',
                     'desc' => 'Klibi doğrudan sosyal medya platformlarında paylaşın. Replash profili gerekmez. Oyuncu her paylaşıma sahip.'
                 ],
                 '4' => [
@@ -148,8 +148,8 @@ return [
         ],
         'faq' => [
             'eyebrow' => 'Sık Sorulan Sorular',
-            'title' => 'Evet demeden önce bilmeniz gereken her şey.',
-            'subtitle' => 'Sahaların ve oyuncuların en çok sorduğu soruların cevapları.',
+            'title' => 'Sık sorulanlar',
+            'subtitle' => 'Tesislerin ve oyuncuların en çok sorduğu sorular.',
             'items' => [
                 '1' => [
                     'q' => 'Sahama tam olarak ne kurulur?',
@@ -157,7 +157,7 @@ return [
                 ],
                 '2' => [
                     'q' => 'Başlangıç maliyeti veya sözleşme yükümlülüğü var mı?',
-                    'a' => 'Hayır. Replash maliyetin %100\'ünü karşılar. Kameralar, kurulum, bakım, yazılım güncellemeleri. Aylık ücret yok. Minimum taahhüt 6 aydır. Sözleşme süresince tesis, anlaşılan yüzde payını her ay almaya devam eder.'
+                    'a' => 'Peşin maliyet yok. Replash kameraların, kurulumun, bakımın ve yazılım güncellemelerinin maliyetinin %100\'ünü karşılar, aylık ücret yoktur. Hizmet için en az 12 ay taahhüt gerekir. Bu sürenin tamamında tesisiniz anlaşılan payı her ay alır.'
                 ],
                 '3' => [
                     'q' => 'Replash sahayla geliri nasıl paylaşır?',
@@ -198,7 +198,7 @@ return [
             'title' => 'Sahanızı yeni bir dijital maç deneyimiyle güncelleyin.',
             'subtitle' => 'Kurulum ve şartlar hakkında detaylı bilgi almak için bizimle iletişime geçin.',
             'button' => 'Sahalar İçin Keşfet',
-            'secondary' => 'İletişime Geçin'
+            'secondary' => 'İletişime geç'
         ]
     ],
     'howItWorks' => [
@@ -295,7 +295,7 @@ return [
                 'tip' => 'WhatsApp grubuna atın, tüm arkadaşlarınız aynı anda kendi cihazından izlesin.'
             ],
             'step5' => [
-                'button' => 'Maçımı Bul & İzle',
+                'button' => 'Maçımı bul ve izle',
                 'noApp' => 'Uygulama Yok',
                 'noAccount' => 'Hesap Açmak Yok',
                 'instantAccess' => 'Anında Erişim'
@@ -411,27 +411,27 @@ return [
             'auto_refresh' => 'Bu sayfa 30 saniyede bir kendini yeniler.',
             'refresh' => 'Şimdi yenile',
         ],
-        'title' => 'Maçını Bul & İzle',
-        'subtitle' => 'Sahanızı ve maç saatinizi seçerek kaydınızı bulun veya doğrudan erişim kodunuzla videonuzu açın.',
+        'title' => 'Maçını bul ve izle',
+        'subtitle' => 'Sahanı ve maç saatini seçerek kaydını bul ya da doğrudan maç kodunla videonu aç.',
         'fields' => [
             'facility' => 'Tesis / Saha',
-            'select_facility' => 'Tesis Seçin',
+            'select_facility' => 'Tesis seç',
             'date' => 'Tarih',
-            'time' => 'Saat Slotu',
-            'all_hours' => 'Tüm Saatler',
-            'search_btn' => 'Maçı Bul & İzle',
-            'or_code' => 'veya Doğrudan Erişim Kodu ile Aç:',
-            'code_placeholder' => 'Örn: 4821',
-            'open_code_btn' => 'Kodu Aç'
+            'time' => 'Saat aralığı',
+            'all_hours' => 'Tüm saatler',
+            'search_btn' => 'Maçı bul ve izle',
+            'or_code' => 'ya da maç koduyla aç:',
+            'code_placeholder' => 'Ör. 4821',
+            'open_code_btn' => 'Kodu aç'
         ],
         'status' => [
             'unlocked' => 'İzlemeye Açık',
-            'pending_code' => 'Kod Doğrulaması Bekleniyor',
+            'pending_code' => 'Kod bekleniyor',
             'locked' => 'Kilitli (Ödeme Bekleniyor)',
             'verified_code' => 'Doğrulanan Kod:'
         ],
         'camera_select' => [
-            'label' => 'Kamera Açısı:',
+            'label' => 'Kamera açısı:',
             'camera_n' => '{n}. Kamera',
             'switching' => 'Kameraya geçiliyor...'
         ],
@@ -447,7 +447,7 @@ return [
             'btn_start' => 'Klip Oluştur',
             'btn_stop' => 'Kaydı Durdur',
             'recording_active' => 'KAYIT ALINIYOR',
-            'full_match' => 'Tüm Maç (Full)',
+            'full_match' => 'Maçın tamamı',
             'full_match_wifi' => 'Tüm maç büyük bir dosyadır (birkaç yüz MB). Mobil veriyi tüketmemek için Wi-Fi ile indirmeni öneririz.',
             'share_clip' => 'Klibi paylaş',
             'share_link' => 'Maç linkini paylaş',
@@ -459,12 +459,12 @@ return [
         'modal' => [
                 'clip_downloaded' => 'Klip cihazına indirildi. Açılan sayfada videoyu yükleyip paylaşabilirsin.',
                 'clip_saved' => 'Klip cihazına indirildi.',
-                'interrupted' => 'Kesim yarıda kaldı. Uygulamadan çıkmadan tekrar dene.',
+                'interrupted' => 'Klip kesilirken işlem yarıda kaldı. Sayfadan çıkmadan tekrar dene.',
                 'shared_again' => 'Klip paylaşıldı. Başka bir anı da kesebilirsin.',
                 'preparing_title' => 'Klip hazırlanıyor',
-                'preparing_desc' => 'Seçtiğin aralık kesiliyor, logo ekleniyor. Klip süresi kadar sürer.',
+                'preparing_desc' => 'Seçtiğin aralık kesiliyor ve logo ekleniyor. Bu, klibin süresi kadar sürer.',
                 'save_to_gallery' => 'Galeriye kaydet',
-                'social_steps' => '{p} web sitelerinden videoyu doğrudan almıyor. Klibi galerine kaydet, sonra {p} içinde videoyu seçip paylaş.',
+                'social_steps' => '{p}, web sitelerinden doğrudan video almıyor. Klibi galerine kaydet, sonra {p} içinde videoyu seçip paylaş.',
                 'open_platform' => '{p} sayfasını aç',
                 'no_direct_share' => 'Bu tarayıcı doğrudan paylaşımı desteklemiyor. Klibi galerine kaydedip istediğin uygulamada paylaşabilirsin.',
                 'clip_wait' => 'Klip hazırlanıyor, bitince paylaşabilirsin.',
@@ -472,25 +472,25 @@ return [
                 'clip_ready' => 'Klip hazır.',
                 'clip_server' => 'Klip sunucudan indirilecek.',
                 'download_video' => 'Klibi indir',
-            'title' => 'Pozisyon Klibi Hazır!',
-            'desc' => 'Belirlediğiniz aralık MP4 olarak kesildi',
+            'title' => 'Klibin hazır!',
+            'desc' => 'Seçtiğin aralık MP4 olarak kesildi.',
             'court' => 'Saha / Kort:',
-            'range' => 'Klip Aralığı:',
-            'duration' => 'Klip Süresi:',
+            'range' => 'Klip aralığı:',
+            'duration' => 'Klip süresi:',
             'format' => 'Format:',
             'seconds' => 'saniye',
-            'download_mp4' => 'Klibi MP4 Olarak İndir',
+            'download_mp4' => 'Klibi MP4 olarak indir',
             'share_clip' => 'Paylaş',
-            'share_social_title' => 'Sosyal Medyada Paylaş',
+            'share_social_title' => 'Sosyal medyada paylaş',
             'preparing_file' => 'Video dosyası hazırlanıyor...',
-            'file_share_not_supported' => 'Tarayıcınız doğrudan dosya paylaşımını desteklemiyor. Video indirildi, açılan pencereden yükleyebilirsiniz.',
+            'file_share_not_supported' => 'Tarayıcın doğrudan dosya paylaşımını desteklemiyor. Video indirildi; açılan pencereden yükleyebilirsin.',
             'close' => 'Kapat'
         ],
         'gate' => [
-            'title' => 'Maç Kaydı Bulundu!',
-            'desc' => 'Bu saat slotuna ait kamera kaydı hazırdır. Videoyu izlemek için lütfen tesis görevlisinin size verdiği 8 haneli Erişim Kodunu giriniz.',
-            'placeholder' => 'Erişim Kodu (Örn: 4821)',
-            'verify_btn' => 'Videoyu Doğrula & İzle'
+            'title' => 'Maç kaydı bulundu!',
+            'desc' => 'Bu saate ait kamera kaydı hazır. Videoyu izlemek için tesis görevlisinin verdiği 4 haneli maç kodunu gir.',
+            'placeholder' => 'Maç kodu (ör. 4821)',
+            'verify_btn' => 'Kodu doğrula ve izle'
         ],
         'locked_card' => [
             'title' => 'Bu Maç Kaydı Kilitli',
@@ -498,13 +498,13 @@ return [
             'staff_btn' => 'Tesis Görevlisi Girişi (PIN)'
         ],
         'errors' => [
-                'too_many' => 'Çok fazla hatalı kod denendi. Lütfen {m} dakika sonra tekrar deneyin.',
+                'too_many' => 'Çok fazla hatalı kod denendi. {m} dakika sonra tekrar dene.',
                 'video_not_found' => 'Video bulunamadı',
-            'not_found' => 'Seçilen kriterlere (Tesis, Tarih, Saat) uygun maç kaydı bulunamadı.',
+            'not_found' => 'Bu bilgilere uygun bir maç kaydı bulunamadı.',
             'expired' => 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.',
-            'code_mismatch' => 'Girdiğiniz erişim kodu bu maça/saat dilimine ait değildir! Lütfen doğru kodu giriniz.',
+            'code_mismatch' => 'Girdiğin kod bu maça ait değil. Kodu kontrol edip tekrar dene.',
             'invalid_code' => 'Girdiğiniz erişim koduna ait maç bulunamadı. Lütfen kodu kontrol edin.',
-            'too_short' => 'Kayıt çok kısa (en az 2 saniye olmalıdır).',
+            'too_short' => 'Klip çok kısa; en az 2 saniye olmalı.',
             'notFound' => [
                 'title' => 'Maçınızı bulamadık',
                 'desc' => 'Ya kod yanlış ya da tesis videoyu henüz etkinleştirmedi. Resepsiyondan teyit iste, sonra tekrar dene.',
@@ -523,7 +523,7 @@ return [
         'form' => [
             'facility' => 'Saha',
             'date' => 'Tarih',
-            'time' => 'Saat Slotu',
+            'time' => 'Saat aralığı',
             'facilityPlaceholder' => 'Sahanızı seçin',
             'datePlaceholder' => 'Oynadığınız tarihi seçin',
             'timePlaceholder' => 'Saat slotunuzu seçin',
@@ -576,7 +576,7 @@ return [
             'clip' => [
                     'quick' => 'Bir anı kes',
                     'length' => 'Klip süresi',
-                    'quick_hint' => 'Golden hemen sonra bas: seçtiğin süre kadar geriye dönük kesilir.',
+                    'quick_hint' => 'Golden hemen sonra bas: seçtiğin süre kadar geriye giderek klip kesilir.',
                     'custom' => 'Kendi süreni seç',
                     'sec_short' => 'sn',
                     'advanced' => 'Gelişmiş: saniye seç',
@@ -681,6 +681,7 @@ return [
             'waiting' => 'Satış bekliyor',
             'sold_state' => 'Satıldı',
             'give_code' => 'Bu kodu oyuncuya ver',
+            'remind_recorded' => 'Müşteriye hatırlat: maç kaydediliyor ve videoyu yalnızca kodu olan görebilir.',
             'copy' => 'Kopyala',
             'copied' => 'Kopyalandı',
             'watch' => 'İzle',
@@ -1025,7 +1026,7 @@ return [
     'about' => [
         'hero' => [
             'eyebrow' => 'Replash Hakkında',
-            'title' => 'Tekrar izlemeyi günlük amatör spora getiriyoruz.',
+            'title' => 'Maçı yeniden izleme keyfini amatör spora getiriyoruz.',
             'subtitle' => 'Replash, her gün oynanan amatör futbol, padel ve tenis maçlarına profesyonel kalitede video deneyimi getirir.'
         ],
         'missionVision' => [
@@ -1085,8 +1086,8 @@ return [
         ],
         'linkedin' => 'LinkedIn profilini aç',
         'cta' => [
-            'title' => 'Replash\'i sahanıza getirmek ister misiniz?',
-            'button' => 'İletişime Geçin'
+            'title' => 'Replash’i sahana getirmek ister misin?',
+            'button' => 'İletişime geç'
         ],
         'unimi' => [
             'eyebrow' => 'Università degli Studi di Milano',
@@ -1124,15 +1125,15 @@ return [
         ],
         'vision' => [
             'eyebrow' => 'Vizyonumuz',
-            'text' => 'Her spor tesisinin maç kaydını ışıklar, soyunma odaları veya online rezervasyon kadar doğal bir şekilde sunabildiği bir gelecek.'
+            'text' => 'Her spor tesisinin maç kaydını aydınlatma, soyunma odası ya da online rezervasyon kadar doğal bir hizmet olarak sunduğu bir gelecek.'
         ],
         'whoWeServe' => [
             'eyebrow' => 'Kime Hizmet Veriyoruz',
-            'title' => 'Günlük spor için inşa edildi.',
+            'title' => 'Günlük spor için tasarlandı.',
             'items' => [
                 '1' => [
                     'title' => 'Futbol Sahaları',
-                    'desc' => 'Premium deneyim sunmak isteyen 5\'lik, 7\'lik ve futsal sahaları.'
+                    'desc' => 'Oyunculara daha iyi bir deneyim sunmak isteyen 5’li, 7’li ve futsal sahaları.'
                 ],
                 '2' => [
                     'title' => 'Padel ve Tenis Kulüpleri',
@@ -1144,7 +1145,7 @@ return [
                 ],
                 '4' => [
                     'title' => 'Oyuncular',
-                    'desc' => 'Maçlarını izlemek, kesmek ve paylaşmak isteyen. Kendi kimlikleri altında. Amatör oyuncular.'
+                    'desc' => 'Maçlarını yeniden izlemek, kesmek ve paylaşmak isteyen amatör oyuncular.'
                 ]
             ]
         ],
@@ -1177,7 +1178,7 @@ return [
     'forPlayers' => [
         'hero' => [
             'eyebrow' => 'Oyuncular İçin',
-            'title' => 'Maçınız yeniden görülmeyi hak ediyor.',
+            'title' => 'Maçın yeniden izlenmeyi hak ediyor.',
             'subtitle' => 'Maçını izle. En güzel anları kes. Sosyal medyada paylaş. En güzel anılarınız her zaman sizinle olsun.'
         ],
         'features' => [
@@ -1198,7 +1199,7 @@ return [
             'eyebrow' => 'Hemen Başla',
             'title' => 'Maçını İzlemeye Hazır mısın?',
             'subtitle' => 'Saha görevlisinden aldığınız erişim kodunu girin veya sahanızı seçin.',
-            'button' => 'Maçımı Bul & İzle'
+            'button' => 'Maçımı bul ve izle'
         ],
         'whyVideo' => [
             'title' => 'Oyuncular videoyu neden ister.',
@@ -1326,9 +1327,9 @@ return [
             ]
         ],
         'cta' => [
-            'title' => 'Sahanıza Replash\'i sorun.',
-            'subtitle' => 'Replash partner sahalarda mevcut. Sahanız henüz sunmuyorsa, iletişime geçmelerini teşvik edin.',
-            'button' => 'Sahalar İçin Daha Fazla Bilgi'
+            'title' => 'Sahana Replash’i sor.',
+            'subtitle' => 'Replash anlaşmalı sahalarda kullanılabiliyor. Sahan henüz sunmuyorsa, bize ulaşmalarını söyle.',
+            'button' => 'Tesisler için ayrıntılar'
         ]
     ],
     'contact' => [
@@ -1362,7 +1363,7 @@ return [
             'messagePlaceholder' => 'Tesisiniz hakkında detaylar veya sorularınızı yazabilirsiniz...',
             'submit' => 'Başvuruyu Gönder'
         ],
-        'eyebrow' => 'İletişime Geçin',
+        'eyebrow' => 'İletişime geç',
         'title' => 'Sahanız hakkında konuşalım.',
         'subtitle' => 'Demo istemek, sorularınız olmak veya başlamaya hazır olmak. Biz buradayız.',
         'fields' => [
@@ -1394,16 +1395,16 @@ return [
     'searchSettings' => [
         'codeOnly' => [
             'eyebrow' => 'KOD İLE HIZLI ERİŞİM',
-            'title' => 'Maçını Kod ile Bul',
+            'title' => 'Maçını kodla bul',
             'subtitle' => 'Lütfen tesis görevlisinden aldığınız erişim kodunu giriniz.',
             'desc' => 'Saha görevlisinden aldığınız erişim kodunu girerek maçınızı anında izleyin.',
-            'placeholder' => 'Örn: 4821',
-            'button' => 'Maçımı Bul & İzle',
+            'placeholder' => 'Ör. 4821',
+            'button' => 'Maçımı bul ve izle',
             'hint' => 'Hesap yok, uygulama yok. Sadece kodunuzu girin ve anında izleyin.'
         ]
     ],
     'camera_select' => [
-        'label' => 'Kamera Açısı:',
+        'label' => 'Kamera açısı:',
         'camera_n' => '{n}. Kamera',
         'switching' => 'Kameraya geçiliyor...'
     ],

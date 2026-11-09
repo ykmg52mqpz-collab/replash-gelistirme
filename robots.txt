@@ -3,6 +3,7 @@ Disallow: /panel/
 Disallow: /admin/
 Disallow: /api/
 Disallow: /cron/
+Disallow: /find?code=
 Disallow: /find.php?code=
 
 Sitemap: https://replash.it/sitemap.xml

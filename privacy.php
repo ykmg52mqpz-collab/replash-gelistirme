@@ -1,28 +1,35 @@
 <?php
 require_once __DIR__ . '/includes/init.php';
 
-// Metin 4 dilde (replash.info IT/EN metninden). Saklama bölümü sistemle uyumlu: tüm kayıtlar 7 günde silinir.
+// Metin 4 dilde (replash.info IT/EN metninden). Saklama bölümü sistemle uyumlu: kilidi açılmayan kayıtlar maç tarihinden 3 gün, kilidi açılanlar 7 gün sonra silinir. Ses kaydı ve AB veri merkezi ifadeleri doğrulanamadığı için çıkarıldı.
 $pageTitle = __('footer.privacy');
 $metaTitle = __('footer.privacy') . '. ' . APP_NAME;
 
 $doc = json_decode(<<<'JSON'
 {
   "it": {
-    "updated": "Ultimo aggiornamento: 2026",
+    "updated": "Ultimo aggiornamento: novembre 2026",
     "title": "Informativa sulla Privacy",
     "intro": "Replash registra le partite nei centri sportivi partner tramite telecamere fisse, così i giocatori possono guardare, ritagliare e condividere la propria partita. Questa informativa spiega quali dati trattiamo e come.",
     "sections": [
       {
         "h": "Titolare del trattamento",
         "p": [
-          "Replash è titolare del trattamento dei dati raccolti tramite il servizio. Per qualsiasi richiesta relativa alla privacy puoi scriverci a partnerships@replash.eu."
+          "Il titolare del trattamento è OMSA Group OÜ (codice di registro 17637078, Registro commerciale dell’Estonia), Ruunaoja tn 3, 11415 Tallinn, Estonia, che gestisce il servizio Replash. Per qualsiasi richiesta relativa alla privacy puoi scriverci a partnerships@replash.it."
+        ]
+      },
+      {
+        "h": "Avviso sul campo e consenso del giocatore",
+        "p": [
+          "All'ingresso di ogni campo ripreso è esposto un cartello che segnala la presenza della telecamera. Chi ha pagato il campo accetta che la partita venga registrata.",
+          "Per guardare la partita sul sito, il giocatore conferma di aver giocato nella partita del codice e di sapere che è stata registrata, che il gruppo è d'accordo con l'acquisto del video e di aver letto questa informativa. Senza questa conferma il video non viene mostrato. Non chiediamo il nome. Conserviamo data e ora della conferma, la partita a cui si riferisce e un identificativo cifrato della connessione per 12 mesi, come prova della conferma; poi vengono cancellati automaticamente."
         ]
       },
       {
         "h": "Dati che trattiamo",
         "p": [
           "Registrazioni video dell'area di gioco durante gli orari di apertura del centro. Le telecamere inquadrano solo il campo.",
-          "Non registriamo audio e non utilizziamo alcuna forma di riconoscimento facciale."
+          "Replash non utilizza alcuna forma di riconoscimento facciale."
         ]
       },
       {
@@ -34,7 +41,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Conservazione",
         "p": [
-          "Tutte le registrazioni, sbloccate o no, vengono eliminate automaticamente 7 giorni dopo la data della partita. I file che un giocatore scarica restano sul suo dispositivo."
+          "Le registrazioni non sbloccate vengono eliminate automaticamente 3 giorni dopo la data della partita; quelle sbloccate dopo 7 giorni. Sbloccare una partita non fa ripartire il conteggio. I file che un giocatore scarica restano sul suo dispositivo."
         ]
       },
       {
@@ -46,33 +53,34 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "I tuoi diritti",
         "p": [
-          "Puoi esercitare i diritti di accesso, rettifica, cancellazione e opposizione scrivendo a partnerships@replash.eu."
-        ]
-      },
-      {
-        "h": "Dove vengono trattati i dati",
-        "p": [
-          "Le registrazioni vengono elaborate e archiviate in data center situati nell'Unione Europea."
+          "Puoi esercitare i diritti di accesso, rettifica, cancellazione e opposizione scrivendo a partnerships@replash.it."
         ]
       }
     ]
   },
   "en": {
-    "updated": "Last updated: 2026",
+    "updated": "Last updated: November 2026",
     "title": "Privacy Policy",
     "intro": "Replash records matches at partner sports facilities through fixed cameras, so players can watch, clip and share their match. This policy explains what data we process and how.",
     "sections": [
       {
         "h": "Data controller",
         "p": [
-          "Replash is the controller of the data collected through the service. For any privacy request, contact us at partnerships@replash.eu."
+          "The data controller is OMSA Group OÜ (registry code 17637078, Estonian Commercial Register), Ruunaoja tn 3, 11415 Tallinn, Estonia, which operates the Replash service. For any privacy request, contact us at partnerships@replash.it."
+        ]
+      },
+      {
+        "h": "Notice at the court and player consent",
+        "p": [
+          "A sign at the entrance of every filmed court shows that a camera is in use. Anyone who has paid for the court accepts that the match is recorded.",
+          "To watch the match on the site, the player confirms having played in the match for the code and knowing it was recorded, that the group agrees to buy the video and having read this notice. Without this confirmation the video is not shown. We do not ask for a name. We keep the date and time of the confirmation, the match it refers to and an encrypted connection identifier for 12 months as proof of the confirmation; they are then deleted automatically."
         ]
       },
       {
         "h": "Data we process",
         "p": [
           "Video recordings of the playing area during the facility's opening hours. Cameras only frame the court.",
-          "We do not record audio and we do not use any form of facial recognition."
+          "Replash does not use any form of facial recognition."
         ]
       },
       {
@@ -84,7 +92,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Retention",
         "p": [
-          "All recordings, unlocked or not, are automatically deleted 7 days after the match date. Files a player downloads stay on their own device."
+          "Recordings that are not unlocked are automatically deleted 3 days after the match date; unlocked ones after 7 days. Unlocking a match does not restart the count. Files a player downloads stay on their own device."
         ]
       },
       {
@@ -96,33 +104,34 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Your rights",
         "p": [
-          "You can exercise your rights of access, rectification, erasure and objection by contacting partnerships@replash.eu."
-        ]
-      },
-      {
-        "h": "Where data is processed",
-        "p": [
-          "Recordings are processed and stored in data centers located in the European Union."
+          "You can exercise your rights of access, rectification, erasure and objection by contacting partnerships@replash.it."
         ]
       }
     ]
   },
   "tr": {
-    "updated": "Son güncelleme: 2026",
+    "updated": "Son güncelleme: Kasım 2026",
     "title": "Gizlilik Politikası",
     "intro": "Replash, oyuncular maçlarını izleyip kesip paylaşabilsin diye iş ortağı spor tesislerindeki maçları sabit kameralarla kaydeder. Bu politika hangi verileri nasıl işlediğimizi açıklar.",
     "sections": [
       {
         "h": "Veri sorumlusu",
         "p": [
-          "Hizmet aracılığıyla toplanan verilerin sorumlusu Replash’tir. Gizlilikle ilgili her talebiniz için partnerships@replash.eu adresine yazabilirsiniz."
+          "Veri sorumlusu, Replash hizmetini işleten OMSA Group OÜ’dür (sicil kodu 17637078, Estonya Ticaret Sicili), Ruunaoja tn 3, 11415 Tallinn, Estonya. Gizlilikle ilgili her talebin için partnerships@replash.it adresine yazabilirsin."
+        ]
+      },
+      {
+        "h": "Saha girişi uyarısı ve oyuncu onayı",
+        "p": [
+          "Kayıt yapılan her sahanın girişinde kamera bulunduğunu belirten bir uyarı levhası asılıdır. Sahayı ödeyen kişi, maçın kaydedilmesini kabul etmiş olur.",
+          "Maçı sitede izlemek için oyuncu, bu koda ait maçta oynadığını ve kaydedildiğini bildiğini, grubun videoyu satın almayı kabul ettiğini ve bu bildirimi okuduğunu onaylar. Bu onay olmadan video gösterilmez. Ad istemiyoruz. Onayın tarih ve saatini, ilgili maçı ve bağlantının şifrelenmiş bir tanımlayıcısını onayın kanıtı olarak 12 ay saklarız; sonra otomatik olarak silinir."
         ]
       },
       {
         "h": "İşlediğimiz veriler",
         "p": [
           "Tesisin açık olduğu saatlerde oyun alanının video kayıtları. Kameralar yalnızca sahayı çeker.",
-          "Ses kaydetmiyoruz ve hiçbir yüz tanıma yöntemi kullanmıyoruz."
+          "Replash hiçbir yüz tanıma yöntemi kullanmaz."
         ]
       },
       {
@@ -134,7 +143,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Saklama süresi",
         "p": [
-          "Kilidi açılmış olsun olmasın tüm kayıtlar maç tarihinden 7 gün sonra otomatik olarak silinir. Oyuncunun indirdiği dosyalar kendi cihazında kalır."
+          "Kilidi açılmayan kayıtlar maç tarihinden 3 gün, kilidi açılanlar 7 gün sonra otomatik olarak silinir. Bir maçın kilidini açmak süreyi yeniden başlatmaz. Oyuncunun indirdiği dosyalar kendi cihazında kalır."
         ]
       },
       {
@@ -146,33 +155,34 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Haklarınız",
         "p": [
-          "Erişim, düzeltme, silme ve itiraz haklarınızı partnerships@replash.eu adresine yazarak kullanabilirsiniz."
-        ]
-      },
-      {
-        "h": "Verilerin işlendiği yer",
-        "p": [
-          "Kayıtlar Avrupa Birliği’nde bulunan veri merkezlerinde işlenir ve saklanır."
+          "Erişim, düzeltme, silme ve itiraz haklarınızı partnerships@replash.it adresine yazarak kullanabilirsiniz."
         ]
       }
     ]
   },
   "es": {
-    "updated": "Última actualización: 2026",
+    "updated": "Última actualización: noviembre 2026",
     "title": "Política de Privacidad",
     "intro": "Replash graba los partidos en los centros deportivos asociados mediante cámaras fijas, para que los jugadores puedan ver, recortar y compartir su partido. Esta política explica qué datos tratamos y cómo.",
     "sections": [
       {
         "h": "Responsable del tratamiento",
         "p": [
-          "Replash es responsable del tratamiento de los datos recogidos a través del servicio. Para cualquier solicitud sobre privacidad, escríbenos a partnerships@replash.eu."
+          "El responsable del tratamiento es OMSA Group OÜ (código de registro 17637078, Registro Mercantil de Estonia), Ruunaoja tn 3, 11415 Tallinn, Estonia, que gestiona el servicio Replash. Para cualquier solicitud sobre privacidad, escríbenos a partnerships@replash.it."
+        ]
+      },
+      {
+        "h": "Aviso en la pista y consentimiento del jugador",
+        "p": [
+          "En la entrada de cada pista grabada hay un cartel que indica la presencia de una cámara. Quien ha pagado la pista acepta que el partido se grabe.",
+          "Para ver el partido en el sitio, el jugador confirma que jugó en el partido del código y que sabe que fue grabado, que el grupo está de acuerdo con la compra del vídeo y que ha leído esta información. Sin esta confirmación no se muestra el vídeo. No pedimos el nombre. Guardamos la fecha y hora de la confirmación, el partido al que se refiere y un identificador cifrado de la conexión durante 12 meses como prueba de la confirmación; después se eliminan automáticamente."
         ]
       },
       {
         "h": "Datos que tratamos",
         "p": [
           "Grabaciones de vídeo del área de juego durante el horario de apertura del centro. Las cámaras solo encuadran la pista.",
-          "No grabamos audio y no utilizamos ninguna forma de reconocimiento facial."
+          "Replash no utiliza ninguna forma de reconocimiento facial."
         ]
       },
       {
@@ -184,7 +194,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Conservación",
         "p": [
-          "Todas las grabaciones, desbloqueadas o no, se eliminan automáticamente 7 días después de la fecha del partido. Los archivos que descarga un jugador permanecen en su propio dispositivo."
+          "Las grabaciones sin desbloquear se eliminan automáticamente 3 días después de la fecha del partido; las desbloqueadas, a los 7 días. Desbloquear un partido no reinicia la cuenta. Los archivos que descarga un jugador permanecen en su propio dispositivo."
         ]
       },
       {
@@ -196,13 +206,7 @@ $doc = json_decode(<<<'JSON'
       {
         "h": "Tus derechos",
         "p": [
-          "Puedes ejercer tus derechos de acceso, rectificación, supresión y oposición escribiendo a partnerships@replash.eu."
-        ]
-      },
-      {
-        "h": "Dónde se tratan los datos",
-        "p": [
-          "Las grabaciones se procesan y almacenan en centros de datos situados en la Unión Europea."
+          "Puedes ejercer tus derechos de acceso, rectificación, supresión y oposición escribiendo a partnerships@replash.it."
         ]
       }
     ]
@@ -214,7 +218,7 @@ $d = $doc[$current_lang] ?? $doc['en'];
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="relative bg-ink-900">
+<main id="main" class="relative bg-ink-900">
   <section class="section-y border-t border-white/5">
     <div class="container-x mx-auto max-w-3xl">
       <p class="text-[11px] font-semibold uppercase tracking-widest text-accent/70"><?= e($d['updated']) ?></p>

@@ -7,7 +7,7 @@ $success = null;
 
 // Auth check
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: index.php');
+    header('Location: ./');
     exit;
 }
 
@@ -161,7 +161,7 @@ require_once __DIR__ . '/../includes/header.php';
       <!-- Left Column: Form & Sports Settings (7 cols) -->
       <div class="lg:col-span-7 space-y-6">
 
-        <form action="calculator.php" method="POST" id="calculatorSettingsForm" class="space-y-6">
+        <form action="calculator" method="POST" id="calculatorSettingsForm" class="space-y-6">
           <input type="hidden" name="action" value="save_calculator">
 
           <!-- Sports & Models Header Card -->
@@ -342,7 +342,7 @@ require_once __DIR__ . '/../includes/header.php';
 
               <div>
                 <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('CTA Buton Yönlendirme Linki', 'CTA button link')) ?></label>
-                <input type="text" name="hook_cta_url" value="<?= e($config['hook_cta_url'] ?? 'contact.php') ?>" placeholder="contact.php" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
+                <input type="text" name="hook_cta_url" value="<?= e($config['hook_cta_url'] ?? 'contact') ?>" placeholder="contact" class="w-full rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
               </div>
             </div>
 
@@ -431,7 +431,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('saha', 'courts')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderCourts" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
+                <input type="range" id="prevSliderCourts" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FEF1B6]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinCourts">1</span>
                   <span id="prevMaxCourts">12</span>
@@ -447,7 +447,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('saha başı', 'per court')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderVideos" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
+                <input type="range" id="prevSliderVideos" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FEF1B6]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinVideos">1</span>
                   <span id="prevMaxVideos">15</span>
@@ -463,7 +463,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <span class="text-[10px] text-neutral-400"><?= e(adm('gün', 'days')) ?></span>
                   </div>
                 </div>
-                <input type="range" id="prevSliderDays" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FDEA9C]">
+                <input type="range" id="prevSliderDays" class="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#FEF1B6]">
                 <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
                   <span id="prevMinDays">20</span>
                   <span id="prevMaxDays">30</span>
@@ -520,7 +520,7 @@ require_once __DIR__ . '/../includes/header.php';
       <button type="button" onclick="document.getElementById('addSportModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
     </div>
 
-    <form action="calculator.php" method="POST" class="space-y-4 text-xs">
+    <form action="calculator" method="POST" class="space-y-4 text-xs">
       <input type="hidden" name="action" value="add_sport">
 
       <div class="grid grid-cols-2 gap-3">
@@ -577,13 +577,13 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <!-- Hidden Delete Form -->
-<form id="deleteSportForm" action="calculator.php" method="POST" class="hidden">
+<form id="deleteSportForm" action="calculator" method="POST" class="hidden">
   <input type="hidden" name="action" value="delete_sport">
   <input type="hidden" name="sport_key" id="deleteSportKey">
 </form>
 
 <!-- Hidden Reset Form -->
-<form id="resetDefaultsForm" action="calculator.php" method="POST" class="hidden">
+<form id="resetDefaultsForm" action="calculator" method="POST" class="hidden">
   <input type="hidden" name="action" value="reset_defaults">
 </form>
 

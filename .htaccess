@@ -1,9 +1,14 @@
 # Replash Apache Configuration & Security
-Options -Indexes
+# MultiViews kapalı: temiz adresleri yalnızca aşağıdaki kurallar çözsün (sunucudan sunucuya fark olmasın)
+Options -Indexes -MultiViews
+DirectoryIndex index.php index.html
+
+# Kendi 404 sayfası (Yenileme İşlevsellik 07). Site bir alt klasörde çalışıyorsa yolu ona göre değiştirin (ör. /replash/404.php).
+ErrorDocument 404 /404.php
 
 # İç klasörler ve dosyalar web'den erişilemez (sadece PHP içinden kullanılır)
 <IfModule mod_alias.c>
-    RedirectMatch 404 /(config|includes|languages|cron|replash-info|\.git)(/|$)
+    RedirectMatch 404 /(config|includes|languages|cron|replash-info|tools|kaynak-gorseller|\.git)(/|$)
 </IfModule>
 <FilesMatch "(\.(sql|md|log|env|example|sh)|^\.gitignore|^install\.php|^player\.html)$">
     <IfModule mod_authz_core.c>
@@ -17,7 +22,52 @@ Options -Indexes
     Header set X-XSS-Protection "1; mode=block"
 </IfModule>
 
+# Temiz adresler: /how-it-works.php yerine /how-it-works
+# Kurallar sitenin bulunduğu klasörden bağımsızdır (kök "/" veya alt klasör "/replash/"); RewriteBase gerekmez.
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /replash/
+
+    # Sitenin klasörü -> %{ENV:BASE} (kökte "/", alt klasörde ör. "/replash/")
+    RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+    RewriteRule ^(.*)$ - [E=BASE:%1]
+
+    # İç klasörler: hiçbir yönlendirme yapılmadan doğrudan 404 (yukarıdaki RedirectMatch ile aynı liste)
+    RewriteRule ^(config|includes|languages|cron|replash-info|tools|kaynak-gorseller|\.git)(/|$) - [R=404,L]
+
+    # 404 sayfası ve erişimi kapalı dosyalar hiç yönlendirilmez (LiteSpeed hata sayfasını da bu kurallardan geçirir)
+    RewriteRule ^404\.php$ - [L]
+    RewriteRule ^(install\.php|player\.html)$ - [F,L]
+
+    # api/ olduğu gibi kalır: video indirme ve kamera bildirimleri .php adresleriyle çalışmaya devam eder
+    RewriteRule ^api/ - [L]
+
+    # Eski .php adresleri kalıcı (301) olarak temiz adrese yönlenir; ?lang=... gibi parametreler korunur.
+    # Sadece GET/HEAD: form gönderimleri (POST) yönlendirilmez, veri kaybolmaz.
+    # THE_REQUEST + REDIRECT_STATUS: yalnızca tarayıcının yazdığı adrese bakılır, iç yönlendirmelerde döngü olmaz.
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteCond %{THE_REQUEST} \s[^?\s]*\.php[?\s]
+    RewriteRule ^(.*/)?index\.php$ %{ENV:BASE}$1 [R=301,L]
+
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteCond %{THE_REQUEST} \s[^?\s]*\.php[?\s]
+    RewriteRule ^(.+)\.php$ %{ENV:BASE}$1 [R=301,L]
+
+    # /index -> / (aynı sayfanın iki adresi olmasın)
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^(.*/)?index/?$ %{ENV:BASE}$1 [R=301,L]
+
+    # Sondaki eğik çizgi kaldırılır (/about/ -> /about); gerçek klasörler (/panel/, /admin/) hariç
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)/$ %{ENV:BASE}$1 [R=301,L]
+
+    # Temiz adres arka planda .php dosyasını çalıştırır (/about -> about.php)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+)$ $1.php [L]
 </IfModule>

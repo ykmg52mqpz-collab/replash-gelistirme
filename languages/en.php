@@ -148,7 +148,7 @@ return [
         ],
         'faq' => [
             'eyebrow' => 'Common Questions',
-            'title' => 'Everything you need to know before saying yes.',
+            'title' => 'Frequently asked questions',
             'subtitle' => 'Answers to the questions facilities and players ask most.',
             'items' => [
                 '1' => [
@@ -157,7 +157,7 @@ return [
                 ],
                 '2' => [
                     'q' => 'Are there any upfront costs or contract commitments?',
-                    'a' => 'No. Replash covers 100% of the cost. Cameras, installation, maintenance, software updates. No monthly fees. Minimum commitment is 6 months. For the duration of the contract, your facility receives the same agreed revenue share every month.'
+                    'a' => 'No upfront costs. Replash covers 100% of the cost of cameras, installation, maintenance and software updates, with no monthly fee. The service has a minimum commitment of 12 months. For the whole term, your venue receives the agreed share every month.'
                 ],
                 '3' => [
                     'q' => 'How does Replash share revenue with the facility?',
@@ -640,6 +640,28 @@ return [
             'total_revenue' => 'Total Revenue',
             'matches_unit' => 'matches'
         ],
+        'ui' => [
+            'choose_title' => 'Which device are you working on?',
+            'choose_sub' => 'Choose how to use the panel. You can change this at any time.',
+            'computer' => 'Computer',
+            'computer_sub' => 'Calendar and full table',
+            'phone' => 'Phone',
+            'phone_sub' => 'Simple screen with big touch targets',
+            'switch_to_phone' => 'Phone version',
+            'switch_to_computer' => 'Computer version',
+            'prev_day' => 'Previous day',
+            'next_day' => 'Next day',
+            'pick_day' => 'Pick a day',
+            'sell_title' => 'Sell before the match',
+            'open' => 'Open',
+            'confirm_title' => 'Unlock this match?',
+            'confirm_desc' => 'Give the code only after taking payment. You can undo it within {m} minutes, if the player has not opened it yet.',
+            'hours_label' => 'Length',
+            'hours_n' => '{n} h',
+            'multi_hint' => 'One code per hour: give the player all the codes',
+            'tournament_soon' => 'Tournament mode · coming soon',
+            'tournament_hint' => 'One code for all matches in the tournament, with the videos one under the other on a single page.',
+        ],
         'shell' => [
             'cal_legend' => 'Number: matches that day',
             'tab_matches' => 'Matches and slots',
@@ -681,6 +703,7 @@ return [
             'waiting' => 'Awaiting sale',
             'sold_state' => 'Sold',
             'give_code' => 'Give this code to the player',
+            'remind_recorded' => 'Remind the customer: the match is recorded and only people with the code can see the video.',
             'copy' => 'Copy',
             'copied' => 'Copied',
             'watch' => 'Watch',

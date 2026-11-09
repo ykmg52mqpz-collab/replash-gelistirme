@@ -13,10 +13,15 @@
  */
 
 const REPLASH_UNDO_WINDOW_MIN = 10;
+// Oyuncu onayı (find.php): metin değişince sürüm değişir; kayıtlar bu kadar ay saklanır
+const REPLASH_ACCEPT_TEXT_VERSION = '2026-10-15b';
+const REPLASH_ACCEPT_RETENTION_MONTHS = 12;
 
-// Oyuncunun kesebileceği klip süresi (saniye). Hazır seçenekler find.php'de.
-const REPLASH_CLIP_MIN_SEC = 15;
-const REPLASH_CLIP_MAX_SEC = 45;
+// Klip süresinde ürün sınırı yoktur: oyuncunun seçtiği aralık alınır (find.php: yalnızca teknik taban 1 sn).
+
+// Saklama: kilidi hiç açılmayan (satılmayan) kayıtlar maç tarihinden itibaren bu kadar gün sonra silinir;
+// erişime açılmış kayıtlar RETENTION_DAYS (7) gün sonra kapanır. Erişime açmak süreyi yeniden başlatmaz.
+const REPLASH_UNSOLD_RETENTION_DAYS = 3;
 
 /**
  * Mark a match as opened (first watch or download). The first open makes the sale final.
@@ -88,13 +93,16 @@ function replash_undo_count(PDO $pdo, ?string $facilityId, string $yearMonth): i
 }
 
 /**
- * 7-day retention (Platform Brief): from the match date, every recording — sold or not —
- * is removed after RETENTION_DAYS. Status becomes EXPIRED and the stored playback URL is
+ * Retention, counted from the MATCH DATE (unlocking never restarts the clock):
+ *  - unlocked (sold) recordings: RETENTION_DAYS (7) days, then EXPIRED;
+ *  - never-unlocked recordings: REPLASH_UNSOLD_RETENTION_DAYS (3) days, then deleted
+ *    (see replash_delete_unsold_matches). Status becomes EXPIRED and the stored playback URL is
  * cleared, so access codes and old links stop working. Sold matches keep sold_at/billable
  * for monthly billing.
  * Runs at most once per hour on normal page loads; cron/purge.php can run it on a schedule.
  */
-function replash_purge_expired(PDO $pdo, bool $force = false): int {
+function replash_purge_expired(PDO $pdo, bool $force = false, ?int &$deletedUnsold = null): int {
+    $deletedUnsold = 0;
     try {
         if (!$force) {
             $last = (int)get_setting('last_retention_purge', 0);
@@ -105,10 +113,48 @@ function replash_purge_expired(PDO $pdo, bool $force = false): int {
         $stmt->execute([RETENTION_DAYS]);
         $n = $stmt->rowCount();
         $pdo->exec("DELETE vs FROM viewer_sessions vs JOIN matches m ON m.id = vs.match_id WHERE m.status = 'EXPIRED'");
+        $deletedUnsold = replash_delete_unsold_matches($pdo);
+        try {
+            $pdo->prepare("DELETE FROM viewer_acceptances WHERE accepted_at < DATE_SUB(NOW(), INTERVAL ? MONTH)")
+                ->execute([REPLASH_ACCEPT_RETENTION_MONTHS]);
+        } catch (Exception $e) {
+            error_log('replash_purge_expired acceptances: ' . $e->getMessage());
+        }
         set_setting('last_retention_purge', (string)time());
         return $n;
     } catch (Exception $e) {
         error_log('replash_purge_expired: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Kilitli (satılmamış) kayıt saklama süresini doldurdu mu? (maç tarihi + REPLASH_UNSOLD_RETENTION_DAYS)
+ * Süresi dolmuş kilitli maçın satışı panelden yapılamaz; silme görevi onu kaldıracaktır.
+ */
+function replash_locked_expired(?string $date): bool {
+    if (empty($date)) return false;
+    return strtotime($date . ' 23:59:59') < strtotime('-' . REPLASH_UNSOLD_RETENTION_DAYS . ' days');
+}
+
+/**
+ * Kilidi açılmamış maçları siler: maç tarihinden REPLASH_UNSOLD_RETENTION_DAYS gün sonra hâlâ LOCKED ise
+ * (satılmadı, faturalanmaz, hiç açılmadı) kayıt ve izleyici oturumları silinir.
+ * Satılmış maçlara dokunmaz (faturalama için kalır); sale_events denetim kaydı silinmez.
+ * Dönüş: silinen maç sayısı.
+ */
+function replash_delete_unsold_matches(PDO $pdo): int {
+    try {
+        $where = "status = 'LOCKED' AND sold_at IS NULL AND billable = 0 AND first_opened_at IS NULL
+                  AND DATE_ADD(`date`, INTERVAL " . (int)REPLASH_UNSOLD_RETENTION_DAYS . " DAY) < CURDATE()";
+        $pdo->exec("DELETE vs FROM viewer_sessions vs JOIN matches m ON m.id = vs.match_id
+                    WHERE m.status = 'LOCKED' AND m.sold_at IS NULL AND m.billable = 0 AND m.first_opened_at IS NULL
+                      AND DATE_ADD(m.`date`, INTERVAL " . (int)REPLASH_UNSOLD_RETENTION_DAYS . " DAY) < CURDATE()");
+        $stmt = $pdo->prepare("DELETE FROM matches WHERE $where");
+        $stmt->execute();
+        return $stmt->rowCount();
+    } catch (Exception $e) {
+        error_log('replash_delete_unsold_matches: ' . $e->getMessage());
         return 0;
     }
 }
@@ -168,6 +214,18 @@ function replash_client_key(string $scope = 'code'): string {
     return hash('sha256', $scope . '|' . $ip . '|' . (defined('REPLASH_TOKEN_SECRET') ? REPLASH_TOKEN_SECRET : 'replash'));
 }
 
+/** Oyuncunun beyanını kaydeder: hangi maç, ne zaman, hangi metin sürümü. Ad tutulmaz; IP yalnızca özetlenmiş tutulur. */
+function replash_record_acceptance(PDO $pdo, array $match): void {
+    global $current_lang;
+    try {
+        $pdo->prepare("INSERT INTO viewer_acceptances (match_id, facility_id, client_key, user_agent, lang, text_version) VALUES (?, ?, ?, ?, ?, ?)")
+            ->execute([$match['id'], $match['facility_id'], replash_client_key('accept'),
+                       mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255), $current_lang ?? null, REPLASH_ACCEPT_TEXT_VERSION]);
+    } catch (Exception $e) {
+        error_log('replash_record_acceptance: ' . $e->getMessage());
+    }
+}
+
 /** Too many failed attempts of this kind from this client within the window? */
 function replash_attempt_blocked(PDO $pdo, string $scope, int $maxFails, int $windowMin): bool {
     try {
@@ -225,11 +283,34 @@ function replash_slot_bounds(array $match): array {
 /**
  * Returns ['state' => ready|upcoming|playing|processing|delayed, 'start', 'end', 'eta'] (timestamps).
  */
+/**
+ * Demo sahası: kamera adresi sitedeki /demo/ klasöründeki bir dosyaya işaret ediyorsa o saha "demo"dur.
+ * Demo sahada video bekletilmez (sunumlarda hazır görünsün); gerçek kamera adresi yazılınca demo kendiliğinden kapanır.
+ */
+function replash_is_demo_court(PDO $pdo, array $match): bool {
+    try {
+        $st = $pdo->prepare("SELECT stream_url FROM cameras WHERE facility_id = ? AND court = ? AND stream_url <> ''");
+        $st->execute([$match['facility_id'] ?? '', $match['court'] ?? '']);
+        foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $u) {
+            $path = parse_url((string)$u, PHP_URL_PATH);
+            if (is_string($path) && strpos($path, '/demo/') !== false) return true;
+        }
+    } catch (Throwable $e) {
+        error_log('replash_is_demo_court: ' . $e->getMessage());
+    }
+    return false;
+}
+
 function replash_video_state(PDO $pdo, array $match, ?int $now = null): array {
     $now = $now ?? time();
     [$start, $end] = replash_slot_bounds($match);
     $eta = $end + (defined('PROCESSING_MINUTES') ? PROCESSING_MINUTES : 8) * 60;
     $out = ['start' => $start, 'end' => $end, 'eta' => $eta];
+
+    // Demo saha: slot bitmediyse canlı (başlamamış slot dahil), bittiyse hemen hazır
+    if (replash_is_demo_court($pdo, $match)) {
+        return ['state' => ($now < $end) ? 'playing' : 'ready'] + $out;
+    }
 
     if (!empty($match['available_at']) && strtotime($match['available_at']) <= $now) return ['state' => 'ready'] + $out;
     if ($now < $start) return ['state' => 'upcoming'] + $out;

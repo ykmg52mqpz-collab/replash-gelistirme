@@ -57,7 +57,7 @@ class DB {
                 if ($adminCheck === 0) {
                     $adminPassHash = password_hash(bin2hex(random_bytes(24)), PASSWORD_BCRYPT) /* şifre: php cron/admin-password.php */;
                     $insAdmin = $pdo->prepare("INSERT INTO `admins` (`id`, `email`, `name`, `password_hash`, `role`) VALUES (?, ?, ?, ?, ?)");
-                    $insAdmin->execute(['admin-root', 'admin@replash.info', 'Replash Super Admin', $adminPassHash, 'superadmin']);
+                    $insAdmin->execute(['admin-root', 'admin@replash.it', 'Replash Super Admin', $adminPassHash, 'superadmin']);
                 }
             }
         } catch (Exception $e) {
@@ -106,10 +106,31 @@ class DB {
                     INDEX (`client_key`, `created_at`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
             },
+            // Oyuncu beyanı kaydı (find.php): kod ile izlemeden önce; REPLASH_ACCEPT_RETENTION_MONTHS sonra silinir
+            'viewer_acceptances' => function (PDO $pdo) {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `viewer_acceptances` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `match_id` VARCHAR(64) NOT NULL,
+                    `facility_id` VARCHAR(64) NOT NULL,
+                    `client_key` CHAR(64) NOT NULL,
+                    `user_agent` VARCHAR(255) NULL,
+                    `lang` VARCHAR(5) NULL,
+                    `text_version` VARCHAR(20) NOT NULL,
+                    `accepted_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX (`match_id`),
+                    INDEX (`facility_id`, `accepted_at`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            },
             // Facility sport prices: {"football": 15, "padel": 10} (includes/billing.php)
             'facilities.sport_prices' => function (PDO $pdo) {
                 if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'sport_prices'")->fetch()) {
                     $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `sport_prices` TEXT NULL DEFAULT NULL");
+                }
+            },
+            // Pilot ayı başlangıcı (includes/billing.php): bu tarihten REPLASH_PILOT_DAYS gün boyunca Replash payı %0
+            'facilities.pilot_start' => function (PDO $pdo) {
+                if (!$pdo->query("SHOW COLUMNS FROM `facilities` LIKE 'pilot_start'")->fetch()) {
+                    $pdo->exec("ALTER TABLE `facilities` ADD COLUMN `pilot_start` DATE NULL DEFAULT NULL");
                 }
             },
             'settings' => function (PDO $pdo) {
@@ -241,7 +262,7 @@ class DB {
         // 3. Admin Account
         $adminPassHash = password_hash(bin2hex(random_bytes(24)), PASSWORD_BCRYPT) /* şifre: php cron/admin-password.php */;
         $insAdmin = $pdo->prepare("INSERT INTO `admins` (`id`, `email`, `name`, `password_hash`, `role`) VALUES (?, ?, ?, ?, ?)");
-        $insAdmin->execute(['admin-root', 'admin@replash.info', 'Replash Super Admin', $adminPassHash, 'superadmin']);
+        $insAdmin->execute(['admin-root', 'admin@replash.it', 'Replash Super Admin', $adminPassHash, 'superadmin']);
 
         // 4. Sample Matches (Last 6 days)
         $timeSlots = ['17:00–18:00', '18:00–19:00', '19:00–20:00', '20:00–21:00', '21:00–22:00'];

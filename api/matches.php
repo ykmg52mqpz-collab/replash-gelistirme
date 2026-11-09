@@ -14,7 +14,13 @@ try {
         exit;
     }
 
+    // Tesis/tarih/saat ile arama kaldırıldı (maça yalnızca kodla ulaşılır): herkese açık slot listesi artık verilmez.
     if ($action === 'get_slots') {
+        http_response_code(410);
+        echo json_encode(['ok' => false, 'error' => 'Gone']);
+        exit;
+    }
+    if (false && $action === 'get_slots') {
         $facilityId = $_GET['facility_id'] ?? '';
         $date = $_GET['date'] ?? '';
 
@@ -63,5 +69,7 @@ try {
 
     echo json_encode(['ok' => false, 'error' => 'Unknown action']);
 } catch (Exception $e) {
-    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
+    error_log('api/matches.php: ' . $e->getMessage());   // ayrıntı sunucu günlüğüne, istemciye genel mesaj
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'error' => 'Server error']);
 }

@@ -7,7 +7,7 @@ $success = null;
 
 // Auth check
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: index.php');
+    header('Location: ./');
     exit;
 }
 
@@ -286,7 +286,7 @@ require_once __DIR__ . '/../includes/header.php';
 
     <!-- Filter & Search Toolbar -->
     <div class="rounded-2xl bg-white/[0.02] p-5 border border-white/10 mb-8">
-      <form action="matches.php" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+      <form action="matches" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
         
         <!-- Facility Filter -->
         <div>
@@ -340,7 +340,7 @@ require_once __DIR__ . '/../includes/header.php';
           <button type="submit" class="flex-1 rounded-xl bg-accent py-2.5 font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
             <?= e(adm('Filtrele', 'Filter')) ?>
           </button>
-          <a href="matches.php" class="px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 transition text-center" title="<?= e(adm('Filtreleri Sıfırla', 'Reset filters')) ?>">
+          <a href="matches" class="px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 transition text-center" title="<?= e(adm('Filtreleri Sıfırla', 'Reset filters')) ?>">
             &times;
           </a>
         </div>
@@ -357,7 +357,7 @@ require_once __DIR__ . '/../includes/header.php';
         <button type="button" onclick="document.getElementById('addMatchModal').classList.add('hidden')" class="text-neutral-400 hover:text-white text-lg font-bold">&times;</button>
       </div>
 
-      <form action="matches.php" method="POST" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs items-end">
+      <form action="matches" method="POST" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs items-end">
         <input type="hidden" name="action" value="add_match">
 
         <div>
@@ -508,7 +508,7 @@ require_once __DIR__ . '/../includes/header.php';
                   <div class="inline-flex items-center gap-1.5">
                     <!-- Status Toggle Button -->
                     <?php if ($m['status'] === 'LOCKED'): ?>
-                      <form action="matches.php" method="POST" class="inline-block">
+                      <form action="matches" method="POST" class="inline-block">
                         <input type="hidden" name="action" value="unlock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="<?= e(adm('Satışa Aç & Kodu Aktifleştir', 'Unlock & activate code')) ?>" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold">
@@ -516,7 +516,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </button>
                       </form>
                     <?php else: ?>
-                      <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar Kilitli/Bekliyor durumuna almak istediğinize emin misiniz?');">
+                      <form action="matches" method="POST" class="inline-block" onsubmit="return confirm('Bu maçı tekrar Kilitli/Bekliyor durumuna almak istediğinize emin misiniz?');">
                         <input type="hidden" name="action" value="lock_match">
                         <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                         <button type="submit" title="<?= e(adm('Kilitle / Satış Bekliyor Yap', 'Lock / set awaiting sale')) ?>" class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold">
@@ -527,7 +527,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <!-- View Match Link -->
                     <a 
-                      href="<?= base_url('find.php?code=' . urlencode($m['shown_code'])) ?>" 
+                      href="<?= base_url('find?code=' . urlencode($m['shown_code'])) ?>" 
                       target="_blank" 
                       title="<?= e(adm('Videoyu Aç & İzle', 'Open & watch video')) ?>" 
                       class="p-1.5 rounded-lg bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10"
@@ -547,7 +547,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </button>
 
                     <!-- Delete Form -->
-                    <form action="matches.php" method="POST" class="inline-block" onsubmit="return confirm('Bu maç kaydını silmek istediğinize emin misiniz?');">
+                    <form action="matches" method="POST" class="inline-block" onsubmit="return confirm('Bu maç kaydını silmek istediğinize emin misiniz?');">
                       <input type="hidden" name="action" value="delete_match">
                       <input type="hidden" name="match_id" value="<?= e($m['id']) ?>">
                       <button type="submit" title="<?= e(adm('Maçı Sil', 'Delete match')) ?>" class="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30">
@@ -576,7 +576,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
       <button type="button" onclick="closeEditMatch()" class="text-xl font-bold text-white/50 hover:text-white" aria-label="<?= e(adm('Kapat', 'Close')) ?>">&times;</button>
     </div>
-    <form action="matches.php" method="POST" class="space-y-3.5 text-xs">
+    <form action="matches" method="POST" class="space-y-3.5 text-xs">
       <input type="hidden" name="action" value="edit_match">
       <input type="hidden" name="match_id" id="em_id">
       <input type="hidden" name="duration_sec" id="em_duration_sec">

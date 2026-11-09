@@ -23,8 +23,22 @@ const REPLASH_BILLING_CURRENCY = 'EUR';
 const REPLASH_VIDEO_PRICES = [
     'football' => 15.00,
     'padel'    => 10.00,
-    'tennis'   => 10.00,
+    'tennis'   => 7.50,
 ];
+
+// Tenis: 7,50 € (kullanıcı kararı, 2026-11-07). Tesisin kendi fiyatı yoksa faturalamada da bu değer kullanılır;
+// sitedeki hesaplayıcı bayrak true olduğu için tenis gelirini hesaplar.
+const REPLASH_TENNIS_PRICE_APPROVED = true;
+
+// Calcio a 11: Guida alla fatturazione IT (5A/11A) → 20 € (calcio a 5: 15 €). 7A için belgede fiyat yok.
+// Yalnızca sitedeki hesaplayıcı kullanır; gerçek faturalama tesisin sport_prices değerini kullanır.
+const REPLASH_FOOTBALL_11_PRICE = 20.00;
+
+// Pilot ayı: tesisin pilot başlangıç tarihinden (facilities.pilot_start) itibaren REPLASH_PILOT_DAYS gün boyunca
+// Replash payı %0'dır; pilottaki satış gelirinin tamamı tesiste kalır. Pilottan sonra aşağıdaki kademeler geçerlidir.
+// Pilot süresinin ve sonrası koşullarının yazılı ticari anlaşmayla teyidi gerekir (bkz. sonuç raporu).
+const REPLASH_PILOT_DAYS = 30;
+const REPLASH_PILOT_REPLASH_PCT = 0;
 
 // Monthly facility-wide valid sales tiers, highest first: [min_sales, facility_pct]
 const REPLASH_SHARE_TIERS = [
@@ -150,7 +164,18 @@ function replash_sale_date_sql(string $m = 'm'): string {
 }
 
 /**
+ * Pilot penceresi: ['start' => 'Y-m-d', 'end' => 'Y-m-d'] (iki uç dahil) veya pilot tarihi yoksa null.
+ */
+function replash_pilot_window(?string $pilotStart): ?array {
+    if (empty($pilotStart) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $pilotStart)) return null;
+    $end = date('Y-m-d', strtotime($pilotStart . ' +' . (REPLASH_PILOT_DAYS - 1) . ' days'));
+    return ['start' => $pilotStart, 'end' => $end];
+}
+
+/**
  * Monthly statement for one facility, as described in the billing guide.
+ * Pilot satışları (pilot penceresindeki geçerli satışlar) tesise %100 kalır; kademe yine ayın TOPLAM
+ * geçerli satışına göre belirlenir ve pilot dışındaki satışlara uygulanır.
  * $yearMonth: 'YYYY-MM'
  */
 function replash_monthly_statement(PDO $pdo, string $facilityId, string $yearMonth): array {
@@ -176,13 +201,41 @@ function replash_monthly_statement(PDO $pdo, string $facilityId, string $yearMon
     $stmtTotal = $pdo->prepare("SELECT COUNT(*) FROM matches WHERE facility_id = ? AND DATE_FORMAT(date, '%Y-%m') = ?");
     $stmtTotal->execute([$facilityId, $yearMonth]);
 
-    return [
+    $result = [
         'month' => $yearMonth,
         'currency' => REPLASH_BILLING_CURRENCY,
         'total_matches' => (int)$stmtTotal->fetchColumn(),
         'valid_sales' => $validSales,
         'by_sport' => $bySport,
     ] + replash_split_gross($gross, $validSales);
+
+    // Pilot: pencere bu aya denk geliyorsa pilottaki satışlar %100 tesise
+    $result['pilot'] = null;
+    try {
+        $ps = $pdo->prepare("SELECT pilot_start FROM facilities WHERE id = ?");
+        $ps->execute([$facilityId]);
+        $win = replash_pilot_window($ps->fetchColumn() ?: null);
+        if ($win && $validSales > 0) {
+            $stmtP = $pdo->prepare("SELECT COUNT(*) AS cnt, COALESCE(SUM({$price}), 0) AS gross
+                FROM matches m JOIN facilities f ON f.id = m.facility_id
+                WHERE m.facility_id = ? AND {$valid} AND DATE_FORMAT({$saleDate}, '%Y-%m') = ? AND {$saleDate} BETWEEN ? AND ?");
+            $stmtP->execute([$facilityId, $yearMonth, $win['start'], $win['end']]);
+            $pr = $stmtP->fetch(PDO::FETCH_ASSOC);
+            $pilotSales = (int)$pr['cnt'];
+            if ($pilotSales > 0) {
+                $pilotGross = round((float)$pr['gross'], 2);
+                $restGross = $gross - $pilotGross;
+                $pilotFacilityPct = 100 - REPLASH_PILOT_REPLASH_PCT;
+                $facilityShare = round($pilotGross * $pilotFacilityPct / 100 + $restGross * $result['facility_pct'] / 100, 2);
+                $result['facility_share'] = $facilityShare;
+                $result['replash_share'] = round($gross - $facilityShare, 2);
+                $result['pilot'] = ['start' => $win['start'], 'end' => $win['end'], 'sales' => $pilotSales, 'gross' => $pilotGross, 'facility_pct' => $pilotFacilityPct];
+            }
+        }
+    } catch (Exception $e) {
+        error_log('replash_monthly_statement pilot: ' . $e->getMessage());
+    }
+    return $result;
 }
 
 /**

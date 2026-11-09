@@ -14,6 +14,17 @@ require_once __DIR__ . '/admin_i18n.php';
 if (!defined('REPLASH_LINKEDIN_URL')) {
     define('REPLASH_LINKEDIN_URL', 'https://www.linkedin.com/in/%C3%B6mer-tan-sager-0021692a9/');
 }
+// Şirket bilgileri (altbilgi, Yasal bilgiler sayfası, gizlilik metni). AB e-ticaret kuralları ve GDPR md. 13 gereği.
+if (!defined('REPLASH_COMPANY_NAME'))    define('REPLASH_COMPANY_NAME', 'OMSA Group OÜ');
+if (!defined('REPLASH_COMPANY_REG'))     define('REPLASH_COMPANY_REG', '17637078');
+if (!defined('REPLASH_COMPANY_ADDRESS')) define('REPLASH_COMPANY_ADDRESS', 'Ruunaoja tn 3, 11415 Tallinn, Estonia');
+if (!defined('REPLASH_COMPANY_VAT'))     define('REPLASH_COMPANY_VAT', '');   // KMKR numarası alınınca yazılır; boşken gösterilmez
+if (!defined('REPLASH_CONTACT_EMAIL'))   define('REPLASH_CONTACT_EMAIL', 'partnerships@replash.it');
+
+// Hakkımızda sayfasındaki Instagram bağlantısı (@replash.it). Boş bırakılırsa düğme hiç çizilmez.
+if (!defined('REPLASH_INSTAGRAM_URL')) {
+    define('REPLASH_INSTAGRAM_URL', 'https://www.instagram.com/replash.it/');
+}
 
 // Oturum çerezi: JavaScript okuyamaz, HTTPS'te sadece şifreli bağlantıyla gider, başka sitelerden gelen
 // form isteklerinde gönderilmez (config/config.php sunucuda değişmediği için burada yeniden yazılır)
@@ -57,7 +68,22 @@ $langFile = REPLASH_ROOT . '/languages/' . $current_lang . '.php';
 if (!file_exists($langFile)) {
     $langFile = REPLASH_ROOT . '/languages/' . DEFAULT_LANG . '.php';
 }
-$translations = require $langFile;
+$translations = replash_apply_overrides(require $langFile, $current_lang);
+
+/**
+ * Güncel metinler: languages/ov_<dil>.php, dil dosyasındaki aynı anahtarların üstüne yazılır
+ * (pazarlama ve ticari koşul metinleri tek yerde, dört dilde tutarlı).
+ */
+function replash_apply_overrides(array $translations, string $lang): array {
+    $file = REPLASH_ROOT . '/languages/ov_' . $lang . '.php';
+    if (!file_exists($file)) return $translations;
+    $ov = require $file;
+    $translations = array_replace_recursive($translations, $ov);
+    // Slogan, pilot koşulu ve AI Analiz katmanı (languages/v2_<dil>.php)
+    $v2 = REPLASH_ROOT . '/languages/v2_' . $lang . '.php';
+    if (file_exists($v2)) $translations = array_replace_recursive($translations, require $v2);
+    return $translations;
+}
 
 /**
  * Translate helper function
@@ -84,7 +110,9 @@ function lang_url($lang) {
     $queryParams = $_GET;
     $queryParams['lang'] = $lang;
     $queryString = http_build_query($queryParams);
-    $script = basename($_SERVER['PHP_SELF']);
+    // Temiz adres: how-it-works.php -> how-it-works, index.php -> ./ (bulunulan klasör)
+    $script = basename($_SERVER['PHP_SELF'], '.php');
+    $script = ($script === 'index') ? './' : $script;
     return $script . '?' . $queryString;
 }
 
@@ -104,7 +132,7 @@ function replash_shell_languages(array $langs): void
     if (in_array($current_lang, $langs, true)) return;
     $current_lang = $langs[0];
     $file = REPLASH_ROOT . '/languages/' . $current_lang . '.php';
-    if (file_exists($file)) $translations = require $file;
+    if (file_exists($file)) $translations = replash_apply_overrides(require $file, $current_lang);
 }
 
 /**
@@ -121,6 +149,17 @@ function base_url($path = '') {
  */
 function asset($path = '') {
     return base_url('assets/' . ltrim($path, '/'));
+}
+
+/**
+ * Sahne görselleri (assets/images/sahne-<ad>-<genişlik>.webp): src + srcset + sizes özniteliklerini üretir.
+ * Kullanım: <img <?= scene_img_attrs('sahne-padel', [1200, 1920]) ?> alt="" ...>
+ */
+function scene_img_attrs(string $slug, array $widths, string $sizes = '100vw'): string {
+    sort($widths);
+    $srcset = [];
+    foreach ($widths as $w) $srcset[] = asset("images/{$slug}-{$w}.webp") . " {$w}w";
+    return 'src="' . e(asset("images/{$slug}-" . $widths[0] . '.webp')) . '" srcset="' . e(implode(', ', $srcset)) . '" sizes="' . e($sizes) . '"';
 }
 
 /**
@@ -182,7 +221,7 @@ function get_default_roi_calculator_config() {
         'hook_title' => 'Bu tahmini tesisinin aylık gelirine çevir.',
         'hook_desc' => 'Kısa bir görüşme ayarla. Bu rakamları senin tesisine göre çıkaralım; kurulum, süre ve şartları birlikte konuşalım.',
         'hook_cta_text' => 'Görüşme ayarla',
-        'hook_cta_url' => 'contact.php',
+        'hook_cta_url' => 'contact',
         'sports' => [
             'padel' => [
                 'id' => 'padel',
@@ -381,6 +420,35 @@ function buildMatchPlaybackUrl($streamUrl, $date, $timeSlot, $durationSec = 3600
     $newQuery = '?' . $queryString;
 
     return "{$scheme}{$userPass}{$host}{$port}{$path}{$newQuery}";
+}
+
+/**
+ * Canlı yayın adresi: kameranın arşiv adresinden zaman (time/duration) ve indirme parametreleri çıkarılır;
+ * böylece oynatıcı yayının güncel noktasına bağlanır. RTSP tarayıcıda oynatılamaz: boş döner.
+ */
+function buildLiveStreamUrl($streamUrl)
+{
+    $streamUrl = trim((string)$streamUrl);
+    if ($streamUrl === '' || stripos($streamUrl, 'rtsp://') === 0) return '';
+    $parsed = parse_url($streamUrl);
+    if (!$parsed) return '';
+
+    $query = [];
+    if (!empty($parsed['query'])) parse_str($parsed['query'], $query);
+    foreach (['time', 'duration', 'download', 'filename'] as $k) unset($query[$k]);
+
+    // Göreli adres (aynı sitedeki örnek/demo dosya): olduğu gibi, yalnızca zaman parametreleri çıkarılarak
+    if (!isset($parsed['host'])) {
+        return ($parsed['path'] ?? '') . ($query ? '?' . http_build_query($query) : '');
+    }
+
+    $scheme   = isset($parsed['scheme']) ? $parsed['scheme'] . '://' : 'https://';
+    $port     = isset($parsed['port']) ? ':' . $parsed['port'] : '';
+    $user     = $parsed['user'] ?? '';
+    $pass     = isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+    $userPass = ($user || $pass) ? "{$user}{$pass}@" : '';
+    $qs = $query ? '?' . str_replace(['%3A', '+'], [':', '%20'], http_build_query($query)) : '';
+    return $scheme . $userPass . $parsed['host'] . $port . ($parsed['path'] ?? '') . $qs;
 }
 
 /**

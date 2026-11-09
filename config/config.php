@@ -84,5 +84,5 @@ define('PROCESSING_MINUTES', 8);
 define('DEFAULT_CURRENCY', 'EUR');
 
 // Supported Languages
-$SUPPORTED_LANGUAGES = ['it', 'tr', 'en', 'es'];
+$SUPPORTED_LANGUAGES = ['it', 'tr', 'en'];   // İspanyolca kaldırıldı (languages/es.php dosyaları duruyor)
 define('DEFAULT_LANG', 'it');

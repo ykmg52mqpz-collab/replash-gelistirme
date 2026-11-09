@@ -9,8 +9,15 @@ $soldNotice = null; // satıştan sonra büyük kod ekranı
 
 // Handle Logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    unset($_SESSION['facility_id']);
-    header('Location: index.php');
+    unset($_SESSION['facility_id'], $_SESSION['panel_ui']);
+    header('Location: ./');
+    exit;
+}
+
+// Cihaz seçimi (telefon / bilgisayar): girişten hemen sonra sorulur, istenirse üstten değiştirilir
+if (isset($_GET['ui'], $_SESSION['facility_id']) && in_array($_GET['ui'], ['phone', 'computer'], true)) {
+    $_SESSION['panel_ui'] = $_GET['ui'];
+    header('Location: ./' . ((($_GET['tab'] ?? '') === 'account') ? '?tab=account' : ''));
     exit;
 }
 
@@ -26,14 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_pin'])) {
         if ($fac) {
             session_regenerate_id(true);
             $_SESSION['facility_id'] = $fac['id'];
-            header('Location: index.php');
+            unset($_SESSION['panel_ui']);   // her girişte cihaz sorulur
+            header('Location: ./');
             exit;
         } else {
             replash_attempt_failed($pdo, 'pin');
             $error = __('panel.login.invalid_pin');
         }
     } else {
-        $error = "Veritabanı bağlantısı kurulamadı! / Database connection failed.";
+        $error = "Connessione al database non riuscita. Riprova tra poco. / Database connection failed. Please try again shortly.";
     }
 }
 
@@ -74,7 +82,7 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $stmtFind->execute([$matchId, $facility['id']]);
             $mRow = $stmtFind->fetch();
 
-            if ($mRow && ($mRow['status'] === 'EXPIRED' || is_match_expired($mRow['date']))) {
+            if ($mRow && ($mRow['status'] === 'EXPIRED' || is_match_expired($mRow['date']) || ($mRow['status'] === 'LOCKED' && replash_locked_expired($mRow['date'])))) {
                 $error = __('panel.shell.expired_sell');
             } elseif ($mRow && $mRow['status'] === 'LOCKED') {
                 // Ensure playback URL is current
@@ -97,39 +105,48 @@ if (isset($_SESSION['facility_id']) && $pdo) {
             $psCourt = trim((string)($_POST['court'] ?? ''));
             $psDate = (string)($_POST['date'] ?? date('Y-m-d'));
             $psHour = (int)($_POST['hour'] ?? -1);
+            $psHours = max(1, min(4, (int)($_POST['hours'] ?? 1)));   // turnuva / uzun rezervasyon: ardışık 1–4 saat
             $courtData = null;
             foreach (get_facility_courts_data($facility) as $cd) { if ($cd['name'] === $psCourt) { $courtData = $cd; break; } }
             $validDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $psDate) && $psDate >= date('Y-m-d') && $psDate <= date('Y-m-d', strtotime('+7 days'));
-            if (!$courtData || !$validDate || $psHour < 0 || $psHour > 23) {
+            if (!$courtData || !$validDate || $psHour < 0 || $psHour + $psHours > 24) {
                 $error = __('panel.presale.invalid');
             } else {
-                $psSlot = sprintf('%02d:00–%02d:00', $psHour, $psHour + 1);
-                $ex = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
-                $ex->execute([$facility['id'], $psCourt, $psDate, $psSlot]);
-                $row = $ex->fetch();
-                if ($row && $row['status'] === 'UNLOCKABLE') {
-                    // Zaten satılmış: aynı kodu tekrar göster
-                    $soldNotice = ['code' => $row['access_code'], 'court' => $row['court'], 'slot' => $row['time_slot']];
-                } elseif ($row && ($row['status'] === 'EXPIRED' || is_match_expired($row['date']))) {
-                    $error = __('panel.shell.expired_sell');
-                } else {
-                    $newCode = replash_new_access_code($pdo);
-                    if ($row) {
-                        $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'")
-                            ->execute([$newCode, $row['id']]);
-                        $logRow = $row;
+                $psSold = [];   // [['slot' => ..., 'code' => ...], ...]
+                for ($hh = $psHour; $hh < $psHour + $psHours; $hh++) {
+                    $psSlot = sprintf('%02d:00–%02d:00', $hh, $hh + 1);
+                    $ex = $pdo->prepare("SELECT * FROM matches WHERE facility_id = ? AND court = ? AND date = ? AND time_slot = ? LIMIT 1");
+                    $ex->execute([$facility['id'], $psCourt, $psDate, $psSlot]);
+                    $row = $ex->fetch();
+                    if ($row && $row['status'] === 'UNLOCKABLE') {
+                        // Zaten satılmış: aynı kodu tekrar göster
+                        $psSold[] = ['slot' => $row['time_slot'], 'code' => $row['access_code']];
+                    } elseif ($row && ($row['status'] === 'EXPIRED' || is_match_expired($row['date']) || ($row['status'] === 'LOCKED' && replash_locked_expired($row['date'])))) {
+                        $error = __('panel.shell.expired_sell');
+                        break;
                     } else {
-                        $camStmt = $pdo->prepare("SELECT id FROM cameras WHERE facility_id = ? AND court = ? ORDER BY id ASC LIMIT 1");
-                        $camStmt->execute([$facility['id'], $psCourt]);
-                        $logRow = ['id' => 'm-' . bin2hex(random_bytes(5)), 'facility_id' => $facility['id']];
-                        $pdo->prepare("INSERT INTO matches
-                            (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, duration_sec, sold_at, views, billable, sport, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, 3600, NOW(), 0, 1, ?, 'presale')")
-                            ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . sprintf('%02d00', $psHour), $newCode,
-                                       $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
+                        $newCode = replash_new_access_code($pdo);
+                        if ($row) {
+                            $pdo->prepare("UPDATE matches SET status = 'UNLOCKABLE', access_code = ?, sold_at = NOW(), billable = 1 WHERE id = ? AND status = 'LOCKED'")
+                                ->execute([$newCode, $row['id']]);
+                            $logRow = $row;
+                        } else {
+                            $camStmt = $pdo->prepare("SELECT id FROM cameras WHERE facility_id = ? AND court = ? ORDER BY id ASC LIMIT 1");
+                            $camStmt->execute([$facility['id'], $psCourt]);
+                            $logRow = ['id' => 'm-' . bin2hex(random_bytes(5)), 'facility_id' => $facility['id']];
+                            $pdo->prepare("INSERT INTO matches
+                                (id, code, access_code, camera_id, facility_id, court, date, time_slot, status, playback_url, duration_sec, sold_at, views, billable, sport, source)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNLOCKABLE', NULL, 3600, NOW(), 0, 1, ?, 'presale')")
+                                ->execute([$logRow['id'], 'MATCH-' . str_replace('-', '', $psDate) . '-' . sprintf('%02d00', $hh), $newCode,
+                                           $camStmt->fetchColumn() ?: null, $facility['id'], $psCourt, $psDate, $psSlot, $courtData['sport']]);
+                        }
+                        replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
+                        $psSold[] = ['slot' => $psSlot, 'code' => $newCode];
                     }
-                    replash_log_sale_event($pdo, $logRow, 'sold', 'panel', 'presale');
-                    $soldNotice = ['code' => $newCode, 'court' => $psCourt, 'slot' => $psSlot];
+                }
+                if ($psSold) {
+                    $soldNotice = ['code' => $psSold[0]['code'], 'court' => $psCourt, 'slot' => $psSold[0]['slot']];
+                    if (count($psSold) > 1) { $soldNotice['multi'] = $psSold; }
                     $presaleDay = $psDate; // tablo satılan günü göstersin
                 }
             }
@@ -316,8 +333,11 @@ if (!empty($facility) && $pdo) {
     $undoCountMonth = replash_undo_count($pdo, $facility['id'], date('Y-m'));
 }
 $panelUrl = function (array $params = []) use ($tab, $viewDay, $viewMonth) {
-    return 'index.php?' . http_build_query(array_merge(['tab' => $tab, 'day' => $viewDay, 'month' => $viewMonth], $params));
+    return './?' . http_build_query(array_merge(['tab' => $tab, 'day' => $viewDay, 'month' => $viewMonth], $params));
 };
+
+$needsChoice = !empty($facility) && empty($_SESSION['panel_ui']);
+$isPhone = !empty($facility) && ($_SESSION['panel_ui'] ?? '') === 'phone';
 
 $internalShell = __('nav.panel');
 require_once __DIR__ . '/../includes/header.php';
@@ -337,13 +357,13 @@ $weekdayShort = [
 $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en';
 ?>
 
-<main class="min-h-screen pb-10">
-  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+<main class="min-h-screen <?= $isPhone ? 'pb-28' : 'pb-10' ?>">
+  <div class="mx-auto max-w-7xl px-4 <?= $isPhone ? 'py-4' : 'py-8' ?> sm:px-6">
 
     <?php if (!$facility): ?>
       <!-- Giriş -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+        <form action="./" method="POST" class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
           <input type="hidden" name="login_pin" value="1">
           <h1 class="text-lg font-semibold text-gray-900"><?= e(__('panel.shell.login_title')) ?></h1>
           <p class="mb-5 mt-1 text-sm text-gray-500"><?= e(__('panel.shell.login_sub')) ?></p>
@@ -356,19 +376,42 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
         </form>
       </div>
 
+    <?php elseif ($needsChoice): ?>
+      <!-- Girişten sonra: bilgisayar mı telefon mu? -->
+      <div class="mx-auto grid min-h-[60vh] max-w-2xl place-items-center">
+        <div class="w-full">
+          <div class="text-center text-xs font-medium uppercase tracking-wide text-gray-500"><?= e($facility['name']) ?></div>
+          <h1 class="mt-2 text-center text-2xl font-semibold text-gray-900"><?= e(__('panel.ui.choose_title')) ?></h1>
+          <p class="mb-6 mt-2 text-center text-sm text-gray-500"><?= e(__('panel.ui.choose_sub')) ?></p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <a href="./?ui=computer" class="flex flex-col items-center gap-3 rounded-xl border-2 border-gray-200 bg-white px-6 py-8 text-center shadow-sm hover:border-gray-900 focus:border-gray-900 focus:outline-none">
+              <svg class="h-14 w-14 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="1.5"/><path d="M8 20.5h8M12 16.5v4"/></svg>
+              <span class="text-lg font-semibold text-gray-900"><?= e(__('panel.ui.computer')) ?></span>
+              <span class="text-sm text-gray-500"><?= e(__('panel.ui.computer_sub')) ?></span>
+            </a>
+            <a href="./?ui=phone" class="flex flex-col items-center gap-3 rounded-xl border-2 border-gray-200 bg-white px-6 py-8 text-center shadow-sm hover:border-gray-900 focus:border-gray-900 focus:outline-none">
+              <svg class="h-14 w-14 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>
+              <span class="text-lg font-semibold text-gray-900"><?= e(__('panel.ui.phone')) ?></span>
+              <span class="text-sm text-gray-500"><?= e(__('panel.ui.phone_sub')) ?></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
     <?php else: ?>
       <!-- Başlık ve sekmeler -->
-      <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-gray-200">
+      <div class="<?= $isPhone ? 'mb-4' : 'mb-6' ?> flex flex-wrap items-end justify-between gap-x-4 gap-y-1 border-b border-gray-200">
         <div class="pb-3">
           <div class="text-xs font-medium uppercase tracking-wide text-gray-500"><?= e($facility['name']) ?></div>
           <h1 class="mt-1 text-2xl font-semibold text-gray-900"><?= e($tab === 'account' ? __('panel.shell.tab_account') : __('panel.shell.tab_matches')) ?></h1>
         </div>
-        <div class="flex items-end gap-6">
-          <nav class="flex gap-6 text-sm" aria-label="Panel">
+        <div class="flex flex-wrap items-end gap-x-3 gap-y-0 sm:gap-x-6">
+          <nav class="<?= $isPhone ? 'hidden' : 'flex' ?> gap-6 text-sm" aria-label="Panel">
             <?php foreach (['matches' => __('panel.shell.tab_matches'), 'account' => __('panel.shell.tab_account')] as $tk => $tl): ?>
-              <a href="index.php?tab=<?= $tk ?>" class="-mb-px border-b-2 pb-3 <?= $tab === $tk ? 'border-gray-900 font-semibold text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-900' ?>" <?= $tab === $tk ? 'aria-current="page"' : '' ?>><?= e($tl) ?></a>
+              <a href="./?tab=<?= $tk ?>" class="-mb-px border-b-2 pb-3 <?= $tab === $tk ? 'border-gray-900 font-semibold text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-900' ?>" <?= $tab === $tk ? 'aria-current="page"' : '' ?>><?= e($tl) ?></a>
             <?php endforeach; ?>
           </nav>
+          <a href="./?ui=<?= $isPhone ? 'computer' : 'phone' ?><?= $tab === 'account' ? '&tab=account' : '' ?>" class="mb-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"><?= e($isPhone ? __('panel.ui.switch_to_computer') : __('panel.ui.switch_to_phone')) ?></a>
           <a href="?action=logout" class="mb-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"><?= e(__('panel.shell.logout')) ?></a>
         </div>
       </div>
@@ -380,12 +423,29 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
         <div class="mb-5 rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"><?= $success ?></div>
       <?php endif; ?>
 
-      <?php if ($soldNotice): ?>
+      <?php if ($soldNotice && !empty($soldNotice['multi'])): ?>
+        <!-- Uzun rezervasyon / turnuva: her saat için ayrı kod -->
+        <div class="mb-6 rounded-lg border border-gray-900 bg-white px-4 py-5 sm:px-6">
+          <div class="text-sm text-gray-500"><?= e(__('panel.shell.sold_title')) ?> · <?= e($soldNotice['court']) ?></div>
+          <div class="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.ui.multi_hint')) ?></div>
+          <p class="mt-2 flex items-start gap-1.5 text-sm text-gray-700"><svg class="mt-0.5 h-4 w-4 flex-none text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span><?= e(__('panel.shell.remind_recorded')) ?></span></p>
+          <div class="mt-3 divide-y divide-gray-100">
+            <?php foreach ($soldNotice['multi'] as $ms1): ?>
+              <div class="flex items-center justify-between gap-3 py-2.5">
+                <span class="font-mono text-sm text-gray-600"><?= e($ms1['slot']) ?></span>
+                <span class="select-all font-mono text-2xl font-bold tracking-[0.15em] text-gray-900"><?= e($ms1['code']) ?></span>
+                <button type="button" data-copy="<?= e($ms1['code']) ?>" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"><?= e(__('panel.shell.copy')) ?></button>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php elseif ($soldNotice): ?>
         <!-- Kilit açıldı: kodu oyuncuya ver -->
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-gray-900 bg-white px-6 py-5">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-gray-900 bg-white <?= $isPhone ? 'px-4 py-5' : 'px-6 py-5' ?>">
           <div>
             <div class="text-sm text-gray-500"><?= e(__('panel.shell.sold_title')) ?> · <?= e($soldNotice['court']) ?> · <?= e($soldNotice['slot']) ?></div>
             <div class="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.give_code')) ?></div>
+            <p class="mt-2 flex items-start gap-1.5 text-sm text-gray-700"><svg class="mt-0.5 h-4 w-4 flex-none text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span><?= e(__('panel.shell.remind_recorded')) ?></span></p>
           </div>
           <div class="flex items-center gap-4">
             <span class="select-all font-mono text-3xl font-bold tracking-[0.15em] text-gray-900 sm:text-4xl"><?= e($soldNotice['code']) ?></span>
@@ -424,14 +484,111 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
           </div>
         <?php endif; ?>
 
+        <?php if ($isPhone): ?>
+        <?php
+          $prevDay = date('Y-m-d', strtotime('-1 day', strtotime($viewDay)));
+          $nextDay = date('Y-m-d', strtotime('+1 day', strtotime($viewDay)));
+          $canSell = ($viewDay >= $today && $viewDay <= date('Y-m-d', strtotime('+7 days')));
+          $psDefaultHour = ($viewDay === $today) ? (int)date('G') : 18;
+        ?>
+        <!-- TELEFON: gün gezgini + büyük dokunma alanlı kartlar -->
+        <div class="mb-3 flex items-stretch gap-2">
+          <a href="./?tab=matches&day=<?= $prevDay ?>" aria-label="<?= e(__('panel.ui.prev_day')) ?>" class="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-gray-300 bg-white text-xl text-gray-800 active:bg-gray-100">‹</a>
+          <form method="GET" action="./" class="relative flex-1">
+            <input type="hidden" name="tab" value="matches">
+            <label class="flex h-12 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-center text-base font-semibold text-gray-900">
+              <span><?= e(formatDateLocalized($viewDay, $current_lang)) ?></span>
+              <input type="date" name="day" value="<?= e($viewDay) ?>" aria-label="<?= e(__('panel.ui.pick_day')) ?>" onchange="this.form.submit()" class="absolute inset-0 h-full w-full cursor-pointer opacity-0">
+            </label>
+          </form>
+          <a href="./?tab=matches&day=<?= $nextDay ?>" aria-label="<?= e(__('panel.ui.next_day')) ?>" class="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-gray-300 bg-white text-xl text-gray-800 active:bg-gray-100">›</a>
+        </div>
+        <div class="mb-4 flex items-center justify-between text-sm text-gray-500">
+          <span><?= e(str_replace(['{t}', '{s}', '{l}'], [$dayTotals['t'], $dayTotals['s'], $dayTotals['l']], __('panel.shell.day_summary'))) ?></span>
+          <?php if ($viewDay !== $today): ?><a href="./?tab=matches" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-gray-700"><?= e(__('panel.shell.go_today')) ?></a><?php endif; ?>
+        </div>
+
+        <?php if ($canSell): ?>
+          <details class="mb-4 rounded-lg border border-gray-200 bg-white">
+            <summary class="flex min-h-[52px] cursor-pointer items-center justify-between px-4 text-base font-semibold text-gray-900"><?= e(__('panel.ui.sell_title')) ?><span class="text-gray-400" aria-hidden="true">+</span></summary>
+            <form action="<?= e($panelUrl()) ?>" method="POST" class="space-y-3 border-t border-gray-200 px-4 py-4">
+              <input type="hidden" name="action" value="presell">
+              <input type="hidden" name="date" value="<?= e($viewDay) ?>">
+              <p class="text-sm text-gray-500"><?= e(__('panel.presale.hint')) ?></p>
+              <label class="block text-sm text-gray-600"><?= e(__('panel.presale.court')) ?>
+                <select name="court" class="mt-1 block h-12 w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900">
+                  <?php foreach (get_facility_courts_data($facility) as $cd): ?><option value="<?= e($cd['name']) ?>"><?= e($cd['name']) ?></option><?php endforeach; ?>
+                </select>
+              </label>
+              <label class="block text-sm text-gray-600"><?= e(__('panel.shell.time_col')) ?>
+                <select name="hour" class="mt-1 block h-12 w-full rounded-lg border border-gray-300 bg-white px-3 font-mono text-base text-gray-900">
+                  <?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= $h === $psDefaultHour ? 'selected' : '' ?>><?= sprintf('%02d:00–%02d:00', $h, $h + 1) ?></option><?php endfor; ?>
+                </select>
+              </label>
+              <label class="block text-sm text-gray-600"><?= e(__('panel.ui.hours_label')) ?>
+                <select name="hours" class="mt-1 block h-12 w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900">
+                  <?php for ($n = 1; $n <= 4; $n++): ?><option value="<?= $n ?>"><?= e(str_replace('{n}', (string)$n, __('panel.ui.hours_n'))) ?></option><?php endfor; ?>
+                </select>
+              </label>
+              <button type="submit" class="h-12 w-full rounded-lg bg-gray-900 text-base font-semibold text-white active:bg-gray-700"><?= e(__('panel.presale.button')) ?></button>
+              <p class="text-sm text-gray-500"><span class="mr-1.5 rounded-full border border-gray-300 bg-white px-2 py-0.5 text-xs font-medium text-gray-700"><?= e(__('panel.ui.tournament_soon')) ?></span><?= e(__('panel.ui.tournament_hint')) ?></p>
+            </form>
+          </details>
+        <?php endif; ?>
+
+        <?php if (empty($dayMatches)): ?>
+          <div class="rounded-lg border border-gray-200 bg-white px-5 py-12 text-center text-base text-gray-500"><?= e(__('panel.shell.no_matches')) ?></div>
+        <?php else: foreach ($gridSlots as $gs): ?>
+          <section class="mb-4">
+            <h2 class="mb-2 font-mono text-sm font-semibold text-gray-600"><?= e($gs) ?></h2>
+            <div class="space-y-3">
+              <?php foreach ($gridCourts as $gc): if (empty($grid[$gs][$gc])) continue; foreach ($grid[$gs][$gc] as $cm):
+                $expired = ($cm['status'] === 'EXPIRED' || is_match_expired($cm['date']));
+                $undoState = replash_staff_undo_status($cm);
+              ?>
+                <div class="rounded-xl border border-gray-200 bg-white p-4">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="text-base font-semibold text-gray-900"><?= e($gc) ?></div>
+                    <?php if ($expired): ?>
+                      <span class="text-sm text-gray-400"><?= e(__('panel.shell.deleted_state')) ?></span>
+                    <?php elseif ($cm['status'] === 'UNLOCKABLE'): ?>
+                      <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700"><?= e(__('panel.shell.sold_state')) ?></span>
+                    <?php else: ?>
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500"><?= e(__('panel.shell.locked_state')) ?></span>
+                    <?php endif; ?>
+                  </div>
+                  <?php if ($expired): ?>
+                  <?php elseif ($cm['status'] === 'UNLOCKABLE'): ?>
+                    <div class="mt-3 select-all text-center font-mono text-4xl font-bold tracking-[0.2em] text-gray-900"><?= e($cm['access_code']) ?></div>
+                    <?php $vs = replash_video_state($pdo, $cm); if ($vs['state'] !== 'ready'): ?>
+                      <div class="mt-1 text-center text-sm <?= $vs['state'] === 'delayed' ? 'font-medium text-red-700' : 'text-gray-500' ?>"><?= e(str_replace('{t}', date('H:i', $vs['eta']), __('panel.presale.state_' . $vs['state']))) ?></div>
+                    <?php endif; ?>
+                    <div class="mt-3 grid grid-cols-2 gap-2">
+                      <button type="button" data-copy="<?= e($cm['access_code']) ?>" class="h-12 rounded-lg border border-gray-300 bg-white text-base font-medium text-gray-800 active:bg-gray-100"><?= e(__('panel.shell.copy')) ?></button>
+                      <?php if ($undoState['allowed']): ?>
+                        <button type="button" data-relock="<?= e($cm['id']) ?>" data-label="<?= e($gc . ' · ' . $gs) ?>" class="h-12 rounded-lg border border-gray-300 bg-white text-base font-medium text-gray-800 active:bg-gray-100"><?= e(__('panel.shell.relock')) ?></button>
+                      <?php else: ?>
+                        <button type="button" disabled class="h-12 cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 text-base text-gray-400"><?= e(__('panel.shell.final_state')) ?></button>
+                      <?php endif; ?>
+                    </div>
+                  <?php else: ?>
+                    <!-- Telefonda yanlışlıkla dokunmayı önlemek için onay penceresi açılır -->
+                    <button type="button" data-unlock="<?= e($cm['id']) ?>" data-label="<?= e($gc . ' · ' . $gs) ?>" class="mt-3 h-14 w-full rounded-lg bg-gray-900 text-lg font-semibold text-white active:bg-gray-700"><?= e(__('panel.shell.unlock')) ?></button>
+                  <?php endif; ?>
+                </div>
+              <?php endforeach; endforeach; ?>
+            </div>
+          </section>
+        <?php endforeach; endif; ?>
+        <?php else: ?>
         <div class="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
 
           <!-- Ay takvimi (tarih kısıtı yok) -->
           <aside class="self-start rounded-lg border border-gray-200 bg-white p-4">
             <div class="mb-3 flex items-center justify-between">
-              <a href="index.php?tab=matches&month=<?= $prevMonth ?>&day=<?= e($viewDay) ?>" class="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100" aria-label="‹">‹</a>
+              <a href="./?tab=matches&month=<?= $prevMonth ?>&day=<?= e($viewDay) ?>" class="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100" aria-label="‹">‹</a>
               <div class="text-sm font-semibold text-gray-900"><?= e($monthNamesFull[$L][(int)date('n', $monthTs) - 1] . ' ' . date('Y', $monthTs)) ?></div>
-              <a href="index.php?tab=matches&month=<?= $nextMonth ?>&day=<?= e($viewDay) ?>" class="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100" aria-label="›">›</a>
+              <a href="./?tab=matches&month=<?= $nextMonth ?>&day=<?= e($viewDay) ?>" class="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100" aria-label="›">›</a>
             </div>
             <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-gray-400">
               <?php foreach ($weekdayShort[$L] as $wd): ?><div class="py-1"><?= e($wd) ?></div><?php endforeach; ?>
@@ -444,7 +601,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                 $isSel = ($ds === $viewDay);
                 $isToday = ($ds === $today);
               ?>
-                <a href="index.php?tab=matches&month=<?= $viewMonth ?>&day=<?= $ds ?>"
+                <a href="./?tab=matches&month=<?= $viewMonth ?>&day=<?= $ds ?>"
                    class="flex h-11 flex-col items-center justify-center rounded-md text-sm <?= $isSel ? 'bg-gray-900 text-white' : ($isToday ? 'border border-gray-900 text-gray-900' : 'text-gray-700 hover:bg-gray-100') ?>">
                   <span class="leading-none"><?= $d ?></span>
                   <?php if ($mc): ?>
@@ -454,7 +611,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
               <?php endfor; ?>
             </div>
             <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
-              <a href="index.php?tab=matches" class="rounded-md border border-gray-300 px-2.5 py-1 text-gray-700 hover:bg-gray-50"><?= e(__('panel.shell.go_today')) ?></a>
+              <a href="./?tab=matches" class="rounded-md border border-gray-300 px-2.5 py-1 text-gray-700 hover:bg-gray-50"><?= e(__('panel.shell.go_today')) ?></a>
               <span><?= e(__('panel.shell.cal_legend')) ?></span>
             </div>
           </aside>
@@ -486,7 +643,13 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
                     <?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= $h === $psDefaultHour ? 'selected' : '' ?>><?= sprintf('%02d:00–%02d:00', $h, $h + 1) ?></option><?php endfor; ?>
                   </select>
                 </label>
+                <label class="text-xs text-gray-600"><?= e(__('panel.ui.hours_label')) ?>
+                  <select name="hours" class="mt-1 block rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-900">
+                    <?php for ($n = 1; $n <= 4; $n++): ?><option value="<?= $n ?>"><?= e(str_replace('{n}', (string)$n, __('panel.ui.hours_n'))) ?></option><?php endfor; ?>
+                  </select>
+                </label>
                 <button type="submit" class="rounded-md bg-gray-900 px-3.5 py-2 text-sm font-medium text-white hover:bg-gray-800"><?= e(__('panel.presale.button')) ?></button>
+                <p class="basis-full text-xs text-gray-500"><span class="mr-1.5 rounded-full border border-gray-300 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-700"><?= e(__('panel.ui.tournament_soon')) ?></span><?= e(__('panel.ui.tournament_hint')) ?></p>
               </form>
             <?php endif; ?>
 
@@ -552,15 +715,16 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             <div class="border-t border-gray-200 px-5 py-3 text-xs text-gray-500"><?= e(__('panel.shell.auto_note')) ?></div>
           </section>
         </div>
+        <?php endif; ?>
 
         <?php $ms = $monthStatement; ?>
         <p class="mt-4 text-xs text-gray-500">
           <?= e(str_replace(['{n}', '{pct}', '{share}'], [$ms['valid_sales'], $ms['facility_pct'], replash_money($ms['facility_share'])], __('panel.shell.month_line'))) ?>
-          · <a href="index.php?tab=account" class="text-gray-700 underline"><?= e(__('panel.shell.tab_account')) ?></a>
+          · <a href="./?tab=account" class="text-gray-700 underline"><?= e(__('panel.shell.tab_account')) ?></a>
         </p>
 
         <!-- Tekrar kilitleme (aynı düğme; kurallar: includes/sales.php) -->
-        <dialog id="relockDialog" class="w-full max-w-md rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/30">
+        <dialog id="relockDialog" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-gray-200 p-0 shadow-xl backdrop:bg-black/30">
           <form action="<?= e($panelUrl()) ?>" method="POST" class="p-6">
             <input type="hidden" name="action" value="mark_locked">
             <input type="hidden" name="match_id" id="relockMatchId">
@@ -575,6 +739,22 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             </div>
           </form>
         </dialog>
+        <?php if ($isPhone): ?>
+        <dialog id="unlockDialog" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-gray-200 p-0 shadow-xl backdrop:bg-black/40">
+          <form action="<?= e($panelUrl()) ?>" method="POST" class="p-5">
+            <input type="hidden" name="action" value="mark_sold">
+            <input type="hidden" name="match_id" id="unlockMatchId">
+            <h2 class="text-lg font-semibold text-gray-900"><?= e(__('panel.ui.confirm_title')) ?></h2>
+            <p id="unlockLabel" class="mt-1 text-base font-medium text-gray-700"></p>
+            <p class="mt-3 text-sm text-gray-600"><?= e(str_replace('{m}', (string)REPLASH_UNDO_WINDOW_MIN, __('panel.ui.confirm_desc'))) ?></p>
+            <p class="mt-3 flex items-start gap-1.5 text-sm text-gray-700"><svg class="mt-0.5 h-4 w-4 flex-none text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span><?= e(__('panel.shell.remind_recorded')) ?></span></p>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <button type="button" onclick="document.getElementById('unlockDialog').close()" class="h-14 rounded-lg border border-gray-300 bg-white text-base font-medium text-gray-800 active:bg-gray-100"><?= e(__('panel.shell.cancel')) ?></button>
+              <button type="submit" class="h-14 rounded-lg bg-gray-900 text-base font-semibold text-white active:bg-gray-700"><?= e(__('panel.shell.unlock')) ?></button>
+            </div>
+          </form>
+        </dialog>
+        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($tab === 'account'): ?>
@@ -680,7 +860,7 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
           </div>
           <div>
             <span class="text-xs font-semibold text-neutral-400"><?= e(__('panel.billing.tier')) ?></span>
-            <div class="mt-1 text-2xl font-bold font-display text-accent">%<?= (int)$ms['facility_pct'] ?> / %<?= (int)$ms['replash_pct'] ?></div>
+            <div class="mt-1 text-2xl font-bold font-display text-accent"><?= (int)$ms['facility_pct'] ?>% / <?= (int)$ms['replash_pct'] ?>%</div>
             <div class="text-[11px] text-neutral-500 mt-0.5"><?= e(__('panel.billing.tier_hint')) ?></div>
           </div>
           <div>
@@ -698,12 +878,17 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
             <span class="text-neutral-400 self-center mr-1"><?= e(__('panel.billing.tiers_title')) ?>:</span>
             <?php foreach (replash_share_tiers() as $t): $active = $t['facility_pct'] === $ms['facility_pct']; ?>
               <span class="px-2.5 py-1 rounded-lg border <?= $active ? 'border-accent/50 bg-accent/15 text-accent font-bold' : 'border-white/10 text-neutral-400' ?>">
-                <?= (int)$t['min'] ?><?= $t['max'] !== null ? '–' . (int)$t['max'] : '+' ?> → %<?= (int)$t['facility_pct'] ?>
+                <?= (int)$t['min'] ?><?= $t['max'] !== null ? '–' . (int)$t['max'] : '+' ?> → <?= (int)$t['facility_pct'] ?>%
               </span>
             <?php endforeach; ?>
           </div>
           <p class="text-[11px] text-neutral-500 lg:max-w-md"><?= e(__('panel.billing.note')) ?></p>
         </div>
+        <?php if (!empty($ms['pilot'])): ?>
+          <p class="mt-3 rounded-lg border border-emerald-400/25 bg-emerald-400/10 px-3 py-2 text-xs text-emerald-200">
+            <?= e(str_replace(['{n}', '{amount}', '{from}', '{to}'], [$ms['pilot']['sales'], replash_money($ms['pilot']['gross']), $ms['pilot']['start'], $ms['pilot']['end']], __('panel.billing.pilot_note'))) ?>
+          </p>
+        <?php endif; ?>
       </div>
 
       <!-- Interactive Revenue & Payment Analytics Chart Card -->
@@ -754,6 +939,15 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
   </div>
 </main>
 
+<?php if ($isPhone): ?>
+<!-- Telefon: alt gezinme çubuğu -->
+<nav class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]" aria-label="Panel">
+  <?php foreach (['matches' => __('panel.shell.tab_matches'), 'account' => __('panel.shell.tab_account')] as $tk => $tl): ?>
+    <a href="./?tab=<?= $tk ?>" class="flex h-16 items-center justify-center text-base <?= $tab === $tk ? 'border-t-2 border-gray-900 font-semibold text-gray-900' : 'border-t-2 border-transparent text-gray-500' ?>" <?= $tab === $tk ? 'aria-current="page"' : '' ?>><?= e($tl) ?></a>
+  <?php endforeach; ?>
+</nav>
+<?php endif; ?>
+
 <script>
   // Kodu kopyala
   document.addEventListener('click', function (e) {
@@ -762,6 +956,14 @@ $L = in_array($current_lang, ['tr','en','it','es'], true) ? $current_lang : 'en'
       var label = btn.textContent;
       var done = function () { btn.textContent = <?= json_encode(__('panel.shell.copied')) ?>; setTimeout(function () { btn.textContent = label; }, 1500); };
       if (navigator.clipboard) navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(done, done); else done();
+      return;
+    }
+    // Telefon: Sblocca önce onay ister
+    var ul = e.target.closest('[data-unlock]');
+    if (ul) {
+      document.getElementById('unlockMatchId').value = ul.getAttribute('data-unlock');
+      document.getElementById('unlockLabel').textContent = ul.getAttribute('data-label');
+      document.getElementById('unlockDialog').showModal();
       return;
     }
     // Aynı düğme: satılmış maçı tekrar kilitle (neden sorulur)
@@ -832,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: chartData.daily.count,
             type: 'line',
             borderColor: '#10B981',
-            backgroundColor: ''#111827'',
+            backgroundColor: 'rgba(16, 185, 129, 0.10)',
             fill: true,
             tension: 0.35,
             pointRadius: 4,

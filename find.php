@@ -6,10 +6,11 @@ $metaTitle = __('meta.find.title');
 $metaDescription = __('meta.find.description');
 
 $code = replash_normalize_code((string)($_GET['code'] ?? ''));
-$facilityId = $_GET['facility_id'] ?? '';
-$court = $_GET['court'] ?? '';
-$date = $_GET['date'] ?? '';
-$timeSlot = $_GET['time_slot'] ?? '';
+// Maça yalnızca kodla ulaşılır: tesis / tarih / saat ile arama yoktur (bu parametreler yok sayılır).
+$facilityId = '';
+$court = '';
+$date = '';
+$timeSlot = '';
 
 $match = null;
 $error = null;
@@ -17,8 +18,36 @@ $codeValidated = false;
 
 // 4 haneli kod tahmin edilebilir: çok sayıda yanlış denemeden sonra kısa süre kod kabul edilmez
 $codeBlocked = ($pdo && $code !== '' && replash_code_blocked($pdo));
+$errKind = null;   // blocked | empty | short | expired | technical | notfound
 if ($codeBlocked) {
     $error = str_replace('{m}', (string)REPLASH_CODE_WINDOW_MIN, __('find.errors.too_many'));
+    $errKind = 'blocked';
+}
+
+// Sunucu tarafı biçim doğrulaması (tarayıcı doğrulamasına güvenilmez): boş ve eksik kod anlaşılır hata verir,
+// yanlış-deneme sayacını artırmaz. Eski alfanümerik kodlar (rakam dışı karakter içerenler) etkilenmez.
+$skipCodeLookup = false;
+$facilitySearchRequested = (!empty($facilityId) && !empty($date));
+// Oyuncu onayı (ilk katman): kodla izleme, "ilgili maçta ben de varım ve gizlilik bilgisini okudum" onayı olmadan açılmaz.
+// Oyuncu, bu koda ait maçta oynadığını ve kaydı bildiğini beyan eder (ad istenmez). Onay bu oturumda hatırlanır;
+// kod doğru çıktığında maç başına bir kez viewer_acceptances tablosuna yazılır (includes/sales.php).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
+    if (!empty($_POST['consent'])) {
+        $_SESSION['consent_ok'] = time();
+    }
+    header('Location: ' . base_url('find') . '?code=' . urlencode(replash_normalize_code((string)$_POST['code'])));
+    exit;
+}
+$consentOk = !empty($_SESSION['consent_ok']);
+$consentErrorShown = false;
+if (!$codeBlocked && !$facilitySearchRequested) {
+    if ($code !== '' && !$consentOk) {
+        $error = __('find.consentError'); $errKind = 'consent'; $skipCodeLookup = true; $consentErrorShown = true;
+    } elseif (array_key_exists('code', $_GET) && $code === '') {
+        $error = __('find.errors.empty'); $errKind = 'empty'; $skipCodeLookup = true;
+    } elseif ($code !== '' && ctype_digit($code) && strlen($code) < REPLASH_CODE_DIGITS) {
+        $error = __('find.errors.short'); $errKind = 'short'; $skipCodeLookup = true;
+    }
 }
 
 if ($pdo && !$codeBlocked) {
@@ -66,7 +95,7 @@ if ($pdo && !$codeBlocked) {
                     }
                 }
             }
-        } elseif (!empty($code)) {
+        } elseif (!empty($code) && !$skipCodeLookup) {
             // 2. User searched solely with an access code (direct code search)
             $match = replash_match_by_code($pdo, $code, true);
 
@@ -92,6 +121,12 @@ if ($pdo && !$codeBlocked) {
                     $court = $match['court'];
                 }
             }
+        }
+
+        // Onay kaydı: bu oturumda bu maç için ilk açılışta
+        if ($match && $codeValidated && $consentOk && empty($_SESSION['acc_logged'][$match['id']])) {
+            replash_record_acceptance($pdo, $match);
+            $_SESSION['acc_logged'][$match['id']] = 1;
         }
 
         // Ödeme alınmış maçın videosu hazır mı? (maçtan önce satışta kod videodan önce verilir)
@@ -122,11 +157,38 @@ if ($pdo && !$codeBlocked) {
                 $hasSource = (bool)$cs->fetchColumn();
             }
             if (!$hasSource) {
+                // Kod geçerli ve satış yapılmış ama video kaynağı yok: gizleme, sonraki adımı söyle
                 $match = null;
                 $codeValidated = false;
                 $matchCameras = [];
-                $error = __('find.errors.not_found');
+                $error = __('find.errors.technical');
+                $errKind = 'technical';
             }
+        }
+
+        // Canlı yayın: kilidi açılmış maçın saati geldiyse (başladı, bitmedi) kod ile canlı izlenir.
+        // Klip kesme ve indirme maç bittikten ve video işlendikten sonra açılır.
+        $videoLive = false;
+        $liveCameras = [];
+        if ($match && $codeValidated && $videoState && $videoState['state'] === 'playing') {
+            $liveTpl = __('find.camera_select.camera_n', __('camera_select.camera_n', '{n}. Kamera'));
+            $liveIdx = 1;
+            foreach ($matchCameras as $lc) {
+                $lu = buildLiveStreamUrl($lc['stream_url'] ?? '');
+                if ($lu === '') continue;
+                $lname = str_replace('{n}', (string)$liveIdx, $liveTpl);
+                if (str_contains($lname, '%d')) { $lname = sprintf($lname, $liveIdx); }
+                $liveCameras[] = ['id' => $lc['id'], 'name' => $lname, 'url' => $lu];
+                $liveIdx++;
+            }
+            $videoLive = !empty($liveCameras);
+            if ($videoLive) {
+                replash_record_match_open($pdo, $match['id']);   // canlı izleme de satışı kesinleştirir
+            }
+        }
+
+        if ($error && !$errKind) {
+            $errKind = ($error === __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.')) ? 'expired' : 'notfound';
         }
 
         // Fetch facilities for dropdown
@@ -143,66 +205,44 @@ if ($pdo && !$codeBlocked) {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<main class="min-h-screen pb-20 relative overflow-x-hidden">
+<main id="main" class="min-h-screen pb-20 relative overflow-x-hidden">
 
   <?php
-  $searchFacilityEnabled = (string)get_setting('search_by_facility_enabled', '1') === '1';
+  $searchFacilityEnabled = false;   // maça yalnızca kodla ulaşılır
   $searchCodeEnabled = (string)get_setting('search_by_code_enabled', '1') === '1';
   $codeOnlySearch = (!$searchFacilityEnabled && $searchCodeEnabled);
   // Kod doğrulandıysa oyuncu doğrudan videoyu görür; kod formu tekrar gösterilmez
   $watching = $match && $match['status'] === 'UNLOCKABLE' && $codeValidated; ?>
   <?php if (!$watching && ($match || $codeOnlySearch)): ?>
     <!-- HERO + KOD KARTI (replash.info) -->
-    <section class="relative overflow-hidden bg-ink-900 pt-36 pb-20 md:pt-44 md:pb-28">
-    <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" style="background:radial-gradient(circle, rgba(253,234,156,0.12) 0%, transparent 70%)" aria-hidden="true">
+    <section class="relative overflow-hidden bg-ink-900 pt-24 pb-4 md:pt-36 md:pb-8">
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full" aria-hidden="true">
     </div>
     <div class="absolute inset-0 grid-noise opacity-10" aria-hidden="true">
     </div>
-    <div class="container-x relative text-center">
-    <h1 class="mx-auto max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl lg:text-6xl" style="background:linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-reveal="up">
-    <?= e(__('find.hero.title')) ?>
+    <div class="container-x relative"><div class="max-w-2xl">
+    <h1 class="font-display text-3xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl">
+    <?= e(__('v2.sl.tonight')) ?>
     </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-white/55 md:text-xl"  data-reveal="up">
+    <p class="mt-3 hidden text-lg text-white/75 sm:block md:mt-4 md:text-xl">
     <?= e(__('find.hero.subtitle')) ?>
     </p>
-    </div>
+    </div></div>
     </section>
 
     <?php if (true): ?>
-    <section class="border-t border-white/5 bg-ink-900 py-16 md:py-20">
+    <section class="bg-ink-900 pt-4 pb-16 md:pt-6 md:pb-20">
     <div class="container-x">
-    <div class="mx-auto max-w-2xl"  data-reveal="up">
-    <form action="<?= base_url('find.php') ?>" method="GET" class="card-elevated rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
-    <div class="mb-5 flex items-center gap-2.5">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDEA9C" stroke-width="2">
-    <rect x="4" y="10" width="16" height="11" rx="2">
-    </rect>
-    <path d="M8 10V7a4 4 0 118 0v3">
-    </path>
-    </svg>
-    <h3 class="font-display text-lg font-bold text-white">
-    <?= e(__('find.watch.title')) ?>
-    </h3>
-    </div>
-    <p class="mb-5 text-sm text-white/50">
-    <?= e(__('find.watch.subtitle')) ?>
-    </p>
-    <div class="flex flex-col gap-2">
-    <label class="text-xs font-semibold uppercase tracking-wider text-white/60">
-    <?= e(__('find.watch.codeLabel')) ?>
-    </label>
-    <input type="text" name="code" required value="<?= e($code) ?>" placeholder="0000" maxlength="9" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-accent text-center font-mono text-2xl font-bold tracking-[0.3em] placeholder:tracking-[0.3em] placeholder:text-white/25" />
-    </div>
-    <button type="submit" class="mt-5 w-full rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-ink-900 shadow-glow-sm transition hover:shadow-glow disabled:opacity-60">
-    <?= e(__('find.watch.button')) ?>
-    </button>
-    <?php if ($searchFacilityEnabled): ?>
-    <a href="#facility-search" class="mt-4 flex items-center gap-1.5 text-xs text-white/45 transition hover:text-accent">
-    <?= e(__('find.watch.fallbackToggle')) ?>
-    <span>▾</span>
-    </a>
-    <?php endif; ?>
-    </form>
+    <div class="max-w-2xl">
+    <?php $ccId = 'find-code'; $ccError = $error; $ccErrKind = $errKind; $ccValue = $code; $ccTitleTag = 'h2'; include __DIR__ . '/includes/code_card.php'; ?>
+    <p id="find-code-hint" class="mt-4 text-xs text-white/55"><?= e(__('searchSettings.codeOnly.hint')) ?></p>
+    <details class="mt-5 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-2">
+    <summary class="flex min-h-[44px] cursor-pointer items-center text-sm font-semibold text-white/80"><?= e(__('support.title')) ?></summary>
+    <ul class="mb-3 mt-1 space-y-2 text-sm leading-relaxed text-white/60">
+    <?php foreach (['lost', 'wrong', 'preparing', 'expired', 'playback'] as $sk): ?><li><?= e(__('support.' . $sk)) ?></li><?php endforeach; ?>
+    </ul>
+    <a class="mb-3 inline-flex min-h-[44px] items-center rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white/85 transition hover:border-white/45 hover:text-white" href="https://wa.me/393447598309?text=<?= urlencode(__('support.whatsapp.prefill')) ?>" target="_blank" rel="noopener noreferrer"><?= e(__('support.button')) ?></a>
+    </details>
     <div aria-live="polite" class="mt-6">
     </div>
     </div>
@@ -232,7 +272,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
           </div>
 
-          <form action="find.php" method="GET" class="flex flex-col sm:flex-row items-center gap-3.5 mt-6">
+          <form action="find" method="GET" class="flex flex-col sm:flex-row items-center gap-3.5 mt-6">
             <div class="relative w-full flex-1">
               <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-accent">
                 <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,6 +282,7 @@ require_once __DIR__ . '/includes/header.php';
               <input 
                 type="text" 
                 name="code" 
+                aria-label="<?= e(__('find.watch.codeLabel')) ?>"
                 inputmode="numeric"
                 placeholder="<?= e(__('searchSettings.codeOnly.placeholder', 'Örn: 4821')) ?>" 
                 required 
@@ -250,7 +291,7 @@ require_once __DIR__ . '/includes/header.php';
               >
             </div>
 
-            <button type="submit" style="color: #000000 !important;" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-[#FDEA9C] hover:bg-accent-neon text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-glow transition flex-shrink-0">
+            <button type="submit" style="color: #000000 !important;" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-[#FEF1B6] hover:bg-accent-neon text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition flex-shrink-0">
               <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
@@ -281,22 +322,23 @@ require_once __DIR__ . '/includes/header.php';
         <?php if (!$searchFacilityEnabled && $searchCodeEnabled): ?>
           <!-- CENTERED LARGE PIN / ACCESS CODE CARD -->
           <div class="max-w-md mx-auto card-elevated rounded-3xl p-8 sm:p-10 border border-white/10 bg-ink-900/95 shadow-2xl text-center mb-10">
-            <div class="w-16 h-16 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(253,234,156,0.15)]">
+            <div class="w-16 h-16 rounded-2xl border border-accent/30 bg-accent/10 text-accent flex items-center justify-center mx-auto mb-6">
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
             
             <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
               <?= e(__('searchSettings.codeOnly.title')) ?>
             </h2>
-            <p class="text-neutral-400 text-xs sm:text-sm mb-6 leading-relaxed">
+            <p class="text-neutral-400 text-sm sm:text-sm mb-6 leading-relaxed">
               <?= e(__('searchSettings.codeOnly.subtitle')) ?>
             </p>
 
-            <form action="find.php" method="GET" class="space-y-4">
+            <form action="find" method="GET" class="space-y-4">
               <div>
                 <input 
                   type="text" 
                   name="code" 
+                  aria-label="<?= e(__('find.watch.codeLabel')) ?>"
                   inputmode="numeric"
                   value="<?= e($code) ?>" 
                   required 
@@ -305,7 +347,7 @@ require_once __DIR__ . '/includes/header.php';
                 >
               </div>
 
-              <button type="submit" class="w-full rounded-2xl bg-accent py-4 text-base font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition flex items-center justify-center gap-2">
+              <button type="submit" class="w-full rounded-2xl bg-accent py-4 text-base font-bold text-ink-900 hover:bg-accent-neon transition flex items-center justify-center gap-2">
                 <span><?= e(__('searchSettings.codeOnly.button')) ?></span>
                 <span>&rarr;</span>
               </button>
@@ -314,7 +356,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
         <?php else: ?>
           <div class="card-elevated rounded-3xl p-6 sm:p-8 border border-white/10 mb-10">
-            <form action="find.php" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form action="find" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label class="block text-xs font-medium text-neutral-400 mb-1.5"><?= e(__('find.fields.facility')) ?></label>
                 <select name="facility_id" class="w-full rounded-xl border border-white/10 bg-ink-900 px-3.5 py-2.5 text-sm text-neutral-200 focus:border-accent focus:outline-none">
@@ -346,7 +388,7 @@ require_once __DIR__ . '/includes/header.php';
               </div>
 
               <div class="flex items-end">
-                <button type="submit" class="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition">
+                <button type="submit" class="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-ink-900 hover:bg-accent-neon transition">
                   <?= e(__('find.fields.search_btn')) ?> &rarr;
                 </button>
               </div>
@@ -355,7 +397,7 @@ require_once __DIR__ . '/includes/header.php';
             <?php if ($searchCodeEnabled): ?>
               <div class="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-400">
                 <span><?= e(__('find.fields.or_code')) ?></span>
-                <form action="find.php" method="GET" class="flex items-center gap-2 w-full sm:w-auto">
+                <form action="find" method="GET" class="flex items-center gap-2 w-full sm:w-auto">
                   <input type="text" name="code" value="<?= e($code) ?>" inputmode="numeric" placeholder="<?= e(__('find.fields.code_placeholder')) ?>" class="rounded-lg border border-white/10 bg-ink-900 px-3 py-1.5 text-xs text-neutral-200 uppercase tracking-widest focus:border-accent focus:outline-none">
                   <button type="submit" class="rounded-lg bg-accent/20 border border-accent/40 text-accent px-3 py-1.5 font-semibold hover:bg-accent hover:text-ink-900 transition">
                     <?= e(__('find.fields.open_code_btn')) ?> &rarr;
@@ -379,17 +421,18 @@ require_once __DIR__ . '/includes/header.php';
 
     <?php endif; ?>
 
-    <?php if ($error): ?>
-      <?php $isExpiredError = ($error === __('find.errors.expired', 'Bu maçın 7 günlük saklama süresi dolduğu için video silinmiştir.')); ?>
-      <!-- Uyarı kutusu (replash.info FindForm) -->
-      <div class="mx-auto mb-8 max-w-2xl rounded-2xl border border-red-400/30 bg-red-400/10 p-5">
-        <?php if ($isExpiredError || $codeBlocked): ?>
-          <p class="font-semibold text-red-200"><?= e($error) ?></p>
-        <?php else: ?>
-          <div class="font-semibold text-red-200"><?= e(__('find.errors.video_not_found')) ?></div>
+    <?php if ($error && $watching): ?>
+      <!-- Hata: ne olduğu ve sonraki adım (kilitli bir maçın varlığı belli edilmez). Kod kartı görünüyorsa hata kartın içinde (Yenileme İşlevsellik 04). -->
+      <div role="alert" class="mx-auto mb-8 max-w-2xl rounded-2xl border border-red-400/30 bg-red-400/10 p-5">
+        <?php if ($errKind === 'notfound'): ?><p class="font-display text-lg font-bold text-red-100"><?= e(__('find.errors.video_not_found')) ?></p>
+        <?php elseif ($errKind === 'expired'): ?><p class="font-display text-lg font-bold text-red-100"><?= e(__('find.errors.expiredTitle')) ?></p>
+        <?php elseif ($errKind === 'technical'): ?><p class="font-display text-lg font-bold text-red-100"><?= e(__('find.errors.technicalTitle')) ?></p>
+        <?php endif; ?>
+        <p class="<?= in_array($errKind, ['notfound', 'expired', 'technical'], true) ? 'mt-1 text-sm text-red-100/90' : 'font-semibold text-red-200' ?>"><?= e($error) ?></p>
+        <?php if (in_array($errKind, ['notfound', 'expired', 'technical'], true)): ?>
+          <a class="mt-4 inline-flex min-h-[44px] items-center rounded-full border border-red-200/40 px-5 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-200/10" href="https://wa.me/393447598309?text=<?= urlencode(__('support.whatsapp.prefill')) ?>" target="_blank" rel="noopener noreferrer"><?= e(__('support.button')) ?></a>
         <?php endif; ?>
       </div>
-
     <?php endif; ?>
 
     <!-- MATCH RESULT & PLAYER CONTAINER -->
@@ -404,7 +447,7 @@ require_once __DIR__ . '/includes/header.php';
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> UNLOCKED
             </span>
             <span class="font-mono text-xs text-white/70"><?= e($matchMeta) ?></span>
-            <a href="<?= base_url('find.php') ?>" class="ml-auto text-xs font-semibold text-white/60 underline-offset-4 transition hover:text-accent hover:underline"><?= e(__('find.watch.other_code')) ?></a>
+            <a href="<?= base_url('find') ?>" class="ml-auto text-xs font-semibold text-white/60 underline-offset-4 transition hover:text-accent hover:underline"><?= e(__('find.watch.other_code')) ?></a>
           </div>
         <?php else: ?>
           <div class="mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl border border-accent/25 bg-accent/10 px-4 py-2.5">
@@ -416,7 +459,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <!-- Video Screen or Gate Lock Screen -->
-        <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated && !$videoReady):
+        <?php if ($match['status'] === 'UNLOCKABLE' && $codeValidated && !$videoReady && empty($videoLive)):
           $vs = $videoState['state'];
           $fmt = function ($ts) { return date('H:i', $ts); };
           $stepState = [
@@ -462,6 +505,73 @@ require_once __DIR__ . '/includes/header.php';
           <script>
             // Video hazır olunca sayfa kendiliğinden oynatıcıya geçer
             setTimeout(function () { if (!document.hidden) location.reload(); else document.addEventListener('visibilitychange', function () { location.reload(); }, { once: true }); }, 30000);
+          </script>
+
+        <?php elseif ($match['status'] === 'UNLOCKABLE' && $codeValidated && !empty($videoLive)): ?>
+          <!-- CANLI: slot başladı, bitmedi. Kodu bilen herkes (aile, arkadaşlar) izleyebilir. -->
+          <div id="rp-live" class="rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4">
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
+              <span class="inline-flex items-center gap-2 rounded-full bg-red-500/15 px-3 py-1 text-xs font-bold tracking-widest text-red-300"><span class="h-2 w-2 animate-pulse rounded-full bg-red-500"></span><?= e(__('find.live.badge')) ?></span>
+              <span class="text-xs text-white/65"><?= e(str_replace('{end}', date('H:i', $videoState['end']), __('find.live.ends'))) ?></span>
+            </div>
+            <div class="relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 bg-black">
+              <div id="live-player" class="h-full w-full"></div>
+              <div id="live-msg" class="absolute inset-0 hidden items-center justify-center bg-black/70 px-6 text-center text-sm text-white/85" role="status"><?= e(__('find.live.reconnecting')) ?></div>
+            </div>
+            <?php if (count($liveCameras) > 1): ?>
+              <div class="mt-3 flex flex-wrap gap-2" role="group" aria-label="<?= e(__('find.live.camera')) ?>">
+                <?php foreach ($liveCameras as $li => $lc): ?>
+                  <button type="button" data-live-cam="<?= (int)$li ?>" class="min-h-[40px] rounded-full border px-4 text-xs font-semibold <?= $li === 0 ? 'border-accent bg-accent text-ink-900' : 'border-white/20 text-white/80' ?>"><?= e($lc['name']) ?></button>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+            <p class="mt-3 px-1 text-sm leading-relaxed text-white/65"><?= e(__('find.live.note')) ?></p>
+          </div>
+          <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+          <script>
+          (function () {
+            var cams = <?= json_encode(array_values($liveCameras), JSON_UNESCAPED_SLASHES) ?>;
+            var startTs = <?= (int)$videoState['start'] ?>, endTs = <?= (int)$videoState['end'] ?>;
+            var skew = <?= time() ?> * 1000 - Date.now();   // sunucu saatine göre
+            var idx = 0, player = null, retry = null, seeked = false;
+            var msgEl = document.getElementById('live-msg');
+            function showMsg(on) { msgEl.classList.toggle('hidden', !on); msgEl.classList.toggle('flex', on); }
+            function mimeOf(u) { return /\.m3u8$/i.test(u.split('?')[0]) ? 'application/x-mpegURL' : 'video/mp4'; }
+            function build(u) {
+              if (player) { try { player.destroy(); } catch (e) {} }
+              seeked = false;
+              player = new Clappr.Player({
+                source: u, mimeType: mimeOf(u), parentId: '#live-player', width: '100%', height: '100%',
+                autoPlay: true, mute: true, playback: { playInline: true, recycleVideo: true }
+              });
+              player.on(Clappr.Events.PLAYER_ERROR, function () {
+                showMsg(true); clearTimeout(retry);
+                retry = setTimeout(function () { build(cams[idx].url); }, 8000);
+              });
+              player.on(Clappr.Events.PLAYER_PLAY, function () {
+                showMsg(false);
+                // Demo: tek dosya (mp4) "canlı" gibi gösterilir; yayın (m3u8) olduğu gibi güncel noktadan akar
+                if (mimeOf(u) === 'video/mp4' && !seeked) {
+                  var d = player.getDuration();
+                  if (d > 0) { seeked = true; var off = ((Date.now() + skew) / 1000 - startTs) % d; player.seek(off < 0 ? off + d : off); }
+                }
+              });
+              player.on(Clappr.Events.PLAYER_ENDED, function () { if (mimeOf(u) === 'video/mp4') { player.seek(0); player.play(); } });
+            }
+            build(cams[0].url);
+            document.querySelectorAll('[data-live-cam]').forEach(function (b) {
+              b.addEventListener('click', function () {
+                idx = +b.getAttribute('data-live-cam'); clearTimeout(retry); build(cams[idx].url);
+                document.querySelectorAll('[data-live-cam]').forEach(function (x) {
+                  var on = x === b;
+                  x.classList.toggle('bg-accent', on); x.classList.toggle('text-ink-900', on); x.classList.toggle('border-accent', on);
+                  x.classList.toggle('border-white/20', !on); x.classList.toggle('text-white/80', !on);
+                });
+              });
+            });
+            // Slot bitince sayfa yenilenir: video işleniyor / hazır ekranına geçer, klip kesme açılır
+            setTimeout(function () { location.reload(); }, Math.max(5000, endTs * 1000 - (Date.now() + skew) + 3000));
+          })();
           </script>
 
         <?php elseif ($match['status'] === 'UNLOCKABLE' && $codeValidated): ?>
@@ -675,7 +785,7 @@ require_once __DIR__ . '/includes/header.php';
                 <button 
                   type="button" 
                   onclick="openClipShare()"
-                  class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-ink-900 shadow-glow hover:bg-accent-neon transition"
+                  class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-ink-900 hover:bg-accent-neon transition"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
@@ -741,7 +851,7 @@ require_once __DIR__ . '/includes/header.php';
                     href="#"
                     onclick="return clipDownloadClick(event)"
                     download="replash_clip.mp4"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent py-3 px-3 text-xs font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition text-center"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent py-3 px-3 text-xs font-bold text-ink-900 hover:bg-accent-neon transition text-center"
                   >
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     <span id="modal-download-label"><?= e(__('find.modal.download_mp4')) ?></span>
@@ -853,7 +963,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php elseif ($match['status'] === 'UNLOCKABLE' && !$codeValidated): ?>
           <!-- 2. MATCH FOUND BUT ACCESS CODE REQUIRED BEFORE WATCHING -->
           <div class="p-10 sm:p-14 text-center bg-ink-900/95 flex flex-col items-center justify-center">
-            <div class="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent mb-4 shadow-glow">
+            <div class="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent mb-4">
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
               </svg>
@@ -864,7 +974,7 @@ require_once __DIR__ . '/includes/header.php';
               <?= e(__('find.gate.desc')) ?>
             </p>
 
-            <form action="find.php" method="GET" class="w-full max-w-sm space-y-3">
+            <form action="find" method="GET" class="w-full max-w-sm space-y-3">
               <input type="hidden" name="facility_id" value="<?= e($match['facility_id']) ?>">
               <input type="hidden" name="date" value="<?= e($match['date']) ?>">
               <input type="hidden" name="time_slot" value="<?= e($match['time_slot']) ?>">
@@ -876,6 +986,7 @@ require_once __DIR__ . '/includes/header.php';
                 <input 
                   type="text" 
                   name="code" 
+                  aria-label="<?= e(__('find.watch.codeLabel')) ?>"
                   inputmode="numeric"
                   placeholder="<?= e(__('find.gate.placeholder')) ?>" 
                   required 
@@ -884,7 +995,7 @@ require_once __DIR__ . '/includes/header.php';
                 >
               </div>
 
-              <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-bold text-ink-900 shadow-glow hover:bg-accent-neon transition">
+              <button type="submit" class="w-full rounded-xl bg-accent py-3 text-sm font-bold text-ink-900 hover:bg-accent-neon transition">
                 <?= e(__('find.gate.verify_btn')) ?> &rarr;
               </button>
             </form>
@@ -902,118 +1013,12 @@ require_once __DIR__ . '/includes/header.php';
   </div>
   </div>
 
-  <!-- ERİŞİM NASIL ÇALIŞIR (replash.info) -->
-      <section class="section-y border-t border-white/5 bg-section-gradient">
-      <div class="container-x">
-      <div class="mx-auto max-w-3xl"  data-reveal="up">
-      <div class="rounded-2xl border border-white/8 bg-white/[0.03] p-6 md:p-8">
-      <div class="flex items-start gap-4">
-      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
-      <svg class="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
-      </rect>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4">
-      </path>
-      </svg>
-      </div>
-      <div class="flex-1">
-      <h3 class="mb-2 text-base font-semibold text-white">
-      <?= e(__('find.explainer.title')) ?>
-      </h3>
-      <p class="text-sm leading-relaxed text-white/55">
-      <?= e(__('find.explainer.desc')) ?>
-      </p>
-      </div>
-      </div>
-      <div class="mt-6 grid gap-3 sm:grid-cols-2">
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z">
-      </path>
-      <circle cx="12" cy="10" r="3">
-      </circle>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65"><?= e(__('find.explainer.facility')) ?></span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <rect x="3" y="4" width="18" height="18" rx="2">
-      </rect>
-      <line x1="16" y1="2" x2="16" y2="6">
-      </line>
-      <line x1="8" y1="2" x2="8" y2="6">
-      </line>
-      <line x1="3" y1="10" x2="21" y2="10">
-      </line>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65"><?= e(__('find.explainer.date')) ?></span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <circle cx="12" cy="12" r="10">
-      </circle>
-      <polyline points="12 6 12 12 16 14">
-      </polyline>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65"><?= e(__('find.explainer.timeSlot')) ?></span>
-      </div>
-      <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.015] px-4 py-3">
-      <span class="text-accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-      <rect x="3" y="11" width="18" height="11" rx="2">
-      </rect>
-      <path d="M7 11V7a5 5 0 0 1 10 0">
-      </path>
-      </svg>
-      </span>
-      <span class="text-sm text-white/65"><?= e(__('find.explainer.unlocked')) ?></span>
-      </div>
-      </div>
-      <div class="mt-6 flex items-center gap-2 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3">
-      <svg class="h-4 w-4 flex-shrink-0 text-accent" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7zM12 15a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd">
-      </path>
-      </svg>
-      <span class="text-xs text-white/60">
-      <?= e(__('find.explainer.noShare')) ?>
-      </span>
-      </div>
-      </div>
-      </div>
-      </div>
-      </section>
 
 <script>
-// Kod kutuları: 4 rakam tamamlanınca formu kendiliğinden gönderir (telefonda bir adım siler).
-// Ayrıca son açılan kod hatırlanır; oyuncu geri döndüğünde tekrar yazmak zorunda kalmaz.
+// Açılan maçın kodu hatırlanır; kod kartı "Son açtığın maç" satırında gösterir (assets/js/main.js)
 (function () {
-  var SON_KOD = 'rp_son_kod';
-  document.querySelectorAll('input[name="code"]').forEach(function (inp) {
-    if (!inp.value) {
-      try {
-        var kayit = localStorage.getItem(SON_KOD);
-        if (kayit && /^\d{4}$/.test(kayit)) inp.placeholder = kayit;
-      } catch (e) {}
-    }
-    inp.addEventListener('input', function () {
-      var t = inp.value.replace(/\D/g, '');
-      if (t !== inp.value) inp.value = t;
-      if (t.length === 4 && inp.form && !inp.form.dataset.gonderildi) {
-        inp.form.dataset.gonderildi = '1';
-        try { localStorage.setItem(SON_KOD, t); } catch (e) {}
-        inp.blur();
-        inp.form.submit();
-      }
-    });
-  });
   var acikKod = <?= json_encode($code ?? '') ?>;
-  if (acikKod && /^\d{4}$/.test(acikKod)) { try { localStorage.setItem(SON_KOD, acikKod); } catch (e) {} }
+  if (acikKod && /^\d{4}$/.test(acikKod) && <?= json_encode(!empty($codeValidated)) ?>) { try { localStorage.setItem('rp_son_kod', acikKod); } catch (e) {} }
 })();
 </script>
 </main>
@@ -1050,7 +1055,8 @@ var I18N = {
   downloadVideo: <?= json_encode(__('find.modal.download_video')) ?>,
   downloadMp4: <?= json_encode(__('find.modal.download_mp4')) ?>
 };
-var CLIP_MIN = <?= (int)REPLASH_CLIP_MIN_SEC ?>, CLIP_MAX = <?= (int)REPLASH_CLIP_MAX_SEC ?>; // includes/sales.php
+// Klip süresinde ürün sınırı yok: oyuncunun seçtiği aralık alınır. Yalnızca teknik taban: seçim en az 1 sn olmalı.
+var CLIP_MIN = 1, CLIP_MAX = Infinity;
 
 var cameraList = <?= json_encode($cameraList) ?>;
 var activeCameraIndex = 0;
@@ -1196,7 +1202,7 @@ function clipSetBusyUI(busy, pct) {
 }
 // Filigran: sağ üstte "replash.it" + küçük logo, sağ altta tesis · saha (ince dijital yazı)
 var clipLogo = new Image();
-clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.webp'), PHP_URL_PATH)) ?>;
+clipLogo.src = <?= json_encode(parse_url(asset('images/replash-logo.webp'), PHP_URL_PATH) . '?v=2') ?>;
 var clipCourtLabel = <?= json_encode(mb_strtoupper(trim(($match['facility_name'] ?? '') . ' · ' . ($match['court'] ?? ''), ' ·'), 'UTF-8')) ?>;
 var CLIP_FONT = '"Share Tech Mono", "SFMono-Regular", Menlo, Consolas, monospace';
 // Yazı tipi kendi sunucumuzdan (Google'a ziyaretçi IP'si gitmez); Share Tech Mono, SIL Open Font License
@@ -1630,7 +1636,7 @@ function startClipRecording() {
   var timerEl = document.getElementById('record-timer');
 
   if (btn) {
-    btn.className = "inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 border border-rose-400 px-4 py-2.5 text-xs font-bold text-white shadow-glow";
+    btn.className = "inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 border border-rose-400 px-4 py-2.5 text-xs font-bold text-white";
   }
   if (btnDot) {
     btnDot.className = "w-2.5 h-2.5 rounded-full bg-white animate-ping";
@@ -1674,7 +1680,7 @@ function stopClipRecording() {
   var btnText = document.getElementById('btn-record-text');
 
   if (btn) {
-    btn.className = "inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition shadow-glow";
+    btn.className = "inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition";
   }
   if (btnDot) {
     btnDot.className = "w-2 h-2 rounded-full bg-rose-500";
@@ -1849,7 +1855,7 @@ async function shareClipFileOrLink() {
 
 // Maç linkini paylaş: telefonda paylaşım menüsü, diğerlerinde panoya kopyala
 function shareMatchLink() {
-  var url = <?= json_encode(base_url('find.php?code=' . rawurlencode($match['access_code'] ?? ''))) ?>;
+  var url = <?= json_encode(base_url('find?code=' . rawurlencode($match['access_code'] ?? ''))) ?>;
   var text = <?= json_encode(__('find.tools.share_link_text')) ?>;
   var copy = function () {
     var done = function () { showToast(<?= json_encode(__('find.tools.link_copied')) ?>); };
@@ -1942,7 +1948,7 @@ document.addEventListener('DOMContentLoaded', function() {
         preload: 'auto'
       },
       mediacontrol: {
-        seekbar: "#FDEA9C",
+        seekbar: "#FEF1B6",
         buttons: "#FFFFFF"
       }
     });

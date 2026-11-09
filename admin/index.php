@@ -8,7 +8,7 @@ $success = null;
 // Logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     unset($_SESSION['admin_logged_in']);
-    header('Location: index.php');
+    header('Location: ./');
     exit;
 }
 
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
                 session_regenerate_id(true);
                 $_SESSION['admin_logged_in'] = true;
                 $_SESSION['admin_name'] = $admin['name'];
-                header('Location: index.php');
+                header('Location: ./');
                 exit;
             } else {
                 // Hangi e-postanın kayıtlı olduğu belli edilmez
@@ -38,11 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
                 $error = adm('E-posta veya şifre hatalı.', 'Wrong email or password.');
             }
         } catch (PDOException $e) {
-            $error = "Veritabanı Hatası: " . $e->getMessage();
+            error_log('admin login: ' . $e->getMessage());
+            $error = adm('Veritabanı hatası. Lütfen tekrar deneyin.', 'Database error. Please try again.');
         }
     } else {
-        $error = adm('Veritabanı bağlantısı kurulamadı. ', 'Could not connect to the database. ')
-            . ($dbError ? "({$dbError})" : adm('Lütfen MySQL ayarlarınızı kontrol ediniz.', 'Please check your MySQL settings.'));
+        // Bağlantı ayrıntısı (sunucu/kullanıcı adı) ekrana yazılmaz; sunucu günlüğünde (includes/init.php)
+        $error = adm('Veritabanı bağlantısı kurulamadı. Lütfen MySQL ayarlarını kontrol edin.', 'Could not connect to the database. Please check your MySQL settings.');
     }
 }
 
@@ -51,6 +52,12 @@ $isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] =
 /**
  * Tesis sporları ve spor başına video fiyatı (facilities.sport_prices).
  */
+/** Pilot başlangıç tarihi (YYYY-MM-DD) veya boş = pilot yok. */
+function admin_pilot_start_from_post(): ?string {
+    $v = trim((string)($_POST['pilot_start'] ?? ''));
+    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $v) ? $v : null;
+}
+
 function admin_sport_prices_from_post(): array {
     $out = [];
     $enabled = $_POST['sport_enabled'] ?? [];
@@ -97,12 +104,39 @@ function admin_sport_price_fields(array $prices, string $uid): void {
 }
 
 
+/** Tesis PIN'i: tam 6 rakam, kolay tahmin edilemez ve başka tesiste kullanılmıyor. Hata yoksa null. */
+function admin_pin_check(PDO $pdo, string $pin, string $exceptId = ''): ?string {
+    if (!preg_match('/^\d{6}$/', $pin)) {
+        return adm('PIN tam 6 rakamdan oluşmalı.', 'The PIN must be exactly 6 digits.');
+    }
+    $d = array_map('intval', str_split($pin));
+    $allSame = count(array_unique($d)) === 1;
+    $asc = true; $desc = true;
+    for ($i = 1; $i < 6; $i++) { if ($d[$i] !== $d[$i - 1] + 1) $asc = false; if ($d[$i] !== $d[$i - 1] - 1) $desc = false; }
+    if ($allSame || $asc || $desc) {
+        return adm('Bu PIN çok kolay tahmin edilir (ör. 111111, 123456). Başka bir PIN seçin.', 'This PIN is too easy to guess (e.g. 111111, 123456). Choose another.');
+    }
+    $st = $pdo->prepare("SELECT COUNT(*) FROM facilities WHERE pin = ? AND id <> ?");
+    $st->execute([$pin, $exceptId]);
+    if ((int)$st->fetchColumn() > 0) {
+        return adm('Bu PIN başka bir tesiste kullanılıyor. Başka bir PIN seçin.', 'This PIN is already used by another facility. Choose a different one.');
+    }
+    return null;
+}
+$adminFormError = null;
+
 $facilities = [];
 $cameras = [];
 $leads = [];
 $stats = ['total_matches' => 0, 'sold_matches' => 0, 'total_revenue' => 0, 'active_cameras' => 0];
 
 if ($isAdmin && $pdo) {
+    // PIN doğrulaması: geçersizse ekleme/güncelleme hiç çalışmaz, üstte hata gösterilir
+    if (isset($_POST['action']) && in_array($_POST['action'], ['add_facility', 'update_facility'], true)) {
+        $pinExcept = ($_POST['action'] === 'update_facility') ? trim((string)($_POST['facility_id'] ?? '')) : '';
+        $adminFormError = admin_pin_check($pdo, trim((string)($_POST['pin'] ?? '')), $pinExcept);
+        if ($adminFormError !== null) { unset($_POST['action']); }
+    }
     // Add Facility
     if (isset($_POST['action']) && $_POST['action'] === 'add_facility') {
         $name = trim($_POST['name'] ?? '');
@@ -194,8 +228,9 @@ if ($isAdmin && $pdo) {
         }
         $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-        $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency, sport_prices) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), $pin, $unitPrice, $currency, json_encode($sportPrices)]);
+        $pilotStart = admin_pilot_start_from_post();
+        $ins = $pdo->prepare("INSERT INTO facilities (id, name, slug, city, sport, courts, pin, unit_price, currency, sport_prices, pilot_start) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $ins->execute([$facId, $name, $slug, $city, $primarySport, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), $pin, $unitPrice, $currency, json_encode($sportPrices), $pilotStart]);
 
         // Add cameras for each court
         $insCam = $pdo->prepare("INSERT INTO cameras (id, facility_id, court, name, token, channel_id, stream_url, status, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'online', NOW())");
@@ -326,8 +361,9 @@ if ($isAdmin && $pdo) {
             }
             $primarySport = !empty($distinctSports) ? implode(', ', $distinctSports) : $sport;
 
-            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ?, sport_prices = ? WHERE id = ?");
-            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $facId]);
+            $pilotStart = admin_pilot_start_from_post();
+            $upd = $pdo->prepare("UPDATE facilities SET name = ?, city = ?, sport = ?, pin = ?, unit_price = ?, currency = ?, courts = ?, sport_prices = ?, pilot_start = ? WHERE id = ?");
+            $upd->execute([$name, $city, $primarySport, $pin, $unitPrice, $currency, json_encode($courtObjects, JSON_UNESCAPED_UNICODE), json_encode($sportPrices), $pilotStart, $facId]);
 
             // Sync cameras
             $pdo->prepare("DELETE FROM cameras WHERE facility_id = ?")->execute([$facId]);
@@ -554,6 +590,7 @@ if ($isAdmin && $pdo) {
 $adminTab = in_array($_GET['tab'] ?? '', ['overview', 'facilities', 'audit', 'leads', 'settings'], true) ? $_GET['tab'] : 'overview';
 $auditEvents = [];
 $undoByFacility = [];
+$acceptances = [];
 if ($isAdmin && $pdo) {
     try {
         $auditFacility = $_GET['audit_facility'] ?? '';
@@ -572,6 +609,20 @@ if ($isAdmin && $pdo) {
     } catch (Exception $e) {
         error_log('admin audit: ' . $e->getMessage());
     }
+    // Oyuncu onayları (find.php): kod ile izlemeden önce ad + beyan
+    try {
+        $sqlAcc = "SELECT va.*, f.name AS facility_name, m.court, m.date, m.time_slot
+            FROM viewer_acceptances va
+            LEFT JOIN facilities f ON f.id = va.facility_id
+            LEFT JOIN matches m ON m.id = va.match_id";
+        $accParams = [];
+        if (($auditFacility ?? '') !== '') { $sqlAcc .= " WHERE va.facility_id = ?"; $accParams[] = $auditFacility; }
+        $sqlAcc .= " ORDER BY va.id DESC LIMIT 200";
+        $stAcc = $pdo->prepare($sqlAcc); $stAcc->execute($accParams);
+        $acceptances = $stAcc->fetchAll();
+    } catch (Exception $e) {
+        error_log('admin acceptances: ' . $e->getMessage());
+    }
 }
 
 $shellLangs = ['tr', 'en'];               // yönetim: Türkçe / İngilizce
@@ -583,10 +634,14 @@ require_once __DIR__ . '/../includes/header.php';
 
   <div class="container-x py-10 relative z-10">
 
+    <?php if ($isAdmin && $adminFormError): ?>
+      <div role="alert" class="mb-6 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800"><?= e($adminFormError) ?></div>
+    <?php endif; ?>
+
     <?php if (!$isAdmin): ?>
       <!-- Yönetim girişi (replash.info AdminApp) -->
       <div class="grid min-h-[60vh] place-items-center">
-        <form action="index.php" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+        <form action="./" method="POST" class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/[0.03] p-8">
           <input type="hidden" name="admin_login" value="1">
           <h1 class="font-display text-xl font-bold"><?= e(adm('Platform Admin', 'Platform Admin')) ?></h1>
           <p class="mb-5 mt-1 text-sm text-white/50"><?= e(adm('Replash sistem yöneticisi hesabınızla giriş yapın.', 'Sign in with your Replash system administrator account.')) ?></p>
@@ -621,7 +676,7 @@ require_once __DIR__ . '/../includes/header.php';
           <h2 class="font-display text-xl font-bold text-white flex items-center gap-2 mt-0.5">
             <span><?= e($selectedFacilityName) ?></span>
             <?php if ($selectedFacilityId !== 'all'): ?>
-              <a href="index.php" class="text-xs font-normal text-rose-400 hover:underline bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20"><?= e(adm('Filtreyi Kaldır ×', 'Clear filter ×')) ?></a>
+              <a href="./" class="text-xs font-normal text-rose-400 hover:underline bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20"><?= e(adm('Filtreyi Kaldır ×', 'Clear filter ×')) ?></a>
             <?php endif; ?>
           </h2>
         </div>
@@ -629,7 +684,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="flex items-center gap-2">
           <label class="text-xs text-neutral-400 font-semibold whitespace-nowrap"><?= e(adm('Tesis Seçin:', 'Facility:')) ?></label>
           <select 
-            onchange="window.location.href = 'index.php?facility_id=' + encodeURIComponent(this.value);" 
+            onchange="window.location.href = './?facility_id=' + encodeURIComponent(this.value);" 
             class="rounded-xl border border-white/10 bg-ink-900 px-3.5 py-2 text-xs font-medium text-white focus:border-accent focus:outline-none"
           >
             <option value="all" <?= $selectedFacilityId === 'all' ? 'selected' : '' ?>><?= e(adm('Tüm Tesisler (Platform Geneli)', 'All facilities (platform-wide)')) ?></option>
@@ -810,11 +865,11 @@ require_once __DIR__ . '/../includes/header.php';
                   </td>
                   <td class="px-4 py-2.5 text-right">
                     <?php if ($selectedFacilityId === $fb['id']): ?>
-                      <a href="index.php" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-300 text-xs font-semibold hover:bg-rose-500/20 transition">
+                      <a href="./" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-300 text-xs font-semibold hover:bg-rose-500/20 transition">
                         <?= e(adm('Filtreyi Kaldır', 'Clear filter')) ?>
                       </a>
                     <?php else: ?>
-                      <a href="index.php?facility_id=<?= urlencode($fb['id']) ?>" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-accent text-ink-900 text-xs font-semibold shadow-glow hover:bg-accent-neon transition">
+                      <a href="./?facility_id=<?= urlencode($fb['id']) ?>" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-accent text-ink-900 text-xs font-semibold shadow-glow hover:bg-accent-neon transition">
                         <?= e(adm('Grafiği İncele →', 'View chart →')) ?>
                       </a>
                     <?php endif; ?>
@@ -869,7 +924,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <span class="text-[11px] text-neutral-400"><?= e(adm('Her sahaya özel canlı RTSP/HLS linki bağlayın', 'Attach an RTSP/HLS link to each court')) ?></span>
               </div>
 
-              <form action="index.php?tab=facilities" method="POST" class="space-y-4 text-xs">
+              <form action="./?tab=facilities" method="POST" class="space-y-4 text-xs">
                 <input type="hidden" name="action" value="add_facility">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -886,6 +941,10 @@ require_once __DIR__ . '/../includes/header.php';
                 <div>
                   <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('6 haneli PIN', '6-digit PIN')) ?></label>
                   <input type="text" name="pin" maxlength="6" inputmode="numeric" required class="w-40 rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white font-mono focus:border-accent focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-neutral-400 mb-1 font-medium" for="pilot-start-new"><?= e(adm('Pilot başlangıç tarihi (Replash payı %0 — ' . REPLASH_PILOT_DAYS . ' gün)', 'Pilot start date (Replash share 0% — ' . REPLASH_PILOT_DAYS . ' days)')) ?></label>
+                  <input type="date" id="pilot-start-new" name="pilot_start" class="w-48 rounded-xl border border-white/10 bg-ink-800 p-2.5 text-white focus:border-accent focus:outline-none">
                 </div>
                 <?php admin_sport_price_fields(['football' => REPLASH_VIDEO_PRICES['football']], 'new'); ?>
 
@@ -985,7 +1044,7 @@ require_once __DIR__ . '/../includes/header.php';
                       </button>
 
                       <!-- Delete Facility Form -->
-                      <form action="index.php?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
+                      <form action="./?tab=facilities" method="POST" onsubmit="return confirm('<?= e($f['name']) ?> tesisini, bağlı tüm kameraları ve maç kayıtlarını tamamen silmek istediğinize emin misiniz?');" class="inline">
                         <input type="hidden" name="action" value="delete_facility">
                         <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                         <button type="submit" class="p-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20" title="<?= e(adm('Tesisi Sil', 'Delete facility')) ?>">
@@ -1002,7 +1061,7 @@ require_once __DIR__ . '/../includes/header.php';
                       <span class="text-[11px] text-neutral-400"><?= e(adm('Her sahaya birden fazla kamera URL\'si atayabilirsiniz', 'You can assign several camera URLs to each court')) ?></span>
                     </div>
 
-                    <form action="index.php?tab=facilities" method="POST" class="space-y-3">
+                    <form action="./?tab=facilities" method="POST" class="space-y-3">
                       <input type="hidden" name="action" value="update_facility">
                       <input type="hidden" name="facility_id" value="<?= e($f['id']) ?>">
                       
@@ -1020,6 +1079,10 @@ require_once __DIR__ . '/../includes/header.php';
                       <div>
                         <label class="block text-neutral-400 mb-1 font-medium"><?= e(adm('6 haneli PIN', '6-digit PIN')) ?></label>
                         <input type="text" name="pin" maxlength="6" inputmode="numeric" value="<?= e($f['pin']) ?>" required class="w-40 rounded-lg border border-white/10 bg-ink-900 p-2 text-white font-mono text-xs focus:border-accent focus:outline-none">
+                      </div>
+                      <div>
+                        <label class="block text-neutral-400 mb-1 font-medium" for="pilot-start-<?= e($f['id']) ?>"><?= e(adm('Pilot başlangıç tarihi (Replash payı %0 — ' . REPLASH_PILOT_DAYS . ' gün)', 'Pilot start date (Replash share 0% — ' . REPLASH_PILOT_DAYS . ' days)')) ?></label>
+                        <input type="date" id="pilot-start-<?= e($f['id']) ?>" name="pilot_start" value="<?= e($f['pilot_start'] ?? '') ?>" class="w-48 rounded-lg border border-white/10 bg-ink-900 p-2 text-white text-xs focus:border-accent focus:outline-none">
                       </div>
                       <?php
                         $fPrices = replash_facility_prices($f);
@@ -1164,7 +1227,7 @@ require_once __DIR__ . '/../includes/header.php';
                   </div>
 
                   <!-- Edit Stream URL Form -->
-                  <form id="edit-stream-<?= e($c['id']) ?>" action="index.php" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2">
+                  <form id="edit-stream-<?= e($c['id']) ?>" action="./" method="POST" class="hidden mt-2 pt-2 border-t border-white/10 flex gap-2">
                     <input type="hidden" name="action" value="update_camera_stream">
                     <input type="hidden" name="camera_id" value="<?= e($c['id']) ?>">
                     <input type="text" name="stream_url" value="<?= e($c['stream_url'] ?? '') ?>" placeholder="<?= e(adm('rtsp://... veya https://...', 'rtsp://... or https://...')) ?>" class="flex-1 rounded-lg border border-white/10 bg-ink-900 px-2 py-1 text-xs text-white font-mono focus:border-accent focus:outline-none">
@@ -1181,7 +1244,7 @@ require_once __DIR__ . '/../includes/header.php';
       <?php endif; ?>
 
       <?php if ($adminTab === 'settings'): ?>
-      <a href="<?= base_url('admin/calculator.php') ?>" class="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-5 transition hover:border-accent/40">
+      <a href="<?= base_url('admin/calculator') ?>" class="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-5 transition hover:border-accent/40">
         <div>
           <div class="font-semibold text-white"><?= e(adm('Gelir Hesaplayıcı', 'Revenue calculator')) ?></div>
           <div class="text-xs text-white/50"><?= e(adm('Sahalar İçin sayfasındaki hesaplayıcının varsayılanları ve metinleri', 'Defaults and texts of the calculator on the For Facilities page')) ?></div>
@@ -1200,7 +1263,7 @@ require_once __DIR__ . '/../includes/header.php';
           </span>
         </div>
 
-        <form action="index.php?tab=settings" method="POST" class="space-y-6">
+        <form action="./?tab=settings" method="POST" class="space-y-6">
           <input type="hidden" name="action" value="update_search_form_settings">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1335,6 +1398,33 @@ require_once __DIR__ . '/../includes/header.php';
                 <td class="px-4 py-2.5"><span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold <?= $ac ?>"><?= e($al) ?></span></td>
                 <td class="px-4 py-2.5 font-mono text-xs text-white/50"><?= e($ev['actor']) ?></td>
                 <td class="px-4 py-2.5 text-xs text-white/70"><?= e($ev['reason'] ?? '') ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="mb-2 mt-10 text-lg font-semibold"><?= e(adm('Oyuncu onayları', 'Player confirmations')) ?></h2>
+      <p class="mb-4 text-xs text-white/50"><?= e(adm(
+            'Kodla izlemeden önce oyuncu beyan eder: bu koda ait maçta oynadığını ve kaydedildiğini bildiğini, grubun videoyu satın almayı kabul ettiğini, gizlilik bildirimini okuduğunu. Ad tutulmaz; cihaz, IP\'nin şifreli özetinden türetilir. Kayıtlar ' . REPLASH_ACCEPT_RETENTION_MONTHS . ' ay sonra otomatik silinir.',
+            'Before watching with a code, the player confirms having played in the match for that code and knowing it was recorded, that the group agreed to buy the video and having read the privacy notice. No name is stored; the device is derived from an encrypted IP hash. Records are deleted automatically after ' . REPLASH_ACCEPT_RETENTION_MONTHS . ' months.'
+         )) ?></p>
+      <div class="overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full min-w-[760px] text-sm">
+          <thead class="border-b border-white/10 text-left text-[11px] uppercase tracking-wider text-white/40">
+            <tr><th class="px-4 py-3"><?= e(adm('Zaman', 'Time')) ?></th><th class="px-4 py-3"><?= e(adm('Tesis', 'Facility')) ?></th><th class="px-4 py-3"><?= e(adm('Maç', 'Match')) ?></th><th class="px-4 py-3"><?= e(adm('Cihaz', 'Device')) ?></th><th class="px-4 py-3"><?= e(adm('Metin sürümü', 'Text version')) ?></th></tr>
+          </thead>
+          <tbody>
+            <?php if (empty($acceptances)): ?>
+              <tr><td colspan="5" class="px-4 py-8 text-center text-white/40"><?= e(adm('Kayıt yok.', 'No records.')) ?></td></tr>
+            <?php endif; ?>
+            <?php foreach ($acceptances as $ac): ?>
+              <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+                <td class="px-4 py-2.5 font-mono text-xs text-white/60"><?= e(date('d.m.Y H:i', strtotime($ac['accepted_at']))) ?></td>
+                <td class="px-4 py-2.5"><?= e($ac['facility_name'] ?? $ac['facility_id']) ?></td>
+                <td class="px-4 py-2.5 text-xs"><?= e(($ac['court'] ?? '—') . ' · ' . ($ac['date'] ?? '') . ' · ' . ($ac['time_slot'] ?? '')) ?></td>
+                <td class="px-4 py-2.5 font-mono text-xs text-white/60">#<?= e(substr((string)$ac['client_key'], 0, 8)) ?></td>
+                <td class="px-4 py-2.5 font-mono text-xs text-white/50"><?= e($ac['text_version']) ?> · <?= e(strtoupper((string)$ac['lang'])) ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
@@ -1493,7 +1583,7 @@ document.addEventListener('DOMContentLoaded', function() {
           data: chartData.daily.count,
           type: 'line',
           borderColor: '#10B981',
-          backgroundColor: ''#111827'',
+          backgroundColor: 'rgba(16, 185, 129, 0.10)',
           fill: true,
           tension: 0.35,
           pointRadius: 4,

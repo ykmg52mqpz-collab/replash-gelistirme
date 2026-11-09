@@ -148,7 +148,7 @@ return [
         ],
         'faq' => [
             'eyebrow' => 'Domande Frequenti',
-            'title' => 'Tutto quello che vuoi sapere prima di dire sì.',
+            'title' => 'Domande frequenti',
             'subtitle' => 'Risposte alle domande che centri e giocatori fanno più spesso.',
             'items' => [
                 '1' => [
@@ -157,7 +157,7 @@ return [
                 ],
                 '2' => [
                     'q' => 'Ci sono costi anticipati o vincoli contrattuali?',
-                    'a' => 'No. Replash copre il 100% del costo. Telecamere, installazione, manutenzione, aggiornamenti software. Nessun canone mensile. L\'impegno minimo è di 6 mesi. Per tutta la durata del contratto, il tuo centro riceve la stessa quota di ricavi concordata ogni mese.'
+                    'a' => 'Nessun costo anticipato. Replash copre il 100% del costo di telecamere, installazione, manutenzione e aggiornamenti software, senza canone mensile. Il servizio prevede un impegno minimo di 12 mesi. Per tutta la durata, il tuo centro riceve la quota concordata ogni mese.'
                 ],
                 '3' => [
                     'q' => 'Come funziona la divisione dei ricavi con il centro?',
@@ -640,6 +640,28 @@ return [
             'total_revenue' => 'Incasso Totale',
             'matches_unit' => 'partite'
         ],
+        'ui' => [
+            'choose_title' => 'Da quale dispositivo stai lavorando?',
+            'choose_sub' => 'Scegli come usare il pannello. Potrai cambiare in qualsiasi momento.',
+            'computer' => 'Computer',
+            'computer_sub' => 'Calendario e tabella completa',
+            'phone' => 'Telefono',
+            'phone_sub' => 'Schermata semplice a tocchi grandi',
+            'switch_to_phone' => 'Versione telefono',
+            'switch_to_computer' => 'Versione computer',
+            'prev_day' => 'Giorno precedente',
+            'next_day' => 'Giorno successivo',
+            'pick_day' => 'Scegli giorno',
+            'sell_title' => 'Vendi prima della partita',
+            'open' => 'Apri',
+            'confirm_title' => 'Sbloccare questa partita?',
+            'confirm_desc' => 'Dai il codice solo dopo aver incassato il pagamento. Potrai annullare entro {m} minuti, se non è stata ancora aperta dal giocatore.',
+            'hours_label' => 'Durata',
+            'hours_n' => '{n} h',
+            'multi_hint' => 'Un codice per ogni ora: dai al giocatore tutti i codici',
+            'tournament_soon' => 'Modalità torneo · in arrivo',
+            'tournament_hint' => 'Un solo codice per tutte le partite del torneo, con i video uno sotto l\'altro in un\'unica pagina.',
+        ],
         'shell' => [
             'cal_legend' => 'Numero: partite del giorno',
             'tab_matches' => 'Partite e fasce',
@@ -681,6 +703,7 @@ return [
             'waiting' => 'In attesa di vendita',
             'sold_state' => 'Venduto',
             'give_code' => 'Dai questo codice al giocatore',
+            'remind_recorded' => 'Ricorda al cliente: la partita è registrata e il video lo vede solo chi ha il codice.',
             'copy' => 'Copia',
             'copied' => 'Copiato',
             'watch' => 'Guarda',

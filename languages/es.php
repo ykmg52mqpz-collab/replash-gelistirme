@@ -148,7 +148,7 @@ return [
         ],
         'faq' => [
             'eyebrow' => 'Preguntas Frecuentes',
-            'title' => 'Todo lo que necesitas saber antes de decir sí.',
+            'title' => 'Preguntas frecuentes',
             'subtitle' => 'Respuestas a las preguntas que más hacen centros y jugadores.',
             'items' => [
                 '1' => [
@@ -157,7 +157,7 @@ return [
                 ],
                 '2' => [
                     'q' => '¿Hay costes iniciales o compromisos contractuales?',
-                    'a' => 'No. Replash cubre el 100% del coste. Cámaras, instalación, mantenimiento, actualizaciones de software. Sin cuotas mensuales. El compromiso mínimo es de 6 meses. Durante la duración del contrato, tu centro recibe la misma parte de ingresos acordada cada mes.'
+                    'a' => 'Sin costes iniciales. Replash cubre el 100% del coste de cámaras, instalación, mantenimiento y actualizaciones de software, sin cuota mensual. El servicio prevé un compromiso mínimo de 12 meses. Durante todo el periodo, tu centro recibe la cuota acordada cada mes.'
                 ],
                 '3' => [
                     'q' => '¿Cómo comparte Replash los ingresos con el centro?',
@@ -681,6 +681,7 @@ return [
             'waiting' => 'Pendiente de venta',
             'sold_state' => 'Vendido',
             'give_code' => 'Da este código al jugador',
+            'remind_recorded' => 'Recuerda al cliente: el partido se graba y solo quien tiene el código puede ver el vídeo.',
             'copy' => 'Copiar',
             'copied' => 'Copiado',
             'watch' => 'Ver',
